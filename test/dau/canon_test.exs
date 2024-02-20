@@ -120,4 +120,58 @@ defmodule DAU.CanonTest do
       assert %Ecto.Changeset{} = Canon.change_factcheck_article(factcheck_article)
     end
   end
+
+  describe "analysis" do
+    alias DAU.Canon.Analysis
+
+    import DAU.CanonFixtures
+
+    @invalid_attrs %{content: nil}
+
+    test "list_analysis/0 returns all analysis" do
+      analysis = analysis_fixture()
+      assert Canon.list_analysis() == [analysis]
+    end
+
+    test "get_analysis!/1 returns the analysis with given id" do
+      analysis = analysis_fixture()
+      assert Canon.get_analysis!(analysis.id) == analysis
+    end
+
+    test "create_analysis/1 with valid data creates a analysis" do
+      valid_attrs = %{content: %{}}
+
+      assert {:ok, %Analysis{} = analysis} = Canon.create_analysis(valid_attrs)
+      assert analysis.content == %{}
+    end
+
+    test "create_analysis/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Canon.create_analysis(@invalid_attrs)
+    end
+
+    test "update_analysis/2 with valid data updates the analysis" do
+      analysis = analysis_fixture()
+      update_attrs = %{content: %{}}
+
+      assert {:ok, %Analysis{} = analysis} = Canon.update_analysis(analysis, update_attrs)
+      assert analysis.content == %{}
+    end
+
+    test "update_analysis/2 with invalid data returns error changeset" do
+      analysis = analysis_fixture()
+      assert {:error, %Ecto.Changeset{}} = Canon.update_analysis(analysis, @invalid_attrs)
+      assert analysis == Canon.get_analysis!(analysis.id)
+    end
+
+    test "delete_analysis/1 deletes the analysis" do
+      analysis = analysis_fixture()
+      assert {:ok, %Analysis{}} = Canon.delete_analysis(analysis)
+      assert_raise Ecto.NoResultsError, fn -> Canon.get_analysis!(analysis.id) end
+    end
+
+    test "change_analysis/1 returns a analysis changeset" do
+      analysis = analysis_fixture()
+      assert %Ecto.Changeset{} = Canon.change_analysis(analysis)
+    end
+  end
 end

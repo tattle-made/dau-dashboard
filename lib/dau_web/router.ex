@@ -47,6 +47,13 @@ defmodule DAUWeb.Router do
 
     live "/factcheck_articles/:id", FactcheckArticleLive.Show, :show
     live "/factcheck_articles/:id/show/edit", FactcheckArticleLive.Show, :edit
+
+    live "/analysis", AnalysisLive.Index, :index
+    live "/analysis/new", AnalysisLive.Index, :new
+    live "/analysis/:id/edit", AnalysisLive.Index, :edit
+
+    live "/analysis/:id", AnalysisLive.Show, :show
+    live "/analysis/:id/show/edit", AnalysisLive.Show, :edit
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

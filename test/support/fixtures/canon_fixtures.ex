@@ -36,4 +36,18 @@ defmodule DAU.CanonFixtures do
 
     factcheck_article
   end
+
+  @doc """
+  Generate a analysis.
+  """
+  def analysis_fixture(attrs \\ %{}) do
+    {:ok, analysis} =
+      attrs
+      |> Enum.into(%{
+        content: %{}
+      })
+      |> DAU.Canon.create_analysis()
+
+    analysis
+  end
 end
