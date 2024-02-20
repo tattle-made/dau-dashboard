@@ -1,0 +1,41 @@
+<.header>
+  Listing Response
+  <:actions>
+    <.link patch={~p"/response/new"}>
+      <.button>New Response</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="response"
+  rows={@streams.response_collection}
+  row_click={fn {_id, response} -> JS.navigate(~p"/response/#{response}") end}
+>
+  <:col :let={{_id, response}} label="Content"><%= response.content %></:col>
+  <:action :let={{_id, response}}>
+    <div class="sr-only">
+      <.link navigate={~p"/response/#{response}"}>Show</.link>
+    </div>
+    <.link patch={~p"/response/#{response}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, response}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: response.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="response-modal" show on_cancel={JS.patch(~p"/response")}>
+  <.live_component
+    module={DAUWeb.ResponseLive.FormComponent}
+    id={@response.id || :new}
+    title={@page_title}
+    action={@live_action}
+    response={@response}
+    patch={~p"/response"}
+  />
+</.modal>

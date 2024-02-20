@@ -56,6 +56,29 @@ defmodule DAUWeb.Router do
     live "/analysis/:id/show/edit", AnalysisLive.Show, :edit
   end
 
+  scope "verification", DAU do
+    live "/queries", QueryLive.Index, :index
+    live "/queries/new", QueryLive.Index, :new
+    live "/queries/:id/edit", QueryLive.Index, :edit
+
+    live "/queries/:id", QueryLive.Show, :show
+    live "/queries/:id/show/edit", QueryLive.Show, :edit
+
+    live "/comments", CommentLive.Index, :index
+    live "/comments/new", CommentLive.Index, :new
+    live "/comments/:id/edit", CommentLive.Index, :edit
+
+    live "/comments/:id", CommentLive.Show, :show
+    live "/comments/:id/show/edit", CommentLive.Show, :edit
+
+    live "/response", ResponseLive.Index, :index
+    live "/response/new", ResponseLive.Index, :new
+    live "/response/:id/edit", ResponseLive.Index, :edit
+
+    live "/response/:id", ResponseLive.Show, :show
+    live "/response/:id/show/edit", ResponseLive.Show, :edit
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:dau, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put

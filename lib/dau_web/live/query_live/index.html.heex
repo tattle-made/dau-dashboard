@@ -1,0 +1,42 @@
+<.header>
+  Listing Queries
+  <:actions>
+    <.link patch={~p"/queries/new"}>
+      <.button>New Query</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="queries"
+  rows={@streams.queries}
+  row_click={fn {_id, query} -> JS.navigate(~p"/queries/#{query}") end}
+>
+  <:col :let={{_id, query}} label="Messages"><%= query.messages %></:col>
+  <:col :let={{_id, query}} label="Status"><%= query.status %></:col>
+  <:action :let={{_id, query}}>
+    <div class="sr-only">
+      <.link navigate={~p"/queries/#{query}"}>Show</.link>
+    </div>
+    <.link patch={~p"/queries/#{query}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, query}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: query.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="query-modal" show on_cancel={JS.patch(~p"/queries")}>
+  <.live_component
+    module={DAUWeb.QueryLive.FormComponent}
+    id={@query.id || :new}
+    title={@page_title}
+    action={@live_action}
+    query={@query}
+    patch={~p"/queries"}
+  />
+</.modal>
