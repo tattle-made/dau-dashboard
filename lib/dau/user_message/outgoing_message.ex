@@ -1,4 +1,4 @@
-defmodule DAU.DAU.UserMessage.OutgoingMessage do
+defmodule DAU.UserMessage.OutgoingMessage do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -17,7 +17,23 @@ defmodule DAU.DAU.UserMessage.OutgoingMessage do
   @doc false
   def changeset(outgoing_message, attrs) do
     outgoing_message
-    |> cast(attrs, [:context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype, :payload_type])
-    |> validate_required([:context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype, :payload_type])
+    |> cast(attrs, [
+      :context_id,
+      :context_gsid,
+      :payload_text,
+      :payload_caption,
+      :payload_url,
+      :payload_contenttype,
+      :payload_type
+    ])
+    |> validate_required([
+      :context_id,
+      :context_gsid,
+      :payload_text,
+      :payload_caption,
+      :payload_url,
+      :payload_contenttype,
+      :payload_type
+    ])
   end
 end
