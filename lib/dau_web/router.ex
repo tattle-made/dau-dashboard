@@ -59,7 +59,9 @@ defmodule DAUWeb.Router do
     live "/analysis/:id/show/edit", AnalysisLive.Show, :edit
   end
 
-  scope "verification", DAU do
+  scope "/verification", DAUWeb do
+    pipe_through :browser
+
     live "/queries", QueryLive.Index, :index
     live "/queries/new", QueryLive.Index, :new
     live "/queries/:id/edit", QueryLive.Index, :edit
