@@ -31,6 +31,24 @@ defmodule DAUWeb.Router do
   #   pipe_through :api
   # end
 
+  scope "/canon", DAUWeb do
+    pipe_through :browser
+
+    live "/manipulated_media", ManipulatedMediaLive.Index, :index
+    live "/manipulated_media/new", ManipulatedMediaLive.Index, :new
+    live "/manipulated_media/:id/edit", ManipulatedMediaLive.Index, :edit
+
+    live "/manipulated_media/:id", ManipulatedMediaLive.Show, :show
+    live "/manipulated_media/:id/show/edit", ManipulatedMediaLive.Show, :edit
+
+    live "/factcheck_articles", FactcheckArticleLive.Index, :index
+    live "/factcheck_articles/new", FactcheckArticleLive.Index, :new
+    live "/factcheck_articles/:id/edit", FactcheckArticleLive.Index, :edit
+
+    live "/factcheck_articles/:id", FactcheckArticleLive.Show, :show
+    live "/factcheck_articles/:id/show/edit", FactcheckArticleLive.Show, :edit
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:dau, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put

@@ -1,0 +1,42 @@
+<.header>
+  Listing Manipulated media
+  <:actions>
+    <.link patch={~p"/manipulated_media/new"}>
+      <.button>New Manipulated media</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="manipulated_media"
+  rows={@streams.manipulated_media_collection}
+  row_click={fn {_id, manipulated_media} -> JS.navigate(~p"/manipulated_media/#{manipulated_media}") end}
+>
+  <:col :let={{_id, manipulated_media}} label="Description"><%= manipulated_media.description %></:col>
+  <:col :let={{_id, manipulated_media}} label="Url"><%= manipulated_media.url %></:col>
+  <:action :let={{_id, manipulated_media}}>
+    <div class="sr-only">
+      <.link navigate={~p"/manipulated_media/#{manipulated_media}"}>Show</.link>
+    </div>
+    <.link patch={~p"/manipulated_media/#{manipulated_media}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, manipulated_media}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: manipulated_media.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="manipulated_media-modal" show on_cancel={JS.patch(~p"/manipulated_media")}>
+  <.live_component
+    module={DAUWeb.ManipulatedMediaLive.FormComponent}
+    id={@manipulated_media.id || :new}
+    title={@page_title}
+    action={@live_action}
+    manipulated_media={@manipulated_media}
+    patch={~p"/manipulated_media"}
+  />
+</.modal>
