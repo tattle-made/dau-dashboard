@@ -1,7 +1,7 @@
 <.header>
   Listing Queries
   <:actions>
-    <.link patch={~p"/queries/new"}>
+    <.link patch={~p"/verification/queries/new"}>
       <.button>New Query</.button>
     </.link>
   </:actions>
@@ -10,15 +10,15 @@
 <.table
   id="queries"
   rows={@streams.queries}
-  row_click={fn {_id, query} -> JS.navigate(~p"/queries/#{query}") end}
+  row_click={fn {_id, query} -> JS.navigate(~p"/verification/queries/#{query}") end}
 >
   <:col :let={{_id, query}} label="Messages"><%= query.messages %></:col>
   <:col :let={{_id, query}} label="Status"><%= query.status %></:col>
   <:action :let={{_id, query}}>
     <div class="sr-only">
-      <.link navigate={~p"/queries/#{query}"}>Show</.link>
+      <.link navigate={~p"/verification/queries/#{query}"}>Show</.link>
     </div>
-    <.link patch={~p"/queries/#{query}/edit"}>Edit</.link>
+    <.link patch={~p"/verification/queries/#{query}/edit"}>Edit</.link>
   </:action>
   <:action :let={{id, query}}>
     <.link
@@ -30,13 +30,13 @@
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="query-modal" show on_cancel={JS.patch(~p"/queries")}>
+<.modal :if={@live_action in [:new, :edit]} id="query-modal" show on_cancel={JS.patch(~p"/verification/queries")}>
   <.live_component
     module={DAUWeb.QueryLive.FormComponent}
     id={@query.id || :new}
     title={@page_title}
     action={@live_action}
     query={@query}
-    patch={~p"/queries"}
+    patch={~p"/verification/queries"}
   />
 </.modal>
