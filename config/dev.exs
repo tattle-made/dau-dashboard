@@ -2,8 +2,8 @@ import Config
 
 # Configure your database
 config :dau, DAU.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "tattle",
+  password: "weak_password",
   hostname: "localhost",
   database: "dau_dev",
   stacktrace: true,
