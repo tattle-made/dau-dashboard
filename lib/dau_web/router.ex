@@ -20,6 +20,12 @@ defmodule DAUWeb.Router do
     get "/", PageController, :home
   end
 
+  scope "/gupshup", DAUWeb do
+    pipe_through :api
+
+    resources "/message", IncomingMessageController, except: [:edit, :delete]
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", DAUWeb do
   #   pipe_through :api
