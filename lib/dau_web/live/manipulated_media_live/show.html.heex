@@ -2,7 +2,7 @@
   Manipulated media <%= @manipulated_media.id %>
   <:subtitle>This is a manipulated_media record from your database.</:subtitle>
   <:actions>
-    <.link patch={~p"/manipulated_media/#{@manipulated_media}/show/edit"} phx-click={JS.push_focus()}>
+    <.link patch={~p"/canon/manipulated_media/#{@manipulated_media}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit manipulated_media</.button>
     </.link>
   </:actions>
@@ -13,15 +13,15 @@
   <:item title="Url"><%= @manipulated_media.url %></:item>
 </.list>
 
-<.back navigate={~p"/manipulated_media"}>Back to manipulated_media</.back>
+<.back navigate={~p"/canon/manipulated_media"}>Back to manipulated_media</.back>
 
-<.modal :if={@live_action == :edit} id="manipulated_media-modal" show on_cancel={JS.patch(~p"/manipulated_media/#{@manipulated_media}")}>
+<.modal :if={@live_action == :edit} id="manipulated_media-modal" show on_cancel={JS.patch(~p"/canon/manipulated_media/#{@manipulated_media}")}>
   <.live_component
     module={DAUWeb.ManipulatedMediaLive.FormComponent}
     id={@manipulated_media.id}
     title={@page_title}
     action={@live_action}
     manipulated_media={@manipulated_media}
-    patch={~p"/manipulated_media/#{@manipulated_media}"}
+    patch={~p"/canon/manipulated_media/#{@manipulated_media}"}
   />
 </.modal>

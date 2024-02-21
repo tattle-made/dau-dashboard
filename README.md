@@ -25,7 +25,7 @@ Visit `localhost:8080` to access adminer. Login with following fields
 **Fetch Credentials**
 Credentials are stored using AWS Secrets Manager. Please request @dennyabrain for SECRET_ARN and credentials for a suitable AWS IAM account
 ```shell
-aws secretsmanager get-secret-value --secret-id $SECRET_ARN | jq '.SecretString' | jq -r | jq -r 'to_entries[]' | jq -r '.key + "=" + .value' > env.dev
+aws secretsmanager get-secret-value --secret-id $SECRET_ARN | jq '.SecretString' | jq -r | jq -r 'to_entries[]' | jq -r '"export " + .key + "=" + .value' > env.dev
 ```
 
 **Load environment variables** : `source env.dev` 

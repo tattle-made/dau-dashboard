@@ -20,6 +20,26 @@ if System.get_env("PHX_SERVER") do
   config :dau, DAUWeb.Endpoint, server: true
 end
 
+aws_access_key_id =
+  System.get_env("AWS_ACCESS_KEY_ID") ||
+    raise """
+    aws access key is missing. Please contact tattle admin.
+    """
+
+aws_secret_access_key =
+  System.get_env("AWS_SECRET_ACCESS_KEY") ||
+    raise """
+    aws secret acess key are missing. Please contact tattle admin.
+    """
+
+config :dau,
+  aws_access_key_id: aws_access_key_id,
+  aws_secret_access_key: aws_secret_access_key
+
+config :ex_aws,
+  access_key_id: {:system, "AWS_ACCESS_KEY_ID"},
+  secret_access_key: {:system, "AWS_SECRET_ACCESS_KEY"}
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
