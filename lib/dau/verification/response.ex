@@ -2,7 +2,7 @@ defmodule DAU.Verification.Response do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "response" do
+  schema "responses" do
     field :content, :map
 
     timestamps(type: :utc_datetime)

@@ -17,19 +17,19 @@ defmodule DAUWeb.ManipulatedMediaLiveTest do
     setup [:create_manipulated_media]
 
     test "lists all manipulated_media", %{conn: conn, manipulated_media: manipulated_media} do
-      {:ok, _index_live, html} = live(conn, ~p"/manipulated_media")
+      {:ok, _index_live, html} = live(conn, ~p"/canon/manipulated_media")
 
       assert html =~ "Listing Manipulated media"
       assert html =~ manipulated_media.description
     end
 
     test "saves new manipulated_media", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/manipulated_media")
+      {:ok, index_live, _html} = live(conn, ~p"/canon/manipulated_media")
 
       assert index_live |> element("a", "New Manipulated media") |> render_click() =~
                "New Manipulated media"
 
-      assert_patch(index_live, ~p"/manipulated_media/new")
+      assert_patch(index_live, ~p"/canon/manipulated_media/new")
 
       assert index_live
              |> form("#manipulated_media-form", manipulated_media: @invalid_attrs)
@@ -39,20 +39,25 @@ defmodule DAUWeb.ManipulatedMediaLiveTest do
              |> form("#manipulated_media-form", manipulated_media: @create_attrs)
              |> render_submit()
 
-      assert_patch(index_live, ~p"/manipulated_media")
+      assert_patch(index_live, ~p"/canon/manipulated_media")
 
       html = render(index_live)
       assert html =~ "Manipulated media created successfully"
       assert html =~ "some description"
     end
 
-    test "updates manipulated_media in listing", %{conn: conn, manipulated_media: manipulated_media} do
-      {:ok, index_live, _html} = live(conn, ~p"/manipulated_media")
+    test "updates manipulated_media in listing", %{
+      conn: conn,
+      manipulated_media: manipulated_media
+    } do
+      {:ok, index_live, _html} = live(conn, ~p"/canon/manipulated_media")
 
-      assert index_live |> element("#manipulated_media-#{manipulated_media.id} a", "Edit") |> render_click() =~
+      assert index_live
+             |> element("#manipulated_media-#{manipulated_media.id} a", "Edit")
+             |> render_click() =~
                "Edit Manipulated media"
 
-      assert_patch(index_live, ~p"/manipulated_media/#{manipulated_media}/edit")
+      assert_patch(index_live, ~p"/canon/manipulated_media/#{manipulated_media}/edit")
 
       assert index_live
              |> form("#manipulated_media-form", manipulated_media: @invalid_attrs)
@@ -62,17 +67,23 @@ defmodule DAUWeb.ManipulatedMediaLiveTest do
              |> form("#manipulated_media-form", manipulated_media: @update_attrs)
              |> render_submit()
 
-      assert_patch(index_live, ~p"/manipulated_media")
+      assert_patch(index_live, ~p"/canon/manipulated_media")
 
       html = render(index_live)
       assert html =~ "Manipulated media updated successfully"
       assert html =~ "some updated description"
     end
 
-    test "deletes manipulated_media in listing", %{conn: conn, manipulated_media: manipulated_media} do
-      {:ok, index_live, _html} = live(conn, ~p"/manipulated_media")
+    test "deletes manipulated_media in listing", %{
+      conn: conn,
+      manipulated_media: manipulated_media
+    } do
+      {:ok, index_live, _html} = live(conn, ~p"/canon/manipulated_media")
 
-      assert index_live |> element("#manipulated_media-#{manipulated_media.id} a", "Delete") |> render_click()
+      assert index_live
+             |> element("#manipulated_media-#{manipulated_media.id} a", "Delete")
+             |> render_click()
+
       refute has_element?(index_live, "#manipulated_media-#{manipulated_media.id}")
     end
   end
@@ -81,19 +92,22 @@ defmodule DAUWeb.ManipulatedMediaLiveTest do
     setup [:create_manipulated_media]
 
     test "displays manipulated_media", %{conn: conn, manipulated_media: manipulated_media} do
-      {:ok, _show_live, html} = live(conn, ~p"/manipulated_media/#{manipulated_media}")
+      {:ok, _show_live, html} = live(conn, ~p"/canon/manipulated_media/#{manipulated_media}")
 
       assert html =~ "Show Manipulated media"
       assert html =~ manipulated_media.description
     end
 
-    test "updates manipulated_media within modal", %{conn: conn, manipulated_media: manipulated_media} do
-      {:ok, show_live, _html} = live(conn, ~p"/manipulated_media/#{manipulated_media}")
+    test "updates manipulated_media within modal", %{
+      conn: conn,
+      manipulated_media: manipulated_media
+    } do
+      {:ok, show_live, _html} = live(conn, ~p"/canon/manipulated_media/#{manipulated_media}")
 
       assert show_live |> element("a", "Edit") |> render_click() =~
                "Edit Manipulated media"
 
-      assert_patch(show_live, ~p"/manipulated_media/#{manipulated_media}/show/edit")
+      assert_patch(show_live, ~p"/canon/manipulated_media/#{manipulated_media}/show/edit")
 
       assert show_live
              |> form("#manipulated_media-form", manipulated_media: @invalid_attrs)
@@ -103,7 +117,7 @@ defmodule DAUWeb.ManipulatedMediaLiveTest do
              |> form("#manipulated_media-form", manipulated_media: @update_attrs)
              |> render_submit()
 
-      assert_patch(show_live, ~p"/manipulated_media/#{manipulated_media}")
+      assert_patch(show_live, ~p"/canon/manipulated_media/#{manipulated_media}")
 
       html = render(show_live)
       assert html =~ "Manipulated media updated successfully"
