@@ -21,7 +21,27 @@ defmodule DAU.UserMessage.IncomingMessage do
   @doc false
   def changeset(incoming_message, attrs) do
     incoming_message
-    |> cast(attrs, [:source, :payload_id, :payload_type, :sender_phone, :sender_name, :context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype])
-    |> validate_required([:source, :payload_id, :payload_type, :sender_phone, :sender_name, :context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype])
+    |> cast(attrs, [
+      :source,
+      :payload_id,
+      :payload_type,
+      :sender_phone,
+      :sender_name,
+      :context_id,
+      :context_gsid,
+      :payload_text,
+      :payload_caption,
+      :payload_url,
+      :payload_contenttype
+    ])
+    # |> validate_required([:source, :payload_id, :payload_type, :sender_phone, :sender_name, :context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype])
+    |> validate_required([
+      :source,
+      :payload_id,
+      :payload_type,
+      :sender_phone,
+      :sender_name,
+      :payload_text
+    ])
   end
 end

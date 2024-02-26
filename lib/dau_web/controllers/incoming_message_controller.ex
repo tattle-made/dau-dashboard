@@ -11,8 +11,11 @@ defmodule DAUWeb.IncomingMessageController do
     render(conn, :index, incoming_messages: incoming_messages)
   end
 
-  def create(conn, %{"incoming_message" => incoming_message_params}) do
-    with {:ok, %IncomingMessage{} = incoming_message} <- UserMessage.create_incoming_message(incoming_message_params) do
+  def create(conn, %{"app" => _app_name, "payload" => payload}) do
+    # conn |> render(:show, incoming_message: %{})
+
+    with {:ok, %IncomingMessage{} = incoming_message} <-
+           UserMessage.create_incoming_message(adapt(payload)) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/incoming_messages/#{incoming_message}")
@@ -28,7 +31,8 @@ defmodule DAUWeb.IncomingMessageController do
   def update(conn, %{"id" => id, "incoming_message" => incoming_message_params}) do
     incoming_message = UserMessage.get_incoming_message!(id)
 
-    with {:ok, %IncomingMessage{} = incoming_message} <- UserMessage.update_incoming_message(incoming_message, incoming_message_params) do
+    with {:ok, %IncomingMessage{} = incoming_message} <-
+           UserMessage.update_incoming_message(incoming_message, incoming_message_params) do
       render(conn, :show, incoming_message: incoming_message)
     end
   end
@@ -39,5 +43,21 @@ defmodule DAUWeb.IncomingMessageController do
     with {:ok, %IncomingMessage{}} <- UserMessage.delete_incoming_message(incoming_message) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  defp adapt(payload) do
+    %{
+      source: payload["source"],
+      payload_id: payload["id"],
+      payload_type: payload["type"],
+      sender_phone: payload["sender"]["phone"],
+      sender_name: payload["sender"]["name"],
+      context_id: nil,
+      context_gsid: nil,
+      payload_text: payload["payload"]["text"],
+      payload_caption: nil,
+      payload_url: nil,
+      payload_contenttype: nil
+    }
   end
 end
