@@ -6,43 +6,48 @@ defmodule DAUWeb.IncomingMessageControllerTest do
   alias DAU.UserMessage.IncomingMessage
 
   @create_attrs %{
-    source: "some source",
-    payload_id: "some payload_id",
-    payload_type: "some payload_type",
-    sender_phone: "some sender_phone",
-    sender_name: "some sender_name",
-    context_id: "some context_id",
-    context_gsid: "some context_gsid",
-    payload_text: "some payload_text",
-    payload_caption: "some payload_caption",
-    payload_url: "some payload_url",
-    payload_contenttype: "some payload_contenttype"
+    app: "DemoApp",
+    payload: %{
+      id: "some payload_id",
+      source: "some source",
+      type: "some payload_type",
+      payload: %{
+        text: "some payload text"
+      },
+      sender: %{
+        phone: "some sender_phone",
+        name: "some sender_name"
+      }
+    }
   }
   @update_attrs %{
-    source: "some updated source",
-    payload_id: "some updated payload_id",
-    payload_type: "some updated payload_type",
-    sender_phone: "some updated sender_phone",
-    sender_name: "some updated sender_name",
-    context_id: "some updated context_id",
-    context_gsid: "some updated context_gsid",
-    payload_text: "some updated payload_text",
-    payload_caption: "some updated payload_caption",
-    payload_url: "some updated payload_url",
-    payload_contenttype: "some updated payload_contenttype"
+    app: "DemoApp",
+    payload: %{
+      id: "some payload_id",
+      source: "some source",
+      type: "some payload_type",
+      payload: %{
+        text: "some payload text"
+      },
+      sender: %{
+        phone: "some sender_phone",
+        name: "some sender_name"
+      }
+    }
   }
   @invalid_attrs %{
-    source: nil,
-    payload_id: nil,
-    payload_type: nil,
-    sender_phone: nil,
-    sender_name: nil,
-    context_id: nil,
-    context_gsid: nil,
-    payload_text: nil,
-    payload_caption: nil,
-    payload_url: nil,
-    payload_contenttype: nil
+    app: "DemoApp",
+    payload: %{
+      id: nil,
+      type: nil,
+      payload: %{
+        text: nil
+      },
+      sender: %{
+        phone: nil,
+        name: nil
+      }
+    }
   }
 
   setup %{conn: conn} do
@@ -65,14 +70,14 @@ defmodule DAUWeb.IncomingMessageControllerTest do
 
       assert %{
                "id" => ^id,
-               "context_gsid" => "some context_gsid",
-               "context_id" => "some context_id",
-               "payload_caption" => "some payload_caption",
-               "payload_contenttype" => "some payload_contenttype",
+               "context_gsid" => nil,
+               "context_id" => nil,
+               "payload_caption" => nil,
+               "payload_contenttype" => nil,
                "payload_id" => "some payload_id",
-               "payload_text" => "some payload_text",
+               "payload_text" => "some payload text",
                "payload_type" => "some payload_type",
-               "payload_url" => "some payload_url",
+               "payload_url" => nil,
                "sender_name" => "some sender_name",
                "sender_phone" => "some sender_phone",
                "source" => "some source"
@@ -99,17 +104,17 @@ defmodule DAUWeb.IncomingMessageControllerTest do
 
       assert %{
                "id" => ^id,
-               "context_gsid" => "some updated context_gsid",
-               "context_id" => "some updated context_id",
-               "payload_caption" => "some updated payload_caption",
-               "payload_contenttype" => "some updated payload_contenttype",
-               "payload_id" => "some updated payload_id",
-               "payload_text" => "some updated payload_text",
-               "payload_type" => "some updated payload_type",
-               "payload_url" => "some updated payload_url",
-               "sender_name" => "some updated sender_name",
-               "sender_phone" => "some updated sender_phone",
-               "source" => "some updated source"
+               "context_gsid" => nil,
+               "context_id" => nil,
+               "payload_caption" => nil,
+               "payload_contenttype" => nil,
+               "payload_id" => "some payload_id",
+               "payload_text" => "some payload text",
+               "payload_type" => "some payload_type",
+               "payload_url" => nil,
+               "sender_name" => "some sender_name",
+               "sender_phone" => "some sender_phone",
+               "source" => "some source"
              } = json_response(conn, 200)["data"]
     end
 

@@ -24,7 +24,6 @@ defmodule DAUWeb.ManipulatedMediaLive.FormComponent do
           <.live_file_input upload={@uploads.manipulated_media} />
         </div>
         <.input field={@form[:description]} type="text" label="Description" />
-        <.input field={@form[:url]} type="text" label="Url" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Manipulated media</.button>
         </:actions>
@@ -62,7 +61,7 @@ defmodule DAUWeb.ManipulatedMediaLive.FormComponent do
 
   def handle_event("save", %{"manipulated_media" => manipulated_media_params}, socket) do
     uploaded_files =
-      consume_uploaded_entries(socket, :manipulated_media, fn %{key: key}, entry ->
+      consume_uploaded_entries(socket, :manipulated_media, fn %{key: _key}, entry ->
         save_manipulated_media(
           socket,
           socket.assigns.action,
@@ -72,7 +71,6 @@ defmodule DAUWeb.ManipulatedMediaLive.FormComponent do
         {:ok, entry}
       end)
 
-    # IO.inspect(socket.assigns.uploads)
     {:noreply, update(socket, :uploaded_files, &(&1 ++ uploaded_files))}
     # {:noreply, socket}
   end

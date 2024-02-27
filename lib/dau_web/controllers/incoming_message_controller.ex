@@ -11,7 +11,7 @@ defmodule DAUWeb.IncomingMessageController do
     render(conn, :index, incoming_messages: incoming_messages)
   end
 
-  def create(conn, %{"app" => _app_name, "payload" => payload}) do
+  def create(conn, %{"incoming_message" => %{"app" => _app_name, "payload" => payload}}) do
     # conn |> render(:show, incoming_message: %{})
 
     with {:ok, %IncomingMessage{} = incoming_message} <-
@@ -28,11 +28,14 @@ defmodule DAUWeb.IncomingMessageController do
     render(conn, :show, incoming_message: incoming_message)
   end
 
-  def update(conn, %{"id" => id, "incoming_message" => incoming_message_params}) do
+  def update(conn, %{
+        "id" => id,
+        "incoming_message" => %{"app" => _app_name, "payload" => payload}
+      }) do
     incoming_message = UserMessage.get_incoming_message!(id)
 
     with {:ok, %IncomingMessage{} = incoming_message} <-
-           UserMessage.update_incoming_message(incoming_message, incoming_message_params) do
+           UserMessage.update_incoming_message(incoming_message, adapt(payload)) do
       render(conn, :show, incoming_message: incoming_message)
     end
   end

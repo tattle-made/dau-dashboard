@@ -33,7 +33,10 @@ defmodule DAUWeb.ManipulatedMediaLive.Index do
   end
 
   @impl true
-  def handle_info({DAUWeb.ManipulatedMediaLive.FormComponent, {:saved, manipulated_media}}, socket) do
+  def handle_info(
+        {DAUWeb.ManipulatedMediaLive.FormComponent, {:saved, manipulated_media}},
+        socket
+      ) do
     {:noreply, stream_insert(socket, :manipulated_media_collection, manipulated_media)}
   end
 
