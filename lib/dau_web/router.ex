@@ -85,6 +85,12 @@ defmodule DAUWeb.Router do
     live "/response/:id/show/edit", ResponseLive.Show, :edit
   end
 
+  scope "/demo", DAUWeb do
+    pipe_through :browser
+
+    live "/search", SearchLive.Index
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:dau, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
