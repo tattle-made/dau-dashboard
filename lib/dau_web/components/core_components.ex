@@ -584,7 +584,7 @@ defmodule DAUWeb.CoreComponents do
 
   ## Examples
 
-      <.icon name="hero-x-mark-solid" />
+      <.icon name="<hero>-x-mark-solid" />
       <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
   """
   attr :name, :string, required: true
@@ -623,6 +623,37 @@ defmodule DAUWeb.CoreComponents do
       </div>
       <p><%= @query.id %></p>
     </div>
+    """
+  end
+
+  def checkbox(assigns) do
+    ~H"""
+    <div class="flex items-center mb-4">
+      <input
+        id="default-checkbox"
+        type="checkbox"
+        value=""
+        checked={@checked}
+        class="text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+      />
+      <label for="default-checkbox" class="ms-2 text-xs  text-gray-900 dark:text-gray-300">
+        <%= @label %>
+      </label>
+    </div>
+    """
+  end
+
+  def stepper(assigns) do
+    ~H"""
+    <ol class="border-s border-red-900">
+      <li class="text-sm ms-4">
+        <div class="bg-green-400 rounded-full w-4 h-4">
+          <span class="hero-x-mark-solid w-2 h-2 items-center justify-center"></span>
+        </div>
+        <h3 class="">Reverse Image Search</h3>
+      </li>
+      <li class="text-sm ms-4">Manual Verification</li>
+    </ol>
     """
   end
 

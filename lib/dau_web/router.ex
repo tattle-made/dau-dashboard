@@ -88,7 +88,8 @@ defmodule DAUWeb.Router do
   scope "/demo", DAUWeb do
     pipe_through :browser
 
-    live "/search", SearchLive.Index
+    live "/query/", SearchLive.Index
+    live "/query/abcd-sdfafd-asdf-asdf", SearchLive.Detail
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
