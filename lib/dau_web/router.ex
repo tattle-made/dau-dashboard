@@ -90,6 +90,7 @@ defmodule DAUWeb.Router do
 
     live "/query/", SearchLive.Index
     live "/query/abcd-sdfafd-asdf-asdf", SearchLive.Detail
+    live "/query/components", SearchLive.Component
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
