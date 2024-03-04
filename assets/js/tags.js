@@ -21,6 +21,7 @@ export class SimpleGreeting extends LitElement {
                 <p>${this.tags}</p>
                 <label for="tags">Tags:</label>
                 <input type="text" id="tags" name="tags" @change=${this._add_tag}><br><br>
+                <button phx-click="add-tag">add tag to liveview</button>
             </div>`;
     }
 

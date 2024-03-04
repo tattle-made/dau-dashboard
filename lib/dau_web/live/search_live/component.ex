@@ -4,25 +4,38 @@ defmodule DAUWeb.SearchLive.Component do
 
   def render(assigns) do
     ~H"""
-    <div class="border-2 border-red-400 p-2">
-      <my-test></my-test>
-    </div>
     <div class="h-4" />
     <div class="border-2 border-red-200 p-2">
-      <simple-greeting />
+      <div id="all-tags" class="flex flex-row gap-2 p-2 bg-red-50">
+        <%= for tag <- @tags do %>
+          <p class="text-lg" phx-click="remove-tag"><%= tag %></p>
+        <% end %>
+      </div>
+      <input id="current-tag" type="text" />
+      <button class="bg-red-300 px-4" phx-click={JS.push("add-tag")}>add</button>
     </div>
     """
   end
 
   def mount(params, session, socket) do
-    {:ok, socket}
+    tags = ["one"]
+    {:ok, assign(socket, :tags, tags)}
   end
 
   def handle_event("add-tag", unsigned_params, socket) do
-    {:ok, socket}
+    IO.puts(~c"add tag event got on server")
+    # {:noreply, socket}
+    {:noreply, update(socket, :tags, &["two" | &1])}
   end
 
   def handle_event("remove-tag", unsigned_params, socket) do
-    {:ok, socket}
+    IO.puts("tag removed")
+    {:noreply, socket}
   end
 end
+
+# <%= for query <- @queries do %>
+#       <div class="rounded-lg py-2 my-2 border-2 border-slate-100 ">
+#         <.query query={query} />
+#       </div>
+#     <% end %>

@@ -600,28 +600,31 @@ defmodule DAUWeb.CoreComponents do
   Renders a Query
 
   ## Examples
-    <.query id="123" type="image" url="https://path-to-media" />
-    <.query id="123" type="video" url="https://path-to-media" />
+    <.query type="image" url="https://path-to-media" />
+    <.query type="video" url="https://path-to-media" />
   """
 
-  attr :id, :string, required: true
   attr :type, :string, required: true
   attr :url, :string, required: true
 
-  def query(assigns) do
+  def queryt(assigns) do
     ~H"""
     <div class="flex flex-row gap-1">
       <div class="w-48">
-        <%= if @query.type=="image" do %>
-          <img src={@query.url} />
+        <%= if @type=="image" do %>
+          <img src={@url} />
         <% end %>
-        <%= if @query.type=="video" do %>
+        <%= if @type=="video" do %>
           <video controls>
-            <source src={@query.url} type="video/mp4" />
+            <source src={@url} type="video/mp4" />
           </video>
         <% end %>
+        <%= if @type=="audio" do %>
+          <div class="border-2 border-green-200">
+            <dau-audio-player url={@url} />
+          </div>
+        <% end %>
       </div>
-      <p><%= @query.id %></p>
     </div>
     """
   end

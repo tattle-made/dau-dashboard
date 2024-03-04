@@ -20,7 +20,7 @@ defmodule DAUWeb.QueryHTML do
 
     <%= for query <- @queries do %>
       <div class="rounded-lg py-2 my-2 border-2 border-slate-100 ">
-        <.query query={query} />
+        <.queryt query={query} />
       </div>
     <% end %>
     """

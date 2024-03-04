@@ -9,7 +9,10 @@ defmodule DAUWeb.SearchLive.Detail do
         <div class="flex flex-row gap-1">
           <div class="w-1/3 border-2 border-green-50 overflow-hidden">
             <video controls>
-              <source src="" type="video/mp4" />
+              <source
+                src="https://github.com/tattle-made/feluda/raw/main/src/core/operators/sample_data/sample-cat-video.mp4"
+                type="video/mp4"
+              />
             </video>
           </div>
 
@@ -35,9 +38,7 @@ defmodule DAUWeb.SearchLive.Detail do
           </div>
         </div>
       </div>
-      <div class="w-1/2 rounded-md ">
-        <.stepper />
-      </div>
+
       <div class="flex flex-row gap-1">
         <div class="p-2 w-1/2 rounded-md border-2 border-green-100">
           <p class="text-lg">Tagging</p>

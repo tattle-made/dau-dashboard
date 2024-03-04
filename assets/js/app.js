@@ -24,6 +24,7 @@ import topbar from "../vendor/topbar";
 import Uploaders from "./uploaders";
 import "flowbite/dist/flowbite.phoenix.js";
 import SimpleGreeting from './tags'
+import AudioPlayer from "./audio-player";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -69,3 +70,4 @@ class TestElement extends HTMLElement {
   }
 }
 window.customElements.define("my-test", TestElement)
+window.customElements.define("dau-audio-player", AudioPlayer)
