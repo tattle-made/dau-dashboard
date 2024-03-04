@@ -25,6 +25,7 @@ import Uploaders from "./uploaders";
 import "flowbite/dist/flowbite.phoenix.js";
 import SimpleGreeting from './tags'
 import AudioPlayer from "./audio-player";
+import RichTextEditor from "./rich-text-editor";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -63,7 +64,7 @@ class TestElement extends HTMLElement {
     const text = document.createElement('span')
     text.innerHTML = `
       <div>
-        <p>hellllo world</p>
+        
       </div>
     `
     shadow.appendChild(text)
@@ -71,3 +72,4 @@ class TestElement extends HTMLElement {
 }
 window.customElements.define("my-test", TestElement)
 window.customElements.define("dau-audio-player", AudioPlayer)
+window.customElements.define("dau-rich-text-editor", RichTextEditor)
