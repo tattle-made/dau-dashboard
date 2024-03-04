@@ -21,7 +21,7 @@ export class RichTextEditor extends LitElement {
     init() {
         let selector = this.shadowRoot.querySelector('#editor-container');
         this.quill = new Quill(selector, {
-            placeholder: 'Compose an epic...',
+            placeholder: 'Add your notes here...',
             theme: 'snow'
         });
 

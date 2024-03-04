@@ -8,9 +8,6 @@ defmodule DAUWeb.SearchLive.Index do
     <h1 class="text-xl font-normal text-slate-900 mb-2">
       Showing all queries
     </h1>
-    <div class="w-120 h-fit min-h-60 border-2 border-green-200 p-2 overflow-none">
-      <dau-rich-text-editor />
-    </div>
 
     <div class="flex flex-col sm:flex-row">
       <div class="h-fit w-full sm:w-1/4 sm:h-auto flex flex-row gap-4 sm:flex-col">
