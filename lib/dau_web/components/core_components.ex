@@ -731,4 +731,33 @@ defmodule DAUWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  def action_dropdown(assigns) do
+    ~H"""
+    <div class="w-fit cursor-pointer items-center">
+      <details>
+        <summary class="flex p-1 bg-gray-200 rounded-md">
+          Assign to
+          <button class="ml-auto">
+            <svg
+              class="fill-current opacity-75 w-4 h-4 -mr-1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z" />
+            </svg>
+          </button>
+        </summary>
+        <div class="flex flex-col gap-2 mt-4">
+          <button class="p-1 bg-gray-200 rounded-md" phx-click="assign-to" phx-value-id="areeba">
+            areeba
+          </button>
+          <button class="p-1 bg-gray-200 rounded-md" phx-click="assign-to" phx-value-id="debraj">
+            debraj
+          </button>
+        </div>
+      </details>
+    </div>
+    """
+  end
 end

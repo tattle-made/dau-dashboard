@@ -89,7 +89,8 @@ defmodule DAUWeb.Router do
     pipe_through :browser
 
     live "/query/", SearchLive.Index
-    live "/query/abcd-sdfafd-asdf-asdf", SearchLive.Detail
+    live "/query/verification/:id", SearchLive.Index
+    live "/query/:id", SearchLive.Detail
     live "/query/components", SearchLive.Component
   end
 
