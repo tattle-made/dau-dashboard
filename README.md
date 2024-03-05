@@ -39,3 +39,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Viewing Documentation
 Run `mix docs`. This generates the documentation and puts the .html and .epub file in `doc/`. Run `http-server doc/` and visit [`localhost:80801`](http://localhost:8081) 
+
+
+### Media during development
+Copy Paste files in `/priv/static/assets/media`. These will be available to the app at `http://localhost:4000/assets/media/${filename.extention}`

@@ -10,10 +10,17 @@ defmodule DAUWeb.SearchLive.Index do
     </h1>
 
     <div class="flex flex-col sm:flex-row">
-      <div class="h-fit w-full sm:w-1/4 sm:h-auto flex flex-row gap-4 sm:flex-col">
+      <div class="h-fit w-full sm:w-1/5 sm:h-auto flex flex-row gap-4 sm:flex-col">
         <div>
-          <p class="py-2">Tbd</p>
-          <.checkbox label="Unread" checked={true} />
+          <p class="py-2">Feeds</p>
+          <.checkbox label="Common" checked={true} />
+          <.checkbox label="Assigned to me" checked={false} />
+        </div>
+        <div>
+          <p class="py-2">Status</p>
+          <.checkbox label="Unseen" checked={true} />
+          <.checkbox label="Verification Complete" checked={false} />
+          <.checkbox label="Answered" checked={false} />
         </div>
         <div>
           <p class="py-2">Type</p>
@@ -33,7 +40,7 @@ defmodule DAUWeb.SearchLive.Index do
         </div>
       </div>
 
-      <div class="w-full sm:w-3/4">
+      <div class="w-full sm:w-4f/5">
         <div :if={@selection != []} class="flex flex-row gap-4 align-center ">
           <.action_dropdown />
           <button class="p-1 bg-gray-200 rounded-md h-fit" phx-click="mark-as-spam">
@@ -73,10 +80,12 @@ defmodule DAUWeb.SearchLive.Index do
           <:col :let={query}>
             <div class="flex flex-col gap-2">
               <.link navigate={~p"/demo/query/#{query.id}"}>
-                <p class="p-1 bg-green-200 rounded-md  w-fit">view query</p>
+                <p class="p-1 bg-yellow-100 text-zinc-800 rounded-md  w-fit">view query</p>
               </.link>
               <.link patch={~p"/demo/query/verification/#{query.id}"}>
-                <p class="p-1 bg-green-200 rounded-md  w-fit">add verification notes</p>
+                <p class="p-1 bg-yellow-100 text-zinc-800 rounded-md  w-fit">
+                  add verification notes
+                </p>
               </.link>
             </div>
           </:col>
@@ -104,12 +113,26 @@ defmodule DAUWeb.SearchLive.Index do
         tags: ["synthetic media", "phase 2", "politics"]
       },
       %{
+        id: ~s"yuiw",
+        type: "audio",
+        url: ~c"/assets/media/audio-01.wav",
+        count: %{exact: 20, similar: 3},
+        tags: ["synthetic media", "phase 2", "politics"]
+      },
+      %{
         id: ~s"pwoe",
         type: "video",
         url:
           ~c"https://github.com/tattle-made/feluda/raw/main/src/core/operators/sample_data/sample-cat-video.mp4",
         count: %{exact: 0, similar: 0},
         tags: ["satire", "spam"]
+      },
+      %{
+        id: ~s"yuiw",
+        type: "audio",
+        url: ~c"/assets/media/audio-03.wav",
+        count: %{exact: 20, similar: 3},
+        tags: ["synthetic media", "phase 2", "politics"]
       },
       %{
         id: ~s"maoq",
