@@ -3,6 +3,8 @@ defmodule DAUWeb.IncomingMessageController do
 
   alias DAU.UserMessage
   alias DAU.UserMessage.IncomingMessage
+  alias FileManager
+  alias DAU.Feed
 
   action_fallback DAUWeb.FallbackController
 
@@ -11,11 +13,30 @@ defmodule DAUWeb.IncomingMessageController do
     render(conn, :index, incoming_messages: incoming_messages)
   end
 
-  def create(conn, %{"incoming_message" => %{"app" => _app_name, "payload" => payload}}) do
+  def create(conn, %{"app" => _app_name, "payload" => payload}) do
     # conn |> render(:show, incoming_message: %{})
 
+    adapted_payload = adapt(payload)
+    IO.inspect(adapted_payload)
+
     with {:ok, %IncomingMessage{} = incoming_message} <-
-           UserMessage.create_incoming_message(adapt(payload)) do
+           UserMessage.create_incoming_message(adapted_payload) do
+      # download file,
+      {file_key, file_hash} =
+        FileManager.upload_to_s3(
+          "http://localhost:4000/assets/media/" <> adapted_payload.payload_text
+        )
+
+      # upload to s3
+      # todo
+      # update in db
+      UserMessage.update_incoming_message(incoming_message, %{
+        file_key: file_key,
+        file_hash: file_hash
+      })
+
+      Feed.add_to_common_feed(%{media_urls: [file_key]})
+
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/incoming_messages/#{incoming_message}")
@@ -59,8 +80,8 @@ defmodule DAUWeb.IncomingMessageController do
       context_gsid: nil,
       payload_text: payload["payload"]["text"],
       payload_caption: nil,
-      payload_url: nil,
-      payload_contenttype: nil
+      payload_url: payload["payload"]["url"],
+      payload_contenttype: payload["payload"]["contentType"]
     }
   end
 end

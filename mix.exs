@@ -55,7 +55,8 @@ defmodule DAU.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
-      {:amqp, "~> 3.3"}
+      {:amqp, "~> 3.3"},
+      {:elixir_uuid, "~> 1.2"}
     ]
   end
 

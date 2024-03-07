@@ -101,4 +101,6 @@ defmodule DAU.UserMessage do
   def change_incoming_message(%IncomingMessage{} = incoming_message, attrs \\ %{}) do
     IncomingMessage.changeset(incoming_message, attrs)
   end
+
+
 end

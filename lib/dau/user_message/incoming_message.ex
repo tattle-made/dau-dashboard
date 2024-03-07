@@ -14,6 +14,8 @@ defmodule DAU.UserMessage.IncomingMessage do
     field :payload_caption, :string
     field :payload_url, :string
     field :payload_contenttype, :string
+    field :file_key, :string
+    field :file_hash, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -32,7 +34,9 @@ defmodule DAU.UserMessage.IncomingMessage do
       :payload_text,
       :payload_caption,
       :payload_url,
-      :payload_contenttype
+      :payload_contenttype,
+      :file_key,
+      :file_hash,
     ])
     # |> validate_required([:source, :payload_id, :payload_type, :sender_phone, :sender_name, :context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype])
     |> validate_required([
@@ -40,8 +44,7 @@ defmodule DAU.UserMessage.IncomingMessage do
       :payload_id,
       :payload_type,
       :sender_phone,
-      :sender_name,
-      :payload_text
+      :sender_name
     ])
   end
 end

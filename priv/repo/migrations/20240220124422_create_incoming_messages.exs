@@ -14,6 +14,8 @@ defmodule DAU.Repo.Migrations.CreateIncomingMessages do
       add :payload_caption, :string
       add :payload_url, :string
       add :payload_contenttype, :string
+      add :file_key, :string
+      add :file_hash, :string
 
       timestamps(type: :utc_datetime)
     end
