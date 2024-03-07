@@ -32,9 +32,13 @@ export class RichTextEditor extends LitElement {
     render() {
         return html`
             <link rel='stylesheet' href='http://cdn.quilljs.com/1.3.6/quill.snow.css'>        
-            
+            <style>
+                #editor-container {
+                height: 20em;
+                }
+            </style>
+
             <div id="editor-container"></div>
-            <button @click=${this._save}>Save</button>
         `;
     }
 
@@ -52,3 +56,5 @@ export class RichTextEditor extends LitElement {
 }
 
 export default RichTextEditor
+
+// {/* <button @click=${this._save}>Save</button> */}

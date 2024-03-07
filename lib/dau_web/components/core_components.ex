@@ -473,7 +473,7 @@ defmodule DAUWeb.CoreComponents do
 
     ~H"""
     <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-11 sm:w-full">
+      <table class="w-[40rem] mt-2 sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
             <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
@@ -557,7 +557,7 @@ defmodule DAUWeb.CoreComponents do
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
+    <div class="mt-0">
       <.link
         navigate={@navigate}
         class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
@@ -597,6 +597,39 @@ defmodule DAUWeb.CoreComponents do
   end
 
   @doc """
+  Renders Thumbnail of a Query
+
+  ## Examples
+    <.queryt type="image" url="https://path-to-media" />
+    <.queryt type="video" url="https://path-to-media" />
+  """
+
+  attr :type, :string, required: true
+  attr :url, :string, required: true
+
+  def queryt(assigns) do
+    ~H"""
+    <div class="flex flex-row gap-1">
+      <div>
+        <%= if @type=="image" do %>
+          <img src={@url} />
+        <% end %>
+        <%= if @type=="video" do %>
+          <video class="w-48" controls>
+            <source src={@url} type="video/mp4" />
+          </video>
+        <% end %>
+        <%= if @type=="audio" do %>
+          <div class="border-2 border-green-200 w-48">
+            <dau-audio-player url={@url} />
+          </div>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a Query
 
   ## Examples
@@ -607,10 +640,10 @@ defmodule DAUWeb.CoreComponents do
   attr :type, :string, required: true
   attr :url, :string, required: true
 
-  def queryt(assigns) do
+  def query(assigns) do
     ~H"""
     <div class="flex flex-row gap-1">
-      <div class="w-48">
+      <div class="w-full">
         <%= if @type=="image" do %>
           <img src={@url} />
         <% end %>
@@ -630,16 +663,30 @@ defmodule DAUWeb.CoreComponents do
   end
 
   def checkbox(assigns) do
+    text_decoration = if Map.get(assigns, :disabled, false), do: "line-through", else: ""
+    text_color = "text-zinc-800"
+
+    assigns =
+      assigns |> assign(:text_color, text_color) |> assign(:text_decoration, text_decoration)
+
     ~H"""
     <div class="flex items-center mb-4">
       <input
         id="default-checkbox"
         type="checkbox"
         value=""
+        disabled={Map.get(assigns, :disabled, false)}
         checked={@checked}
         class="text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
       />
-      <label for="default-checkbox" class="ms-2 text-xs  text-gray-900 dark:text-gray-300">
+      <label
+        for="default-checkbox"
+        class={[
+          "ms-2 text-xs dark:text-gray-300",
+          @text_color,
+          @text_decoration
+        ]}
+      >
         <%= @label %>
       </label>
     </div>
@@ -749,10 +796,13 @@ defmodule DAUWeb.CoreComponents do
           </button>
         </summary>
         <div class="flex flex-col gap-2 mt-4">
-          <button class="p-1 bg-gray-200 rounded-md" phx-click="assign-to" phx-value-id="areeba">
+          <button class="p-1 bg-gray-300 rounded-md" phx-click="assign-to" phx-value-id="myself">
+            myself
+          </button>
+          <button class="p-1 bg-gray-300 rounded-md" phx-click="assign-to" phx-value-id="areeba">
             areeba
           </button>
-          <button class="p-1 bg-gray-200 rounded-md" phx-click="assign-to" phx-value-id="debraj">
+          <button class="p-1 bg-gray-300 rounded-md" phx-click="assign-to" phx-value-id="debraj">
             debraj
           </button>
         </div>
