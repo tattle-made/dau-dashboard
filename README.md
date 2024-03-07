@@ -30,6 +30,8 @@ aws secretsmanager get-secret-value --secret-id $SECRET_ARN | jq '.SecretString'
 
 **Load environment variables** : `source env.dev` 
 
+**Install frontend Dependencies** : `cd assets && npm install` 
+
 **Start your Phoenix server**:
 
   * Run `mix setup` to install and setup dependencies
