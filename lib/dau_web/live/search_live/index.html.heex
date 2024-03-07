@@ -1,0 +1,172 @@
+<h1 class="text-xl font-normal text-slate-900 mb-2">
+      Showing all queries
+    </h1>
+
+    <div class="flex flex-col sm:flex-row">
+      <div class="h-fit w-full sm:w-1/5 sm:h-fit flex flex-row gap-12 sm:gap-4 sm:flex-col mr-4 border-e border-zinc-200 overflow-scroll">
+        <div>
+          <p class="py-2">Feeds</p>
+          <.input_radio name="feed" id={:common} label="Common" selection={@search_params.feed} />
+          <.input_radio name="feed" id={:my_feed} label="My Feed" selection={@search_params.feed} />
+        </div>
+        <div>
+          <p class="py-2">Media Type</p>
+          <div>
+            <.checkbox id={:video} group={:media_type} label="Video" selection={@search_params.media_type} />
+            <.checkbox id={:audio} group={:media_type} label="Audio" selection={@search_params.media_type} />
+          </div>
+        </div>
+        <div>
+          <p class="py-2 text-zinc-500">Languages</p>
+          <div>
+            <.checkbox id={:english} group={:language} label="English" checked={true} disabled={true} />
+            <.checkbox id={:hindi} group={:language} label="Hindi" checked={false} disabled={true} />
+            <.checkbox id={:tamil} group={:language} label="Tamil" checked={false} disabled={true} />
+            <.checkbox id={:telugu} group={:language} label="Telugu" checked={false} disabled={true} />
+          </div>
+        </div>
+        <div>
+          <div class="flex flex-row gap-2">
+            <p class="py-2">Date Range</p>
+            <button phx-click={JS.dispatch("click", to: "#from-date") |> JS.dispatch("click", to: "#to-date") |> JS.push("change-search", value: %{"name" => "date-range"}) }>
+              <.icon name="hero-paper-airplane" class="w-3 h-3" />
+            </button>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
+              <label class="text-xs" for="start">From</label>
+              <input
+                class="w-fit border-green-800 text-xs focus:ring-green-900 ring-green-900 outline-0"
+                type="date"
+                id="from-date"
+                name="to-date"
+                value={@search_params.date.from}
+                min="2024-02-01"
+                max="2040-12-01"
+                phx-click="change-search-date"
+                phx-value-name="from-date"
+              />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-xs" for="start">To</label>
+              <input
+                class="w-fit border-green-800 text-xs focus:ring-green-900 ring-green-900"
+                type="date"
+                id="to-date"
+                name="to-date"
+                value={@search_params.date.to}
+                min="2024-02-01"
+                max="2024-12-01"
+                phx-click="change-search-date"
+                phx-value-name="to-date"
+              />
+            </div>
+          </div>
+        </div>
+        <div>
+          <p class="py-2">Sort</p>
+          <div>
+            <.input_radio
+              name="sort-by"
+              id={:newest}
+              label="Newest first"
+              selection={@search_params.sort}
+            />
+            <.input_radio
+              name="sort-by"
+              id={:oldest}
+              label="Oldest first"
+              selection={@search_params.sort}
+            />
+            <.input_radio
+              name="sort-by"
+              id={:repetition_count}
+              label="Repetition count"
+              name="sort-by"
+              disabled={true}
+              selection={@search_params.sort}
+            />
+          </div>
+        </div>
+        <div>
+          <p class="py-2  text-zinc-500">Status</p>
+          <.checkbox id={:unseen} group={:status} label="Unseen" checked={false} disabled={true} />
+          <.checkbox
+            id={:verification_complete}
+            label="Verification Complete"
+            checked={false}
+            disabled={true}
+            group={:status}
+          />
+          <.checkbox id={:answered} group={:status} label="Answered" checked={false} disabled={true} />
+        </div>
+        <div>
+          <p class="py-2  text-zinc-300">Tags</p>
+        </div>
+      </div>
+
+      <div class="w-full sm:w-4/5">
+        <div
+          :if={@selection != []}
+          class="flex flex-row gap-4 align-center border-2 border-zinc-200 p-2 rounded-lg"
+        >
+          <button class="p-1 bg-gray-200 rounded-md h-fit" phx-click="claim">
+            take up
+          </button>
+          <button class="p-1 bg-gray-200 rounded-md h-fit" phx-click="mark-as-spam">
+            mark as spam
+          </button>
+          <button class="p-1 bg-red-400 rounded-md h-fit" phx-click="delete">delete</button>
+        </div>
+        <.table id="queries" rows={@queries}>
+          <:col :let={query} label="select">
+            <input
+              type="checkbox"
+              value={query.id}
+              phx-click="select-one"
+              phx-value-id={query.id}
+              checked={Enum.member?(@selection, query.id)}
+            />
+          </:col>
+          <:col :let={query} label="preview">
+            <.queryt type={query.type} url={query.url} />
+          </:col>
+
+          <:col :let={query} label="tags">
+            <div class="flex flex-row wrap gap-2">
+              <%= for tag <- query.tags do %>
+                <div class="p-1 bg-green-100 rounded-lg">
+                  <span><%= tag %></span>
+                </div>
+              <% end %>
+            </div>
+          </:col>
+          <:col :let={query} label="taken up by">
+            <div
+              :if={Map.get(query, :assignee, "unassigned")}
+              class="p-1 text-green-9f00 w-fit rounded-lg"
+            >
+              <p><%= Map.get(query, :assignee, "") %></p>
+            </div>
+          </:col>
+          <:col :let={query} label="virality">
+            <div class="flex flex-col">
+              <p>Exact : <%= query.count.exact %></p>
+              <p>Similar : <%= query.count.similar %></p>
+            </div>
+          </:col>
+          <:col :let={query}>
+            <div class="flex flex-col gap-2">
+              <.link navigate={~p"/demo/query/#{query.id}"}>
+                <p class="p-1 bg-yellow-100 text-zinc-800 rounded-md  w-fit">view query</p>
+              </.link>
+              <.link navigate={~p"/demo/query/verification/#{query.id}"}>
+                <p class="p-1 bg-yellow-100 text-zinc-800 rounded-md  w-fit">
+                  add verification notes
+                </p>
+              </.link>
+            </div>
+          </:col>
+        </.table>
+      </div>
+    </div>

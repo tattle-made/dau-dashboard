@@ -11,7 +11,7 @@ defmodule DauWeb.SearchLive.Data do
       %{
         id: ~s"pqmq",
         type: "audio",
-        url: ~c"/assets/audio.wav",
+        url: ~c"/assets/media/audio-05.wav",
         count: %{exact: 20, similar: 3},
         tags: ["synthetic media", "phase 2", "politics"]
       },
@@ -51,5 +51,9 @@ defmodule DauWeb.SearchLive.Data do
     |> Enum.map(fn query ->
       if query.id == query_id, do: Map.put(query, :assignee, assignee), else: query
     end)
+  end
+
+  def search_filter() do
+    [%{feed: ~c""}]
   end
 end

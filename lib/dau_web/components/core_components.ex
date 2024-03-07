@@ -664,23 +664,72 @@ defmodule DAUWeb.CoreComponents do
 
   def checkbox(assigns) do
     text_decoration = if Map.get(assigns, :disabled, false), do: "line-through", else: ""
-    text_color = "text-zinc-800"
+    text_color = if Map.get(assigns, :disabled, false), do: "text-zinc-300", else: "text-zinc-800"
+    selection = Map.get(assigns, :selection, [])
+    checked = Enum.member?(selection, Map.get(assigns, :id))
 
     assigns =
-      assigns |> assign(:text_color, text_color) |> assign(:text_decoration, text_decoration)
+      assigns
+      |> assign(:text_color, text_color)
+      |> assign(:text_decoration, text_decoration)
+      |> assign(:selection, selection)
+      |> assign(:checked, checked)
 
     ~H"""
-    <div class="flex items-center mb-4">
+    <div class="flex items-center mb-2">
       <input
         id="default-checkbox"
         type="checkbox"
-        value=""
+        value={@id}
         disabled={Map.get(assigns, :disabled, false)}
         checked={@checked}
         class="text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        phx-click="change-search"
+        phx-value-name={@group}
+        phx-value-id={@id}
+        phx-value-value={@checked}
       />
       <label
         for="default-checkbox"
+        class={[
+          "ms-2 text-xs dark:text-gray-300",
+          @text_color,
+          @text_decoration
+        ]}
+      >
+        <%= @label %>
+      </label>
+    </div>
+    """
+  end
+
+  def input_radio(assigns) do
+    text_decoration = if Map.get(assigns, :disabled, false), do: "line-through", else: ""
+    text_color = if Map.get(assigns, :disabled, false), do: "text-zinc-300", else: "text-zinc-800"
+    selection = Map.get(assigns, :selection, "")
+
+    assigns =
+      assigns
+      |> assign(:text_color, text_color)
+      |> assign(:text_decoration, text_decoration)
+      |> assign(:selection, selection)
+
+    ~H"""
+    <div class="flex items-center mb-2">
+      <input
+        id={@id}
+        name={@name}
+        type="radio"
+        value={@id}
+        checked={@selection == @id}
+        disabled={Map.get(assigns, :disabled, false)}
+        class="text-green-600 bg-gray-100 border-gray-300 rounded-full focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        phx-click="change-search"
+        phx-value-name={@name}
+        phx-value-id={@id}
+      />
+      <label
+        for={@id}
         class={[
           "ms-2 text-xs dark:text-gray-300",
           @text_color,
