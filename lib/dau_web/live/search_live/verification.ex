@@ -6,9 +6,13 @@ defmodule DAUWeb.SearchLive.Verification do
   use DAUWeb, :html
 
   def mount(_params, _session, socket) do
+    # form =
+    #   Feed.get_feed_item_by_id(1)
+    #   |> Common.annotation_changeset()
+    #   |> to_form()
     form =
-      Feed.get_feed_item_by_id(1)
-      |> Common.annotation_changeset()
+      %Common{}
+      |> Common.annotation_changeset(%{tags: [], verification_note: "hello"})
       |> to_form()
 
     {:ok, assign(socket, :form, form)}
