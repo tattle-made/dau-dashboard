@@ -18,4 +18,9 @@ defmodule DAU.Feed.Common do
     |> cast(attrs, [:media_urls, :verification_note, :tags, :status, :exact_count])
     |> validate_required([:media_urls])
   end
+
+  def annotation_changeset(common, attrs \\ %{}) do
+    common
+    |> cast(attrs, [:verification_note, :tags])
+  end
 end

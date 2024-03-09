@@ -12,10 +12,19 @@ module.exports = {
     "../lib/dau_web/**/*.*ex",
     './node_modules/flowbite/**/*.js'
   ],
+  safelist: [
+    'bg-green-300',
+    "w-fit",
+    "h-fit",
+    "rounded-md",
+    "p-2",
+    "cursor-pointer"
+  ],
   theme: {
     extend: {
       colors: {
         brand: "#93AF7B",
+        "brand-50": "#93AF55",
       }
     },
   },

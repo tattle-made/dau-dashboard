@@ -81,7 +81,9 @@ defmodule DAUWeb.IncomingMessageController do
       payload_text: payload["payload"]["text"],
       payload_caption: nil,
       payload_url: payload["payload"]["url"],
-      payload_contenttype: payload["payload"]["contentType"]
+      payload_contenttype: payload["payload"]["contentType"],
+      file_hash: nil,
+      file_key: nil
     }
   end
 end

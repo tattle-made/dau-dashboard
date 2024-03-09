@@ -26,12 +26,18 @@ import "flowbite/dist/flowbite.phoenix.js";
 import SimpleGreeting from './tags'
 import AudioPlayer from "./audio-player";
 import RichTextEditor from "./rich-text-editor";
+import TagSelector from "./tag-selector";
+import TagSelectorHook from "./tag-selector-hooks";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 
+let Hooks = {}
+Hooks.TagSelector = TagSelectorHook
+
 let liveSocket = new LiveSocket("/live", Socket, {
+  hooks: Hooks,
   uploaders: Uploaders,
   params: { _csrf_token: csrfToken },
 });

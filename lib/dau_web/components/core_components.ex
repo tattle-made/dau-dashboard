@@ -15,7 +15,6 @@ defmodule DAUWeb.CoreComponents do
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
-
   alias Phoenix.LiveView.JS
 
   @doc """
@@ -178,7 +177,6 @@ defmodule DAUWeb.CoreComponents do
   Renders a simple form.
 
   ## Examples
-
       <.simple_form for={@form} phx-change="validate" phx-submit="save">
         <.input field={@form[:email]} label="Email"/>
         <.input field={@form[:username]} label="Username" />
@@ -229,7 +227,7 @@ defmodule DAUWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
+        "phx-submit-loading:opacity-75 rounded-lg bg-brand hover:bg-brand-50 py-2 px-3",
         "text-sm font-semibold leading-6 text-white active:text-white/80",
         @class
       ]}

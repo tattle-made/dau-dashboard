@@ -1,0 +1,40 @@
+
+<.back navigate={~p"/demo/query"}>Back to feed</.back>
+<div class="mb-4" />
+<div class="flex flex-row gap-8 items-center mb-4">
+    <h1 class="text-xl font-normal text-slate-900 ">
+    Verification Notes
+    </h1>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+    <div class="w-1/2 border-2 rounded-md border-green-100 p-4">
+        <.query type={@query.type} url={@query.url} />
+    </div>
+    <div class="w-1/2 h-fit border-2 rounded-md border-green-100 p-4 flex flex-col gap-2">
+       <.simple_form for={@form} phx-submit="save" phx-change="validate">
+        <.input field={@form[:verification_note]} type="textarea" label="Verification Note" />
+        <.input name="tags" field={@form[:tags]} label="Tags" type="hidden" />   
+        <div id="tag-selector" phx-hook="TagSelector" class="border-2 border-gray-200 overflow-none">
+            <input type="text" placeholder="Type to see suggestions like deepfake, cheapfake, synthetic media etc" class="border-0 w-full"/>
+            <div id="tag-suggestions" class="flex flex-row flex-wrap gap-2 p-2">
+            </div>
+        </div>
+        <div class="flex flex-row flex-wrap gap-2">
+            <%= for tag <- @form[:tags].value do%>
+                <div class="flex flex-row gap-3 item-center bg-green-200 px-2 py-2 rounded-md">
+                    <span class=""> <%= tag %> </span>
+                    <button phx-click="remove-tag" phx-value-tag={tag}>
+                        <.icon name="hero-x-mark" class="h-4 w-4" />
+                    </button>
+                </div>
+            <% end %>
+        </div>
+        
+        <:actions>
+           <.button type="submit" phx-disable-with="Sending..." class="w-fit">
+                Save
+            </.button>
+        </:actions>
+       </.simple_form>
+    </div>
+</div>
