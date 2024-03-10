@@ -51,7 +51,7 @@ if config_env() == :prod do
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :dau, DAU.Repo,
-    ssl: true,
+    # ssl: true,
     # url: database_url,
     username: System.get_env("DATABASE_USER"),
     password: System.get_env("DATABASE_PASSWORD"),
