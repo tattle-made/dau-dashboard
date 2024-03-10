@@ -23,7 +23,7 @@ services:
       - 8080:8080
 
   backend:
-    image: tattletech/dau-dashboard:814ce4e
+    image: tattletech/dau-dashboard:ceb2ea9
     container_name: dashboard
     restart: always
     command: tail -f /dev/null
