@@ -21,3 +21,14 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  backend:
+    build:
+      context: ./
+    container_name: dashboard
+    restart: always
+    command: tail -f /dev/null
+    ports:
+      - 4000:4000
+    env_file:
+      - ./env.dev

@@ -13,15 +13,18 @@
 #
 ARG ELIXIR_VERSION=1.15.0
 ARG OTP_VERSION=26.0
-ARG DEBIAN_VERSION=rc3-debian-buster-20230522
+ARG DEBIAN_VERSION=rc3-debian-bullseye-20230522-slim
+ARG RUNNER_DEBIAN_VERSION=bullseye-20230522-slim
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-${DEBIAN_VERSION}"
-ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
+ARG RUNNER_IMAGE="debian:${RUNNER_DEBIAN_VERSION}"
+
+
 
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
+RUN apt-get update -y && apt-get install -y build-essential git npm \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
@@ -51,27 +54,29 @@ COPY lib lib
 
 COPY assets assets
 
+RUN npm install --prefix assets
+
 # compile assets
 RUN mix assets.deploy
 
-# Compile the release
+# # Compile the release
 RUN mix compile
 
-# Changes to config/runtime.exs don't require recompiling the code
+# # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
 
-COPY rel rel
+# COPY rel rel
 RUN mix release
 
-# start a new build stage so that the final image will only contain
-# the compiled release and other runtime necessities
+# # start a new build stage so that the final image will only contain
+# # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && \
   apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
-# Set the locale
+# # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
 ENV LANG en_US.UTF-8
@@ -81,10 +86,10 @@ ENV LC_ALL en_US.UTF-8
 WORKDIR "/app"
 RUN chown nobody /app
 
-# set runner ENV
+# # set runner ENV
 ENV MIX_ENV="prod"
 
-# Only copy the final release from the build stage
+# # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/dau ./
 
 USER nobody
@@ -94,4 +99,5 @@ USER nobody
 # above and adding an entrypoint. See https://github.com/krallin/tini for details
 # ENTRYPOINT ["/tini", "--"]
 
-CMD ["/app/bin/server"]
+# CMD ["/app/bin/server"]
+CMD ["tail", "-f", "/dev/null"]
