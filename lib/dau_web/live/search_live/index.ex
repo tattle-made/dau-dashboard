@@ -41,7 +41,7 @@ defmodule DAUWeb.SearchLive.Index do
     IO.inspect("====")
     IO.inspect(page_num)
     IO.inspect("====")
-    queries = Feed.list_common_feed(1)
+    queries = Feed.list_common_feed(page_num)
 
     socket =
       socket
@@ -190,33 +190,6 @@ defmodule DAUWeb.SearchLive.Index do
     # queries = Data.assign_to(socket.assigns.queries, hd(socket.assigns.selection), "areeba")
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
     # {:noreply, socket}
-  end
-
-  def handle_event("page-next", _value, socket) do
-    page_num = socket.assigns.page_num
-    new_page_num = page_num + 1
-    queries = Feed.list_common_feed(new_page_num)
-
-    socket =
-      socket
-      |> assign(:page_num, new_page_num)
-      |> assign(:queries, queries)
-
-    {:noreply, socket}
-  end
-
-  def handle_event("page-previous", _value, socket) do
-    page_num = socket.assigns.page_num
-    new_page_num = if page_num > 1, do: page_num - 1, else: 1
-
-    queries = Feed.list_common_feed(page_num)
-
-    socket =
-      socket
-      |> assign(:page_num, new_page_num)
-      |> assign(:queries, queries)
-
-    {:noreply, socket}
   end
 
   def handle_params(params, uri, socket) do

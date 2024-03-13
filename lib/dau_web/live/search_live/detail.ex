@@ -13,6 +13,13 @@ defmodule DAUWeb.SearchLive.Detail do
           <div class="w-1/2 border-2 border-green-50 overflow-hidden">
             <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
           </div>
+          <div class="w-1/2">
+            <div class="flex flex-row wrap gap-4">
+              <p class="p-2 bg-gray-100 rounded-lg">
+                <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -22,19 +29,13 @@ defmodule DAUWeb.SearchLive.Detail do
 
           <div class="h-4" />
           <div class="flex flex-row flex-wrap gap-1">
-            <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border-2 border-green-50 w-fit">
-              <p class="text-stone-800 text-xs">Cheapfake</p>
-              <span class="hero-x-mark-solid w-3 h-3" />
-            </div>
-            <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border-2 border-green-50 w-fit">
-              <p class="text-stone-800 text-xs">AI-voice</p>
-              <span class="hero-x-mark-solid w-3 h-3" />
-            </div>
-            <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border-2 border-green-50 w-fit">
-              <p class="text-stone-800 text-xs">Phase-2</p>
-              <span class="hero-x-mark-solid w-3 h-3" />
-            </div>
+            <%= for tag <- @query.tags do %>
+              <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border-2 border-green-50 w-fit">
+                <p class="text-stone-800 text-xs"><%= tag %></p>
+              </div>
+            <% end %>
           </div>
+          <!--
           <div class="h-2" />
           <button
             id="dropdownContainer"
@@ -131,9 +132,10 @@ defmodule DAUWeb.SearchLive.Detail do
               </div>
             </div>
           </div>
+          -->
         </div>
       </div>
-
+      <!--
       <div class="flex flex-row gap-1">
         <div class="p-2 w-1/2 rounded-md border-2 border-green-100">
           <p class="text-lg">Factcheck Articles</p>
@@ -155,7 +157,7 @@ defmodule DAUWeb.SearchLive.Detail do
           </div>
         </div>
       </div>
-
+      -->
       <div class="flex flex-row gap-1">
         <div class="p-2 w-1/2 rounded-md border-2 border-green-100">
           <p class="text-lg">Resources</p>
