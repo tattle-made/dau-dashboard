@@ -37,7 +37,7 @@ defmodule DAUWeb.SearchLive.Index do
       sort: :oldest
     }
 
-    page_num = String.to_integer(params["page_num"])
+    page_num = String.to_integer(params["page_num"] || 1)
     queries = Feed.list_common_feed(page_num)
 
     socket =

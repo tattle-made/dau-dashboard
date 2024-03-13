@@ -96,7 +96,19 @@ defmodule DAU.Feed do
   end
 
   def get_feed_item_by_id(id) do
-    Repo.get!(Common, id)
+    {_, query} =
+      Repo.get!(Common, id)
+      |> Map.get_and_update(:media_urls, fn urls ->
+        new_value =
+          Enum.map(urls, fn url ->
+            {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", url)
+            url
+          end)
+
+        {urls, new_value}
+      end)
+
+    query
   end
 
   def add_secratariat_notes(common) do

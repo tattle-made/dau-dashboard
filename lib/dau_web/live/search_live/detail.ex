@@ -1,4 +1,5 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.Feed
   alias DAU.UserMessage.MessageDelivery
   use DAUWeb, :live_view
   use DAUWeb, :html
@@ -6,15 +7,11 @@ defmodule DAUWeb.SearchLive.Detail do
   def render(assigns) do
     ~H"""
     <section class="w-1/2 m-auto flex flex-col gap-2">
+      <.back navigate={~p"/demo/query/pg/1"}>Back to feed</.back>
       <div class="flex flex-row gap-1 ">
         <div class="flex flex-row gap-1">
           <div class="w-1/2 border-2 border-green-50 overflow-hidden">
-            <video controls>
-              <source
-                src="https://github.com/tattle-made/feluda/raw/main/src/core/operators/sample_data/sample-cat-video.mp4"
-                type="video/mp4"
-              />
-            </video>
+            <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
           </div>
         </div>
       </div>
@@ -219,7 +216,8 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   def handle_params(%{"id" => id}, uri, socket) do
-    {:noreply, socket}
+    query = Feed.get_feed_item_by_id(id)
+    {:noreply, assign(socket, :query, query)}
   end
 
   # def handle_event(event, unsigned_params, socket) do

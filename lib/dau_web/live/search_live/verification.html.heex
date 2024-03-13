@@ -1,14 +1,15 @@
 
-<.back navigate={~p"/demo/query"}>Back to feed</.back>
+<.back navigate={~p"/demo/query/pg/1"}>Back to feed</.back>
 <div class="mb-4" />
 <div class="flex flex-row gap-8 items-center mb-4">
     <h1 class="text-xl font-normal text-slate-900 ">
     Verification Notes
     </h1>
+    <p class="p-2 bg-zinc-200 rounded-full"><%= @query.id %></p>
 </div>
 <div class="flex flex-col sm:flex-row gap-4">
     <div class="w-1/2 border-2 rounded-md border-green-100 p-4">
-        <.query type={@query.type} url={@query.url} />
+        <.query type={to_string(@query.media_type)} url={@query.media_urls|>hd} />
     </div>
     <div class="w-1/2 h-fit border-2 rounded-md border-green-100 p-4 flex flex-col gap-2">
        <.simple_form for={@form} phx-submit="save" phx-change="validate">

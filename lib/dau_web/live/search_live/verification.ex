@@ -26,17 +26,18 @@ correct the record\n
   end
 
   def handle_params(params, uri, socket) do
-    IO.puts("params go here")
-    IO.inspect(params)
-    # query = Data.queries() |> Enum.filter(fn query -> query.id == params["id"] end) |> hd
-    query = %{
-      id: 1,
-      type: "video",
-      url: ~c"/assets/media/video-01.mp4",
-      count: %{exact: 10, similar: 3},
-      inserted_at: ~D[2024-03-01],
-      tags: ["deepfake", "cheapfake", "voiceover"]
-    }
+    query_id = String.to_integer(params["id"])
+    query = Feed.get_feed_item_by_id(query_id)
+    IO.inspect(query)
+
+    # query = %{
+    #   id: 1,
+    #   type: "video",
+    #   url: ~c"/assets/media/video-01.mp4",
+    #   count: %{exact: 10, similar: 3},
+    #   inserted_at: ~D[2024-03-01],
+    #   tags: ["deepfake", "cheapfake", "voiceover"]
+    # }
 
     {:noreply, assign(socket, :query, query)}
     # {:noreply, socket}
