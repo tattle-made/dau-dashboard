@@ -4,11 +4,13 @@
 
     <div class="flex flex-col sm:flex-row">
       <div class="h-fit w-full sm:w-1/5 sm:h-fit flex flex-row gap-12 sm:gap-4 sm:flex-col mr-4 border-e border-zinc-200 overflow-scroll">
+        <!--
         <div>
           <p class="py-2">Feeds</p>
           <.input_radio name="feed" id={:common} label="Common" selection={@search_params.feed} />
           <.input_radio name="feed" id={:my_feed} label="My Feed" selection={@search_params.feed} />
         </div>
+        -->
         <div>
           <p class="py-2">Media Type</p>
           <div>
@@ -16,6 +18,7 @@
             <.checkbox id={:audio} group={:media_type} label="Audio" selection={@search_params.media_type} />
           </div>
         </div>
+        <!--
         <div>
           <p class="py-2 text-zinc-500">Languages</p>
           <div>
@@ -25,6 +28,7 @@
             <.checkbox id={:telugu} group={:language} label="Telugu" checked={false} disabled={true} />
           </div>
         </div>
+        
         <div>
           <div class="flex flex-row gap-2">
             <p class="py-2">Date Range</p>
@@ -63,6 +67,7 @@
             </div>
           </div>
         </div>
+        -->
         <div>
           <p class="py-2">Sort</p>
           <div>
@@ -88,6 +93,7 @@
             />
           </div>
         </div>
+        <!--
         <div>
           <p class="py-2  text-zinc-500">Status</p>
           <.checkbox id={:unseen} group={:status} label="Unseen" checked={false} disabled={true} />
@@ -103,6 +109,7 @@
         <div>
           <p class="py-2  text-zinc-300">Tags</p>
         </div>
+        -->
       </div>
 
       <div class="w-full sm:w-4/5 gap-4">
