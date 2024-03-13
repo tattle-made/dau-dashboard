@@ -38,7 +38,10 @@ defmodule DAUWeb.SearchLive.Index do
     }
 
     page_num = String.to_integer(params["page_num"] || 1)
-    queries = Feed.list_common_feed(page_num)
+    IO.inspect("====")
+    IO.inspect(page_num)
+    IO.inspect("====")
+    queries = Feed.list_common_feed(1)
 
     socket =
       socket

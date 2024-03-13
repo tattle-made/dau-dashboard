@@ -5,10 +5,11 @@
     <h1 class="text-xl font-normal text-slate-900 ">
     Verification Notes
     </h1>
-    <p class="p-2 bg-zinc-200 rounded-full"><%= @query.id %></p>
+    <p class="p-2 bg-zinc-200 rounded-full"><%= Map.get(@query, :id, "")  %></p>
 </div>
 <div class="flex flex-col sm:flex-row gap-4">
     <div class="w-1/2 border-2 rounded-md border-green-100 p-4">
+            
         <.query type={to_string(@query.media_type)} url={@query.media_urls|>hd} />
     </div>
     <div class="w-1/2 h-fit border-2 rounded-md border-green-100 p-4 flex flex-col gap-2">

@@ -111,9 +111,10 @@ defmodule DAU.Feed do
     query
   end
 
-  def add_secratariat_notes(common) do
+  def add_secratariat_notes(%Common{} = common, attrs \\ %{}) do
     common
-    |> Repo.insert()
+    |> Common.annotation_changeset(attrs)
+    |> Repo.update()
   end
 
   def add_verification_note() do
