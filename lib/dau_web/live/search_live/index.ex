@@ -6,7 +6,7 @@ defmodule DAUWeb.SearchLive.Index do
   use DAUWeb, :html
 
   def mount(params, session, socket) do
-    queries = Feed.list_common_feed()
+    queries = Feed.list_common_feed(1)
 
     # IO.inspect(queries |> hd)
 
@@ -20,6 +20,7 @@ defmodule DAUWeb.SearchLive.Index do
       |> assign(:selection, [])
       |> assign(:current_user_id, user.id)
       |> assign(:current_user_name, String.split(user.email, "@") |> hd)
+      |> assign(:page_num, 1)
 
     {:ok, socket}
   end
@@ -36,7 +37,17 @@ defmodule DAUWeb.SearchLive.Index do
       sort: :oldest
     }
 
-    {:noreply, assign(socket, :search_params, search_params)}
+    page_num = String.to_integer(params["page_num"])
+    queries = Feed.list_common_feed(page_num)
+
+    socket =
+      socket
+      |> assign(:page_num, page_num)
+      |> assign(:search_params, search_params)
+      |> assign(:queries, queries)
+      |> assign(:selection, [])
+
+    {:noreply, socket}
   end
 
   def handle_event("change-search", value, socket) do
@@ -120,7 +131,7 @@ defmodule DAUWeb.SearchLive.Index do
         {_id, _value} -> :add
       end
 
-    # IO.inspect(selection_type)
+    IO.inspect(selection_type)
 
     socket =
       case selection_type == :add && !Enum.member?(socket.assigns.selection, value["value"]) do
@@ -134,7 +145,6 @@ defmodule DAUWeb.SearchLive.Index do
         false -> socket
       end
 
-    IO.inspect(socket.assigns.selection)
     IO.inspect(socket.assigns.selection)
 
     {:noreply, socket}
@@ -163,15 +173,47 @@ defmodule DAUWeb.SearchLive.Index do
     IO.inspect(socket.assigns.selection)
     selection = socket.assigns.selection
     user = socket.assigns.current_user_name
+    page_num = socket.assigns.page_num
 
-    Enum.map(selection, fn id ->
-      Feed.get_feed_item_by_id(id)
-      |> Feed.take_up(user)
-    end)
+    result =
+      Enum.map(selection, fn id ->
+        Feed.get_feed_item_by_id(id)
+        |> Feed.take_up(user)
+      end)
 
-    queries = Feed.list_common_feed()
+    IO.inspect(result)
+
+    queries = Feed.list_common_feed(page_num)
     # queries = Data.assign_to(socket.assigns.queries, hd(socket.assigns.selection), "areeba")
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
+    # {:noreply, socket}
+  end
+
+  def handle_event("page-next", _value, socket) do
+    page_num = socket.assigns.page_num
+    new_page_num = page_num + 1
+    queries = Feed.list_common_feed(new_page_num)
+
+    socket =
+      socket
+      |> assign(:page_num, new_page_num)
+      |> assign(:queries, queries)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("page-previous", _value, socket) do
+    page_num = socket.assigns.page_num
+    new_page_num = if page_num > 1, do: page_num - 1, else: 1
+
+    queries = Feed.list_common_feed(page_num)
+
+    socket =
+      socket
+      |> assign(:page_num, new_page_num)
+      |> assign(:queries, queries)
+
+    {:noreply, socket}
   end
 
   def handle_params(params, uri, socket) do

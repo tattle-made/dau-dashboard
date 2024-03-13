@@ -105,7 +105,20 @@
         </div>
       </div>
 
-      <div class="w-full sm:w-4/5">
+      <div class="w-full sm:w-4/5 gap-4">
+        <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
+          <div :if={@page_num-1 > 0}>
+            <.link navigate={~p"/demo/query/pg/#{@page_num-1}"}>
+              <.icon name="hero-arrow-left" class="h-5 w-5" />
+            </.link>
+          </div>
+          <div class="rounded-full p-2 bg-zinc-100"><p><%= @page_num %></p></div>
+          <.link navigate={~p"/demo/query/pg/#{@page_num+1}"}>
+            <.icon name="hero-arrow-right" class="h-5 w-5" />
+          </.link>
+
+        </div>
+        <div class="h-2" />
         <div
           :if={@selection != []}
           class="flex flex-row gap-4 align-center border-2 border-zinc-200 p-2 rounded-lg"
@@ -118,15 +131,20 @@
           </button>
           <button class="p-1 bg-red-400 rounded-md h-fit" phx-click="delete">delete</button>
         </div>
+        
         <.table id="queries" rows={@queries}>
+          
           <:col :let={query} label="">
             <input
               type="checkbox"
               value={query.id}
               phx-click="select-one"
               phx-value-id={query.id}
-              checked={Enum.member?(@selection, query.id)}
+              
             />
+          </:col>
+          <:col :let={query} label="id">
+              <p> <%= query.id %> </p>
           </:col>
           <:col :let={query} label="preview">
             <.queryt type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />

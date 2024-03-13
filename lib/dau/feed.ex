@@ -10,16 +10,19 @@ defmodule DAU.Feed do
     |> Repo.insert()
   end
 
-  def list_common_feed() do
+  def list_common_feed(page_num \\ 1) do
     # search_params = %{
     #   taken_by: "areeba",
     #   sort: :oldest
     # }
 
+    order = [desc: :inserted_at]
+
     Common
-    |> limit(50)
+    |> offset(10 * (^page_num - 1))
+    |> limit(10)
+    |> order_by(^order)
     |> Repo.all()
-    # |> order_by(:desc, :inserted_at)
     |> Enum.map(fn query ->
       # {_, map} =
       #   Map.get_and_update(query, :media_urls, &{&1, Enum.map(&1, fn key -> "/temp/#{key}" end)})
