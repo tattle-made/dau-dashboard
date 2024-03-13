@@ -32,9 +32,30 @@ aws_secret_access_key =
     aws secret acess key are missing. Please contact tattle admin.
     """
 
+gupshup_userid =
+  System.get_env("GUPSHUP_USERID") ||
+    raise """
+    Gupshup user id is missing. Please contact tattle admin.
+    """
+
+gupshup_password =
+  System.get_env("GUPSHUP_PASSWORD") ||
+    raise """
+    Gupshup password is missing. Please contact tattle admin
+    """
+
+gupshup_api_endpoint =
+  System.get_env("GUPSHUP_ENDPOINT") ||
+    raise """
+    Gupshup api endpoint is missing. Please contact tattle admin
+    """
+
 config :dau,
   aws_access_key_id: aws_access_key_id,
-  aws_secret_access_key: aws_secret_access_key
+  aws_secret_access_key: aws_secret_access_key,
+  gupshup_userid: gupshup_userid,
+  gupshup_password: gupshup_password,
+  gupshup_api_endpoint: gupshup_api_endpoint
 
 config :ex_aws,
   access_key_id: {:system, "AWS_ACCESS_KEY_ID"},

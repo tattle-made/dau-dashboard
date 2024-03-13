@@ -45,3 +45,8 @@ Run `mix docs`. This generates the documentation and puts the .html and .epub fi
 
 ### Media during development
 Copy Paste files in `/priv/static/assets/media`. These will be available to the app at `http://localhost:4000/assets/media/${filename.extention}`
+
+
+### Seeding Data 
+1. Upload test files to s3 : `aws s3 sync . s3://staging.dau.tattle.co.in/temp`
+2. Seed database : `mix run priv/repo/seeds.exs`

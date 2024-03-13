@@ -8,6 +8,9 @@ defmodule DAU.Repo.Migrations.CreateFeedCommon do
       add :tags, {:array, :string}
       add :status, :string
       add :exact_count, :integer
+      add :media_type, :string
+      add :language, :string
+      add :taken_by, :string
 
       timestamps(type: :utc_datetime)
     end

@@ -56,7 +56,8 @@ defmodule DAU.MixProject do
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
       {:amqp, "~> 3.3"},
-      {:elixir_uuid, "~> 1.2"}
+      {:elixir_uuid, "~> 1.2"},
+      {:httpoison, "~> 2.0"}
     ]
   end
 

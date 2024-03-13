@@ -15,8 +15,8 @@
         <.input field={@form[:verification_note]} type="textarea" label="Verification Note" />
         <.input name="tags" field={@form[:tags]} label="Tags" type="hidden" />   
         <div id="tag-selector" phx-hook="TagSelector" class="border-2 border-gray-200 overflow-none">
-            <input type="text" placeholder="Type to see suggestions like deepfake, cheapfake, synthetic media etc" class="border-0 w-full"/>
-            <div id="tag-suggestions" class="flex flex-row flex-wrap gap-2 p-2">
+            <input type="text" placeholder="Type to see suggestions like deepfake, cheapfake, synthetic media etc" class="border-0 w-full focus:border-0 outline-none focus:outline-none"/>
+            <div id="tag-suggestions" class="flex flex-row flex-wrap gap-2 p-2 h-fit">
             </div>
         </div>
         <div class="flex flex-row flex-wrap gap-2">

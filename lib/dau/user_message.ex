@@ -6,7 +6,7 @@ defmodule DAU.UserMessage do
   import Ecto.Query, warn: false
   alias DAU.Repo
 
-  alias DAU.UserMessage.IncomingMessage
+  alias DAU.UserMessage.Inbox
 
   @doc """
   Returns the list of incoming_messages.
@@ -18,7 +18,7 @@ defmodule DAU.UserMessage do
 
   """
   def list_incoming_messages do
-    Repo.all(IncomingMessage)
+    Repo.all(Inbox)
   end
 
   @doc """
@@ -35,7 +35,7 @@ defmodule DAU.UserMessage do
       ** (Ecto.NoResultsError)
 
   """
-  def get_incoming_message!(id), do: Repo.get!(IncomingMessage, id)
+  def get_incoming_message!(id), do: Repo.get!(Inbox, id)
 
   @doc """
   Creates a incoming_message.
@@ -50,8 +50,8 @@ defmodule DAU.UserMessage do
 
   """
   def create_incoming_message(attrs \\ %{}) do
-    %IncomingMessage{}
-    |> IncomingMessage.changeset(attrs)
+    %Inbox{}
+    |> Inbox.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -67,9 +67,15 @@ defmodule DAU.UserMessage do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_incoming_message(%IncomingMessage{} = incoming_message, attrs) do
-    incoming_message
-    |> IncomingMessage.changeset(attrs)
+  def update_inbox_message(%Inbox{} = inbox_message, attrs) do
+    inbox_message
+    |> Inbox.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_user_message_file_metadata(%Inbox{} = inbox_message, attrs) do
+    inbox_message
+    |> Inbox.file_metadata_changeset(attrs)
     |> Repo.update()
   end
 
@@ -85,7 +91,7 @@ defmodule DAU.UserMessage do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_incoming_message(%IncomingMessage{} = incoming_message) do
+  def delete_incoming_message(%Inbox{} = incoming_message) do
     Repo.delete(incoming_message)
   end
 
@@ -98,9 +104,7 @@ defmodule DAU.UserMessage do
       %Ecto.Changeset{data: %IncomingMessage{}}
 
   """
-  def change_incoming_message(%IncomingMessage{} = incoming_message, attrs \\ %{}) do
-    IncomingMessage.changeset(incoming_message, attrs)
+  def change_incoming_message(%Inbox{} = incoming_message, attrs \\ %{}) do
+    Inbox.changeset(incoming_message, attrs)
   end
-
-
 end

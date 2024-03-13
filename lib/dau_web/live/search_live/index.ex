@@ -1,11 +1,25 @@
 defmodule DAUWeb.SearchLive.Index do
+  alias DAU.Feed
+  alias DAU.Accounts
   alias DauWeb.SearchLive.Data
   use DAUWeb, :live_view
   use DAUWeb, :html
 
   def mount(params, session, socket) do
-    queries = Data.queries()
-    socket = socket |> assign(:queries, queries) |> assign(:selection, [])
+    queries = Feed.list_common_feed()
+
+    # IO.inspect(queries |> hd)
+
+    user_token = session["user_token"]
+    user = user_token && Accounts.get_user_by_session_token(user_token)
+    # IO.inspect(user)
+
+    socket =
+      socket
+      |> assign(:queries, queries)
+      |> assign(:selection, [])
+      |> assign(:current_user_id, user.id)
+      |> assign(:current_user_name, String.split(user.email, "@") |> hd)
 
     {:ok, socket}
   end
@@ -65,9 +79,10 @@ defmodule DAUWeb.SearchLive.Index do
       end
 
     # fetch data from db and add to socket
-    # IO.inspect(socket.assigns.search_params)
+    IO.inspect(socket.assigns.search_params)
+    queries = Feed.list_common_feed(socket.assigns.search_params)
 
-    {:noreply, socket}
+    {:noreply, assign(socket, :queries, queries)}
   end
 
   def handle_event("change-search-date", value, socket) do
@@ -96,6 +111,7 @@ defmodule DAUWeb.SearchLive.Index do
   end
 
   def handle_event("select-one", value, socket) do
+    IO.inspect("selected one key")
     IO.inspect(value)
 
     selection_type =
@@ -104,7 +120,7 @@ defmodule DAUWeb.SearchLive.Index do
         {_id, _value} -> :add
       end
 
-    IO.inspect(selection_type)
+    # IO.inspect(selection_type)
 
     socket =
       case selection_type == :add && !Enum.member?(socket.assigns.selection, value["value"]) do
@@ -118,6 +134,7 @@ defmodule DAUWeb.SearchLive.Index do
         false -> socket
       end
 
+    IO.inspect(socket.assigns.selection)
     IO.inspect(socket.assigns.selection)
 
     {:noreply, socket}
@@ -142,8 +159,18 @@ defmodule DAUWeb.SearchLive.Index do
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
   end
 
-  def handle_event("claim", value, socket) do
-    queries = Data.assign_to(socket.assigns.queries, hd(socket.assigns.selection), "areeba")
+  def handle_event("take-up", value, socket) do
+    IO.inspect(socket.assigns.selection)
+    selection = socket.assigns.selection
+    user = socket.assigns.current_user_name
+
+    Enum.map(selection, fn id ->
+      Feed.get_feed_item_by_id(id)
+      |> Feed.take_up(user)
+    end)
+
+    queries = Feed.list_common_feed()
+    # queries = Data.assign_to(socket.assigns.queries, hd(socket.assigns.selection), "areeba")
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
   end
 

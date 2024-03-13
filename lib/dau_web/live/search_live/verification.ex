@@ -10,9 +10,16 @@ defmodule DAUWeb.SearchLive.Verification do
     #   Feed.get_feed_item_by_id(1)
     #   |> Common.annotation_changeset()
     #   |> to_form()
+
     form =
       %Common{}
-      |> Common.annotation_changeset(%{tags: [], verification_note: "hello"})
+      |> Common.annotation_changeset(%{tags: [], verification_note: "
+identify claim or hoax\n
+confirm it is fact checkable\n
+choose what you will focus on\n
+find the fact\n
+correct the record\n
+      "})
       |> to_form()
 
     {:ok, assign(socket, :form, form)}
@@ -21,8 +28,18 @@ defmodule DAUWeb.SearchLive.Verification do
   def handle_params(params, uri, socket) do
     IO.puts("params go here")
     IO.inspect(params)
-    query = Data.queries() |> Enum.filter(fn query -> query.id == params["id"] end) |> hd
+    # query = Data.queries() |> Enum.filter(fn query -> query.id == params["id"] end) |> hd
+    query = %{
+      id: 1,
+      type: "video",
+      url: ~c"/assets/media/video-01.mp4",
+      count: %{exact: 10, similar: 3},
+      inserted_at: ~D[2024-03-01],
+      tags: ["deepfake", "cheapfake", "voiceover"]
+    }
+
     {:noreply, assign(socket, :query, query)}
+    # {:noreply, socket}
   end
 
   def handle_event("validate", %{"common" => common}, socket) do
