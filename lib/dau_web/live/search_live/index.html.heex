@@ -3,7 +3,7 @@
     </h1>
 
     <div class="flex flex-col sm:flex-row">
-      <div class="h-fit w-full sm:w-1/5 sm:h-fit flex flex-row gap-12 sm:gap-4 sm:flex-col mr-4 border-e border-zinc-200 overflow-scroll">
+      <div class="h-fit w-full sm:w-1/5 sm:h-fit flex flex-row gap-12 sm:gap-4 sm:flex-col mr-4 border-e border-zinc-200">
         <!--
         <div>
           <p class="py-2">Feeds</p>
@@ -19,6 +19,7 @@
           </div>
         </div>
         
+        <!--
         <div>
           <p class="py-2 text-zinc-500">Languages</p>
           <div>
@@ -28,7 +29,9 @@
             <.checkbox id={:telugu} group={:language} label="Telugu" checked={false} disabled={true} />
           </div>
         </div>
+        -->
         
+        <!--
         <div>
           <div class="flex flex-row gap-2">
             <p class="py-2">Date Range</p>
@@ -67,7 +70,8 @@
             </div>
           </div>
         </div>
-        
+        -->
+
         <div>
           <p class="py-2">Sort</p>
           <div>
@@ -156,8 +160,9 @@
           <:col :let={query} label="preview">
             <.queryt type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
           </:col>
+          
           <:col :let={query} label="receieved at">
-            <p> <%= query.inserted_at %> </p>
+            <p> <%= humanize_date(query.inserted_at) %> </p>
           </:col>
 
           <:col :let={query} label="tags">
@@ -188,10 +193,10 @@
           <:col :let={query}>
             <div class="flex flex-col gap-2">
               <.link navigate={~p"/demo/query/#{query.id}"}>
-                <p class="p-1 bg-yellow-100 text-zinc-800 rounded-md  w-fit">view query</p>
+                <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">view media details</p>
               </.link>
               <.link navigate={~p"/demo/query/verification/#{query.id}"}>
-                <p class="p-1 bg-yellow-100 text-zinc-800 rounded-md  w-fit">
+                <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">
                   add verification notes
                 </p>
               </.link>

@@ -7,12 +7,8 @@ defmodule DAUWeb.SearchLive.Index do
 
   def mount(params, session, socket) do
     queries = Feed.list_common_feed(1)
-
-    # IO.inspect(queries |> hd)
-
     user_token = session["user_token"]
     user = user_token && Accounts.get_user_by_session_token(user_token)
-    # IO.inspect(user)
 
     socket =
       socket
@@ -38,9 +34,7 @@ defmodule DAUWeb.SearchLive.Index do
     }
 
     page_num = String.to_integer(params["page_num"] || 1)
-    IO.inspect("====")
-    IO.inspect(page_num)
-    IO.inspect("====")
+
     queries = Feed.list_common_feed(page_num)
 
     socket =
@@ -87,8 +81,6 @@ defmodule DAUWeb.SearchLive.Index do
           assign(socket, :search_params, new_search_params)
 
         _ ->
-          # IO.inspect("unsupported change")
-          # IO.inspect(value)
           socket
       end
 
@@ -187,13 +179,15 @@ defmodule DAUWeb.SearchLive.Index do
     IO.inspect(result)
 
     queries = Feed.list_common_feed(page_num)
-    # queries = Data.assign_to(socket.assigns.queries, hd(socket.assigns.selection), "areeba")
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
-    # {:noreply, socket}
   end
 
   def handle_params(params, uri, socket) do
     IO.inspect(params)
     {:noreply, socket}
+  end
+
+  defp humanize_date(date) do
+    "#{date.day}-#{date.month}-#{date.year}"
   end
 end

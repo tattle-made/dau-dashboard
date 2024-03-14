@@ -1,4 +1,5 @@
 defmodule DAU.Feed.Common do
+  alias DAU.Feed.Common
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -13,6 +14,7 @@ defmodule DAU.Feed.Common do
     field :taken_by, :string
     field :user_response, :string
     field :sender_number, :string
+    field :verification_sop, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -49,5 +51,11 @@ defmodule DAU.Feed.Common do
     common
     |> cast(attrs, [:user_response])
     |> validate_required([:user_response])
+  end
+
+  def verification_sop_changeset(%Common{} = common, attrs \\ %{}) do
+    common
+    |> cast(attrs, [:verification_sop])
+    |> validate_required([:verification_sop])
   end
 end

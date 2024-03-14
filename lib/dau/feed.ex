@@ -180,4 +180,10 @@ defmodule DAU.Feed do
 
     MessageDelivery.send_message_to_bsp(common.sender_number, message)
   end
+
+  def add_verification_sop(%Common{} = common, attrs) do
+    common
+    |> Common.verification_sop_changeset(attrs)
+    |> Repo.update()
+  end
 end

@@ -13,9 +13,9 @@ defmodule DAUWeb.SearchLive.Detail do
           <div class="w-1/2 border-2 border-green-50 overflow-hidden">
             <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
           </div>
-          <div class="w-1/2">
+          <div class="w-1/2 border-2 h-fit border-green-50 overflow-hidden">
             <div class="flex flex-row wrap gap-4">
-              <p class="p-2 bg-gray-100 rounded-lg">
+              <p class="p-2">
                 <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
               </p>
             </div>
@@ -25,9 +25,10 @@ defmodule DAUWeb.SearchLive.Detail do
 
       <div class="">
         <div class="w-full p-4 rounded-md border-2 border-gray-200">
-          <p class="text-lg">Verification Notes</p>
-          <p class="text-sm text-gray-400">Added by DAU secratariat</p>
-
+          <div>
+            <span class="text-lg">Verification Notes</span>
+            <span class="text-xs text-gray-400">Added by DAU secratariat</span>
+          </div>
           <div class="h-4" />
           <div class="flex flex-row flex-wrap gap-2">
             <span class="text-md"><%= @query.verification_note %></span>
@@ -142,6 +143,24 @@ defmodule DAUWeb.SearchLive.Detail do
           -->
         </div>
       </div>
+
+      <div class="w-full p-4 rounded-md border-2 border-gray-200">
+        <h2 class="text-lg">DAU Verificaton SOP</h2>
+        <form phx-submit="save-verification-sop" class="flex flex-col gap-1">
+          <textarea
+            class="block p-2.5 w-full text-xs text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:ring-green-300 focus:border-green-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+            id="verification_sop"
+            name="verification_sop"
+            rows="6"
+          ><%= Map.get(@query, :verification_sop, "") %></textarea>
+          <button
+            class="border-2 border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
+            type="submit"
+          >
+            <p class="text-xs p-2">Save</p>
+          </button>
+        </form>
+      </div>
       <!--
       <div class="w-full">
         <div class="w-full lg:w-1/2 p-2 rounded-md border-2 border-green-100">
@@ -197,11 +216,10 @@ defmodule DAUWeb.SearchLive.Detail do
             <form phx-submit="send-to-user" class="flex flex-col gap-1">
               <textarea
                 class="block p-2.5 w-full text-xs text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:ring-green-300 focus:border-green-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                rows="4"
+                rows="6"
                 id="assessment-report"
                 name="assessment-report"
-                value={"#{Map.get(@query, :user_response, "")}"}
-              />
+              ><%=@query.user_response %></textarea>
               <button
                 class="border-2 border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
                 type="submit"
@@ -243,6 +261,26 @@ defmodule DAUWeb.SearchLive.Detail do
     query_id = socket.assigns.query.id
     Feed.send_assessment_report_to_user(query_id, assessment_report)
     # MessageDelivery.send_message_to_bsp(sender_number, assessment_report)
+    socket =
+      socket
+      |> put_flash(:info, "Assessment report has been sent to user")
+
     {:noreply, socket}
+  end
+
+  def handle_event("save-verification-sop", verification_sop_params, socket) do
+    case Feed.add_verification_sop(socket.assigns.query, verification_sop_params) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Verification SOP saved")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        IO.inspect(changeset)
+
+        {:noreply,
+         socket
+         |> put_flash(:error, "Error saving verification SOP")}
+    end
   end
 end

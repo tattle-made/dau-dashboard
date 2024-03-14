@@ -13,6 +13,7 @@ defmodule DAU.Repo.Migrations.CreateFeedCommon do
       add :taken_by, :string
       add :user_response, :text
       add :sender_number, :string
+      add :verification_sop, :text
 
       timestamps(type: :utc_datetime)
     end

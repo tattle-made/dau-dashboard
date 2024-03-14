@@ -610,7 +610,9 @@ defmodule DAUWeb.CoreComponents do
     <div class="flex flex-row gap-1">
       <div>
         <%= if @type=="image" do %>
-          <img src={@url} />
+          <div class="w-48">
+            <img src={@url} />
+          </div>
         <% end %>
         <%= if @type=="video" do %>
           <video class="w-48" controls>
