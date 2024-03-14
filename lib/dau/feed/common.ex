@@ -16,6 +16,9 @@ defmodule DAU.Feed.Common do
     field :sender_number, :string
     field :verification_sop, :string
 
+    field :verification_status, Ecto.Enum,
+      values: [:deepfake, :manipulated, :not_manipulated, :inconclusive]
+
     timestamps(type: :utc_datetime)
   end
 
@@ -31,14 +34,15 @@ defmodule DAU.Feed.Common do
       :status,
       :exact_count,
       :sender_number,
-      :user_response
+      :user_response,
+      :verification_status
     ])
     |> validate_required([:media_urls, :media_type, :sender_number])
   end
 
   def annotation_changeset(common, attrs \\ %{}) do
     common
-    |> cast(attrs, [:verification_note, :tags])
+    |> cast(attrs, [:verification_note, :tags, :verification_status])
   end
 
   def take_up_changeset(common, attrs \\ %{}) do

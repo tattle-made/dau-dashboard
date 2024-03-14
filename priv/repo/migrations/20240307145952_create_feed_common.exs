@@ -14,6 +14,7 @@ defmodule DAU.Repo.Migrations.CreateFeedCommon do
       add :user_response, :text
       add :sender_number, :string
       add :verification_sop, :text
+      add :verification_status, :string
 
       timestamps(type: :utc_datetime)
     end

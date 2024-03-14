@@ -8,13 +8,14 @@ defmodule DAUWeb.SearchLive.Verification do
   def mount(_params, _session, socket) do
     form =
       %Common{}
-      |> Common.annotation_changeset(%{tags: [], verification_note: ""})
+      |> Common.annotation_changeset()
       |> to_form()
 
     socket =
       socket
       |> assign(:form, form)
       |> assign(:query, %{})
+      |> assign(:tags, [])
 
     {:ok, socket}
   end
@@ -28,27 +29,18 @@ defmodule DAUWeb.SearchLive.Verification do
       socket
       |> assign(:query, query)
       |> assign(:form, to_form(query_changeset))
+      |> assign(:tags, query.tags)
 
     {:noreply, socket}
   end
 
-  def handle_event("validate", %{"common" => common}, socket) do
-    changeset_form =
-      socket.assigns.form.source
-      |> Common.annotation_changeset(common)
-      |> Map.put(:action, :insert)
-      |> to_form()
-
-    {:noreply, assign(socket, :form, changeset_form)}
-  end
-
   def handle_event("save", params, socket) do
-    IO.inspect(params)
     query = socket.assigns.query
-    verification_note = params["common"]["verification_note"]
+    normal_params = params["common"]
     tags = socket.assigns.tags
 
-    attributes = %{"verification_note" => verification_note, "tags" => tags}
+    attributes = Map.put(normal_params, "tags", tags)
+    IO.inspect(attributes)
 
     case Feed.add_secratariat_notes(query, attributes) do
       {:ok, _user} ->
@@ -96,5 +88,8 @@ defmodule DAUWeb.SearchLive.Verification do
       |> assign(:form, to_form(changeset))
 
     {:noreply, socket}
+  end
+
+  def handle_status("add-status", value, socket) do
   end
 end

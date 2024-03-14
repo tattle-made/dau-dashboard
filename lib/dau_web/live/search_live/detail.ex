@@ -14,9 +14,12 @@ defmodule DAUWeb.SearchLive.Detail do
             <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
           </div>
           <div class="w-1/2 border-2 h-fit border-green-50 overflow-hidden">
-            <div class="flex flex-row wrap gap-4">
+            <div class="flex flex-col wrap gap-4">
               <p class="p-2">
                 <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
+              </p>
+              <p :if={Map.get(@query, :verification_status)} class="p-2 bg-green-100 rounded-lg w-fit">
+                <%= "#{Map.get(@query, :verification_status, "")}" %>
               </p>
             </div>
           </div>

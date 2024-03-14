@@ -166,16 +166,19 @@
           </:col>
 
           <:col :let={query} label="tags">
-            <div class="flex flex-row wrap gap-2">
+            <div class="flex flex-row wrap gap-4">
               <div :if={query.tags}>
                 <%= for tag <- query.tags do %>
-                  <div class="m-2 p-1 bg-green-100 rounded-sm w-fit">
-                    <span><%= tag %></span>
-                  </div>
+                    <span class="w-fit rounded-sm bg-gray-200 text-gray-600"><%= tag %></span>
                 <% end %>
               </div>
             </div>
           </:col>
+
+          <:col :let={query} label="verification status">
+              <p> <%= query.verification_status %> </p>
+          </:col>
+
           <:col :let={query} label="taken up by">
             <div
               :if={Map.get(query, :assignee, "unassigned")}

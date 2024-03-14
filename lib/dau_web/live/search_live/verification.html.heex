@@ -12,7 +12,7 @@
         <.query type={to_string(@query.media_type)} url={@query.media_urls|>hd} />
     </div>
     <div class="w-1/2 h-fit border-2 rounded-md border-green-100 pl-4 pr-4 pb-4 flex flex-col gap-2">
-       <.simple_form for={@form} phx-submit="save" phx-change="validate">
+       <.simple_form for={@form} phx-submit="save">
         <.input field={@form[:verification_note]} type="textarea" label="Verification Note" />
         <.input name="tags" field={@form[:tags]} label="Tags" type="hidden" />   
         <div id="tag-selector" phx-hook="TagSelector" class="border-2 border-gray-200 overflow-none">
@@ -33,6 +33,20 @@
             <% end %>
         </div>
 
+
+        <.input
+            type="select"
+            label="Verification Status"
+            field={@form[:verification_status]}
+            options={[
+                {"", ""},
+                {"Deepfake", "deepfake"},
+                {"Manipulated", "manipulated"},
+                {"Not Manipulated", "not_manipulated"},
+                {"Inconclusive", "inconclusive"}
+            ]}
+            >
+        </.input>
         
         
         <:actions>
