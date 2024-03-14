@@ -11,6 +11,8 @@ defmodule DAU.Repo.Migrations.CreateFeedCommon do
       add :media_type, :string
       add :language, :string
       add :taken_by, :string
+      add :user_response, :text
+      add :sender_number, :string
 
       timestamps(type: :utc_datetime)
     end

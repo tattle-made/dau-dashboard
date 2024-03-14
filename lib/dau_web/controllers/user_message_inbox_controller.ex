@@ -28,7 +28,11 @@ defmodule DAUWeb.IncomingMessageController do
         file_hash: file_hash
       })
 
-      Feed.add_to_common_feed(%{media_urls: [file_key], media_type: inbox_message.media_type})
+      Feed.add_to_common_feed(%{
+        media_urls: [file_key],
+        media_type: inbox_message.media_type,
+        sender_number: inbox_message.sender_number
+      })
 
       conn
       |> Plug.Conn.send_resp(200, [])

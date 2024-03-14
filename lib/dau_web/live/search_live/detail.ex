@@ -34,10 +34,12 @@ defmodule DAUWeb.SearchLive.Detail do
           </div>
           <div class="h-2" />
           <div class="flex flex-row flex-wrap gap-1">
-            <%= for tag <- @query.tags do %>
-              <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border-2 border-green-50 w-fit">
-                <p class="text-stone-800 text-xs"><%= tag %></p>
-              </div>
+            <%= unless is_nil(@query.tags) do %>
+              <%= for tag <- @query.tags do %>
+                <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border-2 border-green-50 w-fit">
+                  <p class="text-stone-800 text-xs"><%= tag %></p>
+                </div>
+              <% end %>
             <% end %>
           </div>
           <!--
@@ -162,7 +164,7 @@ defmodule DAUWeb.SearchLive.Detail do
           </div>
         </div>
       </div>
-      -->
+
       <div class="flex flex-row gap-1">
         <div class="w-full p-4 rounded-md border-2 border-gray-200">
           <p class="text-lg">Resources</p>
@@ -187,7 +189,7 @@ defmodule DAUWeb.SearchLive.Detail do
           ></textarea>
         </div>
       </div>
-
+      -->
       <div class="flex flex-row gap-1">
         <div class="w-full p-4 rounded-md border-2 border-gray-200">
           <p class="text-lg">User Response</p>
@@ -198,7 +200,7 @@ defmodule DAUWeb.SearchLive.Detail do
                 rows="4"
                 id="assessment-report"
                 name="assessment-report"
-                value=""
+                value={"#{Map.get(@query, :user_response, "")}"}
               />
               <button
                 class="border-2 border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
@@ -224,6 +226,7 @@ defmodule DAUWeb.SearchLive.Detail do
 
   def handle_params(%{"id" => id}, uri, socket) do
     query = Feed.get_feed_item_by_id(id)
+    IO.inspect(query)
     {:noreply, assign(socket, :query, query)}
   end
 
@@ -237,7 +240,9 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   def handle_event("send-to-user", %{"assessment-report" => assessment_report}, socket) do
-    MessageDelivery.send_message_to_bsp("919605048908", assessment_report)
+    query_id = socket.assigns.query.id
+    Feed.send_assessment_report_to_user(query_id, assessment_report)
+    # MessageDelivery.send_message_to_bsp(sender_number, assessment_report)
     {:noreply, socket}
   end
 end

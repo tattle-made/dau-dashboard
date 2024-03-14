@@ -11,6 +11,8 @@ defmodule DAU.Feed.Common do
     field :media_type, Ecto.Enum, values: [:video, :audio, :image, :text, :mixed]
     field :language, Ecto.Enum, values: [:en, :hi, :ta, :te, :und]
     field :taken_by, :string
+    field :user_response, :string
+    field :sender_number, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -25,9 +27,11 @@ defmodule DAU.Feed.Common do
       :verification_note,
       :tags,
       :status,
-      :exact_count
+      :exact_count,
+      :sender_number,
+      :user_response
     ])
-    |> validate_required([:media_urls, :media_type])
+    |> validate_required([:media_urls, :media_type, :sender_number])
   end
 
   def annotation_changeset(common, attrs \\ %{}) do
@@ -39,5 +43,11 @@ defmodule DAU.Feed.Common do
     common
     |> cast(attrs, [:taken_by])
     |> validate_required([:taken_by])
+  end
+
+  def user_response_changeset(common, attrs \\ %{}) do
+    common
+    |> cast(attrs, [:user_response])
+    |> validate_required([:user_response])
   end
 end

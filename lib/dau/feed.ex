@@ -1,5 +1,6 @@
 defmodule DAU.Feed do
   import Ecto.Query, warn: false
+  alias DAU.UserMessage.MessageDelivery
   alias DAU.Repo
 
   alias DAU.Feed.Common
@@ -126,6 +127,12 @@ defmodule DAU.Feed do
   def add_assessment_skeleton() do
   end
 
+  def add_user_response(id, message) do
+    # common
+    # |> Common.user_response_changeset(%{user_response: message})
+    # |> Repo.update()
+  end
+
   def filter(params) do
     # sort by chronology
     # date range
@@ -165,6 +172,12 @@ defmodule DAU.Feed do
 
     message is a string and target is the user's phone number
   """
-  def send_assessment_report_to_user(message, target) do
+  def send_assessment_report_to_user(id, message) do
+    {:ok, common} =
+      Repo.get!(Common, id)
+      |> Common.user_response_changeset(%{user_response: message})
+      |> Repo.update()
+
+    MessageDelivery.send_message_to_bsp(common.sender_number, message)
   end
 end
