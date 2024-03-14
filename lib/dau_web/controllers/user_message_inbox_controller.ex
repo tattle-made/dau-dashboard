@@ -20,63 +20,22 @@ defmodule DAUWeb.IncomingMessageController do
     IO.inspect(payload)
 
     with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
-      media_string =
-        case inbox_message.type do
-          "audio" -> payload["audio"]
-          "video" -> payload["video"]
-          _ -> nil
-        end
-
-      {:ok, media_url} =
-        if media_string != nil, do: Jason.decode(media_string), else: {:ok, nil}
-
-      url =
-        case media_url do
-          %{"signature" => signature, "url" => url} -> "#{url}#{signature}"
-          nil -> nil
-        end
-
-      IO.inspect(url)
-
       {file_key, file_hash} =
-        FileManager.upload_to_s3(url)
+        FileManager.upload_to_s3(payload["path"])
 
       UserMessage.update_user_message_file_metadata(inbox_message, %{
         file_key: file_key,
         file_hash: file_hash
       })
 
-      Feed.add_to_common_feed(%{media_urls: [file_key], media_type: inbox_message.type})
+      Feed.add_to_common_feed(%{media_urls: [file_key], media_type: inbox_message.media_type})
 
       conn
       |> Plug.Conn.send_resp(200, [])
     end
 
-    # with {:ok, %IncomingMessage{} = incoming_message} <-
-    #        UserMessage.create_incoming_message(adapted_payload) do
-    #   # download file,
-    #   {file_key, file_hash} =
-    #     FileManager.upload_to_s3(
-    #       "http://localhost:4000/assets/media/" <> adapted_payload.payload_text
-    #     )
-
-    #   # upload to s3
-    #   # todo
-    #   # update in db
-    #   UserMessage.update_incoming_message(incoming_message, %{
-    #     file_key: file_key,
-    #     file_hash: file_hash
-    #   })
-
-    #   Feed.add_to_common_feed(%{media_urls: [file_key]})
-
-    #   conn
-    #   |> put_status(:created)
-    #   |> put_resp_header("location", ~p"/api/incoming_messages/#{incoming_message}")
-    #   |> render(:show, incoming_message: incoming_message)
-    # end
-    conn
-    |> Plug.Conn.send_resp(200, [])
+    # conn
+    # |> Plug.Conn.send_resp(200, [])
   end
 
   def show(conn, %{"id" => id}) do

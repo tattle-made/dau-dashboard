@@ -651,9 +651,14 @@ defmodule DAUWeb.CoreComponents do
           </video>
         <% end %>
         <%= if @type=="audio" do %>
+          <!--
           <div class="border-2 border-green-200">
             <dau-audio-player url={@url} />
           </div>
+          -->
+          <audio class="w-full" controls>
+            <source src={@url} />
+          </audio>
         <% end %>
       </div>
     </div>

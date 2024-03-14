@@ -7,12 +7,11 @@
     </h1>
     <p class="p-2 bg-zinc-200 rounded-full"><%= Map.get(@query, :id, "")  %></p>
 </div>
-<div class="flex flex-col sm:flex-row gap-4">
+<div class="flex flex-col gap-2 sm:flex-row">
     <div class="w-1/2 border-2 rounded-md border-green-100 p-4">
-            
         <.query type={to_string(@query.media_type)} url={@query.media_urls|>hd} />
     </div>
-    <div class="w-1/2 h-fit border-2 rounded-md border-green-100 p-4 flex flex-col gap-2">
+    <div class="w-1/2 h-fit border-2 rounded-md border-green-100 pl-4 pr-4 pb-4 flex flex-col gap-2">
        <.simple_form for={@form} phx-submit="save" phx-change="validate">
         <.input field={@form[:verification_note]} type="textarea" label="Verification Note" />
         <.input name="tags" field={@form[:tags]} label="Tags" type="hidden" />   
@@ -22,15 +21,19 @@
             </div>
         </div>
         <div class="flex flex-row flex-wrap gap-2">
-            <%= for tag <- @form[:tags].value do%>
-                <div class="flex flex-row gap-3 item-center bg-green-200 px-2 py-2 rounded-md">
-                    <span class=""> <%= tag %> </span>
-                    <button phx-click="remove-tag" phx-value-tag={tag}>
-                        <.icon name="hero-x-mark" class="h-4 w-4" />
-                    </button>
-                </div>
+            <%= unless is_nil(@form[:tags].value) do %>
+                <%= for tag <- @form[:tags].value do%>
+                    <div class="flex flex-row gap-3 item-center bg-green-200 px-2 py-2 rounded-md">
+                        <span class=""> <%= tag %> </span>
+                        <button phx-click="remove-tag" phx-value-tag={tag}>
+                            <.icon name="hero-x-mark" class="h-4 w-4" />
+                        </button>
+                    </div>
+                <% end %>
             <% end %>
         </div>
+
+        
         
         <:actions>
            <.button type="submit" phx-disable-with="Sending..." class="w-fit">

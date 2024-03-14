@@ -6,9 +6,9 @@ defmodule DAUWeb.SearchLive.Detail do
 
   def render(assigns) do
     ~H"""
-    <section class="w-1/2 m-auto flex flex-col gap-2">
+    <section class="w-full md:w-3/4 lg:w-1/2 m-auto flex flex-col gap-4">
       <.back navigate={~p"/demo/query/pg/1"}>Back to feed</.back>
-      <div class="flex flex-row gap-1 ">
+      <div class="w-full">
         <div class="flex flex-row gap-1">
           <div class="w-1/2 border-2 border-green-50 overflow-hidden">
             <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
@@ -23,11 +23,16 @@ defmodule DAUWeb.SearchLive.Detail do
         </div>
       </div>
 
-      <div class="flex flex-row gap-1">
-        <div class="w-1/2 p-2 rounded-md border-2 border-green-100">
-          <p class="text-lg">Tags</p>
+      <div class="">
+        <div class="w-full p-4 rounded-md border-2 border-gray-200">
+          <p class="text-lg">Verification Notes</p>
+          <p class="text-sm text-gray-400">Added by DAU secratariat</p>
 
           <div class="h-4" />
+          <div class="flex flex-row flex-wrap gap-2">
+            <span class="text-md"><%= @query.verification_note %></span>
+          </div>
+          <div class="h-2" />
           <div class="flex flex-row flex-wrap gap-1">
             <%= for tag <- @query.tags do %>
               <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border-2 border-green-50 w-fit">
@@ -136,8 +141,8 @@ defmodule DAUWeb.SearchLive.Detail do
         </div>
       </div>
       <!--
-      <div class="flex flex-row gap-1">
-        <div class="p-2 w-1/2 rounded-md border-2 border-green-100">
+      <div class="w-full">
+        <div class="w-full lg:w-1/2 p-2 rounded-md border-2 border-green-100">
           <p class="text-lg">Factcheck Articles</p>
           <div class=" flex flex-row items-center gap-x-2">
             <p class="text-stone-800 text-xs">kritika has linked an article</p>
@@ -159,7 +164,7 @@ defmodule DAUWeb.SearchLive.Detail do
       </div>
       -->
       <div class="flex flex-row gap-1">
-        <div class="p-2 w-1/2 rounded-md border-2 border-green-100">
+        <div class="w-full p-4 rounded-md border-2 border-gray-200">
           <p class="text-lg">Resources</p>
           <p class="text-xs text-gray-400">Share relevant resources with the community</p>
           <textarea
@@ -172,7 +177,7 @@ defmodule DAUWeb.SearchLive.Detail do
       </div>
 
       <div class="flex flex-row gap-1">
-        <div class="p-2 w-1/2 rounded-md border-2 border-green-100">
+        <div class="w-full p-4 rounded-md border-2 border-gray-200">
           <p class="text-lg">Assessment Report</p>
           <textarea
             id="user-message"
@@ -184,7 +189,7 @@ defmodule DAUWeb.SearchLive.Detail do
       </div>
 
       <div class="flex flex-row gap-1">
-        <div class="p-2 w-1/2 rounded-md border-2 border-green-100">
+        <div class="w-full p-4 rounded-md border-2 border-gray-200">
           <p class="text-lg">User Response</p>
           <div class="mt-1">
             <form phx-submit="send-to-user" class="flex flex-col gap-1">

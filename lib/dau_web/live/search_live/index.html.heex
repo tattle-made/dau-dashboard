@@ -18,7 +18,7 @@
             <.checkbox id={:audio} group={:media_type} label="Audio" selection={@search_params.media_type} />
           </div>
         </div>
-        <!--
+        
         <div>
           <p class="py-2 text-zinc-500">Languages</p>
           <div>
@@ -67,7 +67,7 @@
             </div>
           </div>
         </div>
-        -->
+        
         <div>
           <p class="py-2">Sort</p>
           <div>
@@ -164,7 +164,7 @@
             <div class="flex flex-row wrap gap-2">
               <div :if={query.tags}>
                 <%= for tag <- query.tags do %>
-                  <div class="m-2 p-1 bg-green-100 rounded-sm">
+                  <div class="m-2 p-1 bg-green-100 rounded-sm w-fit">
                     <span><%= tag %></span>
                   </div>
                 <% end %>

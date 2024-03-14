@@ -6,17 +6,10 @@ defmodule DAUWeb.SearchLive.Verification do
   use DAUWeb, :html
 
   def mount(_params, _session, socket) do
-    # form =
-    #   Feed.get_feed_item_by_id(1)
-    #   |> Common.annotation_changeset()
-    #   |> to_form()
-
     form =
       %Common{}
       |> Common.annotation_changeset(%{tags: [], verification_note: ""})
       |> to_form()
-
-    IO.inspect(form)
 
     socket =
       socket
@@ -29,19 +22,12 @@ defmodule DAUWeb.SearchLive.Verification do
   def handle_params(params, uri, socket) do
     query_id = String.to_integer(params["id"])
     query = Feed.get_feed_item_by_id(query_id)
-    # IO.inspect(query)
+    query_changeset = query |> Common.annotation_changeset()
 
-    # form = %{
-    #   verification_note: query.verification_note,
-    #   tags: Map.get(query, :tags, [])
-    # }
-
-    # {:noreply, assign(socket, :form, to_form(query))}
     socket =
       socket
       |> assign(:query, query)
-
-    # |> assign(:form, to_form(form))
+      |> assign(:form, to_form(query_changeset))
 
     {:noreply, socket}
   end
@@ -70,14 +56,12 @@ defmodule DAUWeb.SearchLive.Verification do
           :noreply,
           socket
           |> put_flash(:info, "verification notes updated")
-          |> redirect(to: ~p"/demo/query/#{query.id}")
+          |> redirect(to: ~p"/demo/query/pg/1")
         }
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
-
-    # {:noreply, socket}
   end
 
   def handle_event("remove-tag", value, socket) do
@@ -99,7 +83,7 @@ defmodule DAUWeb.SearchLive.Verification do
 
   def handle_event("add-tag", value, socket) do
     changeset = socket.assigns.form.source
-    tags = Ecto.Changeset.get_field(changeset, :tags)
+    tags = Ecto.Changeset.get_field(changeset, :tags) || []
     new_tags = [value["tag"] | tags]
 
     changeset =
