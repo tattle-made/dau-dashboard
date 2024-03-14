@@ -223,5 +223,5 @@ defmodule DAUWeb.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn), do: ~p"/"
+  defp signed_in_path(_conn), do: ~p"/demo/query/pg/1"
 end
