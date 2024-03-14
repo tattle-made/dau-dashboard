@@ -1,4 +1,5 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.Feed.Common
   alias DAU.Feed
   alias DAU.UserMessage.MessageDelivery
   use DAUWeb, :live_view
@@ -46,6 +47,35 @@ defmodule DAUWeb.SearchLive.Detail do
         {:noreply,
          socket
          |> put_flash(:error, "Error saving verification SOP")}
+    end
+  end
+
+  @doc """
+
+  """
+  defp get_default_user_response_message(%Common{} = query) do
+    case query.user_response do
+      nil ->
+        """
+        📢 We reviewed this #{query.media_type || ""} and found it to be #{query.verification_status || "<awaiting verification status>"}.
+
+        🎯You can read our assessment report here: <insert link>
+
+        Fact checkers have also shared the following:
+
+        1. <Fact checker name>: <Headline><link>
+
+        2. <Fact checker name>: <Headline><link>
+
+        3. <Fact checker name>: <Headline><link>
+
+        🧠  Please use your thoughtful discretion in sharing this forward.
+
+        Thank you reaching out to use. We hope you have a good day ahead. 🙏
+        """
+
+      _ ->
+        query.user_response
     end
   end
 end

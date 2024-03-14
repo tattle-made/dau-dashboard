@@ -147,7 +147,7 @@
         id="verification_sop"
         name="verification_sop"
         rows="6"
-        ><%= Map.get(@query, :verification_sop, "") %></textarea>
+        > <%= @query.verification_sop %> </textarea>
         <button
         class="border-2 border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
         type="submit"
@@ -214,7 +214,7 @@
             rows="6"
             id="assessment-report"
             name="assessment-report"
-            ><%=@query.user_response %></textarea>
+            >  <%= get_default_user_response_message(@query) %> </textarea>
             <button
             class="border-2 border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
             type="submit"
