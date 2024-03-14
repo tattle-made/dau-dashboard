@@ -1,14 +1,10 @@
 defmodule DAUWeb.SearchLive.Index do
-  alias DAUWeb.SearchLive.Index.DauWeb.SearchLive.Index.SearchParams
+  alias DAUWeb.SearchLive.SearchParams
   alias DAU.Feed
   alias DAU.Accounts
   alias DauWeb.SearchLive.Data
   use DAUWeb, :live_view
   use DAUWeb, :html
-
-  defmodule DauWeb.SearchLive.Index.SearchParams do
-    defstruct [:feed, :media_type, :date, :sort, :page_num, :verification_status]
-  end
 
   def mount(params, session, socket) do
     # queries = Feed.list_common_feed(1)

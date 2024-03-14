@@ -1,6 +1,6 @@
 defmodule DAU.Feed do
   import Ecto.Query, warn: false
-  alias DAUWeb.SearchLive.Index.DauWeb.SearchLive.Index.SearchParams
+  alias DAUWeb.SearchLive.SearchParams
   alias DAU.UserMessage.MessageDelivery
   alias DAU.Repo
 
