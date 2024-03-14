@@ -40,7 +40,6 @@ defmodule DAUWeb.SearchLive.Verification do
     tags = socket.assigns.tags
 
     attributes = Map.put(normal_params, "tags", tags)
-    IO.inspect(attributes)
 
     case Feed.add_secratariat_notes(query, attributes) do
       {:ok, _user} ->

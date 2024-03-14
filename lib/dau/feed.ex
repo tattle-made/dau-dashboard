@@ -52,8 +52,6 @@ defmodule DAU.Feed do
     }
   """
   def list_common_feed(%{date: date, media_type: media_type, sort: sort} = search_params) do
-    IO.inspect(search_params)
-
     query =
       Common
       |> limit(10)
@@ -90,8 +88,6 @@ defmodule DAU.Feed do
     #   end
     query =
       query = query |> Repo.all() |> bulk_add_s3_media_url
-
-    # IO.inspect(query)
 
     query
   end

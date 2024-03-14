@@ -85,7 +85,6 @@ defmodule DAUWeb.SearchLive.Index do
       end
 
     # fetch data from db and add to socket
-    IO.inspect(socket.assigns.search_params)
     queries = Feed.list_common_feed(socket.assigns.search_params)
 
     {:noreply, assign(socket, :queries, queries)}
@@ -93,7 +92,7 @@ defmodule DAUWeb.SearchLive.Index do
 
   def handle_event("change-search-date", value, socket) do
     search_params = socket.assigns.search_params
-    # IO.inspect(value)
+
     socket =
       case value["name"] do
         "from-date" ->
@@ -117,16 +116,11 @@ defmodule DAUWeb.SearchLive.Index do
   end
 
   def handle_event("select-one", value, socket) do
-    IO.inspect("selected one key")
-    IO.inspect(value)
-
     selection_type =
       case {} |> Tuple.insert_at(0, value["id"]) |> Tuple.insert_at(1, value["value"]) do
         {_id, nil} -> :subtract
         {_id, _value} -> :add
       end
-
-    IO.inspect(selection_type)
 
     socket =
       case selection_type == :add && !Enum.member?(socket.assigns.selection, value["value"]) do
@@ -140,8 +134,6 @@ defmodule DAUWeb.SearchLive.Index do
         false -> socket
       end
 
-    IO.inspect(socket.assigns.selection)
-
     {:noreply, socket}
   end
 
@@ -151,7 +143,6 @@ defmodule DAUWeb.SearchLive.Index do
 
   def handle_event("mark-as-spam", value, socket) do
     selection = socket.assigns.selection
-    IO.inspect(selection)
     {:noreply, socket}
   end
 
@@ -165,7 +156,6 @@ defmodule DAUWeb.SearchLive.Index do
   end
 
   def handle_event("take-up", value, socket) do
-    IO.inspect(socket.assigns.selection)
     selection = socket.assigns.selection
     user = socket.assigns.current_user_name
     page_num = socket.assigns.page_num
@@ -176,14 +166,11 @@ defmodule DAUWeb.SearchLive.Index do
         |> Feed.take_up(user)
       end)
 
-    IO.inspect(result)
-
     queries = Feed.list_common_feed(page_num)
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
   end
 
   def handle_params(params, uri, socket) do
-    IO.inspect(params)
     {:noreply, socket}
   end
 

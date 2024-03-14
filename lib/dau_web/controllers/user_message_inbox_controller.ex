@@ -17,7 +17,6 @@ defmodule DAUWeb.IncomingMessageController do
     # conn |> render(:show, incoming_message: %{})
 
     # adapted_payload = adapt(payload)
-    IO.inspect(payload)
 
     with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
       {file_key, file_hash} =
