@@ -58,6 +58,7 @@ config :dau,
   gupshup_api_endpoint: gupshup_api_endpoint
 
 config :ex_aws,
+  region: "ap-south-1",
   access_key_id: {:system, "AWS_ACCESS_KEY_ID"},
   secret_access_key: {:system, "AWS_SECRET_ACCESS_KEY"}
 
