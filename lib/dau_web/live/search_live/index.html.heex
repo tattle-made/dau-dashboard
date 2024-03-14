@@ -1,6 +1,9 @@
 <h1 class="text-xl font-normal text-slate-900 mb-2">
-      Showing all queries
-    </h1>
+    Showing all queries 
+    <.link href={~p"/demo/query"}>
+    <p class="text-gray-400 text-sm"> clear filters </p>
+    </.link>
+</h1>
 
     <div class="flex flex-col sm:flex-row">
       <div class="h-fit w-full sm:w-1/5 sm:h-fit flex flex-row gap-12 sm:gap-4 sm:flex-col mr-4 border-e border-zinc-200">
@@ -12,10 +15,68 @@
         </div>
         -->
         <div>
+
+          
+          </div>
+        <div>
           <p class="py-2">Media Type</p>
           <div>
-            <.checkbox id={:video} group={:media_type} label="Video" selection={@search_params.media_type} />
-            <.checkbox id={:audio} group={:media_type} label="Audio" selection={@search_params.media_type} />
+            <.input_radio
+              name="media_type"
+              id={"video"}
+              value={"video"}
+              label="Video"
+              selection={@search_params.media_type}
+            />
+            <.input_radio
+              name="media_type"
+              id={"audio"}
+              value={"audio"}
+              label="audio"
+              selection={@search_params.media_type}
+            />
+            <.input_radio
+              name="media_type"
+              id={"all"}
+              value={"all"}
+              label="All"
+              selection={@search_params.media_type}
+            />
+          </div>
+        </div>
+
+        <div>
+          <p class="py-2">Verification Status</p>
+          <div>
+            <.input_radio
+              name="verification_status"
+              id={"deepfake"}
+              value={"deepfake"}
+              label="Deepfake"
+              selection={@search_params.verification_status}
+            />
+            <.input_radio
+              name="verification_status"
+              id={"manipulated"}
+              value={"manipulated"}
+              label="Manipulated"
+              selection={@search_params.verification_status}
+            />
+            <.input_radio
+              name="verification_status"
+              id={"not_manipulated"}
+              value={"not_manipulated"}
+              label="Not Manipulated"
+              selection={@search_params.verification_status}
+            />
+            <.input_radio
+              name="verification_status"
+              id={"inconclusive"}
+              value={"inconclusive"}
+              label="Inconclusive"
+              selection={@search_params.verification_status}
+            />
+            
           </div>
         </div>
         
@@ -72,31 +133,33 @@
         </div>
         -->
 
+        
+        
         <div>
           <p class="py-2">Sort</p>
           <div>
             <.input_radio
               name="sort-by"
-              id={:newest}
+              id={"newest"}
               label="Newest first"
               selection={@search_params.sort}
             />
             <.input_radio
               name="sort-by"
-              id={:oldest}
+              id={"oldest"}
               label="Oldest first"
               selection={@search_params.sort}
             />
             <.input_radio
               name="sort-by"
-              id={:repetition_count}
+              id={"repetition_count"}
               label="Repetition count"
-              name="sort-by"
               disabled={true}
               selection={@search_params.sort}
             />
           </div>
         </div>
+        
         <!--
         <div>
           <p class="py-2  text-zinc-500">Status</p>
@@ -117,6 +180,7 @@
       </div>
 
       <div class="w-full sm:w-4/5 gap-4">
+        <!--
         <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
           <div :if={@page_num-1 > 0}>
             <.link navigate={~p"/demo/query/pg/#{@page_num-1}"}>
@@ -124,11 +188,12 @@
             </.link>
           </div>
           <div class="rounded-full p-2 bg-zinc-100"><p><%= @page_num %></p></div>
-          <.link navigate={~p"/demo/query/pg/#{@page_num+1}"}>
-            <.icon name="hero-arrow-right" class="h-5 w-5" />
-          </.link>
 
+          <button phx-click="change-search" phx-value-id="page-next">
+            <.icon name="hero-arrow-right" class="h-5 w-5" />
+          </button>
         </div>
+        -->
         <div class="h-2" />
         <div
           :if={@selection != []}
@@ -161,7 +226,7 @@
             <.queryt type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
           </:col>
           
-          <:col :let={query} label="receieved at">
+          <:col :let={query} label="received at">
             <p> <%= humanize_date(query.inserted_at) %> </p>
           </:col>
 
@@ -169,7 +234,7 @@
             <div class="flex flex-row wrap gap-4">
               <div :if={query.tags}>
                 <%= for tag <- query.tags do %>
-                    <span class="w-fit rounded-sm bg-gray-200 text-gray-600"><%= tag %></span>
+                    <span class="w-fit rounded-sm bg-gray-200 text-gray-800"><%= tag %></span>
                 <% end %>
               </div>
             </div>

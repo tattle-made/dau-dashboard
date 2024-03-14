@@ -1,5 +1,6 @@
 defmodule DAU.Feed do
   import Ecto.Query, warn: false
+  alias DAUWeb.SearchLive.Index.DauWeb.SearchLive.Index.SearchParams
   alias DAU.UserMessage.MessageDelivery
   alias DAU.Repo
 
@@ -20,8 +21,8 @@ defmodule DAU.Feed do
     order = [desc: :inserted_at]
 
     Common
-    |> offset(10 * (^page_num - 1))
-    |> limit(10)
+    |> offset(25 * (^page_num - 1))
+    |> limit(25)
     |> order_by(^order)
     |> Repo.all()
     |> Enum.map(fn query ->
@@ -47,47 +48,45 @@ defmodule DAU.Feed do
     %{
       date: %{to: ~D[2024-03-10], from: ~D[2024-03-01]},
       sort: :oldest,
-      media_type: [:video, :audio],
+      media_type: "video" || "audio" ||  ":all",
       feed: :common
     }
   """
-  def list_common_feed(%{date: date, media_type: media_type, sort: sort} = search_params) do
+  def list_common_feed(page_num, %SearchParams{} = search_params) do
+    order = %{
+      "newest" => [desc: :inserted_at],
+      "oldest" => [asc: :inserted_at]
+    }
+
     query =
       Common
-      |> limit(10)
+      |> limit(25)
+      |> offset(25 * (^page_num - 1))
 
     query =
-      if Enum.member?(media_type, :video),
-        do: query |> where([c], c.media_type == :video),
-        else: query
-
-    query =
-      if Enum.member?(media_type, :audio),
-        do: query |> where([c], c.media_type == :audio),
-        else: query
-
-    query =
-      case media_type do
-        [:audio] ->
-          query |> where([c], c.media_type == :audio)
-
-        [:video] ->
-          query |> where([c], c.media_type == :video)
-
-        [:audio, :video] ->
-          query |> where([c], c.media_type == :video) |> where([c], c.media_type == :audio)
-
-        [] ->
-          query |> where([c], c.media_type != :video) |> where([c], c.media_type != :audio)
+      case search_params.media_type do
+        "video" -> query |> where([c], c.media_type == :video)
+        "audio" -> query |> where([c], c.media_type == :audio)
+        "all" -> query
+        nil -> query
+        _ -> query
       end
 
-    # query =
-    #   case(sort) do
-    #     :oldest -> query |> order_by(desc: :inserted_at)
-    #     :newest -> query |> order_by(asc: :inserted_at)
-    #   end
     query =
-      query = query |> Repo.all() |> bulk_add_s3_media_url
+      case search_params.verification_status do
+        "deepfake" -> query |> where([c], c.verification_status == :deepfake)
+        "manipulated" -> query |> where([c], c.verification_status == :manipulated)
+        "not_manipulated" -> query |> where([c], c.verification_status == :not_manipulated)
+        "inconclusive" -> query |> where([c], c.verification_status == :inconclusive)
+        nil -> query
+        _ -> query
+      end
+
+    query =
+      query
+      |> order_by(^order[search_params.sort])
+
+    query = query |> Repo.all() |> bulk_add_s3_media_url
 
     query
   end
@@ -145,11 +144,11 @@ defmodule DAU.Feed do
   defp bulk_add_s3_media_url(common) do
     common
     |> Enum.map(fn query ->
-      {_, map} =
-        Map.get_and_update(query, :media_urls, &{&1, Enum.map(&1, fn key -> "/temp/#{key}" end)})
+      # {_, map} =
+      #   Map.get_and_update(query, :media_urls, &{&1, Enum.map(&1, fn key -> "/temp/#{key}" end)})
 
       {_, map} =
-        map
+        query
         |> Map.get_and_update(
           :media_urls,
           &{&1,

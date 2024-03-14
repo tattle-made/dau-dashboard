@@ -1,18 +1,23 @@
 defmodule DAUWeb.SearchLive.Index do
+  alias DAUWeb.SearchLive.Index.DauWeb.SearchLive.Index.SearchParams
   alias DAU.Feed
   alias DAU.Accounts
   alias DauWeb.SearchLive.Data
   use DAUWeb, :live_view
   use DAUWeb, :html
 
+  defmodule DauWeb.SearchLive.Index.SearchParams do
+    defstruct [:feed, :media_type, :date, :sort, :page_num, :verification_status]
+  end
+
   def mount(params, session, socket) do
-    queries = Feed.list_common_feed(1)
+    # queries = Feed.list_common_feed(1)
     user_token = session["user_token"]
     user = user_token && Accounts.get_user_by_session_token(user_token)
 
     socket =
       socket
-      |> assign(:queries, queries)
+      # |> assign(:queries, queries)
       |> assign(:selection, [])
       |> assign(:current_user_id, user.id)
       |> assign(:current_user_name, String.split(user.email, "@") |> hd)
@@ -26,16 +31,21 @@ defmodule DAUWeb.SearchLive.Index do
     sort: :newest, :oldest, :repetition_count
   """
   def handle_params(params, uri, socket) do
-    search_params = %{
-      feed: :common,
-      media_type: [:video, :audio],
-      date: %{from: ~D[2024-03-01], to: ~D[2024-03-10]},
-      sort: :oldest
+    page_num = String.to_integer(params["page_num"] || "1")
+    sort = params["sort"]
+    media_type = params["media_type"]
+    feed_name = params["feed_name"]
+    verification_status = params["verification_status"]
+
+    search_params = %SearchParams{
+      page_num: page_num,
+      feed: feed_name,
+      media_type: media_type,
+      sort: sort,
+      verification_status: verification_status
     }
 
-    page_num = String.to_integer(params["page_num"] || 1)
-
-    queries = Feed.list_common_feed(page_num)
+    queries = Feed.list_common_feed(page_num, search_params)
 
     socket =
       socket
@@ -49,45 +59,48 @@ defmodule DAUWeb.SearchLive.Index do
 
   def handle_event("change-search", value, socket) do
     search_params = socket.assigns.search_params
+    IO.inspect(search_params)
 
-    socket =
+    new_search_params =
       case value["name"] do
-        "feed" ->
-          new_search_params =
-            Map.put(search_params, :feed, String.to_existing_atom(value["value"]))
+        "page-next" ->
+          current_page = search_params.page_num || 1
+          IO.inspect(current_page)
+          Map.put(search_params, :page_num, current_page + 1)
 
-          assign(socket, :search_params, new_search_params)
+        "page-previous" ->
+          current_page = search_params.page_num || 1
+          Map.put(search_params, :page_num, current_page - 1)
+
+        "feed" ->
+          Map.put(search_params, :feed, String.to_existing_atom(value["value"]))
 
         "sort-by" ->
-          new_search_params =
-            Map.put(search_params, :sort, String.to_existing_atom(value["value"]))
-
-          assign(socket, :search_params, new_search_params)
+          Map.put(search_params, :sort, String.to_existing_atom(value["value"]))
 
         "date-range" ->
           socket
 
         "media_type" ->
           # check if value["value"] exists
+          Map.put(search_params, :media_type, String.to_existing_atom(value["value"]))
 
-          media =
-            case value["value"] do
-              nil -> search_params.media_type -- [String.to_existing_atom(value["id"])]
-              _ -> search_params.media_type ++ [String.to_existing_atom(value["id"])]
-            end
-
-          new_search_params = Map.put(search_params, :media_type, media)
-
-          assign(socket, :search_params, new_search_params)
+        "verification_status" ->
+          Map.put(search_params, :verification_status, String.to_existing_atom(value["value"]))
 
         _ ->
           socket
       end
 
-    # fetch data from db and add to socket
-    queries = Feed.list_common_feed(socket.assigns.search_params)
+    {:noreply,
+     socket
+     |> assign(:search_params, new_search_params)
+     |> push_patch(
+       to:
+         "/demo/query/pg/1?sort=#{new_search_params.sort}&media_type=#{new_search_params.media_type}&verification_status=#{new_search_params.verification_status}"
+     )}
 
-    {:noreply, assign(socket, :queries, queries)}
+    # {:noreply, assign(socket, :queries, queries)}
   end
 
   def handle_event("change-search-date", value, socket) do
