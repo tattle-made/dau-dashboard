@@ -8,6 +8,15 @@ defmodule DAU.Accounts.User do
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
 
+    field :role, Ecto.Enum,
+      values: [
+        :admin,
+        :secratariat_associate,
+        :secratariat_manager,
+        :expert_factchecker,
+        :expert_forensic
+      ]
+
     timestamps(type: :utc_datetime)
   end
 
@@ -154,5 +163,8 @@ defmodule DAU.Accounts.User do
     else
       add_error(changeset, :current_password, "is not valid")
     end
+  end
+
+  def public(changeset) do
   end
 end

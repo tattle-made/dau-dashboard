@@ -14,6 +14,7 @@ defmodule DAU.Application do
       {Phoenix.PubSub, name: DAU.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: DAU.Finch},
+      {Permission, nil},
       # Start a worker by calling: DAU.Worker.start_link(arg)
       # {DAU.Worker, arg},
       # Start to serve requests, typically the last entry

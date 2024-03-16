@@ -11,12 +11,15 @@ defmodule DAUWeb.SearchLive.Index do
     user_token = session["user_token"]
     user = user_token && Accounts.get_user_by_session_token(user_token)
 
+    IO.inspect(user)
+
     socket =
       socket
       # |> assign(:queries, queries)
       |> assign(:selection, [])
       |> assign(:current_user_id, user.id)
       |> assign(:current_user_name, String.split(user.email, "@") |> hd)
+      # |> assign
       |> assign(:page_num, 1)
 
     {:ok, socket}
