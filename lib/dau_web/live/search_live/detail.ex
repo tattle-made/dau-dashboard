@@ -1,16 +1,15 @@
 defmodule DAUWeb.SearchLive.Detail do
   alias DAU.Feed.Common
   alias DAU.Feed
-  alias DAU.UserMessage.MessageDelivery
   use DAUWeb, :live_view
   use DAUWeb, :html
 
-  def mount(params, session, socket) do
+  def mount(_params, _session, socket) do
     query = ""
     {:ok, assign(socket, :query, query)}
   end
 
-  def handle_params(%{"id" => id}, uri, socket) do
+  def handle_params(%{"id" => id}, _uri, socket) do
     query = Feed.get_feed_item_by_id(id)
     {:noreply, assign(socket, :query, query)}
   end
@@ -26,7 +25,7 @@ defmodule DAUWeb.SearchLive.Detail do
   def handle_event("send-to-user", %{"assessment-report" => assessment_report}, socket) do
     query_id = socket.assigns.query.id
     Feed.send_assessment_report_to_user(query_id, assessment_report)
-    # MessageDelivery.send_message_to_bsp(sender_number, assessment_report)
+
     socket =
       socket
       |> put_flash(:info, "Assessment report has been sent to user")
@@ -50,9 +49,6 @@ defmodule DAUWeb.SearchLive.Detail do
     end
   end
 
-  @doc """
-
-  """
   defp get_default_user_response_message(%Common{} = query) do
     case query.user_response do
       nil ->

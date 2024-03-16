@@ -6,7 +6,7 @@ defmodule DAUWeb.SearchLive.Index do
   use DAUWeb, :live_view
   use DAUWeb, :html
 
-  def mount(params, session, socket) do
+  def mount(_params, session, socket) do
     # queries = Feed.list_common_feed(1)
     user_token = session["user_token"]
     user = user_token && Accounts.get_user_by_session_token(user_token)
@@ -26,7 +26,7 @@ defmodule DAUWeb.SearchLive.Index do
     feed : :common, :my_feed
     sort: :newest, :oldest, :repetition_count
   """
-  def handle_params(params, uri, socket) do
+  def handle_params(params, _uri, socket) do
     page_num = String.to_integer(params["page_num"] || "1")
     sort = params["sort"]
     media_type = params["media_type"]
@@ -146,16 +146,16 @@ defmodule DAUWeb.SearchLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("select-all", value, socket) do
+  def handle_event("select-all", _value, socket) do
     {:noreply, socket}
   end
 
-  def handle_event("mark-as-spam", value, socket) do
-    selection = socket.assigns.selection
+  def handle_event("mark-as-spam", _value, socket) do
+    # selection = socket.assigns.selection
     {:noreply, socket}
   end
 
-  def handle_event("delete", value, socket) do
+  def handle_event("delete", _value, socket) do
     {:noreply, socket}
   end
 
@@ -164,23 +164,18 @@ defmodule DAUWeb.SearchLive.Index do
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
   end
 
-  def handle_event("take-up", value, socket) do
+  def handle_event("take-up", _value, socket) do
     selection = socket.assigns.selection
     user = socket.assigns.current_user_name
     page_num = socket.assigns.page_num
 
-    result =
-      Enum.map(selection, fn id ->
-        Feed.get_feed_item_by_id(id)
-        |> Feed.take_up(user)
-      end)
+    Enum.map(selection, fn id ->
+      Feed.get_feed_item_by_id(id)
+      |> Feed.take_up(user)
+    end)
 
     queries = Feed.list_common_feed(page_num)
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
-  end
-
-  def handle_params(params, uri, socket) do
-    {:noreply, socket}
   end
 
   defp humanize_date(date) do

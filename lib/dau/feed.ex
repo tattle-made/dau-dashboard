@@ -113,28 +113,6 @@ defmodule DAU.Feed do
     |> Repo.update()
   end
 
-  def add_verification_note() do
-  end
-
-  def add_tag(%Common{} = common, tag) do
-  end
-
-  def add_assessment_skeleton() do
-  end
-
-  def add_user_response(id, message) do
-    # common
-    # |> Common.user_response_changeset(%{user_response: message})
-    # |> Repo.update()
-  end
-
-  def filter(params) do
-    # sort by chronology
-    # date range
-    # language
-    #
-  end
-
   def take_up(%Common{} = common, user_name) do
     common
     |> Common.take_up_changeset(%{taken_by: user_name})

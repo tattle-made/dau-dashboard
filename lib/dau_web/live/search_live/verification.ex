@@ -1,6 +1,5 @@
 defmodule DAUWeb.SearchLive.Verification do
   alias DAU.Feed
-  alias DauWeb.SearchLive.Data
   alias DAU.Feed.Common
   use DAUWeb, :live_view
   use DAUWeb, :html
@@ -20,7 +19,7 @@ defmodule DAUWeb.SearchLive.Verification do
     {:ok, socket}
   end
 
-  def handle_params(params, uri, socket) do
+  def handle_params(params, _uri, socket) do
     query_id = String.to_integer(params["id"])
     query = Feed.get_feed_item_by_id(query_id)
     query_changeset = query |> Common.annotation_changeset()
@@ -87,8 +86,5 @@ defmodule DAUWeb.SearchLive.Verification do
       |> assign(:form, to_form(changeset))
 
     {:noreply, socket}
-  end
-
-  def handle_status("add-status", value, socket) do
   end
 end

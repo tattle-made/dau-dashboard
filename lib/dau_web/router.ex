@@ -21,7 +21,6 @@ defmodule DAUWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    # get "/queries", QueryController, :index
   end
 
   scope "/gupshup", DAUWeb do

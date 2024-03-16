@@ -17,11 +17,9 @@ defmodule DAUWeb.IncomingMessageJSON do
 
   defp data(%Inbox{} = incoming_message) do
     %{
-      id: incoming_message.id,
-      mobile: incoming_message.mobile,
-      name: incoming_message.name,
-      type: incoming_message.type,
-      timestamp: incoming_message.timestamp
+      sender_name: incoming_message.sender_name,
+      media_type: incoming_message.media_type,
+      file_key: incoming_message.file_key
     }
   end
 end
