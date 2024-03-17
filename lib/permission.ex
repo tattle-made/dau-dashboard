@@ -25,14 +25,19 @@ defmodule Permission do
 
   Permission.has_privilege?(user_a, :edit, Common)
   true
+
+  ## Future Features
+  The current implementation lacks a notion of ownership. For eg allowing :edit action to be perfomed
+  by the User who created or 'owns' a Resource.
+  This can possibly be done by passing an opts Keyword List to has_privilege? - ownership: true
+  We will have to standardize conventions for how ownership is implemented in the database to make
+  the code simple.
   """
+  # todo : is it possible to import all schema's somehow?
   alias DAU.Accounts.User
   alias DAU.Feed.Common
   alias DAU.Canon.FactcheckArticle
 
-  @doc """
-
-  """
   def has_privilege?(%User{} = user, action, resource) do
     case user.role do
       :admin -> true
