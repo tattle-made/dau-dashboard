@@ -1,12 +1,25 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.Accounts
   alias DAU.Feed.Common
   alias DAU.Feed
+  alias Permission
   use DAUWeb, :live_view
   use DAUWeb, :html
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    user_token = session["user_token"]
+    user = user_token && Accounts.get_user_by_session_token(user_token)
+
+    IO.inspect(user)
+
     query = ""
-    {:ok, assign(socket, :query, query)}
+
+    socket =
+      socket
+      |> assign(:query, query)
+      |> assign(:current_user, user)
+
+    {:ok, socket}
   end
 
   def handle_params(%{"id" => id}, _uri, socket) do
