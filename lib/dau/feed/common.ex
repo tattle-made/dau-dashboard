@@ -19,7 +19,14 @@ defmodule DAU.Feed.Common do
     field :verification_sop, :string
 
     field :verification_status, Ecto.Enum,
-      values: [:deepfake, :manipulated, :not_manipulated, :inconclusive]
+      values: [
+        :deepfake,
+        :manipulated,
+        :not_manipulated,
+        :inconclusive,
+        :not_ai_generated,
+        :out_of_scope
+      ]
 
     embeds_many :factcheck_articles, FactcheckArticle
 

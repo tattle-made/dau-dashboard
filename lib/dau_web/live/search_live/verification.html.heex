@@ -1,59 +1,61 @@
-
 <.back navigate={~p"/demo/query/pg/1"}>Back to feed</.back>
 <div class="mb-4" />
 <div class="flex flex-row gap-8 items-center mb-4">
-    <h1 class="text-xl font-normal text-slate-900 ">
+  <h1 class="text-xl font-normal text-slate-900 ">
     Verification Notes
-    </h1>
-    <p class="p-2 bg-zinc-200 rounded-full"><%= Map.get(@query, :id, "")  %></p>
+  </h1>
+  <p class="p-2 bg-zinc-200 rounded-full"><%= Map.get(@query, :id, "") %></p>
 </div>
 <div class="flex flex-col gap-2 sm:flex-row">
-    <div class="w-1/2 border-2 rounded-md border-green-100 p-4">
-        <.query type={to_string(@query.media_type)} url={@query.media_urls|>hd} />
-    </div>
-    <div class="w-1/2 h-fit border-2 rounded-md border-green-100 pl-4 pr-4 pb-4 flex flex-col gap-2">
-       <.simple_form for={@form} phx-submit="save">
-        <.input field={@form[:verification_note]} type="textarea" label="Verification Note" />
-        <.input name="tags" field={@form[:tags]} label="Tags" type="hidden" />   
-        <div id="tag-selector" phx-hook="TagSelector" class="border-2 border-gray-200 overflow-none">
-            <input type="text" placeholder="Type to see suggestions like deepfake, cheapfake, synthetic media etc" class="border-0 w-full focus:border-0 outline-none focus:outline-none"/>
-            <div id="tag-suggestions" class="flex flex-row flex-wrap gap-2 p-2 h-fit">
+  <div class="w-1/2 border-2 rounded-md border-green-100 p-4">
+    <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
+  </div>
+  <div class="w-1/2 h-fit border-2 rounded-md border-green-100 pl-4 pr-4 pb-4 flex flex-col gap-2">
+    <.simple_form for={@form} phx-submit="save">
+      <.input field={@form[:verification_note]} type="textarea" label="Verification Note" />
+      <.input name="tags" field={@form[:tags]} label="Tags" type="hidden" />
+      <div id="tag-selector" phx-hook="TagSelector" class="border-2 border-gray-200 overflow-none">
+        <input
+          type="text"
+          placeholder="Type to see suggestions like deepfake, cheapfake, synthetic media etc"
+          class="border-0 w-full focus:border-0 outline-none focus:outline-none"
+        />
+        <div id="tag-suggestions" class="flex flex-row flex-wrap gap-2 p-2 h-fit"></div>
+      </div>
+      <div class="flex flex-row flex-wrap gap-2">
+        <%= unless is_nil(@form[:tags].value) do %>
+          <%= for tag <- @form[:tags].value do %>
+            <div class="flex flex-row gap-3 item-center bg-green-200 px-2 py-2 rounded-md">
+              <span class=""><%= tag %></span>
+              <button phx-click="remove-tag" phx-value-tag={tag}>
+                <.icon name="hero-x-mark" class="h-4 w-4" />
+              </button>
             </div>
-        </div>
-        <div class="flex flex-row flex-wrap gap-2">
-            <%= unless is_nil(@form[:tags].value) do %>
-                <%= for tag <- @form[:tags].value do%>
-                    <div class="flex flex-row gap-3 item-center bg-green-200 px-2 py-2 rounded-md">
-                        <span class=""> <%= tag %> </span>
-                        <button phx-click="remove-tag" phx-value-tag={tag}>
-                            <.icon name="hero-x-mark" class="h-4 w-4" />
-                        </button>
-                    </div>
-                <% end %>
-            <% end %>
-        </div>
+          <% end %>
+        <% end %>
+      </div>
 
+      <.input
+        type="select"
+        label="User Response Label"
+        field={@form[:verification_status]}
+        options={[
+          {"", ""},
+          {"Public Status: Deepfake", "deepfake"},
+          {"Public Status: Manipulated", "manipulated"},
+          {"Public Status: Not Manipulated", "not_manipulated"},
+          {"Public Status: Inconclusive", "inconclusive"},
+          {"Not AI Generated", "not_ai_generated"},
+          {"Out of Scope", "out_of_scope"}
+        ]}
+      >
+      </.input>
 
-        <.input
-            type="select"
-            label="Verification Status"
-            field={@form[:verification_status]}
-            options={[
-                {"", ""},
-                {"Deepfake", "deepfake"},
-                {"Manipulated", "manipulated"},
-                {"Not Manipulated", "not_manipulated"},
-                {"Inconclusive", "inconclusive"}
-            ]}
-            >
-        </.input>
-        
-        
-        <:actions>
-           <.button type="submit" phx-disable-with="Sending..." class="w-fit">
-                Save
-            </.button>
-        </:actions>
-       </.simple_form>
-    </div>
+      <:actions>
+        <.button type="submit" phx-disable-with="Sending..." class="w-fit">
+          Save
+        </.button>
+      </:actions>
+    </.simple_form>
+  </div>
 </div>
