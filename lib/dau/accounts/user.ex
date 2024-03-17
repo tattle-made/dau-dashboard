@@ -164,7 +164,4 @@ defmodule DAU.Accounts.User do
       add_error(changeset, :current_password, "is not valid")
     end
   end
-
-  def public(changeset) do
-  end
 end

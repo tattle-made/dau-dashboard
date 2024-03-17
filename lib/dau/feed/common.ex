@@ -1,5 +1,7 @@
 defmodule DAU.Feed.Common do
+  alias DAU.Feed.Resource
   alias DAU.Feed.Common
+  alias DAU.Feed.FactcheckArticle
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -19,11 +21,15 @@ defmodule DAU.Feed.Common do
     field :verification_status, Ecto.Enum,
       values: [:deepfake, :manipulated, :not_manipulated, :inconclusive]
 
+    embeds_many :factcheck_articles, FactcheckArticle
+
+    embeds_many :resources, Resource, on_replace: :delete
+
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(common, attrs) do
+  def changeset(common, attrs \\ %{}) do
     common
     |> cast(attrs, [
       :media_urls,
@@ -61,5 +67,24 @@ defmodule DAU.Feed.Common do
     common
     |> cast(attrs, [:verification_sop])
     |> validate_required([:verification_sop])
+  end
+
+  def query_with_resource_changeset(common, new_resource, attrs \\ %{}) do
+    common
+    |> cast(attrs, [
+      :media_urls,
+      :media_type,
+      :taken_by,
+      :verification_note,
+      :tags,
+      :status,
+      :exact_count,
+      :sender_number,
+      :user_response,
+      :verification_status
+    ])
+    |> validate_required([:media_urls, :media_type, :sender_number])
+    |> put_embed(:resources, [new_resource | common.resources])
+    |> cast_embed(:resources, required: true)
   end
 end

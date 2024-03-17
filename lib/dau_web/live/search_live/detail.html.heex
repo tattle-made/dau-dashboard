@@ -86,20 +86,43 @@
         </div>
     </div>
     </div>
-
-    <div class="flex flex-row gap-1">
+    -->
+  <div class="flex flex-row gap-1">
     <div class="w-full p-4 rounded-md border-2 border-gray-200">
-        <p class="text-lg">Resources</p>
-        <p class="text-xs text-gray-400">Share relevant resources with the community</p>
-        <textarea
-        id="user-message"
-        rows="1"
-        class="block p-2.5 w-full text-xs text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:ring-green-300 focus:border-green-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-        placeholder="Add Resource"
-        ></textarea>
+      <p class="text-lg">Resources</p>
+      <div class="h-2" />
+      <%!-- <div :for={{id, resource} <- @streams.resources} id={id} %>
+        <span class="text-slate-950"><%= resource.username %></span>
+        <span>:</span>
+        <span class="text-slate-800">
+          <%= resource.text %>
+        </span>
+      </div> --%>
+      <%= for resource <- Enum.reverse(@query.resources) do %>
+        <div>
+          <span class="text-slate-950"><%= resource.username %></span>
+          <span>:</span>
+          <span class="text-slate-800">
+            <%= resource.text %>
+          </span>
+        </div>
+      <% end %>
+      <form phx-submit="add-resource">
+        <div class="mt-4 flex flex-row gap-2">
+          <input
+            class="grow text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            type="text"
+            id="resource-text"
+            name="resource-text"
+          />
+          <button type="submit">
+            <.icon name="hero-paper-airplane" />
+          </button>
+        </div>
+      </form>
     </div>
-    </div>
-
+  </div>
+  <!--
     <div class="flex flex-row gap-1">
     <div class="w-full p-4 rounded-md border-2 border-gray-200">
         <p class="text-lg">Assessment Report</p>

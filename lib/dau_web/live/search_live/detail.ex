@@ -1,4 +1,5 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.Feed.Resource
   alias DAU.Accounts
   alias DAU.Feed.Common
   alias DAU.Feed
@@ -10,21 +11,26 @@ defmodule DAUWeb.SearchLive.Detail do
     user_token = session["user_token"]
     user = user_token && Accounts.get_user_by_session_token(user_token)
 
-    IO.inspect(user)
-
     query = ""
 
     socket =
       socket
       |> assign(:query, query)
       |> assign(:current_user, user)
+      |> assign(:current_user_name, String.split(user.email, "@") |> hd)
 
     {:ok, socket}
   end
 
   def handle_params(%{"id" => id}, _uri, socket) do
     query = Feed.get_feed_item_by_id(id)
-    {:noreply, assign(socket, :query, query)}
+
+    socket =
+      socket
+      |> assign(:query, query)
+      |> stream(:resources, query.resources)
+
+    {:noreply, socket}
   end
 
   # def handle_event(event, unsigned_params, socket) do
@@ -60,6 +66,20 @@ defmodule DAUWeb.SearchLive.Detail do
          socket
          |> put_flash(:error, "Error saving verification SOP")}
     end
+  end
+
+  def handle_event("add-resource", params, socket) do
+    IO.inspect(params)
+
+    resource = %Resource{
+      username: socket.assigns.current_user_name,
+      type: "text",
+      text: params["resource-text"]
+    }
+
+    {:ok, query} = Feed.add_resource(socket.assigns.query.id, resource)
+
+    {:noreply, socket |> assign(:query, query)}
   end
 
   defp get_default_user_response_message(%Common{} = query) do

@@ -34,9 +34,9 @@ defmodule Permission do
   the code simple.
   """
   # todo : is it possible to import all schema's somehow?
+  alias DAU.Feed.Common.FactcheckArticle
   alias DAU.Accounts.User
   alias DAU.Feed.Common
-  alias DAU.Canon.FactcheckArticle
 
   def has_privilege?(%User{} = user, action, resource) do
     case user.role do

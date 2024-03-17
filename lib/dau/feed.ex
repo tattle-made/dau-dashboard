@@ -1,5 +1,7 @@
 defmodule DAU.Feed do
   import Ecto.Query, warn: false
+  alias DAU.Feed.Resource
+  alias DAU.Feed.Common.FactcheckArticle
   alias DAUWeb.SearchLive.SearchParams
   alias DAU.UserMessage.MessageDelivery
   alias DAU.Repo
@@ -158,5 +160,15 @@ defmodule DAU.Feed do
     common
     |> Common.verification_sop_changeset(attrs)
     |> Repo.update()
+  end
+
+  def add_resource(query_id, %Resource{} = resource) do
+    Repo.get!(Common, query_id)
+    |> Common.query_with_resource_changeset(resource)
+    |> Repo.update()
+  end
+
+  def get_resources(query_id) do
+    Repo.get!(Common, query_id).resources
   end
 end
