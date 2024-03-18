@@ -46,7 +46,7 @@ defmodule DAUWeb.SearchLive.Verification do
           :noreply,
           socket
           |> put_flash(:info, "verification notes updated")
-          |> redirect(to: ~p"/demo/query/pg/1")
+          # |> redirect(to: ~p"/demo/query?pagE_")
         }
 
       {:error, %Ecto.Changeset{} = changeset} ->
