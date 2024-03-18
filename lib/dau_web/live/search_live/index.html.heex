@@ -212,7 +212,7 @@
         <p><%= query.id %></p>
       </:col>
       <:col :let={query} label="preview">
-        <.queryt type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
+        <.queryt id={query.id} type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
       </:col>
 
       <:col :let={query} label="received at">
