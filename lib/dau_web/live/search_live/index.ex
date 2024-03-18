@@ -31,10 +31,10 @@ defmodule DAUWeb.SearchLive.Index do
   """
   def handle_params(params, _uri, socket) do
     page_num = String.to_integer(params["page_num"] || "1")
-    sort = params["sort"]
-    media_type = params["media_type"]
-    feed_name = params["feed_name"]
-    verification_status = params["verification_status"]
+    sort = params["sort"] || "newest"
+    media_type = params["media_type"] || "all"
+    feed_name = params["feed_name"] || ""
+    verification_status = params["verification_status"] || ""
 
     search_params = %SearchParams{
       page_num: page_num,
@@ -44,7 +44,7 @@ defmodule DAUWeb.SearchLive.Index do
       verification_status: verification_status
     }
 
-    queries = Feed.list_common_feed(page_num, search_params)
+    queries = Feed.list_common_feed(search_params)
 
     socket =
       socket
@@ -96,7 +96,7 @@ defmodule DAUWeb.SearchLive.Index do
      |> assign(:search_params, new_search_params)
      |> push_navigate(
        to:
-         "/demo/query/pg/1?sort=#{new_search_params.sort}&media_type=#{new_search_params.media_type}&verification_status=#{new_search_params.verification_status}"
+         "/demo/query?page_num#{new_search_params.page_num}&sort=#{new_search_params.sort}&media_type=#{new_search_params.media_type}&verification_status=#{new_search_params.verification_status}"
      )}
 
     # {:noreply, assign(socket, :queries, queries)}
@@ -171,13 +171,14 @@ defmodule DAUWeb.SearchLive.Index do
     selection = socket.assigns.selection
     user = socket.assigns.current_user_name
     page_num = socket.assigns.page_num
+    search_params = socket.assigns.search_params
 
     Enum.map(selection, fn id ->
       Feed.get_feed_item_by_id(id)
       |> Feed.take_up(user)
     end)
 
-    queries = Feed.list_common_feed(page_num)
+    queries = Feed.list_common_feed(search_params)
     {:noreply, assign(socket, :queries, queries) |> assign(:selection, [])}
   end
 
@@ -185,5 +186,18 @@ defmodule DAUWeb.SearchLive.Index do
     Timex.to_datetime(date, "Asia/Calcutta")
     |> Calendar.strftime("%a %d-%m-%Y %I
     ':%M %P")
+  end
+
+  def search_string(search_params, opts) do
+    # :paginate action is sent by the pagination buttons. Can be :increment or :decrement
+    paginate_action = Keyword.get(opts, :paginate_action, :none)
+
+    page_num =
+      case paginate_action do
+        :increment -> Map.put(search_params, :page_num, search_params.page_num + 1)
+        :decrement -> Map.put(search_params, :page_num, search_params.page_num - 1)
+      end
+
+    ~p"/demo/query?page_num=#{page_num}&sort=#{search_params.sort}&media_type=#{search_params.media_type}&verification_status=#{search_params.verification_status}"
   end
 end

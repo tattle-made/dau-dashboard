@@ -14,37 +14,37 @@ defmodule DAU.Feed do
     |> Repo.insert()
   end
 
-  def list_common_feed(page_num \\ 1) do
-    # search_params = %{
-    #   taken_by: "areeba",
-    #   sort: :oldest
-    # }
+  # def list_common_feed(page_num \\ 1) do
+  #   # search_params = %{
+  #   #   taken_by: "areeba",
+  #   #   sort: :oldest
+  #   # }
 
-    order = [desc: :inserted_at]
+  #   order = [desc: :inserted_at]
 
-    Common
-    |> offset(25 * (^page_num - 1))
-    |> limit(25)
-    |> order_by(^order)
-    |> Repo.all()
-    |> Enum.map(fn query ->
-      # {_, map} =
-      #   Map.get_and_update(query, :media_urls, &{&1, Enum.map(&1, fn key -> "/temp/#{key}" end)})
+  #   Common
+  #   |> offset(25 * (^page_num - 1))
+  #   |> limit(25)
+  #   |> order_by(^order)
+  #   |> Repo.all()
+  #   |> Enum.map(fn query ->
+  #     # {_, map} =
+  #     #   Map.get_and_update(query, :media_urls, &{&1, Enum.map(&1, fn key -> "/temp/#{key}" end)})
 
-      {_, map} =
-        query
-        |> Map.get_and_update(
-          :media_urls,
-          &{&1,
-           Enum.map(&1, fn key ->
-             {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
-             url
-           end)}
-        )
+  #     {_, map} =
+  #       query
+  #       |> Map.get_and_update(
+  #         :media_urls,
+  #         &{&1,
+  #          Enum.map(&1, fn key ->
+  #            {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+  #            url
+  #          end)}
+  #       )
 
-      map
-    end)
-  end
+  #     map
+  #   end)
+  # end
 
   @doc """
     %{
@@ -54,7 +54,7 @@ defmodule DAU.Feed do
       feed: :common
     }
   """
-  def list_common_feed(page_num, %SearchParams{} = search_params) do
+  def list_common_feed(%SearchParams{} = search_params) do
     order = %{
       "newest" => [desc: :inserted_at],
       "oldest" => [asc: :inserted_at]
@@ -63,7 +63,7 @@ defmodule DAU.Feed do
     query =
       Common
       |> limit(25)
-      |> offset(25 * (^page_num - 1))
+      |> offset(25 * (^search_params.page_num - 1))
 
     query =
       case search_params.media_type do

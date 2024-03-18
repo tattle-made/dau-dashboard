@@ -1,6 +1,6 @@
 <h1 class="text-xl font-normal text-slate-900 mb-2">
   Showing all queries
-  <.link href={~p"/demo/query/pg/1?sort=newest&media_type=all&verification_status="}>
+  <.link href={~p"/demo/query?page_num=1&sort=newest&media_type=all&verification_status="}>
     <p class="text-gray-400 text-sm">clear filters</p>
   </.link>
 </h1>
@@ -171,20 +171,25 @@
   </div>
 
   <div class="w-full sm:w-4/5 gap-4">
-    <!--
-        <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
-          <div :if={@page_num-1 > 0}>
-            <.link navigate={~p"/demo/query/pg/#{@page_num-1}"}>
-              <.icon name="hero-arrow-left" class="h-5 w-5" />
-            </.link>
-          </div>
-          <div class="rounded-full p-2 bg-zinc-100"><p><%= @page_num %></p></div>
+    <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
+      <div :if={@search_params.page_num - 1 > 0}>
+        <.link navigate={
+          ~p"/demo/query?page_num=#{@search_params.page_num - 1}&sort=#{@search_params.sort}&media_type=#{@search_params.media_type}&verification_status=#{@search_params.verification_status}"
+        }>
+          <.icon name="hero-arrow-left" class="h-5 w-5" />
+        </.link>
+      </div>
+      <div class="rounded-full p-2 bg-zinc-100">
+        <p><%= @search_params.page_num %></p>
+      </div>
 
-          <button phx-click="change-search" phx-value-id="page-next">
-            <.icon name="hero-arrow-right" class="h-5 w-5" />
-          </button>
-        </div>
-        -->
+      <.link navigate={
+        ~p"/demo/query?page_num=#{@search_params.page_num + 1}&sort=#{@search_params.sort}&media_type=#{@search_params.media_type}&verification_status=#{@search_params.verification_status}"
+      }>
+        <.icon name="hero-arrow-right" class="h-5 w-5" />
+      </.link>
+    </div>
+
     <div class="h-2" />
     <div
       :if={@selection != []}

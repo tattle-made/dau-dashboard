@@ -88,7 +88,6 @@ defmodule DAUWeb.Router do
     pipe_through :browser
 
     live "/query/", SearchLive.Index
-    live "/query/pg/:page_num", SearchLive.Index
     live "/query/verification/:id", SearchLive.Verification
     live "/query/:id", SearchLive.Detail
     live "/query/components", SearchLive.Component
