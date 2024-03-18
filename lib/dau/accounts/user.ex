@@ -14,7 +14,8 @@ defmodule DAU.Accounts.User do
         :secratariat_associate,
         :secratariat_manager,
         :expert_factchecker,
-        :expert_forensic
+        :expert_forensic,
+        :user
       ]
 
     timestamps(type: :utc_datetime)
