@@ -184,8 +184,7 @@ defmodule DAUWeb.SearchLive.Index do
 
   defp humanize_date(date) do
     Timex.to_datetime(date, "Asia/Calcutta")
-    |> Calendar.strftime("%a %d-%m-%Y %I
-    ':%M %P")
+    |> Calendar.strftime("%a %d-%m-%Y %I:%M %P")
   end
 
   def search_string(search_params, opts) do
