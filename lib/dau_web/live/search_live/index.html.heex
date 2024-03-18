@@ -1,86 +1,81 @@
 <h1 class="text-xl font-normal text-slate-900 mb-2">
-    Showing all queries 
-    <.link href={~p"/demo/query"}>
-    <p class="text-gray-400 text-sm"> clear filters </p>
-    </.link>
+  Showing all queries
+  <.link href={~p"/demo/query/pg/1?sort=newest&media_type=all&verification_status="}>
+    <p class="text-gray-400 text-sm">clear filters</p>
+  </.link>
 </h1>
 
-    <div class="flex flex-col sm:flex-row">
-      <div class="h-fit w-full sm:w-1/5 sm:h-fit flex flex-row gap-12 sm:gap-4 sm:flex-col mr-4 border-e border-zinc-200">
-        <!--
+<div class="flex flex-col sm:flex-row">
+  <div class="h-fit w-full sm:w-1/5 sm:h-fit flex flex-row gap-12 sm:gap-4 sm:flex-col mr-4 border-e border-zinc-200">
+    <!--
         <div>
           <p class="py-2">Feeds</p>
           <.input_radio name="feed" id={:common} label="Common" selection={@search_params.feed} />
           <.input_radio name="feed" id={:my_feed} label="My Feed" selection={@search_params.feed} />
         </div>
         -->
-        <div>
+    <div></div>
+    <div>
+      <p class="py-2">Media Type</p>
+      <div>
+        <.input_radio
+          name="media_type"
+          id="video"
+          value="video"
+          label="Video"
+          selection={@search_params.media_type}
+        />
+        <.input_radio
+          name="media_type"
+          id="audio"
+          value="audio"
+          label="audio"
+          selection={@search_params.media_type}
+        />
+        <.input_radio
+          name="media_type"
+          id="all"
+          value="all"
+          label="All"
+          selection={@search_params.media_type}
+        />
+      </div>
+    </div>
 
-          
-          </div>
-        <div>
-          <p class="py-2">Media Type</p>
-          <div>
-            <.input_radio
-              name="media_type"
-              id={"video"}
-              value={"video"}
-              label="Video"
-              selection={@search_params.media_type}
-            />
-            <.input_radio
-              name="media_type"
-              id={"audio"}
-              value={"audio"}
-              label="audio"
-              selection={@search_params.media_type}
-            />
-            <.input_radio
-              name="media_type"
-              id={"all"}
-              value={"all"}
-              label="All"
-              selection={@search_params.media_type}
-            />
-          </div>
-        </div>
-
-        <div>
-          <p class="py-2">Verification Status</p>
-          <div>
-            <.input_radio
-              name="verification_status"
-              id={"deepfake"}
-              value={"deepfake"}
-              label="Deepfake"
-              selection={@search_params.verification_status}
-            />
-            <.input_radio
-              name="verification_status"
-              id={"manipulated"}
-              value={"manipulated"}
-              label="Manipulated"
-              selection={@search_params.verification_status}
-            />
-            <.input_radio
-              name="verification_status"
-              id={"not_manipulated"}
-              value={"not_manipulated"}
-              label="Not Manipulated"
-              selection={@search_params.verification_status}
-            />
-            <.input_radio
-              name="verification_status"
-              id={"inconclusive"}
-              value={"inconclusive"}
-              label="Inconclusive"
-              selection={@search_params.verification_status}
-            />
-            
-          </div>
-        </div>
-        
-        <!--
+    <div>
+      <p class="py-2">Verification Status</p>
+      <div>
+        <.input_radio
+          name="verification_status"
+          id="deepfake"
+          value="deepfake"
+          label="Deepfake"
+          selection={@search_params.verification_status}
+        />
+        <.input_radio
+          name="verification_status"
+          id="manipulated"
+          value="manipulated"
+          label="Manipulated"
+          selection={@search_params.verification_status}
+        />
+        <.input_radio
+          name="verification_status"
+          id="not_manipulated"
+          value="not_manipulated"
+          label="Not Manipulated"
+          selection={@search_params.verification_status}
+        />
+        <.input_radio
+          name="verification_status"
+          id="inconclusive"
+          value="inconclusive"
+          label="Inconclusive"
+          selection={@search_params.verification_status}
+        />
+      </div>
+    </div>
+    <!--
         <div>
           <p class="py-2 text-zinc-500">Languages</p>
           <div>
@@ -132,35 +127,31 @@
           </div>
         </div>
         -->
-
-        
-        
-        <div>
-          <p class="py-2">Sort</p>
-          <div>
-            <.input_radio
-              name="sort-by"
-              id={"newest"}
-              label="Newest first"
-              selection={@search_params.sort}
-            />
-            <.input_radio
-              name="sort-by"
-              id={"oldest"}
-              label="Oldest first"
-              selection={@search_params.sort}
-            />
-            <.input_radio
-              name="sort-by"
-              id={"repetition_count"}
-              label="Repetition count"
-              disabled={true}
-              selection={@search_params.sort}
-            />
-          </div>
-        </div>
-        
-        <!--
+    <div>
+      <p class="py-2">Sort</p>
+      <div>
+        <.input_radio
+          name="sort-by"
+          id="newest"
+          label="Newest first"
+          selection={@search_params.sort}
+        />
+        <.input_radio
+          name="sort-by"
+          id="oldest"
+          label="Oldest first"
+          selection={@search_params.sort}
+        />
+        <.input_radio
+          name="sort-by"
+          id="repetition_count"
+          label="Repetition count"
+          disabled={true}
+          selection={@search_params.sort}
+        />
+      </div>
+    </div>
+    <!--
         <div>
           <p class="py-2  text-zinc-500">Status</p>
           <.checkbox id={:unseen} group={:status} label="Unseen" checked={false} disabled={true} />
@@ -177,10 +168,10 @@
           <p class="py-2  text-zinc-300">Tags</p>
         </div>
         -->
-      </div>
+  </div>
 
-      <div class="w-full sm:w-4/5 gap-4">
-        <!--
+  <div class="w-full sm:w-4/5 gap-4">
+    <!--
         <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
           <div :if={@page_num-1 > 0}>
             <.link navigate={~p"/demo/query/pg/#{@page_num-1}"}>
@@ -194,82 +185,74 @@
           </button>
         </div>
         -->
-        <div class="h-2" />
-        <div
-          :if={@selection != []}
-          class="flex flex-row gap-4 align-center border-2 border-zinc-200 p-2 rounded-lg"
-        >
-          <button class="p-1 bg-gray-200 rounded-md h-fit" phx-click="take-up">
-            take up
-          </button>
-          <button class="p-1 bg-gray-200 rounded-md h-fit" phx-click="mark-as-spam">
-            mark as spam
-          </button>
-          <button class="p-1 bg-red-400 rounded-md h-fit" phx-click="delete">delete</button>
-        </div>
-        
-        <.table id="queries" rows={@queries}>
-          
-          <:col :let={query} label="">
-            <input
-              type="checkbox"
-              value={query.id}
-              phx-click="select-one"
-              phx-value-id={query.id}
-              
-            />
-          </:col>
-          <:col :let={query} label="id">
-              <p> <%= query.id %> </p>
-          </:col>
-          <:col :let={query} label="preview">
-            <.queryt type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
-          </:col>
-          
-          <:col :let={query} label="received at">
-            <p> <%= humanize_date(query.inserted_at) %> </p>
-          </:col>
-
-          <:col :let={query} label="tags">
-            <div class="flex flex-row wrap gap-4">
-              <div :if={query.tags}>
-                <%= for tag <- query.tags do %>
-                    <span class="w-fit rounded-sm bg-gray-200 text-gray-800"><%= tag %></span>
-                <% end %>
-              </div>
-            </div>
-          </:col>
-
-          <:col :let={query} label="verification status">
-              <p> <%= query.verification_status %> </p>
-          </:col>
-
-          <:col :let={query} label="taken up by">
-            <div
-              :if={Map.get(query, :assignee, "unassigned")}
-              class="p-1 text-green-9f00 w-fit rounded-lg"
-            >
-              <p><%= Map.get(query, :taken_by, "") %></p>
-            </div>
-          </:col>
-          <:col :let={query} label="virality">
-            <div class="flex flex-col">
-              <p><%= query.exact_count %></p>
-
-            </div>
-          </:col>
-          <:col :let={query}>
-            <div class="flex flex-col gap-2">
-              <.link navigate={~p"/demo/query/#{query.id}"}>
-                <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">view media details</p>
-              </.link>
-              <.link navigate={~p"/demo/query/verification/#{query.id}"}>
-                <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">
-                  add verification notes
-                </p>
-              </.link>
-            </div>
-          </:col>
-        </.table>
-      </div>
+    <div class="h-2" />
+    <div
+      :if={@selection != []}
+      class="flex flex-row gap-4 align-center border-2 border-zinc-200 p-2 rounded-lg"
+    >
+      <button class="p-1 bg-gray-200 rounded-md h-fit" phx-click="take-up">
+        take up
+      </button>
+      <button class="p-1 bg-gray-200 rounded-md h-fit" phx-click="mark-as-spam">
+        mark as spam
+      </button>
+      <button class="p-1 bg-red-400 rounded-md h-fit" phx-click="delete">delete</button>
     </div>
+
+    <.table id="queries" rows={@queries}>
+      <:col :let={query} label="">
+        <input type="checkbox" value={query.id} phx-click="select-one" phx-value-id={query.id} />
+      </:col>
+      <:col :let={query} label="id">
+        <p><%= query.id %></p>
+      </:col>
+      <:col :let={query} label="preview">
+        <.queryt type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
+      </:col>
+
+      <:col :let={query} label="received at">
+        <p><%= humanize_date(query.inserted_at) %></p>
+      </:col>
+
+      <:col :let={query} label="tags">
+        <div class="flex flex-row wrap gap-4">
+          <div :if={query.tags}>
+            <%= for tag <- query.tags do %>
+              <span class="w-fit rounded-sm bg-gray-200 text-gray-800"><%= tag %></span>
+            <% end %>
+          </div>
+        </div>
+      </:col>
+
+      <:col :let={query} label="verification status">
+        <p><%= query.verification_status %></p>
+      </:col>
+
+      <:col :let={query} label="taken up by">
+        <div
+          :if={Map.get(query, :assignee, "unassigned")}
+          class="p-1 text-green-9f00 w-fit rounded-lg"
+        >
+          <p><%= Map.get(query, :taken_by, "") %></p>
+        </div>
+      </:col>
+      <:col :let={query} label="virality">
+        <div class="flex flex-col">
+          <p><%= query.exact_count %></p>
+        </div>
+      </:col>
+      <:col :let={query}>
+        <div class="flex flex-col gap-2">
+          <.link navigate={~p"/demo/query/#{query.id}"}>
+            <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">view media details</p>
+          </.link>
+          <.link navigate={~p"/demo/query/verification/#{query.id}"}>
+            <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">
+              add verification notes
+            </p>
+          </.link>
+        </div>
+      </:col>
+    </.table>
+  </div>
+</div>

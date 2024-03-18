@@ -57,7 +57,8 @@ defmodule DAU.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:amqp, "~> 3.3"},
       {:elixir_uuid, "~> 1.2"},
-      {:httpoison, "~> 2.0"}
+      {:httpoison, "~> 2.0"},
+      {:timex, "~> 3.0"}
     ]
   end
 

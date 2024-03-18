@@ -72,20 +72,20 @@ defmodule DAUWeb.SearchLive.Index do
           Map.put(search_params, :page_num, current_page - 1)
 
         "feed" ->
-          Map.put(search_params, :feed, String.to_existing_atom(value["value"]))
+          Map.put(search_params, :feed, String.to_atom(value["value"]))
 
         "sort-by" ->
-          Map.put(search_params, :sort, String.to_existing_atom(value["value"]))
+          Map.put(search_params, :sort, String.to_atom(value["value"]))
 
         "date-range" ->
           socket
 
         "media_type" ->
           # check if value["value"] exists
-          Map.put(search_params, :media_type, String.to_existing_atom(value["value"]))
+          Map.put(search_params, :media_type, String.to_atom(value["value"]))
 
         "verification_status" ->
-          Map.put(search_params, :verification_status, String.to_existing_atom(value["value"]))
+          Map.put(search_params, :verification_status, String.to_atom(value["value"]))
 
         _ ->
           socket
@@ -94,7 +94,7 @@ defmodule DAUWeb.SearchLive.Index do
     {:noreply,
      socket
      |> assign(:search_params, new_search_params)
-     |> push_patch(
+     |> push_navigate(
        to:
          "/demo/query/pg/1?sort=#{new_search_params.sort}&media_type=#{new_search_params.media_type}&verification_status=#{new_search_params.verification_status}"
      )}
@@ -182,6 +182,8 @@ defmodule DAUWeb.SearchLive.Index do
   end
 
   defp humanize_date(date) do
-    "#{date.day}-#{date.month}-#{date.year}"
+    Timex.to_datetime(date, "Asia/Calcutta")
+    |> Calendar.strftime("%a %d-%m-%Y %I
+    ':%M %P")
   end
 end
