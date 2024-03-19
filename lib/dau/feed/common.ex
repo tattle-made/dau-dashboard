@@ -1,4 +1,5 @@
 defmodule DAU.Feed.Common do
+  alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
   alias DAU.Feed.Common
   alias DAU.Feed.FactcheckArticle
@@ -33,6 +34,8 @@ defmodule DAU.Feed.Common do
 
     embeds_many :resources, Resource, on_replace: :delete
 
+    embeds_one :assessment_report, AssessmentReport
+
     timestamps(type: :utc_datetime)
   end
 
@@ -57,6 +60,7 @@ defmodule DAU.Feed.Common do
   def annotation_changeset(common, attrs \\ %{}) do
     common
     |> cast(attrs, [:verification_note, :tags])
+    |> set_default_verification_note_if_empty
   end
 
   def user_response_label_changeset(common, attrs \\ %{}) do
@@ -100,5 +104,56 @@ defmodule DAU.Feed.Common do
     |> validate_required([:media_urls, :media_type, :sender_number])
     |> put_embed(:resources, [new_resource | common.resources])
     |> cast_embed(:resources, required: true)
+  end
+
+  def query_with_assessment_report_changeset(common, assessment_report, attrs \\ %{}) do
+    common
+    |> cast(attrs, [
+      :media_urls,
+      :media_type,
+      :taken_by,
+      :verification_note,
+      :tags,
+      :status,
+      :exact_count,
+      :sender_number,
+      :user_response,
+      :verification_status
+    ])
+    |> put_embed(:assessment_report, assessment_report)
+    |> cast_embed(:assessment_report, required: true)
+  end
+
+  def query_with_factcheck_article(common, factcheck_article, attrs \\ %{}) do
+    common
+    |> cast(attrs, [
+      :media_urls,
+      :media_type,
+      :taken_by,
+      :verification_note,
+      :tags,
+      :status,
+      :exact_count,
+      :sender_number,
+      :user_response,
+      :verification_status
+    ])
+    |> put_embed(:factcheck_articles, [factcheck_article | common.factcheck_articles])
+    |> cast_embed(:factcheck_articles, required: true)
+  end
+
+  defp set_default_verification_note_if_empty(changeset) do
+    default_text = """
+    Identify claim or hoax
+    Confirm it is fact checkable
+    Choose what you will focus on
+    Find the fact
+    Correct the record
+    """
+
+    case get_field(changeset, :verification_note) do
+      nil -> put_change(changeset, :verification_note, default_text)
+      _ -> changeset
+    end
   end
 end

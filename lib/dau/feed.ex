@@ -1,7 +1,8 @@
 defmodule DAU.Feed do
   import Ecto.Query, warn: false
+  alias DAU.Feed.FactcheckArticle
+  alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
-  alias DAU.Feed.Common.FactcheckArticle
   alias DAUWeb.SearchLive.SearchParams
   alias DAU.UserMessage.MessageDelivery
   alias DAU.Repo
@@ -176,5 +177,25 @@ defmodule DAU.Feed do
 
   def get_resources(query_id) do
     Repo.get!(Common, query_id).resources
+  end
+
+  def add_assessment_report(query_id, %AssessmentReport{} = assessment_report) do
+    Repo.get!(Common, query_id)
+    |> Common.query_with_assessment_report_changeset(assessment_report)
+    |> Repo.update()
+  end
+
+  def get_assessment_report(query_id) do
+    Repo.get!(Common, query_id).assessment_report
+  end
+
+  def add_factcheck_article(query_id, %FactcheckArticle{} = factcheck_article) do
+    Repo.get!(Common, query_id)
+    |> Common.query_with_factcheck_article(factcheck_article)
+    |> Repo.update()
+  end
+
+  def get_factcheck_articles(query_id) do
+    Repo.get!(Common, query_id).factcheck_articles
   end
 end
