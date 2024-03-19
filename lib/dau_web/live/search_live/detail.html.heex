@@ -2,19 +2,23 @@
   <%!-- <.back navigate={~p"/demo/query"}>Back to feed</.back> --%>
   <div class="w-full">
     <div class="flex flex-row gap-1">
-      <div class="w-1/2 border border-green-50 overflow-hidden">
+      <div class="flex flex-row gap-2 w-1/2 overflow-hidden">
         <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
-      </div>
-      <div class="w-1/2 border h-fit border-green-50 overflow-hidden">
-        <div class="flex flex-col wrap gap-4">
-          <p class="p-2">
-            <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
+        <div>
+          <p
+            :if={Map.get(@query, :verification_status)}
+            class="text-green-800 w-fit h-fit text-xs"
+          >
+            <%= "status : #{Map.get(@query, :verification_status, "")}" %>
           </p>
-          <p :if={Map.get(@query, :verification_status)} class="p-2 bg-green-100 rounded-lg w-fit">
-            <%= "#{Map.get(@query, :verification_status, "")}" %>
-          </p>
+          <div class="flex flex-col wrap gap-4">
+            <p class="text-xs">
+              <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
+            </p>
+          </div>
         </div>
       </div>
+      <div class="w-1/2 border h-fit border-green-50 overflow-hidden"></div>
     </div>
   </div>
 
@@ -122,6 +126,32 @@
       </form>
     </div>
   </div>
+  <.section label="Assessment Report">
+    <div :if={
+      Permission.has_privilege?(@current_user, :edit, Common) && !@query.assessment_report
+    }>
+      <form phx-submit="add-assessment-report">
+        <div class="mt-4 flex flex-row gap-2">
+          <input
+            class="grow text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            type="text"
+            id="assessment-report-url"
+            name="assessment-report-url"
+          />
+          <button type="submit">
+            <.icon name="hero-paper-airplane" />
+          </button>
+        </div>
+      </form>
+    </div>
+    <div :if={@query.assessment_report}>
+      <div class="">
+        <a href={@query.assessment_report.url} target="_blank">
+          <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">view report</span>
+        </a>
+      </div>
+    </div>
+  </.section>
   <!--
     <div class="flex flex-row gap-1">
     <div class="w-full p-4 rounded-md border border-gray-200">

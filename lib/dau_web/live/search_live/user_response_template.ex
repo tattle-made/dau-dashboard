@@ -104,6 +104,11 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
         ➡️Newsmobile:+91-1171279799
         ➡️Quint WebQoof: +91-9643651818
         """
+
+      nil ->
+        """
+
+        """
     end
   end
 end

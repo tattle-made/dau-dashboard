@@ -1,4 +1,6 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.Feed.AssessmentReport
+  alias DAU.Feed.FactcheckArticle
   alias DAUWeb.SearchLive.UserResponseTemplate
   alias DAU.Feed.Resource
   alias DAU.Accounts
@@ -85,6 +87,34 @@ defmodule DAUWeb.SearchLive.Detail do
     {:ok, query} = Feed.add_resource(socket.assigns.query.id, resource)
 
     {:noreply, socket |> assign(:query, query)}
+  end
+
+  def handle_event("add-factcheck-article", params, socket) do
+    IO.inspect(params)
+
+    factcheck_article = %FactcheckArticle{
+      username: socket.assigns.current_user_name,
+      url: params["factcheck-article-url"]
+    }
+
+    {:ok, query} = Feed.add_factcheck_article(socket.assigns.query.id, factcheck_article)
+
+    socket = socket |> assign(:query, query)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("add-assessment-report", params, socket) do
+    IO.inspect(params)
+
+    assessment_report = %AssessmentReport{
+      url: params["assessment-report-url"]
+    }
+
+    {:ok, query} = Feed.add_assessment_report(socket.assigns.query.id, assessment_report)
+    socket = socket |> assign(:query, query)
+
+    {:noreply, socket}
   end
 
   def handle_event("save-user-response-label", %{"common" => common}, socket) do

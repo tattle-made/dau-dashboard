@@ -864,4 +864,16 @@ defmodule DAUWeb.CoreComponents do
     </div>
     """
   end
+
+  def section(assigns) do
+    ~H"""
+    <section class="flex flex-row gap-1">
+      <div class="w-full p-4 rounded-md border border-gray-200">
+        <p class="text-lg"><%= @label %></p>
+        <div class="h-2" />
+        <%= render_slot(@inner_block) %>
+      </div>
+    </section>
+    """
+  end
 end

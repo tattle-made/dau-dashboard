@@ -30,11 +30,11 @@ defmodule DAU.Feed.Common do
         :spam
       ]
 
-    embeds_many :factcheck_articles, FactcheckArticle
+    embeds_many :factcheck_articles, FactcheckArticle, on_replace: :delete
 
     embeds_many :resources, Resource, on_replace: :delete
 
-    embeds_one :assessment_report, AssessmentReport
+    embeds_one :assessment_report, AssessmentReport, on_replace: :delete
 
     timestamps(type: :utc_datetime)
   end
