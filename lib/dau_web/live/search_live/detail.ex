@@ -133,6 +133,6 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   defp get_default_user_response_message(%Common{} = query) do
-    UserResponseTemplate.get_text(query.media_type, query.verification_status)
+    UserResponseTemplate.get_text(query)
   end
 end

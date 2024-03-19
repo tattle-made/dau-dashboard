@@ -1,10 +1,15 @@
 defmodule DAUWeb.SearchLive.UserResponseTemplate do
-  def get_text(media_type, user_response_label) do
+  def get_text(query) do
+    user_response_label = Map.get(query, :verification_status)
+    media_type = Map.get(query, :media_type, "<unexpected media type>")
+    assessment_report = Map.get(query, :assessment_report)
+    assessment_report_url = Map.get(assessment_report, :url, "<pending addition>")
+
     case user_response_label do
       :deepfake ->
         """
         📢 We reviewed this #{media_type} and found it to be Deepfake.
-        🎯You can read our assessment report here: <insert link>
+        🎯 You can read our assessment report here: #{assessment_report_url}
         🧠  Please use your discretion in sharing this information.
 
         Thank you reaching out to us. We hope you have a good day ahead. 🙏
@@ -14,7 +19,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
         """
         📢 We reviewed this #{media_type} and found it to be Manipulated.
 
-        🎯You can read our assessment report here: <insert link>
+        🎯You can read our assessment report here: #{assessment_report_url}
 
         🧠  Please use your discretion in sharing this forward.
 
@@ -25,7 +30,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
         """
         📢 We reviewed this #{media_type} and found it to be Not Manipulated.
 
-        🎯You can read our assessment report here: <insert link>
+        🎯You can read our assessment report here: #{assessment_report_url}
 
         🧠  Please use your discretion in sharing this forward.
 
@@ -36,7 +41,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
         """
         📢 We reviewed this #{media_type} and found it to be Inconclusive
 
-        🎯You can read our assessment report here: <insert link>
+        🎯You can read our assessment report here:#{assessment_report_url}
 
         🧠  Please use your discretion in sharing this forward.
 
