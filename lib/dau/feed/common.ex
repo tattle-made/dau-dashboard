@@ -25,7 +25,8 @@ defmodule DAU.Feed.Common do
         :not_manipulated,
         :inconclusive,
         :not_ai_generated,
-        :out_of_scope
+        :out_of_scope,
+        :spam
       ]
 
     embeds_many :factcheck_articles, FactcheckArticle
@@ -56,6 +57,12 @@ defmodule DAU.Feed.Common do
   def annotation_changeset(common, attrs \\ %{}) do
     common
     |> cast(attrs, [:verification_note, :tags])
+  end
+
+  def user_response_label_changeset(common, attrs \\ %{}) do
+    common
+    |> cast(attrs, [:verification_status])
+    |> validate_required([:verification_status])
   end
 
   def take_up_changeset(common, attrs \\ %{}) do

@@ -198,7 +198,7 @@ defmodule DAUWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="space-y-8 bg-white">
         <%= render_slot(@inner_block, f) %>
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           <%= render_slot(action, f) %>
@@ -227,8 +227,8 @@ defmodule DAUWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-brand hover:bg-brand-50 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 ",
+        "border border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit",
         @class
       ]}
       {@rest}
@@ -643,7 +643,7 @@ defmodule DAUWeb.CoreComponents do
   def query(assigns) do
     ~H"""
     <div class="flex flex-row gap-1">
-      <div class="w-full">
+      <div class="w-24">
         <%= if @type=="image" do %>
           <img src={@url} />
         <% end %>

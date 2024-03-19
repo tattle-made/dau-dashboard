@@ -115,6 +115,12 @@ defmodule DAU.Feed do
     |> Repo.update()
   end
 
+  def add_user_response_label(%Common{} = common, attrs \\ %{}) do
+    common
+    |> Common.user_response_label_changeset(attrs)
+    |> Repo.update()
+  end
+
   def take_up(%Common{} = common, user_name) do
     common
     |> Common.take_up_changeset(%{taken_by: user_name})

@@ -2,10 +2,10 @@
   <%!-- <.back navigate={~p"/demo/query"}>Back to feed</.back> --%>
   <div class="w-full">
     <div class="flex flex-row gap-1">
-      <div class="w-1/2 border-2 border-green-50 overflow-hidden">
+      <div class="w-1/2 border border-green-50 overflow-hidden">
         <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
       </div>
-      <div class="w-1/2 border-2 h-fit border-green-50 overflow-hidden">
+      <div class="w-1/2 border h-fit border-green-50 overflow-hidden">
         <div class="flex flex-col wrap gap-4">
           <p class="p-2">
             <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
@@ -19,7 +19,7 @@
   </div>
 
   <div class="">
-    <div class="w-full p-4 rounded-md border-2 border-gray-200">
+    <div class="w-full p-4 rounded-md border border-gray-200">
       <div>
         <span class="text-lg">Verification Notes</span>
         <span class="text-xs text-gray-400">Added by DAU secratariat</span>
@@ -32,7 +32,7 @@
       <div class="flex flex-row flex-wrap gap-1">
         <%= unless is_nil(@query.tags) do %>
           <%= for tag <- @query.tags do %>
-            <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border-2 border-green-50 w-fit">
+            <div class="flex flex-row items-center gap-x-2 bg-green-200  p-1 rounded-md border border-green-50 w-fit">
               <p class="text-stone-800 text-xs"><%= tag %></p>
             </div>
           <% end %>
@@ -41,7 +41,7 @@
     </div>
   </div>
 
-  <div class="w-full p-4 rounded-md border-2 border-gray-200">
+  <div class="w-full p-4 rounded-md border border-gray-200">
     <h2 class="text-lg">DAU Verificaton SOP</h2>
     <%= if Permission.has_privilege?(@current_user, :edit, Common) do %>
       <form phx-submit="save-verification-sop" class="flex flex-col gap-1">
@@ -52,7 +52,7 @@
           rows="6"
         > <%= @query.verification_sop %> </textarea>
         <button
-          class="border-2 border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
+          class="border border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
           type="submit"
         >
           <p class="text-xs p-2">Save</p>
@@ -66,7 +66,7 @@
   </div>
   <!--
     <div class="w-full">
-    <div class="w-full lg:w-1/2 p-2 rounded-md border-2 border-green-100">
+    <div class="w-full lg:w-1/2 p-2 rounded-md border border-green-100">
         <p class="text-lg">Factcheck Articles</p>
         <div class=" flex flex-row items-center gap-x-2">
         <p class="text-stone-800 text-xs">kritika has linked an article</p>
@@ -88,7 +88,7 @@
     </div>
     -->
   <div class="flex flex-row gap-1">
-    <div class="w-full p-4 rounded-md border-2 border-gray-200">
+    <div class="w-full p-4 rounded-md border border-gray-200">
       <p class="text-lg">Resources</p>
       <div class="h-2" />
       <%!-- <div :for={{id, resource} <- @streams.resources} id={id} %>
@@ -124,7 +124,7 @@
   </div>
   <!--
     <div class="flex flex-row gap-1">
-    <div class="w-full p-4 rounded-md border-2 border-gray-200">
+    <div class="w-full p-4 rounded-md border border-gray-200">
         <p class="text-lg">Assessment Report</p>
         <textarea
         id="user-message"
@@ -135,12 +135,44 @@
     </div>
     </div>
     -->
+  <div :if={Permission.has_privilege?(@current_user, :edit, Common)}>
+    <div class="flex flex-row gap-1">
+      <div class="w-full p-4 rounded-md border border-gray-200">
+        <p class="text-lg">User Response Label</p>
+        <.simple_form for={@form_user_response_label} phx-submit="save-user-response-label">
+          <.input
+            type="select"
+            field={@form_user_response_label[:verification_status]}
+            options={[
+              {"", ""},
+              {"Public Status: Deepfake", "deepfake"},
+              {"Public Status: Manipulated", "manipulated"},
+              {"Public Status: Not Manipulated", "not_manipulated"},
+              {"Public Status: Inconclusive", "inconclusive"},
+              {"Not AI Generated", "not_ai_generated"},
+              {"Out of Scope", "out_of_scope"},
+              {"Spam", "spam"}
+            ]}
+          >
+          </.input>
+          <:actions>
+            <.button type="submit" phx-disable-with="Sending..." class="w-fit">
+              <p class="text-xs p-2">Apply Label</p>
+            </.button>
+          </:actions>
+        </.simple_form>
+      </div>
+    </div>
+  </div>
+
   <div class="flex flex-row gap-1">
-    <div class="w-full p-4 rounded-md border-2 border-gray-200">
+    <div class="w-full p-4 rounded-md border border-gray-200">
       <div class="w-fit flex flex-row gap-2 justify-center">
         <p class="text-lg">User Response</p>
-        <div class="mt-1 w-fit p-1 bg-teal-100 rounded-md">
-          <p class="text-xs">pending</p>
+        <div :if={!@query.verification_status}>
+          <div class="mt-1 w-fit p-1 bg-teal-100 rounded-md">
+            <p class="text-xs">pending</p>
+          </div>
         </div>
       </div>
 
@@ -154,7 +186,7 @@
               name="assessment-report"
             >  <%= get_default_user_response_message(@query) %> </textarea>
             <button
-              class="border-2 border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
+              class="border border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
               type="submit"
             >
               <p class="text-xs p-2">Send to User</p>

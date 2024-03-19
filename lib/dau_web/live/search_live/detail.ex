@@ -1,4 +1,5 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAUWeb.SearchLive.UserResponseTemplate
   alias DAU.Feed.Resource
   alias DAU.Accounts
   alias DAU.Feed.Common
@@ -10,12 +11,14 @@ defmodule DAUWeb.SearchLive.Detail do
   def mount(_params, session, socket) do
     user_token = session["user_token"]
     user = user_token && Accounts.get_user_by_session_token(user_token)
-
     query = ""
+
+    form_user_response_label = %Common{} |> Common.user_response_changeset() |> to_form()
 
     socket =
       socket
       |> assign(:query, query)
+      |> assign(:form_user_response_label, form_user_response_label)
       |> assign(:current_user, user)
       |> assign(:current_user_name, String.split(user.email, "@") |> hd)
 
@@ -24,10 +27,12 @@ defmodule DAUWeb.SearchLive.Detail do
 
   def handle_params(%{"id" => id}, _uri, socket) do
     query = Feed.get_feed_item_by_id(id)
+    form_user_response_label = query |> Common.user_response_changeset() |> to_form()
 
     socket =
       socket
       |> assign(:query, query)
+      |> assign(:form_user_response_label, form_user_response_label)
       |> stream(:resources, query.resources)
 
     {:noreply, socket}
@@ -82,29 +87,22 @@ defmodule DAUWeb.SearchLive.Detail do
     {:noreply, socket |> assign(:query, query)}
   end
 
+  def handle_event("save-user-response-label", %{"common" => common}, socket) do
+    query = socket.assigns.query
+
+    socket =
+      case Feed.add_user_response_label(query, common) do
+        {:ok, _} ->
+          socket |> put_flash(:info, "user response label applied")
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          socket |> assign(:form_user_response_label, to_form(changeset))
+      end
+
+    {:noreply, socket}
+  end
+
   defp get_default_user_response_message(%Common{} = query) do
-    case query.user_response do
-      nil ->
-        """
-        📢 We reviewed this #{query.media_type || ""} and found it to be #{query.verification_status || "<awaiting verification status>"}.
-
-        🎯You can read our assessment report here: <insert link>
-
-        Fact checkers have also shared the following:
-
-        1. <Fact checker name>: <Headline><link>
-
-        2. <Fact checker name>: <Headline><link>
-
-        3. <Fact checker name>: <Headline><link>
-
-        🧠  Please use your thoughtful discretion in sharing this forward.
-
-        Thank you reaching out to use. We hope you have a good day ahead. 🙏
-        """
-
-      _ ->
-        query.user_response
-    end
+    UserResponseTemplate.get_text(query.media_type, query.verification_status)
   end
 end
