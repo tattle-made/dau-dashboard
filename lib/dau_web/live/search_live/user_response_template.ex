@@ -4,6 +4,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
     media_type = Map.get(query, :media_type, "<unexpected media type>")
     assessment_report = Map.get(query, :assessment_report)
     assessment_report_url = Map.get(assessment_report, :url, "<pending addition>")
+    # assessment_report_url = "url"
 
     case user_response_label do
       :deepfake ->
