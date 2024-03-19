@@ -9,7 +9,7 @@
             :if={Map.get(@query, :verification_status)}
             class="text-green-800 w-fit h-fit text-xs"
           >
-            <%= "status : #{Map.get(@query, :verification_status, "")}" %>
+            <%= "user response label : #{Map.get(@query, :verification_status, "")}" %>
           </p>
           <div class="flex flex-col wrap gap-4">
             <p class="text-xs">
@@ -126,6 +126,34 @@
       </form>
     </div>
   </div>
+  <.section label="Fact Check Articles">
+    <div>
+      <form phx-submit="add-factcheck-article">
+        <div class="mt-4 flex flex-row gap-2">
+          <input
+            class="grow text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            type="text"
+            id="factcheck-article-url"
+            name="factcheck-article-url"
+          />
+          <button type="submit">
+            <.icon name="hero-paper-airplane" />
+          </button>
+        </div>
+      </form>
+    </div>
+    <div :if={@query.factcheck_articles}>
+      <div class="flex flex-row gap-2 flex-wrap mt-2">
+        <%= for factcheck_article <- @query.factcheck_articles do %>
+          <a href={factcheck_article.url} target="_blank">
+            <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">
+              view article
+            </span>
+          </a>
+        <% end %>
+      </div>
+    </div>
+  </.section>
   <.section label="Assessment Report">
     <div :if={
       Permission.has_privilege?(@current_user, :edit, Common) && !@query.assessment_report
@@ -169,28 +197,37 @@
     <div class="flex flex-row gap-1">
       <div class="w-full p-4 rounded-md border border-gray-200">
         <p class="text-lg">User Response Label</p>
-        <.simple_form for={@form_user_response_label} phx-submit="save-user-response-label">
-          <.input
-            type="select"
-            field={@form_user_response_label[:verification_status]}
-            options={[
-              {"", ""},
-              {"Public Status: Deepfake", "deepfake"},
-              {"Public Status: Manipulated", "manipulated"},
-              {"Public Status: Not Manipulated", "not_manipulated"},
-              {"Public Status: Inconclusive", "inconclusive"},
-              {"Not AI Generated", "not_ai_generated"},
-              {"Out of Scope", "out_of_scope"},
-              {"Spam", "spam"}
-            ]}
-          >
-          </.input>
-          <:actions>
-            <.button type="submit" phx-disable-with="Sending..." class="w-fit">
-              <p class="text-xs p-2">Apply Label</p>
-            </.button>
-          </:actions>
-        </.simple_form>
+        <div :if={!@query.verification_status}>
+          <.simple_form for={@form_user_response_label} phx-submit="save-user-response-label">
+            <.input
+              type="select"
+              field={@form_user_response_label[:verification_status]}
+              options={[
+                {"", ""},
+                {"Public Status: Deepfake", "deepfake"},
+                {"Public Status: Manipulated", "manipulated"},
+                {"Public Status: Not Manipulated", "not_manipulated"},
+                {"Public Status: Inconclusive", "inconclusive"},
+                {"Not AI Generated", "not_ai_generated"},
+                {"Out of Scope", "out_of_scope"},
+                {"Spam", "spam"}
+              ]}
+            >
+            </.input>
+            <:actions>
+              <.button type="submit" phx-disable-with="Sending..." class="w-fit">
+                <p class="text-xs p-2">Apply Label</p>
+              </.button>
+            </:actions>
+          </.simple_form>
+        </div>
+        <div :if={@query.verification_status}>
+          <div class="">
+            <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">
+              <%= @query.verification_status %>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
