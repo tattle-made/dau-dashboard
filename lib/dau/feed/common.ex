@@ -55,7 +55,7 @@ defmodule DAU.Feed.Common do
 
   def annotation_changeset(common, attrs \\ %{}) do
     common
-    |> cast(attrs, [:verification_note, :tags, :verification_status])
+    |> cast(attrs, [:verification_note, :tags])
   end
 
   def take_up_changeset(common, attrs \\ %{}) do

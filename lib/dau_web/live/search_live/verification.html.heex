@@ -35,22 +35,6 @@
         <% end %>
       </div>
 
-      <.input
-        type="select"
-        label="User Response Label"
-        field={@form[:verification_status]}
-        options={[
-          {"", ""},
-          {"Public Status: Deepfake", "deepfake"},
-          {"Public Status: Manipulated", "manipulated"},
-          {"Public Status: Not Manipulated", "not_manipulated"},
-          {"Public Status: Inconclusive", "inconclusive"},
-          {"Not AI Generated", "not_ai_generated"},
-          {"Out of Scope", "out_of_scope"}
-        ]}
-      >
-      </.input>
-
       <:actions>
         <.button type="submit" phx-disable-with="Sending..." class="w-fit">
           Save
