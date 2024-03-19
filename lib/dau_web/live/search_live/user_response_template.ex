@@ -2,9 +2,12 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
   def get_text(query) do
     user_response_label = Map.get(query, :verification_status)
     media_type = Map.get(query, :media_type, "<unexpected media type>")
-    assessment_report = Map.get(query, :assessment_report)
-    assessment_report_url = Map.get(assessment_report, :url, "<pending addition>")
-    # assessment_report_url = "url"
+
+    assessment_report_url =
+      case Map.get(query, :assessment_report) do
+        nil -> "<awaiting assement report>"
+        assessment_report -> Map.get(assessment_report, :url, "<pending addition>")
+      end
 
     case user_response_label do
       :deepfake ->
