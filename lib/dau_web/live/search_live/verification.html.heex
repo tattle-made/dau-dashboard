@@ -10,7 +10,7 @@
   <div class="w-1/2 border-2 rounded-md border-green-100 p-4">
     <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
   </div>
-  <div class="w-1/2 h-fit border-2 rounded-md border-green-100 pl-4 pr-4 pb-4 flex flex-col gap-2">
+  <div class="w-1/2 h-fit mt-4 border-2 rounded-md border-green-100 pl-4 pr-4 pb-4 flex flex-col gap-2">
     <.simple_form for={@form} phx-submit="save">
       <.input field={@form[:verification_note]} type="textarea" label="Verification Note" />
       <.input name="tags" field={@form[:tags]} label="Tags" type="hidden" />

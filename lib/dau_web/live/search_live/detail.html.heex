@@ -11,7 +11,7 @@
           >
             <%= "user response label : #{Map.get(@query, :verification_status, "")}" %>
           </p>
-          <div class="flex flex-col wrap gap-4">
+          <div :if={@query.taken_by} class="flex flex-col wrap gap-4">
             <p class="text-xs">
               <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
             </p>
@@ -24,13 +24,26 @@
 
   <div class="">
     <div class="w-full p-4 rounded-md border border-gray-200">
-      <div>
-        <span class="text-lg">Verification Notes</span>
-        <span class="text-xs text-gray-400">Added by DAU secratariat</span>
+      <div class="flex">
+        <span class="text-lg flex-grow">Verification Notes</span>
+        <div :if={Permission.has_privilege?(@current_user, :edit, Common)}>
+          <span>
+            <.link navigate={~p"/demo/query/verification/#{@query.id}"}>
+              <.icon name="hero-pencil-solid" class="w-4 h-4" />
+            </.link>
+          </span>
+        </div>
       </div>
       <div class="h-4" />
-      <div class="flex flex-row flex-wrap gap-2">
-        <span class="text-md"><%= @query.verification_note %></span>
+      <div :if={@query.verification_note}>
+        <div class="flex flex-row flex-wrap gap-2">
+          <span class="text-md"><%= @query.verification_note %></span>
+        </div>
+      </div>
+      <div :if={!@query.verification_note}>
+        <span class="text-rose-900 bg-rose-200 text-xs px-2 py-1 rounded-sm">
+          pending
+        </span>
       </div>
       <div class="h-2" />
       <div class="flex flex-row flex-wrap gap-1">
@@ -63,8 +76,15 @@
         </button>
       </form>
     <% else %>
-      <div class="mt-2 p-2 border border-gray-200">
-        <p><%= @query.verification_sop %></p>
+      <div if={@query.verification_sop}>
+        <div class="mt-2">
+          <p><%= @query.verification_sop %></p>
+        </div>
+      </div>
+      <div if={!@query.verification_sop}>
+        <span class="text-rose-900 bg-rose-200 text-xs px-2 py-1 rounded-sm">
+          pending
+        </span>
       </div>
     <% end %>
   </div>
@@ -118,6 +138,7 @@
             type="text"
             id="resource-text"
             name="resource-text"
+            placeholder="Share useful links and contact with the community"
           />
           <button type="submit">
             <.icon name="hero-paper-airplane" />
@@ -135,6 +156,7 @@
             type="text"
             id="factcheck-article-url"
             name="factcheck-article-url"
+            placeholder="Paste URL of a fact-check article"
           />
           <button type="submit">
             <.icon name="hero-paper-airplane" />
@@ -165,6 +187,7 @@
             type="text"
             id="assessment-report-url"
             name="assessment-report-url"
+            placeholder="URL of the assessment report on DAU microsite"
           />
           <button type="submit">
             <.icon name="hero-paper-airplane" />
@@ -178,6 +201,12 @@
           <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">view report</span>
         </a>
       </div>
+    </div>
+
+    <div if={!@query.assessment_report}>
+      <span class="text-rose-900 bg-rose-200 text-xs px-2 py-1 rounded-sm">
+        pending
+      </span>
     </div>
   </.section>
   <!--
