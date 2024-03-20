@@ -67,7 +67,7 @@
           id="verification_sop"
           name="verification_sop"
           rows="6"
-        > <%= @query.verification_sop %> </textarea>
+        > <%= sop_text(@query)  %> </textarea>
         <button
           class="border border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
           type="submit"
@@ -156,7 +156,7 @@
             type="text"
             id="factcheck-article-url"
             name="factcheck-article-url"
-            placeholder="Paste URL of a fact-check article"
+            placeholder="Add URL of a fact-check article"
           />
           <button type="submit">
             <.icon name="hero-paper-airplane" />
@@ -187,7 +187,7 @@
             type="text"
             id="assessment-report-url"
             name="assessment-report-url"
-            placeholder="URL of the assessment report on DAU microsite"
+            placeholder="Add URL of the assessment report on DAU microsite"
           />
           <button type="submit">
             <.icon name="hero-paper-airplane" />
@@ -196,14 +196,14 @@
       </form>
     </div>
     <div :if={@query.assessment_report}>
-      <div class="">
+      <div class="mt-2">
         <a href={@query.assessment_report.url} target="_blank">
           <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">view report</span>
         </a>
       </div>
     </div>
 
-    <div :if={!@query.assessment_report}>
+    <div :if={!@query.assessment_report} class="mt-2">
       <span class="text-rose-900 bg-rose-200 text-xs px-2 py-1 rounded-sm">
         pending
       </span>

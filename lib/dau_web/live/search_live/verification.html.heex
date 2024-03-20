@@ -10,11 +10,12 @@
   <div class="w-1/2 border-2 rounded-md border-green-100 p-4">
     <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
   </div>
-  <div class="w-1/2 h-fit mt-4 border-2 rounded-md border-green-100 pl-4 pr-4 pb-4 flex flex-col gap-2">
+  <div class="w-1/2 h-fit  border-2 rounded-md border-green-100 p-4  flex flex-col">
     <.simple_form for={@form} phx-submit="save">
       <.input field={@form[:verification_note]} type="textarea" label="Verification Note" />
-      <.input name="tags" field={@form[:tags]} label="Tags" type="hidden" />
-      <div id="tag-selector" phx-hook="TagSelector" class="border-2 border-gray-200 overflow-none">
+      <.input name="tags" field={@form[:tags]} type="hidden" />
+      <p class="block text-sm font-semibold leading-6 text-zinc-800">Tags</p>
+      <div id="tag-selector" phx-hook="TagSelector" class="border border-gray-200 overflow-none ">
         <input
           type="text"
           placeholder="Type to see suggestions like deepfake, cheapfake, synthetic media etc"
@@ -37,7 +38,7 @@
 
       <:actions>
         <.button type="submit" phx-disable-with="Sending..." class="w-fit">
-          Save
+          <p class="text-xs p-2">Save</p>
         </.button>
       </:actions>
     </.simple_form>

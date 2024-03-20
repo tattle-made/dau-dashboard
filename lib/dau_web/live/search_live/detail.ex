@@ -61,10 +61,11 @@ defmodule DAUWeb.SearchLive.Detail do
 
   def handle_event("save-verification-sop", verification_sop_params, socket) do
     case Feed.add_verification_sop(socket.assigns.query, verification_sop_params) do
-      {:ok, _} ->
+      {:ok, query} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Verification SOP saved")}
+         |> put_flash(:info, "Verification SOP saved")
+         |> assign(:query, query)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         IO.inspect(changeset)
@@ -122,8 +123,8 @@ defmodule DAUWeb.SearchLive.Detail do
 
     socket =
       case Feed.add_user_response_label(query, common) do
-        {:ok, _} ->
-          socket |> put_flash(:info, "user response label applied")
+        {:ok, query} ->
+          socket |> put_flash(:info, "user response label applied") |> assign(:query, query)
 
         {:error, %Ecto.Changeset{} = changeset} ->
           socket |> assign(:form_user_response_label, to_form(changeset))
@@ -134,5 +135,24 @@ defmodule DAUWeb.SearchLive.Detail do
 
   defp get_default_user_response_message(%Common{} = query) do
     UserResponseTemplate.get_text(query)
+  end
+
+  defp sop_text(%Common{} = query) do
+    default_text = """
+    Identify claim or hoax\n
+    Confirm it is fact checkable\n
+    Choose what you will focus on\n
+    Find the fact\n
+    Correct the record\n
+    """
+
+    sop =
+      case query.verification_sop do
+        nil -> default_text
+        _ -> query.verification_sop
+      end
+
+    # sop = Map.get(query, :verification_sop, default_text)
+    IO.inspect(sop)
   end
 end

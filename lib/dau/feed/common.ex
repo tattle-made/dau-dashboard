@@ -60,7 +60,6 @@ defmodule DAU.Feed.Common do
   def annotation_changeset(common, attrs \\ %{}) do
     common
     |> cast(attrs, [:verification_note, :tags])
-    |> set_default_verification_note_if_empty
   end
 
   def user_response_label_changeset(common, attrs \\ %{}) do
@@ -151,8 +150,8 @@ defmodule DAU.Feed.Common do
     Correct the record
     """
 
-    case get_field(changeset, :verification_note) do
-      nil -> put_change(changeset, :verification_note, default_text)
+    case get_field(changeset, :verification_sop) do
+      nil -> put_change(changeset, :verification_sop, default_text)
       _ -> changeset
     end
   end
