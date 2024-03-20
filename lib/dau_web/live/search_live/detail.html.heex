@@ -3,7 +3,7 @@
   <div class="w-full">
     <div class="flex flex-row gap-1">
       <div class="flex flex-row gap-2 w-1/2 overflow-hidden">
-        <.query type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
+        <.queryt type={to_string(@query.media_type)} url={@query.media_urls |> hd} />
         <div>
           <p
             :if={Map.get(@query, :verification_status)}

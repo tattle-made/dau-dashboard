@@ -608,7 +608,7 @@ defmodule DAUWeb.CoreComponents do
   def queryt(assigns) do
     ~H"""
     <div class="flex flex-row gap-1">
-      <div>
+      <div class="w-24 overflow-hidden">
         <%= if @type=="image" do %>
           <div class="w-48">
             <img src={@url} />
@@ -643,7 +643,7 @@ defmodule DAUWeb.CoreComponents do
   def query(assigns) do
     ~H"""
     <div class="flex flex-row gap-1">
-      <div class="w-24">
+      <div>
         <%= if @type=="image" do %>
           <img src={@url} />
         <% end %>
