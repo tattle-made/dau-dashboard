@@ -15,19 +15,24 @@ defmodule DAUWeb.IncomingMessageController do
 
   def create(conn, payload) do
     with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
-      {file_key, file_hash} =
-        FileManager.upload_to_s3(payload["path"])
+      if payload["media_type"] != "text" do
+        {file_key, file_hash} =
+          FileManager.upload_to_s3(payload["path"])
 
-      UserMessage.update_user_message_file_metadata(inbox_message, %{
-        file_key: file_key,
-        file_hash: file_hash
-      })
+        UserMessage.update_user_message_file_metadata(inbox_message, %{
+          file_key: file_key,
+          file_hash: file_hash
+        })
 
-      Feed.add_to_common_feed(%{
-        media_urls: [file_key],
-        media_type: inbox_message.media_type,
-        sender_number: inbox_message.sender_number
-      })
+        Feed.add_to_common_feed(%{
+          media_urls: [file_key],
+          media_type: inbox_message.media_type,
+          sender_number: inbox_message.sender_number,
+          language: inbox_message.user_language_input
+        })
+      else
+        IO.inspect("text rcvd")
+      end
 
       conn
       |> Plug.Conn.send_resp(200, [])

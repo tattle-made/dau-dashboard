@@ -3,10 +3,13 @@ defmodule DAU.UserMessage.Inbox do
   import Ecto.Changeset
 
   schema "user_message_inbox" do
-    field :sender_number, :string
-    field :sender_name, :string
     field :media_type, :string
     field :path, :string
+    field :sender_number, :string
+    field :sender_name, :string
+    field :user_language_input, Ecto.Enum, values: [:en, :hi, :ta, :te, :und]
+    field :user_input_text, :string
+    field :caption, :string
     field :file_key, :string
     field :file_hash, :string
 
@@ -17,17 +20,20 @@ defmodule DAU.UserMessage.Inbox do
   def changeset(incoming_message, attrs) do
     incoming_message
     |> cast(attrs, [
+      :media_type,
+      :path,
       :sender_number,
       :sender_name,
-      :media_type,
-      :path
+      :user_language_input,
+      :user_input_text,
+      :caption
     ])
     # |> validate_required([:source, :payload_id, :payload_type, :sender_phone, :sender_name, :context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype])
     |> validate_required([
-      :sender_number,
-      :sender_name,
       :media_type,
-      :path
+      :path,
+      :sender_number,
+      :sender_name
     ])
   end
 
