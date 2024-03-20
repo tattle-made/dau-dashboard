@@ -81,6 +81,7 @@ defmodule DAU.Feed do
         "manipulated" -> query |> where([c], c.verification_status == :manipulated)
         "not_manipulated" -> query |> where([c], c.verification_status == :not_manipulated)
         "inconclusive" -> query |> where([c], c.verification_status == :inconclusive)
+        "spam" -> query |> where([c], c.verification_status == :spam)
         nil -> query
         _ -> query
       end

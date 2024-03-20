@@ -154,7 +154,25 @@ defmodule DAUWeb.SearchLive.Index do
   end
 
   def handle_event("mark-as-spam", _value, socket) do
-    # selection = socket.assigns.selection
+    selection = socket.assigns.selection
+    search_params = socket.assigns.search_params
+
+    Enum.map(selection, fn id ->
+      with query <- Feed.get_feed_item_by_id(id),
+           {:ok, _} <- Feed.add_user_response_label(query, %{verification_status: :spam}) do
+        IO.puts("#{id} marked as spam")
+      else
+        _ -> IO.puts("error marking spam #{id}")
+      end
+    end)
+
+    queries = Feed.list_common_feed(search_params)
+
+    socket =
+      socket
+      |> assign(:queries, queries)
+      |> assign(:selection, [])
+
     {:noreply, socket}
   end
 
