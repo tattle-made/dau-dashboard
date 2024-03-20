@@ -258,11 +258,13 @@
           <.link navigate={~p"/demo/query/#{query.id}"}>
             <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">view media details</p>
           </.link>
-          <.link navigate={~p"/demo/query/verification/#{query.id}"}>
-            <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">
-              add verification notes
-            </p>
-          </.link>
+          <div :if={true}>
+            <.link navigate={~p"/demo/query/verification/#{query.id}"}>
+              <p class="p-1 bg-gray-100 text-zinc-800 rounded-md  w-fit">
+                add verification notes
+              </p>
+            </.link>
+          </div>
         </div>
       </:col>
     </.table>

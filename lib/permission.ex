@@ -60,7 +60,8 @@ defmodule Permission do
         |> MapSet.put({:edit, Common}),
       expert_factchecker:
         MapSet.new()
-        |> MapSet.put({:add, FactcheckArticle})
+        |> MapSet.put({:add, FactcheckArticle}),
+      user: MapSet.new()
     }
   end
 end
