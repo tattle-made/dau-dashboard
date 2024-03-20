@@ -3,6 +3,7 @@ defmodule DAU.Release do
   Used for executing DB release tasks when run in production without Mix
   installed.
   """
+  alias DAU.Accounts
   @app :dau
 
   def migrate do
@@ -16,6 +17,15 @@ defmodule DAU.Release do
   def rollback(repo, version) do
     load_app()
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
+  end
+
+  def register_user(email, password, role) do
+    load_app()
+
+    case Accounts.register_user(%{email: email, password: password, role: role}) do
+      {:ok, user} -> IO.inspect(user)
+      {:error, %Ecto.Changeset{} = changeset} -> IO.inspect(changeset)
+    end
   end
 
   defp repos do
