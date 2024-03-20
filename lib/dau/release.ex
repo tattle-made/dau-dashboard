@@ -22,9 +22,11 @@ defmodule DAU.Release do
   def register_user(email, password, role) do
     load_app()
 
-    case Accounts.register_user(%{email: email, password: password, role: role}) do
-      {:ok, user} -> IO.inspect(user)
-      {:error, %Ecto.Changeset{} = changeset} -> IO.inspect(changeset)
+    for _repo <- repos() do
+      case Accounts.register_user(%{email: email, password: password, role: role}) do
+        {:ok, user} -> IO.inspect(user)
+        {:error, %Ecto.Changeset{} = changeset} -> IO.inspect(changeset)
+      end
     end
   end
 
