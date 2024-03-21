@@ -2,6 +2,7 @@ defmodule DAUWeb.Router do
   use DAUWeb, :router
 
   import DAUWeb.UserAuth
+  import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -95,6 +96,12 @@ defmodule DAUWeb.Router do
     live "/query/components", SearchLive.Component
   end
 
+  scope "/admin", DAUWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_dashboard "/dashboard", metrics: DAUWeb.Telemetry
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:dau, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
@@ -107,7 +114,7 @@ defmodule DAUWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: DAUWeb.Telemetry
+      # live_dashboard "/dashboard", metrics: DAUWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end

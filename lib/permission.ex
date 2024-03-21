@@ -5,7 +5,7 @@ defmodule Permission do
   This module helps answer the question - Can user U perform an action A on resource R.
   U is `DAU.Accounts.User` with U.role ∈ {:expert_factchecker, :expert_forensic, :secratariat_manager,
   :secratariat_associate, :admin}. Refer `DAU.Accounts.User` for definition.
-  A ∈ {:create, :edit, :delete}
+  A ∈ {:view, :create, :edit, :delete}
   R is any module that implements the Ecto.Schema behaviour
 
   ## Background Information
