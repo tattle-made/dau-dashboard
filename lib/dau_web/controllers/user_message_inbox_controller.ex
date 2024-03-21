@@ -14,6 +14,8 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def create(conn, payload) do
+    IO.inspect(payload)
+
     with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
       if payload["media_type"] != "text" do
         {file_key, file_hash} =
