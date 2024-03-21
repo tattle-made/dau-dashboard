@@ -4,6 +4,7 @@ defmodule DAU.UserMessage do
   """
 
   import Ecto.Query, warn: false
+  alias DAU.UserMessage.Preference
   alias DAU.Repo
 
   alias DAU.UserMessage.Inbox
@@ -106,5 +107,17 @@ defmodule DAU.UserMessage do
   """
   def change_incoming_message(%Inbox{} = incoming_message, attrs \\ %{}) do
     Inbox.changeset(incoming_message, attrs)
+  end
+
+  def get_user_preference(payload) do
+    changeset =
+      %Preference{}
+      |> Preference.phone_changeset(payload)
+
+    if changeset.valid? == true do
+      Repo.get_by(Preference, sender_number: changeset.data.sender_number)
+    else
+      {:error}
+    end
   end
 end

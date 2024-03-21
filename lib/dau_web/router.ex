@@ -27,6 +27,8 @@ defmodule DAUWeb.Router do
     pipe_through :api
 
     resources "/message", IncomingMessageController, except: [:edit, :delete]
+    # post "/sender", UserMessagePreferenceController, :create
+    # post "/sender/preference", UserMessagePreferenceController, :fetch
   end
 
   # Other scopes may use custom stacks.
