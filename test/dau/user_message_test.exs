@@ -4,123 +4,62 @@ defmodule DAU.UserMessageTest do
   alias DAU.UserMessage
 
   describe "incoming_messages" do
-    alias DAU.UserMessage.IncomingMessage
+    alias DAU.UserMessage.Inbox
 
     import DAU.UserMessageFixtures
+  end
 
-    @invalid_attrs %{
-      source: nil,
-      payload_id: nil,
-      payload_type: nil,
-      sender_phone: nil,
-      sender_name: nil,
-      context_id: nil,
-      context_gsid: nil,
-      payload_text: nil,
-      payload_caption: nil,
-      payload_url: nil,
-      payload_contenttype: nil
-    }
+  describe "bsp payload" do
+    alias DAU.UserMessage.Payload
 
-    test "list_incoming_messages/0 returns all incoming_messages" do
-      incoming_message = incoming_message_fixture()
-      assert UserMessage.list_incoming_messages() == [incoming_message]
+    test "text payload" do
+      payload_string =
+        ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"text\",\"text\":\"Hi\",\"from\":\"918435249197\",\"timestamp\":1661866007,\"id\":\"ABEGkYQ1JJGXAhAWNMWTV3IX9H4cTFqpvSQO\"}}"
+
+      {:ok, payload} = Jason.decode(payload_string)
+      changeset = Payload.changeset(%Payload{}, payload)
+      assert changeset.valid? == true
+
+      {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
+      IO.inspect(data)
     end
 
-    test "get_incoming_message!/1 returns the incoming_message with given id" do
-      incoming_message = incoming_message_fixture()
-      assert UserMessage.get_incoming_message!(incoming_message.id) == incoming_message
+    test "video payload" do
+      payload_string =
+        ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"video\",\"text\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/9935c424-294c-4793-84d5-3096b91fcfc3\",\"url\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/9935c424-294c-4793-84d5-3096b91fcfc3\",\"from\":\"918435249197\",\"mediaId\":\"9935c424-294c-4793-84d5-3096b91fcfc3\",\"id\":\"ABEGkYQ1JJGXAhBAiWAFnVQL3lE3tNILE8Ga\"}}"
+
+      {:ok, payload} = Jason.decode(payload_string)
+      changeset = Payload.changeset(%Payload{}, payload)
+      assert changeset.valid? == true
     end
 
-    test "create_incoming_message/1 with valid data creates a incoming_message" do
-      valid_attrs = %{
-        source: "some source",
-        payload_id: "some payload_id",
-        payload_type: "some payload_type",
-        sender_phone: "some sender_phone",
-        sender_name: "some sender_name",
-        context_id: "some context_id",
-        context_gsid: "some context_gsid",
-        payload_text: "some payload_text",
-        payload_caption: "some payload_caption",
-        payload_url: "some payload_url",
-        payload_contenttype: "some payload_contenttype"
-      }
+    test "image payload" do
+      payload_string =
+        ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"image\",\"text\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/9cd22a56-3366-4ec5-8fa3-f1ca5c6dc0c4\",\"url\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/9cd22a56-3366-4ec5-8fa3-f1ca5c6dc0c4\",\"from\":\"918435249197\",\"mediaId\":\"9cd22a56-3366-4ec5-8fa3-f1ca5c6dc0c4\",\"id\":\"ABEGkYQ1JJGXAhAcocLgfCp1LCevvjdx5BMg\"}}"
 
-      assert {:ok, %IncomingMessage{} = incoming_message} =
-               UserMessage.create_incoming_message(valid_attrs)
+      {:ok, payload} = Jason.decode(payload_string)
+      changeset = Payload.changeset(%Payload{}, payload)
+      IO.inspect(changeset)
+      # assert changeset.valid? == true
+      # case Ecto.Changeset.apply_action(changeset, :insert) do
+      #   {:ok, data} -> IO.inspect(data)
+      #   {:error, error} -> IO.inspect(error)
+      # end
 
-      assert incoming_message.source == "some source"
-      assert incoming_message.payload_id == "some payload_id"
-      assert incoming_message.payload_type == "some payload_type"
-      assert incoming_message.sender_phone == "some sender_phone"
-      assert incoming_message.sender_name == "some sender_name"
-      assert incoming_message.context_id == "some context_id"
-      assert incoming_message.context_gsid == "some context_gsid"
-      assert incoming_message.payload_text == "some payload_text"
-      assert incoming_message.payload_caption == "some payload_caption"
-      assert incoming_message.payload_url == "some payload_url"
-      assert incoming_message.payload_contenttype == "some payload_contenttype"
+      {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
+
+      IO.inspect(data)
     end
 
-    test "create_incoming_message/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = UserMessage.create_incoming_message(@invalid_attrs)
-    end
+    test "audio payload" do
+      payload_string =
+        ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"audio\",\"text\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"url\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"from\":\"918435249197\",\"mediaId\":\"38b7a035-4870-401b-9064-598f05e48697\",\"id\":\"ABEGkYQ1JJGXAhDUQViMZ5kSKKaDsRmi9ZFm\"}}"
 
-    test "update_incoming_message/2 with valid data updates the incoming_message" do
-      incoming_message = incoming_message_fixture()
-
-      update_attrs = %{
-        source: "some updated source",
-        payload_id: "some updated payload_id",
-        payload_type: "some updated payload_type",
-        sender_phone: "some updated sender_phone",
-        sender_name: "some updated sender_name",
-        context_id: "some updated context_id",
-        context_gsid: "some updated context_gsid",
-        payload_text: "some updated payload_text",
-        payload_caption: "some updated payload_caption",
-        payload_url: "some updated payload_url",
-        payload_contenttype: "some updated payload_contenttype"
-      }
-
-      assert {:ok, %IncomingMessage{} = incoming_message} =
-               UserMessage.update_incoming_message(incoming_message, update_attrs)
-
-      assert incoming_message.source == "some updated source"
-      assert incoming_message.payload_id == "some updated payload_id"
-      assert incoming_message.payload_type == "some updated payload_type"
-      assert incoming_message.sender_phone == "some updated sender_phone"
-      assert incoming_message.sender_name == "some updated sender_name"
-      assert incoming_message.context_id == "some updated context_id"
-      assert incoming_message.context_gsid == "some updated context_gsid"
-      assert incoming_message.payload_text == "some updated payload_text"
-      assert incoming_message.payload_caption == "some updated payload_caption"
-      assert incoming_message.payload_url == "some updated payload_url"
-      assert incoming_message.payload_contenttype == "some updated payload_contenttype"
-    end
-
-    test "update_incoming_message/2 with invalid data returns error changeset" do
-      incoming_message = incoming_message_fixture()
-
-      assert {:error, %Ecto.Changeset{}} =
-               UserMessage.update_incoming_message(incoming_message, @invalid_attrs)
-
-      assert incoming_message == UserMessage.get_incoming_message!(incoming_message.id)
-    end
-
-    test "delete_incoming_message/1 deletes the incoming_message" do
-      incoming_message = incoming_message_fixture()
-      assert {:ok, %IncomingMessage{}} = UserMessage.delete_incoming_message(incoming_message)
-
-      assert_raise Ecto.NoResultsError, fn ->
-        UserMessage.get_incoming_message!(incoming_message.id)
-      end
-    end
-
-    test "change_incoming_message/1 returns a incoming_message changeset" do
-      incoming_message = incoming_message_fixture()
-      assert %Ecto.Changeset{} = UserMessage.change_incoming_message(incoming_message)
+      {:ok, payload} = Jason.decode(payload_string)
+      changeset = Payload.changeset(%Payload{}, payload)
+      assert changeset.valid? == true
+      {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
+      IO.inspect(data)
     end
   end
 end
