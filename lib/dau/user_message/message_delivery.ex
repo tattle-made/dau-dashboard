@@ -23,4 +23,25 @@ defmodule DAU.UserMessage.MessageDelivery do
 
     HTTPoison.post(gupshup_endpoint, body, headers)
   end
+
+  def send_template_to_bsp(phone_num, template_id, params) do
+    bsp_api_key = Application.get_env(:dau, :gupshup_api_key)
+    bsp_endpoint = Application.get_env(:dau, :gupshup_template_api_endpoint)
+    gupshup_dau_number = Application.get_env(:dau, :gupshup_dau_number)
+
+    headers = [
+      {"Content-Type", "application/x-www-form-urlencoded"},
+      {"Apikey", bsp_api_key}
+    ]
+
+    source = "source=#{gupshup_dau_number}"
+    destination = "destination=#{URI.encode_www_form(phone_num)}"
+    template = %{id: template_id, params: params}
+    template_string = Jason.encode(template) |> Tuple.to_list() |> Enum.at(1)
+    template = "template=#{URI.encode_www_form(template_string)}"
+
+    body = "#{source}&#{destination}&#{template}"
+
+    HTTPoison.post(bsp_endpoint, body, headers)
+  end
 end

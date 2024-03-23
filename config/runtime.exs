@@ -50,12 +50,33 @@ gupshup_api_endpoint =
     Gupshup api endpoint is missing. Please contact tattle admin
     """
 
+gupshup_template_api_endpoint =
+  System.get_env("GUPSHUP_TEMPLATE_API_ENDPOINT") ||
+    raise """
+    Gupshup api endpoint is missing. Please contact tattle admin
+    """
+
+gupshup_api_key =
+  System.get_env("GUPSHUP_API_KEY") ||
+    raise """
+    Gupshup api key is missing. Please contact tattle admin
+    """
+
+gupshup_dau_number =
+  System.get_env("GUPSHUP_DAU_NUMBER") ||
+    raise """
+    Gupshup dau number is missing. Please contact tattle admin
+    """
+
 config :dau,
   aws_access_key_id: aws_access_key_id,
   aws_secret_access_key: aws_secret_access_key,
   gupshup_userid: gupshup_userid,
   gupshup_password: gupshup_password,
-  gupshup_api_endpoint: gupshup_api_endpoint
+  gupshup_api_endpoint: gupshup_api_endpoint,
+  gupshup_template_api_endpoint: gupshup_template_api_endpoint,
+  gupshup_api_key: gupshup_api_key,
+  gupshup_dau_number: gupshup_dau_number
 
 config :ex_aws,
   region: "ap-south-1",
