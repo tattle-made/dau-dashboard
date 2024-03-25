@@ -3,28 +3,22 @@ defmodule DAU.UserMessageFixtures do
   This module defines test helpers for creating
   entities via the `DAU.UserMessage` context.
   """
+  alias DAU.UserMessage
 
   @doc """
-  Generate a incoming_message.
+  Generate a inbox message of a video.
   """
-  def incoming_message_fixture(attrs \\ %{}) do
-    {:ok, incoming_message} =
+  def inbox_video_message_fixture(attrs \\ %{}) do
+    {:ok, inbox_video_message} =
       attrs
       |> Enum.into(%{
-        context_gsid: "some context_gsid",
-        context_id: "some context_id",
-        payload_caption: "some payload_caption",
-        payload_contenttype: "some payload_contenttype",
-        payload_id: "some payload_id",
-        payload_text: "some payload_text",
-        payload_type: "some payload_type",
-        payload_url: "some payload_url",
-        sender_name: "some sender_name",
-        sender_phone: "some sender_phone",
-        source: "some source"
+        media_type: "video",
+        path: "https://file-url.com",
+        sender_number: "9999999999",
+        sender_name: "tattle_tester"
       })
-      |> DAU.UserMessage.create_incoming_message()
+      |> UserMessage.create_incoming_message()
 
-    incoming_message
+    inbox_video_message
   end
 end

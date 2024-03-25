@@ -239,7 +239,8 @@
                 {"Public Status: Inconclusive", "inconclusive"},
                 {"Not AI Generated", "not_ai_generated"},
                 {"Out of Scope", "out_of_scope"},
-                {"Spam", "spam"}
+                {"Spam", "spam"},
+                {"Unsupported language", "unsupported_language"}
               ]}
             >
             </.input>
@@ -272,7 +273,7 @@
         </div>
       </div>
 
-      <%= if Permission.has_privilege?(@current_user, :edit, Common) do %>
+      <%= if Permission.has_privilege?(@current_user, :edit, Common) && @query.user_response == nil do %>
         <div class="mt-1">
           <form phx-submit="send-to-user" class="flex flex-col gap-1">
             <textarea

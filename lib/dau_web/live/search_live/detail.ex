@@ -134,7 +134,11 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   defp get_default_user_response_message(%Common{} = query) do
-    UserResponseTemplate.get_text(query)
+    if query.user_response do
+      query.user_response
+    else
+      UserResponseTemplate.get_text(query)
+    end
   end
 
   defp sop_text(%Common{} = query) do

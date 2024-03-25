@@ -114,6 +114,23 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
         ➡️Quint WebQoof: +91-9643651818
         """
 
+      :unsupported_language ->
+        """
+        🫣 Oops! The media you shared is in a language we don't currently support. You can share it with other fact checkers on Whatsapp tiplines listed below:
+
+        ➡️Boom: +91-7700906588
+        ➡️Vishvas News: +91-9599299372
+        ➡️Factly: +91-9247052470
+        ➡️THIP: +91-8507885079
+        ➡️Newschecker: +91-9999499044
+        ➡️Fact Crescendo: +91-9049053770
+        ➡️India Today: +91-7370007000
+        ➡️Newsmobile:+91-1171279799
+        ➡️Quint WebQoof: +91-9540511818
+        ➡️Logically Facts: +91-8640070078
+        ➡️Newsmeter: +91-7482830440
+        """
+
       nil ->
         """
 

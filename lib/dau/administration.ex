@@ -46,6 +46,29 @@ defmodule DAU.Administration do
     |> Repo.all()
   end
 
-  def get_file_key_by_hash(hash) do
+  def get_file_key_by_hash(command \\ nil) do
+    command =
+      case command do
+        nil -> IO.gets("enter command (next, quit)\n")
+        _ -> command
+      end
+
+    case command do
+      ~c"next\n" -> get_file_key_by_hash(~c"next\n")
+      ~c"quit\n" -> "process exited"
+      ~c"\n" -> IO.puts("chose default next")
+      _ -> IO.puts("catchall")
+    end
+  end
+
+  def send_auto_generated_response_to_user(_query_id) do
+    # query = Repo.get(Common, qery_id)
+    # sender_number = query.sender_number
+    # language = query.language
+
+    # response = get_response_type()
+    # IO.puts("response")
+
+    # response =
   end
 end

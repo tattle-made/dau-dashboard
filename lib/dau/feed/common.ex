@@ -1,4 +1,5 @@
 defmodule DAU.Feed.Common do
+  alias DAU.UserMessage.Inbox
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
   alias DAU.Feed.Common
@@ -27,7 +28,8 @@ defmodule DAU.Feed.Common do
         :inconclusive,
         :not_ai_generated,
         :out_of_scope,
-        :spam
+        :spam,
+        :unsupported_language
       ]
 
     embeds_many :factcheck_articles, FactcheckArticle, on_replace: :delete

@@ -1,4 +1,5 @@
 defmodule DAU.UserMessage.Inbox do
+  alias DAU.Feed.Common
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -12,6 +13,7 @@ defmodule DAU.UserMessage.Inbox do
     field :caption, :string
     field :file_key, :string
     field :file_hash, :string
+    belongs_to :query, Common
 
     timestamps(type: :utc_datetime)
   end

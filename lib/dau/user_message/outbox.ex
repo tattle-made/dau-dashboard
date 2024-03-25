@@ -2,7 +2,7 @@ defmodule DAU.UserMessage.Outbox do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "user_message_inbox" do
+  schema "user_message_outbox" do
     field :context_id, :string
     field :context_gsid, :string
     field :payload_text, :string
