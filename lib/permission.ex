@@ -61,6 +61,7 @@ defmodule Permission do
       expert_factchecker:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle}),
+      expert_forensic: MapSet.new(),
       user: MapSet.new()
     }
   end
