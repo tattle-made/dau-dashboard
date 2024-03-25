@@ -52,7 +52,8 @@ defmodule DAU.Feed.Common do
       :exact_count,
       :sender_number,
       :user_response,
-      :verification_status
+      :verification_status,
+      :language
     ])
     |> validate_required([:media_urls, :media_type, :sender_number])
   end
