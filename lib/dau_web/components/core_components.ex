@@ -624,6 +624,13 @@ defmodule DAUWeb.CoreComponents do
             <source src={@url} />
           </audio>
         <% end %>
+        <%= if @type=="text" do %>
+          <a href={@url} target="_blank">
+            <p class="p-2  rounded-md bg-blue-100 overflow-clip">
+              <%= String.slice(@url, 0..20) %>
+            </p>
+          </a>
+        <% end %>
       </div>
     </div>
     """
@@ -661,6 +668,13 @@ defmodule DAUWeb.CoreComponents do
           <audio class="w-full" controls>
             <source src={@url} />
           </audio>
+        <% end %>
+        <%= if @type=="text" do %>
+          <a href={@url} target="_blank">
+            <p class="p-2  rounded-md bg-blue-100 overflow-clip">
+              <%= String.slice(@url, 0..20) %>
+            </p>
+          </a>
         <% end %>
       </div>
     </div>

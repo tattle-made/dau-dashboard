@@ -42,4 +42,10 @@ defmodule DAU.UserMessage.Inbox do
     |> cast(attrs, [:file_key, :file_hash])
     |> validate_required([:file_key, :file_hash])
   end
+
+  def text_file_hash_changeset(user_message_inbox, attrs) do
+    user_message_inbox
+    |> cast(attrs, [:file_hash])
+    |> validate_required([:file_hash])
+  end
 end

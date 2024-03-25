@@ -80,6 +80,12 @@ defmodule DAU.UserMessage do
     |> Repo.update()
   end
 
+  def update_user_message_text_file_hash(%Inbox{} = inbox_message, attrs) do
+    inbox_message
+    |> Inbox.text_file_hash_changeset(attrs)
+    |> Repo.update()
+  end
+
   @doc """
   Deletes a incoming_message.
 

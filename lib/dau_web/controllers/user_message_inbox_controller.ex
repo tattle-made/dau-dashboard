@@ -17,7 +17,9 @@ defmodule DAUWeb.IncomingMessageController do
     IO.inspect(payload)
 
     with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
-      if payload["media_type"] != "text" do
+      media_type = inbox_message.media_type
+
+      if Enum.member?(["video", "audio"], media_type) do
         {file_key, file_hash} =
           FileManager.upload_to_s3(payload["path"])
 
@@ -32,8 +34,22 @@ defmodule DAUWeb.IncomingMessageController do
           sender_number: inbox_message.sender_number,
           language: inbox_message.user_language_input
         })
-      else
-        IO.inspect("text rcvd")
+      end
+
+      if media_type == "text" do
+        UserMessage.update_user_message_text_file_hash(inbox_message, %{
+          file_hash:
+            :crypto.hash(:sha256, inbox_message.user_input_text)
+            |> Base.encode16()
+            |> String.downcase()
+        })
+
+        Feed.add_to_common_feed(%{
+          media_urls: [inbox_message.user_input_text],
+          media_type: inbox_message.media_type,
+          sender_number: inbox_message.sender_number,
+          language: inbox_message.user_language_input
+        })
       end
 
       conn

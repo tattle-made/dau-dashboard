@@ -96,17 +96,25 @@ defmodule DAU.Feed do
   end
 
   def get_feed_item_by_id(id) do
-    {_, query} =
-      Repo.get!(Common, id)
-      |> Map.get_and_update(:media_urls, fn urls ->
-        new_value =
-          Enum.map(urls, fn url ->
-            {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", url)
-            url
-          end)
+    query = Repo.get(Common, id)
+    media_type = query.media_type
 
-        {urls, new_value}
-      end)
+    query
+    |> Map.get_and_update(
+      :media_urls,
+      &{&1,
+       Enum.map(&1, fn key ->
+         url =
+           if media_type == :video || media_type == :audio do
+             {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+             url
+           else
+             key
+           end
+
+         url
+       end)}
+    )
 
     query
   end
@@ -134,6 +142,8 @@ defmodule DAU.Feed do
     |> Enum.map(fn query ->
       # {_, map} =
       #   Map.get_and_update(query, :media_urls, &{&1, Enum.map(&1, fn key -> "/temp/#{key}" end)})
+      IO.inspect(query.media_type)
+      media_type = query.media_type
 
       {_, map} =
         query
@@ -141,7 +151,14 @@ defmodule DAU.Feed do
           :media_urls,
           &{&1,
            Enum.map(&1, fn key ->
-             {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+             url =
+               if media_type == :video || media_type == :audio do
+                 {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+                 url
+               else
+                 key
+               end
+
              url
            end)}
         )
