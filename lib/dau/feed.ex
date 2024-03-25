@@ -156,12 +156,12 @@ defmodule DAU.Feed do
     message is a string and target is the user's phone number
   """
   def send_assessment_report_to_user(id, message) do
-    {:ok, common} =
+    {:ok, _common} =
       Repo.get!(Common, id)
       |> Common.user_response_changeset(%{user_response: message})
       |> Repo.update()
 
-    MessageDelivery.send_message_to_bsp(common.sender_number, message)
+    # MessageDelivery.send_message_to_bsp(common.sender_number, message)
   end
 
   def add_verification_sop(%Common{} = common, attrs) do
