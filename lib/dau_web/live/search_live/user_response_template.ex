@@ -129,6 +129,8 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
         ➡️Quint WebQoof: +91-9540511818
         ➡️Logically Facts: +91-8640070078
         ➡️Newsmeter: +91-7482830440
+
+        Thank you for reaching out to use. We hope you have a good day ahead. 🙏
         """
 
       nil ->
