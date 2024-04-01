@@ -15,6 +15,28 @@ defmodule DAU.Feed do
     |> Repo.insert()
   end
 
+  def add_message_to_query() do
+    # if the message is a duplicate of an existing query
+    # simply add the query_id to message and update
+    # inbox
+    # |> Ecto.Changeset.change()
+    # |> Ecto.Changeset.put_assoc(:query, common)
+    # |> Repo.update
+
+    # if the message is new, create a query with association
+    # of message
+    # common = %{media_urls: ["app_key/asdfasdf"], media_type: :video, sender_number: "919605048908"}
+    #
+    # Repo.get(Inbox, 1)
+    # |> Repo.preload(:query)
+    # |> Ecto.Changeset.cast(%{query: common}, [])
+    # |> Ecto.Changeset.cast_assoc(:query, with: &DAU.Feed.Common.changeset/2)
+    # |> Repo.update
+  end
+
+  def create_query_with_message(attrs \\ %{}) do
+  end
+
   # def list_common_feed(page_num \\ 1) do
   #   # search_params = %{
   #   #   taken_by: "areeba",
@@ -173,12 +195,12 @@ defmodule DAU.Feed do
     message is a string and target is the user's phone number
   """
   def send_assessment_report_to_user(id, message) do
-    {:ok, _common} =
+    {:ok, common} =
       Repo.get!(Common, id)
       |> Common.user_response_changeset(%{user_response: message})
       |> Repo.update()
 
-    # MessageDelivery.send_message_to_bsp(common.sender_number, message)
+    MessageDelivery.send_message_to_bsp(common.sender_number, message)
   end
 
   def add_verification_sop(%Common{} = common, attrs) do
