@@ -28,19 +28,22 @@ defmodule DAU.UserMessage.MessageDelivery do
     bsp_api_key = Application.get_env(:dau, :gupshup_api_key)
     bsp_endpoint = Application.get_env(:dau, :gupshup_template_api_endpoint)
     gupshup_dau_number = Application.get_env(:dau, :gupshup_dau_number)
+    gupshup_src_name = Application.get_env(:dau, :gupshup_src_name)
 
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded"},
-      {"Apikey", bsp_api_key}
+      {"apikey", bsp_api_key}
     ]
 
+    channel = "channel=whatsapp"
     source = "source=#{gupshup_dau_number}"
     destination = "destination=#{URI.encode_www_form(phone_num)}"
+    src_name = "src.name=#{gupshup_src_name}"
     template = %{id: template_id, params: params}
     template_string = Jason.encode(template) |> Tuple.to_list() |> Enum.at(1)
     template = "template=#{URI.encode_www_form(template_string)}"
 
-    body = "#{source}&#{destination}&#{template}"
+    body = "#{channel}&#{source}&#{destination}&#{src_name}&#{template}"
 
     HTTPoison.post(bsp_endpoint, body, headers)
   end

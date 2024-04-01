@@ -68,6 +68,12 @@ gupshup_dau_number =
     Gupshup dau number is missing. Please contact tattle admin
     """
 
+gupshup_src_name =
+  System.get_env("GUPSHUP_SRC_NAME") ||
+    raise """
+      Gupshup src name is missing. Please contact tattle admin
+    """
+
 config :dau,
   aws_access_key_id: aws_access_key_id,
   aws_secret_access_key: aws_secret_access_key,
@@ -76,7 +82,8 @@ config :dau,
   gupshup_api_endpoint: gupshup_api_endpoint,
   gupshup_template_api_endpoint: gupshup_template_api_endpoint,
   gupshup_api_key: gupshup_api_key,
-  gupshup_dau_number: gupshup_dau_number
+  gupshup_dau_number: gupshup_dau_number,
+  gupshup_src_name: gupshup_src_name
 
 config :ex_aws,
   region: "ap-south-1",
