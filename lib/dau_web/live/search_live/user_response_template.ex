@@ -12,7 +12,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
     case user_response_label do
       :deepfake ->
         """
-        📢 We reviewed this #{media_type} and found it to be Deepfake.
+        📢 We reviewed this audio/video and found it to be Deepfake.
         🎯 You can read our assessment report here: #{assessment_report_url}
         🧠  Please use your discretion in sharing this information.
 
@@ -21,7 +21,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
 
       :manipulated ->
         """
-        📢 We reviewed this #{media_type} and found it to be Manipulated.
+        📢 We reviewed this audio/video and found it to be Manipulated.
 
         🎯You can read our assessment report here: #{assessment_report_url}
 
@@ -32,7 +32,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
 
       :not_manipulated ->
         """
-        📢 We reviewed this #{media_type} and found it to be Not Manipulated.
+        📢 We reviewed this audio/video and found it to be Not Manipulated.
 
         🎯You can read our assessment report here: #{assessment_report_url}
 
@@ -43,7 +43,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
 
       :inconclusive ->
         """
-        📢 We reviewed this #{media_type} and found it to be Inconclusive
+        📢 We reviewed this audio/video and found it to be Inconclusive
 
         🎯You can read our assessment report here:#{assessment_report_url}
 
@@ -54,7 +54,7 @@ defmodule DAUWeb.SearchLive.UserResponseTemplate do
 
       :not_ai_generated ->
         """
-        📢 We didn't find any element of AI generation in this #{media_type}. But lack of AI-manipulation does not mean that the information provided in the message is accurate.
+        📢 We didn't find any element of AI generation in this audio/video. But lack of AI-manipulation does not mean that the information provided in the message is accurate.
 
         Please reach out to any of these fact checkers below to verify the things being shown and spoken about in the message.
 
