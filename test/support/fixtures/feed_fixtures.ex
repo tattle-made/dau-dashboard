@@ -41,4 +41,17 @@ defmodule DAU.FeedFixtures do
     |> Enum.map(&Feed.add_to_common_feed/1)
     |> Enum.map(&elem(&1, 1))
   end
+
+  def common() do
+    {:ok, common} =
+      %{
+        media_urls: ["temp/audio-01.wav"],
+        media_type: "audio",
+        sender_number: "0000000000",
+        language: "en"
+      }
+      |> Feed.add_to_common_feed()
+
+    common
+  end
 end

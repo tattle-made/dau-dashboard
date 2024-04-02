@@ -1,10 +1,13 @@
 defmodule DAU.FeedTest do
+  alias DAU.Feed.Common
   alias DAU.UserMessageFixtures
   alias DAU.UserMessage.Inbox
   alias DAU.FeedFixtures
   use DAU.DataCase
 
   alias DAU.Feed
+  import Ecto.Query
+  alias DAU.Repo
 
   describe "inbox and common" do
     test "add message from inbox to common" do
@@ -15,14 +18,46 @@ defmodule DAU.FeedTest do
 
     test "inbox and common association" do
       inbox_video_message = UserMessageFixtures.inbox_video_message_fixture()
-      full_message = Repo.preload(inbox_video_message, :query)
+      common = FeedFixtures.common()
+
+      # inbox_message =
+      #   Inbox
+      #   |> Repo.get!(inbox_video_message.id)
+      #   |> Repo.preload(:query)
+
+      {:ok, inbox_message} =
+        inbox_video_message
+        |> Repo.preload(:query)
+        |> change()
+        |> put_assoc(:query, common)
+        |> Repo.update()
+
+      IO.inspect(common)
+      IO.inspect(inbox_message)
+
+      assert inbox_message.query.id == common.id
+      assert inbox_message.query.media_urls == common.media_urls
+
+      common =
+        Common
+        |> Repo.get(common.id)
+        |> Repo.preload(:messages)
+
+      IO.inspect(common)
+      # data =
+      #   inbox_message
+      #   |> put_assoc(:query, common)
+      #   |> Repo.update()
 
       # inbox =
       #   Inbox
       #   |> Inbox.changeset(%{})
       #   |> Repo.insert()
 
-      IO.inspect(full_message)
+      # IO.inspect(inbox_message)
+      # IO.inspect(common)
+      # IO.inspect(test)
+      # IO.inspect(data)
     end
   end
 end
