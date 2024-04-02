@@ -37,6 +37,8 @@ defmodule DAU.Feed.Common do
 
     embeds_one :assessment_report, AssessmentReport, on_replace: :delete
 
+    has_many :messages, Inbox, foreign_key: :id
+
     timestamps(type: :utc_datetime)
   end
 

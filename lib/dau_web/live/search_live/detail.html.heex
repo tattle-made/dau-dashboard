@@ -16,6 +16,11 @@
               <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
             </p>
           </div>
+          <div :if={@query.language} class="flex flex-col wrap gap-4">
+            <p class="text-xs">
+              <%= "user language : #{Map.get(@query, :language, "")}" %>
+            </p>
+          </div>
         </div>
       </div>
       <div class="w-1/2 border h-fit border-green-50 overflow-hidden"></div>

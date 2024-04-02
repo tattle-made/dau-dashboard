@@ -14,11 +14,9 @@ defmodule DAU.UserMessage.Inbox do
     field :file_key, :string
     field :file_hash, :string
     belongs_to :query, Common
-
     timestamps(type: :utc_datetime)
   end
 
-  @doc false
   def changeset(incoming_message, attrs) do
     incoming_message
     |> cast(attrs, [
@@ -36,6 +34,30 @@ defmodule DAU.UserMessage.Inbox do
       :path,
       :sender_number,
       :sender_name
+    ])
+  end
+
+  def changeset_with_date(incoming_message, attrs) do
+    incoming_message
+    |> cast(attrs, [
+      :media_type,
+      :path,
+      :sender_number,
+      :sender_name,
+      :user_language_input,
+      :user_input_text,
+      :caption,
+      :inserted_at,
+      :updated_at
+    ])
+    # |> validate_required([:source, :payload_id, :payload_type, :sender_phone, :sender_name, :context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype])
+    |> validate_required([
+      :media_type,
+      :path,
+      :sender_number,
+      :sender_name,
+      :inserted_at,
+      :updated_at
     ])
   end
 

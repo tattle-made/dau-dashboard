@@ -57,6 +57,16 @@ defmodule DAU.UserMessage do
   end
 
   @doc """
+  This is used only for testing purposes. It allows us to set inserted_at and updated_at timestamps.
+  This is NOT to be used in application code.
+  """
+  def create_incoming_message_with_date(attrs \\ %{}) do
+    %Inbox{}
+    |> Inbox.changeset_with_date(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
   Updates a incoming_message.
 
   ## Examples
