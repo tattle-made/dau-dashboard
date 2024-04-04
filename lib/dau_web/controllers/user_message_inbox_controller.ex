@@ -61,4 +61,9 @@ defmodule DAUWeb.IncomingMessageController do
     incoming_message = UserMessage.get_incoming_message!(id)
     render(conn, :show, incoming_message: incoming_message)
   end
+
+  def receive_delivery_report(conn, payload) do
+    IO.inspect(payload)
+    conn |> Plug.Conn.send_resp(200, [])
+  end
 end

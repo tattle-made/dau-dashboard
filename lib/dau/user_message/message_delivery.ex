@@ -24,27 +24,26 @@ defmodule DAU.UserMessage.MessageDelivery do
     HTTPoison.post(gupshup_endpoint, body, headers)
   end
 
-  def send_template_to_bsp(phone_num, template_id, params) do
-    bsp_api_key = Application.get_env(:dau, :gupshup_api_key)
-    bsp_endpoint = Application.get_env(:dau, :gupshup_template_api_endpoint)
-    gupshup_dau_number = Application.get_env(:dau, :gupshup_dau_number)
-    gupshup_src_name = Application.get_env(:dau, :gupshup_src_name)
-
+  def send_template_to_bsp(phone_number, message) do
     headers = [
-      {"Content-Type", "application/x-www-form-urlencoded"},
-      {"apikey", bsp_api_key}
+      {"Content-Type", "application/x-www-form-urlencoded"}
     ]
 
-    channel = "channel=whatsapp"
-    source = "source=#{gupshup_dau_number}"
-    destination = "destination=#{URI.encode_www_form(phone_num)}"
-    src_name = "src.name=#{gupshup_src_name}"
-    template = %{id: template_id, params: params}
-    template_string = Jason.encode(template) |> Tuple.to_list() |> Enum.at(1)
-    template = "template=#{URI.encode_www_form(template_string)}"
+    bsp_user_id = Application.get_env(:dau, :gupshup_hsm_userid)
+    bsp_password = Application.get_env(:dau, :gupshup_hsm_password)
+    gupshup_api_endpoint = Application.get_env(:dau, :gupshup_api_endpoint)
 
-    body = "#{channel}&#{source}&#{destination}&#{src_name}&#{template}"
+    params = %{
+      userid: bsp_user_id,
+      password: bsp_password,
+      send_to: phone_number,
+      v: "1.1",
+      format: "json",
+      msg_type: "TEXT",
+      method: "SENDMESSAGE",
+      msg: message
+    }
 
-    HTTPoison.post(bsp_endpoint, body, headers)
+    HTTPoison.post(gupshup_api_endpoint, "", headers, params: params)
   end
 end

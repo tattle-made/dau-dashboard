@@ -32,6 +32,12 @@ aws_secret_access_key =
     aws secret acess key are missing. Please contact tattle admin.
     """
 
+gupshup_api_endpoint =
+  System.get_env("GUPSHUP_ENDPOINT") ||
+    raise """
+    Gupshup api endpoint is missing. Please contact tattle admin
+    """
+
 gupshup_userid =
   System.get_env("GUPSHUP_USERID") ||
     raise """
@@ -44,46 +50,26 @@ gupshup_password =
     Gupshup password is missing. Please contact tattle admin
     """
 
-gupshup_api_endpoint =
-  System.get_env("GUPSHUP_ENDPOINT") ||
+gupshup_hsm_userid =
+  System.get_env("GUPSHUP_HSM_USERID") ||
     raise """
-    Gupshup api endpoint is missing. Please contact tattle admin
+    Gupshup HSM user id is missing. Please contact tattle admin.
     """
 
-gupshup_template_api_endpoint =
-  System.get_env("GUPSHUP_TEMPLATE_API_ENDPOINT") ||
+gupshup_hsm_password =
+  System.get_env("GUPSHUP_HSM_PASSWORD") ||
     raise """
-    Gupshup api endpoint is missing. Please contact tattle admin
-    """
-
-gupshup_api_key =
-  System.get_env("GUPSHUP_API_KEY") ||
-    raise """
-    Gupshup api key is missing. Please contact tattle admin
-    """
-
-gupshup_dau_number =
-  System.get_env("GUPSHUP_DAU_NUMBER") ||
-    raise """
-    Gupshup dau number is missing. Please contact tattle admin
-    """
-
-gupshup_src_name =
-  System.get_env("GUPSHUP_SRC_NAME") ||
-    raise """
-      Gupshup src name is missing. Please contact tattle admin
+    Gupshup HSM password is missing. Please contact tattle admin
     """
 
 config :dau,
   aws_access_key_id: aws_access_key_id,
   aws_secret_access_key: aws_secret_access_key,
+  gupshup_api_endpoint: gupshup_api_endpoint,
   gupshup_userid: gupshup_userid,
   gupshup_password: gupshup_password,
-  gupshup_api_endpoint: gupshup_api_endpoint,
-  gupshup_template_api_endpoint: gupshup_template_api_endpoint,
-  gupshup_api_key: gupshup_api_key,
-  gupshup_dau_number: gupshup_dau_number,
-  gupshup_src_name: gupshup_src_name
+  gupshup_hsm_userid: gupshup_hsm_userid,
+  gupshup_hsm_password: gupshup_hsm_password
 
 config :ex_aws,
   region: "ap-south-1",
