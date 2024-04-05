@@ -23,18 +23,20 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import Uploaders from "./uploaders";
 import "flowbite/dist/flowbite.phoenix.js";
-import SimpleGreeting from './tags'
+import SimpleGreeting from "./tags";
 import AudioPlayer from "./audio-player";
 import RichTextEditor from "./rich-text-editor";
 import TagSelector from "./tag-selector";
 import TagSelectorHook from "./tag-selector-hooks";
+import DateSelectorHook from "./date-selector-hook";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 
-let Hooks = {}
-Hooks.TagSelector = TagSelectorHook
+let Hooks = {};
+Hooks.TagSelector = TagSelectorHook;
+Hooks.DateSelector = DateSelectorHook;
 
 let liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
@@ -47,13 +49,10 @@ topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
-window.customElements.define("simple-greeting", SimpleGreeting)
-
+window.customElements.define("simple-greeting", SimpleGreeting);
 
 // connect if there are any LiveViews on the page
 liveSocket.connect();
-
-
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
@@ -61,21 +60,20 @@ liveSocket.connect();
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
 
-
 class TestElement extends HTMLElement {
   constructor() {
     super();
 
-    const shadow = this.attachShadow({ mode: 'open' })
-    const text = document.createElement('span')
+    const shadow = this.attachShadow({ mode: "open" });
+    const text = document.createElement("span");
     text.innerHTML = `
       <div>
         
       </div>
-    `
-    shadow.appendChild(text)
+    `;
+    shadow.appendChild(text);
   }
 }
-window.customElements.define("my-test", TestElement)
-window.customElements.define("dau-audio-player", AudioPlayer)
-window.customElements.define("dau-rich-text-editor", RichTextEditor)
+window.customElements.define("my-test", TestElement);
+window.customElements.define("dau-audio-player", AudioPlayer);
+window.customElements.define("dau-rich-text-editor", RichTextEditor);

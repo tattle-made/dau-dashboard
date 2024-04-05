@@ -77,7 +77,7 @@ defmodule DAU.Feed do
       feed: :common
     }
   """
-  def list_common_feed(%SearchParams{} = search_params) do
+  def list_common_feed(search_params) do
     order = %{
       "newest" => [desc: :inserted_at],
       "oldest" => [asc: :inserted_at]
@@ -86,10 +86,10 @@ defmodule DAU.Feed do
     query =
       Common
       |> limit(25)
-      |> offset(25 * (^search_params.page_num - 1))
+      |> offset(25 * (^Keyword.get(search_params, :page_num) - 1))
 
     query =
-      case search_params.media_type do
+      case Keyword.get(search_params, :media_type) do
         "video" -> query |> where([c], c.media_type == :video)
         "audio" -> query |> where([c], c.media_type == :audio)
         "all" -> query
@@ -98,7 +98,7 @@ defmodule DAU.Feed do
       end
 
     query =
-      case search_params.verification_status do
+      case Keyword.get(search_params, :verification_status) do
         "deepfake" -> query |> where([c], c.verification_status == :deepfake)
         "manipulated" -> query |> where([c], c.verification_status == :manipulated)
         "not_manipulated" -> query |> where([c], c.verification_status == :not_manipulated)
@@ -110,11 +110,38 @@ defmodule DAU.Feed do
 
     query =
       query
-      |> order_by(^order[search_params.sort])
+      |> order_by(^order[Keyword.get(search_params, :sort)])
 
-    query = query |> Repo.all() |> bulk_add_s3_media_url
+    query =
+      case Keyword.get(search_params, :from) do
+        nil ->
+          query
 
-    query
+        _ ->
+          date_string = Keyword.get(search_params, :from)
+          {:ok, from_date} = NaiveDateTime.from_iso8601(date_string <> " 00:00:00")
+
+          query
+          |> where([c], c.inserted_at >= ^from_date)
+      end
+
+    query =
+      case Keyword.get(search_params, :to) do
+        nil ->
+          query
+
+        _ ->
+          date_string = Keyword.get(search_params, :to)
+          {:ok, to_date} = NaiveDateTime.from_iso8601(date_string <> " 23:59:59")
+
+          query
+          |> where([c], c.inserted_at <= ^to_date)
+      end
+
+    count = query |> Repo.aggregate(:count, :id)
+    results = query |> Repo.all() |> bulk_add_s3_media_url
+
+    {count, results}
   end
 
   def get_feed_item_by_id(id) do
@@ -164,7 +191,7 @@ defmodule DAU.Feed do
     |> Enum.map(fn query ->
       # {_, map} =
       #   Map.get_and_update(query, :media_urls, &{&1, Enum.map(&1, fn key -> "/temp/#{key}" end)})
-      IO.inspect(query.media_type)
+      # IO.inspect(query.media_type)
       media_type = query.media_type
 
       {_, map} =
