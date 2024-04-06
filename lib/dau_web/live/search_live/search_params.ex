@@ -1,24 +1,30 @@
 defmodule DAUWeb.SearchLive.SearchParams do
-  @allowed_filter_params ["media_type", "page_num", "sort", "verification_status", "from", "to"]
-  # @default_filter_params [
-  #   page_num: 1,
-  #   sort: "newest",
-  #   media_type: "all",
-  #   verification_status: nil
-  # ]
+  @allowed_filter_keys ["media_type", "page_num", "sort", "verification_status", "from", "to"]
+  @default_filter_params [
+    page_num: "1",
+    sort: "newest",
+    media_type: "all",
+    from: "2024-03-01",
+    to: Date.to_iso8601(Date.utc_today()),
+    verification_status: "all"
+  ]
 
   def params_to_keyword_list(params) do
-    Enum.filter(params, fn {key, _value} -> Enum.member?(@allowed_filter_params, key) end)
-    |> Enum.filter(fn x -> elem(x, 1) != nil and elem(x, 1) != "" end)
-    |> Enum.map(fn {key, value} -> {String.to_existing_atom(key), value} end)
-    |> Keyword.update(:page_num, 1, fn value -> String.to_integer(value) end)
+    {:ok, params} =
+      Enum.filter(params, fn {key, _value} -> Enum.member?(@allowed_filter_keys, key) end)
+      |> Enum.filter(fn {_key, value} -> value || false end)
+      |> Enum.map(fn {key, value} -> {String.to_existing_atom(key), value} end)
+      |> Keyword.validate(@default_filter_params)
+
+    params |> convert_page_num_to_integer
+  end
+
+  defp convert_page_num_to_integer(params_keyword) do
+    Keyword.update(params_keyword, :page_num, 1, fn value -> String.to_integer(value) end)
   end
 
   def update_search_param(search_params, value) do
     case value["name"] do
-      "feed" ->
-        Map.put(search_params, :feed, String.to_atom(value["value"]))
-
       "sort-by" ->
         Keyword.put(search_params, :sort, value["value"])
 

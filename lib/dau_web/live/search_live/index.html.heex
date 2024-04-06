@@ -104,6 +104,13 @@
           label="Spam"
           selection={Keyword.get(@search_params, :verification_status)}
         />
+        <.input_radio
+          name="verification_status"
+          id="all"
+          value="all"
+          label="All"
+          selection={Keyword.get(@search_params, :verification_status)}
+        />
       </div>
     </div>
     <!--
