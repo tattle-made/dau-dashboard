@@ -15,7 +15,7 @@ defmodule RabbitMQConsumerHashWorker do
     {:ok, chan}
   end
 
-  defp consume(_channel, _tag, _redelivered, payload) do
-    IO.inspect(payload)
-  end
+  # defp consume(_channel, _tag, _redelivered, payload) do
+  #   IO.inspect(payload)
+  # end
 end

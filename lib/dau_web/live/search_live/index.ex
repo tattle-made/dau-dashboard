@@ -114,7 +114,7 @@ defmodule DAUWeb.SearchLive.Index do
   def handle_event("take-up", _value, socket) do
     selection = socket.assigns.selection
     user = socket.assigns.current_user_name
-    page_num = socket.assigns.page_num
+    _page_num = socket.assigns.page_num
     search_params = socket.assigns.search_params
 
     Enum.map(selection, fn id ->

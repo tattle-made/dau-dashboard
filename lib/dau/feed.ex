@@ -3,7 +3,6 @@ defmodule DAU.Feed do
   alias DAU.Feed.FactcheckArticle
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
-  alias DAUWeb.SearchLive.SearchParams
   alias DAU.UserMessage.MessageDelivery
   alias DAU.Repo
 
@@ -34,7 +33,7 @@ defmodule DAU.Feed do
     # |> Repo.update
   end
 
-  def create_query_with_message(attrs \\ %{}) do
+  def create_query_with_message(_attrs \\ %{}) do
   end
 
   # def list_common_feed(page_num \\ 1) do

@@ -7,7 +7,8 @@ defmodule DAUWeb.UserRegistrationLive do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header class="text-center">
+      User registrations are disabled. Please contact admin@tattle.co.in for access.
+      <%!-- <.header class="text-center">
         Register for an account
         <:subtitle>
           Already registered?
@@ -37,7 +38,7 @@ defmodule DAUWeb.UserRegistrationLive do
         <:actions>
           <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
         </:actions>
-      </.simple_form>
+      </.simple_form> --%>
     </div>
     """
   end

@@ -1,11 +1,11 @@
 defmodule DAUWeb.SearchLive.SearchParams do
   @allowed_filter_params ["media_type", "page_num", "sort", "verification_status", "from", "to"]
-  @default_filter_params [
-    page_num: 1,
-    sort: "newest",
-    media_type: "all",
-    verification_status: nil
-  ]
+  # @default_filter_params [
+  #   page_num: 1,
+  #   sort: "newest",
+  #   media_type: "all",
+  #   verification_status: nil
+  # ]
 
   def params_to_keyword_list(params) do
     Enum.filter(params, fn {key, _value} -> Enum.member?(@allowed_filter_params, key) end)

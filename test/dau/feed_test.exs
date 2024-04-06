@@ -1,17 +1,13 @@
 defmodule DAU.FeedTest do
-  alias DAU.Feed.Common
-  alias DAU.UserMessageFixtures
-  alias DAU.UserMessage.Inbox
-  alias DAU.FeedFixtures
   use DAU.DataCase
 
-  alias DAU.Feed
-  import Ecto.Query
+  alias DAU.UserMessageFixtures
+  alias DAU.FeedFixtures
   alias DAU.Repo
 
   describe "inbox and common" do
     test "add message from inbox to common" do
-      feed_of_five = FeedFixtures.common_feed_of_five()
+      _feed_of_five = FeedFixtures.common_feed_of_five()
 
       # IO.inspect(feed_of_five)
     end
@@ -32,18 +28,18 @@ defmodule DAU.FeedTest do
         |> put_assoc(:query, common)
         |> Repo.update()
 
-      IO.inspect(common)
-      IO.inspect(inbox_message)
+      # IO.inspect(common)
+      # IO.inspect(inbox_message)
 
       assert inbox_message.query.id == common.id
       assert inbox_message.query.media_urls == common.media_urls
 
-      common =
-        Common
-        |> Repo.get(common.id)
-        |> Repo.preload(:messages)
+      # common =
+      #   Common
+      #   |> Repo.get(common.id)
+      #   |> Repo.preload(:messages)
 
-      IO.inspect(common)
+      # IO.inspect(common)
       # data =
       #   inbox_message
       #   |> put_assoc(:query, common)

@@ -45,9 +45,7 @@ defmodule Permission do
     end
   end
 
-  @doc """
-  todo : macro to simplify specifying privileges
-  """
+  # todo : macro to simplify specifying privileges
   defp privileges() do
     %{
       secratariat_manager:

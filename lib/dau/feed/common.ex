@@ -1,5 +1,4 @@
 defmodule DAU.Feed.Common do
-  alias DAU.UserMessage.Inbox
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
   alias DAU.Feed.Common
@@ -144,18 +143,18 @@ defmodule DAU.Feed.Common do
     |> cast_embed(:factcheck_articles, required: true)
   end
 
-  defp set_default_verification_note_if_empty(changeset) do
-    default_text = """
-    Identify claim or hoax
-    Confirm it is fact checkable
-    Choose what you will focus on
-    Find the fact
-    Correct the record
-    """
+  # defp set_default_verification_note_if_empty(changeset) do
+  #   default_text = """
+  #   Identify claim or hoax
+  #   Confirm it is fact checkable
+  #   Choose what you will focus on
+  #   Find the fact
+  #   Correct the record
+  #   """
 
-    case get_field(changeset, :verification_sop) do
-      nil -> put_change(changeset, :verification_sop, default_text)
-      _ -> changeset
-    end
-  end
+  #   case get_field(changeset, :verification_sop) do
+  #     nil -> put_change(changeset, :verification_sop, default_text)
+  #     _ -> changeset
+  #   end
+  # end
 end

@@ -2,7 +2,6 @@ defmodule DAUWeb.Router do
   use DAUWeb, :router
 
   import DAUWeb.UserAuth
-  import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -98,6 +97,7 @@ defmodule DAUWeb.Router do
   end
 
   scope "/admin", DAUWeb do
+    import Phoenix.LiveDashboard.Router
     pipe_through [:browser, :require_authenticated_user]
 
     live_dashboard "/dashboard", metrics: DAUWeb.Telemetry
@@ -110,7 +110,6 @@ defmodule DAUWeb.Router do
     # If your application does not have an admins-only section yet,
     # you can use Plug.BasicAuth to set up some basic authentication
     # as long as you are also using SSL (which you should anyway).
-    import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
       pipe_through :browser
@@ -127,7 +126,7 @@ defmodule DAUWeb.Router do
 
     live_session :redirect_if_user_is_authenticated,
       on_mount: [{DAUWeb.UserAuth, :redirect_if_user_is_authenticated}] do
-      # live "/users/register", UserRegistrationLive, :new
+      live "/users/register", UserRegistrationLive, :new
       live "/users/log_in", UserLoginLive, :new
       live "/users/reset_password", UserForgotPasswordLive, :new
       live "/users/reset_password/:token", UserResetPasswordLive, :edit

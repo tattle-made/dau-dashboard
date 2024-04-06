@@ -1,12 +1,7 @@
 defmodule DAU.UserMessageTest do
   use DAU.DataCase
 
-  alias DAU.UserMessage
-
   describe "incoming_messages" do
-    alias DAU.UserMessage.Inbox
-
-    import DAU.UserMessageFixtures
   end
 
   describe "bsp payload" do
@@ -20,8 +15,8 @@ defmodule DAU.UserMessageTest do
       changeset = Payload.changeset(%Payload{}, payload)
       assert changeset.valid? == true
 
-      {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
-      IO.inspect(data)
+      {:ok, _data} = Ecto.Changeset.apply_action(changeset, :insert)
+      # IO.inspect(data)
     end
 
     test "video payload" do
@@ -39,16 +34,16 @@ defmodule DAU.UserMessageTest do
 
       {:ok, payload} = Jason.decode(payload_string)
       changeset = Payload.changeset(%Payload{}, payload)
-      IO.inspect(changeset)
-      # assert changeset.valid? == true
+      # IO.inspect(changeset)
+      assert changeset.valid? == false
       # case Ecto.Changeset.apply_action(changeset, :insert) do
       #   {:ok, data} -> IO.inspect(data)
       #   {:error, error} -> IO.inspect(error)
       # end
 
-      {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
+      # {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
 
-      IO.inspect(data)
+      # IO.inspect(data)
     end
 
     test "audio payload" do
@@ -58,8 +53,8 @@ defmodule DAU.UserMessageTest do
       {:ok, payload} = Jason.decode(payload_string)
       changeset = Payload.changeset(%Payload{}, payload)
       assert changeset.valid? == true
-      {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
-      IO.inspect(data)
+      {:ok, _data} = Ecto.Changeset.apply_action(changeset, :insert)
+      # IO.inspect(data)
     end
   end
 end

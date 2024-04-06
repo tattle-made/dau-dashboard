@@ -1,7 +1,7 @@
 defmodule DAUWeb.SearchLive.UserResponseTemplate do
   def get_text(query) do
     user_response_label = Map.get(query, :verification_status)
-    media_type = Map.get(query, :media_type, "<unexpected media type>")
+    _media_type = Map.get(query, :media_type, "<unexpected media type>")
 
     assessment_report_url =
       case Map.get(query, :assessment_report) do
