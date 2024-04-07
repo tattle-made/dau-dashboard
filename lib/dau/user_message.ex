@@ -4,6 +4,7 @@ defmodule DAU.UserMessage do
   """
 
   import Ecto.Query, warn: false
+  alias DAU.UserMessage.Query
   alias DAU.UserMessage.Preference
   alias DAU.Repo
 
@@ -64,6 +65,15 @@ defmodule DAU.UserMessage do
     %Inbox{}
     |> Inbox.changeset_with_date(attrs)
     |> Repo.insert()
+  end
+
+  def add_user_message_to_query(%Inbox{} = inbox_message, %Query{} = query) do
+    inbox_message
+    |> Inbox.add_query_changeset(query)
+    |> Repo.update()
+  end
+
+  def add_user_message_to_query(%Inbox{} = _inbox_message, _query_id) do
   end
 
   @doc """

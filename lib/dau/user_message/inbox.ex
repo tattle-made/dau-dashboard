@@ -1,4 +1,5 @@
 defmodule DAU.UserMessage.Inbox do
+  alias DAU.UserMessage.Query
   alias DAU.Feed.Common
   use Ecto.Schema
   import Ecto.Changeset
@@ -13,7 +14,7 @@ defmodule DAU.UserMessage.Inbox do
     field :caption, :string
     field :file_key, :string
     field :file_hash, :string
-    belongs_to :query, Common
+    belongs_to :query, Query
     timestamps(type: :utc_datetime)
   end
 
@@ -71,5 +72,11 @@ defmodule DAU.UserMessage.Inbox do
     user_message_inbox
     |> cast(attrs, [:file_hash])
     |> validate_required([:file_hash])
+  end
+
+  def add_query_changeset(user_message_inbox, query) do
+    user_message_inbox
+    |> change()
+    |> put_assoc(:query, query, with: &Query.changeset/2)
   end
 end

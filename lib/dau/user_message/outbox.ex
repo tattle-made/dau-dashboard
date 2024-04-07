@@ -1,39 +1,61 @@
 defmodule DAU.UserMessage.Outbox do
+  alias DAU.Accounts.User
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, Ecto.UUID, autogenerate: true}
+
   schema "user_message_outbox" do
-    field :context_id, :string
-    field :context_gsid, :string
-    field :payload_text, :string
-    field :payload_caption, :string
-    field :payload_url, :string
-    field :payload_contenttype, :string
-    field :payload_type, :string
+    field :sender_number, :string
+    field :sender_name, :string
+    field :reply_type, :string
+    field :type, :string
+    field :text, :string
+    field :message, :map
+    belongs_to :approved_by, User
+    field :approval_status, Ecto.Enum, values: [:ok, :pause, :cancel]
+    field :delivery_status, Ecto.Enum, values: [:success, :failure, :error]
+    field :deliver_report, :string
 
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(outgoing_message, attrs) do
-    outgoing_message
+  def new_changeset(outbox_message, attrs) do
+    outbox_message
     |> cast(attrs, [
-      :context_id,
-      :context_gsid,
-      :payload_text,
-      :payload_caption,
-      :payload_url,
-      :payload_contenttype,
-      :payload_type
+      :sender_number,
+      :sender_name,
+      :reply_type,
+      :type,
+      :text,
+      :message
     ])
     |> validate_required([
-      :context_id,
-      :context_gsid,
-      :payload_text,
-      :payload_caption,
-      :payload_url,
-      :payload_contenttype,
-      :payload_type
+      :sender_number,
+      :sender_name,
+      :reply_type,
+      :type
     ])
+    |> validate_by_type
+  end
+
+  # def approval_changeset(outbox_message, attrs) do
+  #   outbox_message
+  #   |> cast(attrs, [:approval_status])
+  #   |> cast_assoc(:approved_by, )
+  # end
+
+  defp validate_by_type(changeset) do
+    case get_field(changeset, :type) do
+      :text ->
+        changeset |> validate_required([:text])
+
+      :map ->
+        changeset |> validate_required([:message])
+
+      _ ->
+        changeset |> add_error(:type, "Unsupported message type")
+    end
   end
 end

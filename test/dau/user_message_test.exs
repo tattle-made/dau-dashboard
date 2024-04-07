@@ -28,21 +28,23 @@ defmodule DAU.UserMessageTest do
       assert changeset.valid? == true
     end
 
-    test "image payload" do
+    test "image payload is not supported" do
       payload_string =
         ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"image\",\"text\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/9cd22a56-3366-4ec5-8fa3-f1ca5c6dc0c4\",\"url\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/9cd22a56-3366-4ec5-8fa3-f1ca5c6dc0c4\",\"from\":\"918435249197\",\"mediaId\":\"9cd22a56-3366-4ec5-8fa3-f1ca5c6dc0c4\",\"id\":\"ABEGkYQ1JJGXAhAcocLgfCp1LCevvjdx5BMg\"}}"
 
       {:ok, payload} = Jason.decode(payload_string)
       changeset = Payload.changeset(%Payload{}, payload)
+
       # IO.inspect(changeset)
       assert changeset.valid? == false
+
+      # assert changeset.valid? == true
       # case Ecto.Changeset.apply_action(changeset, :insert) do
       #   {:ok, data} -> IO.inspect(data)
       #   {:error, error} -> IO.inspect(error)
       # end
 
       # {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
-
       # IO.inspect(data)
     end
 
@@ -53,8 +55,49 @@ defmodule DAU.UserMessageTest do
       {:ok, payload} = Jason.decode(payload_string)
       changeset = Payload.changeset(%Payload{}, payload)
       assert changeset.valid? == true
+
       {:ok, _data} = Ecto.Changeset.apply_action(changeset, :insert)
       # IO.inspect(data)
+    end
+  end
+
+  describe "user message lifecycle" do
+    setup do
+      feed = FeedFixtures.common_feed_of_five()
+
+      {:ok, datetime} = DateTime.new(~D[2024-03-25], ~T[08:30:00.000], "Etc/UTC")
+
+      user_message =
+        UserMessageFixtures.inbox_message_with_date_fixture(%{
+          inserted_at: datetime,
+          updated_at: datetime
+        })
+
+      %{common_feed: feed, user_message: user_message}
+    end
+
+    test "add inbox message to new query", context do
+      user_message = context.user_message
+
+      # get user_message
+
+      # IO.inspect(user_message)
+      # UserMessage.add_inbox_message_to_query(user_message)
+    end
+
+    test "add inbox message to existing query", context do
+    end
+
+    test "add user query to common feed" do
+    end
+
+    test "add dau response to outbox" do
+    end
+
+    test "approve message in outbox" do
+    end
+
+    test "send message to user " do
     end
   end
 end
