@@ -1,4 +1,5 @@
 defmodule DAU.UserMessageTest do
+  alias DAU.Accounts.User
   use DAU.DataCase
 
   describe "incoming_messages" do
