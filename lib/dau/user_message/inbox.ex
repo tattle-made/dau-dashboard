@@ -1,6 +1,5 @@
 defmodule DAU.UserMessage.Inbox do
   alias DAU.UserMessage.Query
-  alias DAU.Feed.Common
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -45,20 +45,19 @@ defmodule DAU.UserMessageTest do
       #   {:error, error} -> IO.inspect(error)
       # end
 
+      {:error, _changeset} = Ecto.Changeset.apply_action(changeset, :insert)
+
       # {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
-      # IO.inspect(data)
-    end
+      test "audio payload" do
+        payload_string =
+          ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"audio\",\"text\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"url\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"from\":\"918435249197\",\"mediaId\":\"38b7a035-4870-401b-9064-598f05e48697\",\"id\":\"ABEGkYQ1JJGXAhDUQViMZ5kSKKaDsRmi9ZFm\"}}"
 
-    test "audio payload" do
-      payload_string =
-        ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"audio\",\"text\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"url\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"from\":\"918435249197\",\"mediaId\":\"38b7a035-4870-401b-9064-598f05e48697\",\"id\":\"ABEGkYQ1JJGXAhDUQViMZ5kSKKaDsRmi9ZFm\"}}"
+        {:ok, payload} = Jason.decode(payload_string)
+        changeset = Payload.changeset(%Payload{}, payload)
+        assert changeset.valid? == true
 
-      {:ok, payload} = Jason.decode(payload_string)
-      changeset = Payload.changeset(%Payload{}, payload)
-      assert changeset.valid? == true
-
-      {:ok, _data} = Ecto.Changeset.apply_action(changeset, :insert)
-      # IO.inspect(data)
+        {:ok, _data} = Ecto.Changeset.apply_action(changeset, :insert)
+      end
     end
   end
 

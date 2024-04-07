@@ -1,20 +1,21 @@
 defmodule DAUWeb.SearchLive.SearchParams do
   @allowed_filter_keys ["media_type", "page_num", "sort", "verification_status", "from", "to"]
-  @default_filter_params [
-    page_num: "1",
-    sort: "newest",
-    media_type: "all",
-    from: "2024-03-01",
-    to: Date.to_iso8601(Date.utc_today()),
-    verification_status: "all"
-  ]
 
   def params_to_keyword_list(params) do
+    default_filter_params = [
+      page_num: "1",
+      sort: "newest",
+      media_type: "all",
+      from: "2024-03-01",
+      to: Date.to_iso8601(Date.utc_today()),
+      verification_status: "all"
+    ]
+
     {:ok, params} =
       Enum.filter(params, fn {key, _value} -> Enum.member?(@allowed_filter_keys, key) end)
       |> Enum.filter(fn {_key, value} -> value || false end)
       |> Enum.map(fn {key, value} -> {String.to_existing_atom(key), value} end)
-      |> Keyword.validate(@default_filter_params)
+      |> Keyword.validate(default_filter_params)
 
     params |> convert_page_num_to_integer
   end

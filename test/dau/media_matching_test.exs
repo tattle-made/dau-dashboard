@@ -11,7 +11,7 @@ defmodule DAU.MediaMatchingTest do
       {:ok, datetime} = DateTime.new(~D[2024-03-25], ~T[08:30:00.000], "Etc/UTC")
 
       # create user messages (new rows in user_message_inbox)
-      message =
+      _message =
         UserMessageFixtures.inbox_message_with_date_fixture(%{
           inserted_at: datetime,
           updated_at: datetime
@@ -20,12 +20,12 @@ defmodule DAU.MediaMatchingTest do
       # use UserMessage context to add this message to a query
       # use UserMessage context to add this query to common_feed
 
-      IO.inspect(message)
+      # IO.inspect(message)
 
       %{feed: feed}
     end
 
-    test "add message to outbox for query within 24 hours", context do
+    test "add message to outbox for query within 24 hours" do
       # IO.inspect(context.feed)
       # input : feed_common_id, user_message_inbox_id
       # get user_message_inbox inserted_at

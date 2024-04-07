@@ -4,7 +4,6 @@ defmodule DAU.UserMessageFixtures do
   entities via the `DAU.UserMessage` context.
   """
   alias DAU.UserMessage
-  alias DAU.Repo
 
   @doc """
   Generate a inbox message of a video.

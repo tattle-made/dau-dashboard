@@ -1,4 +1,5 @@
 defmodule DAU.Feed.Common do
+  alias DAU.UserMessage.Inbox
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
   alias DAU.Feed.Common
