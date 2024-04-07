@@ -1,6 +1,8 @@
 defmodule DAU.UserMessageTest do
-  alias DAU.Accounts.User
   use DAU.DataCase
+
+  alias DAU.UserMessageFixtures
+  alias DAU.FeedFixtures
 
   describe "incoming_messages" do
   end
@@ -46,18 +48,18 @@ defmodule DAU.UserMessageTest do
       # end
 
       {:error, _changeset} = Ecto.Changeset.apply_action(changeset, :insert)
+    end
 
-      # {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
-      test "audio payload" do
-        payload_string =
-          ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"audio\",\"text\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"url\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"from\":\"918435249197\",\"mediaId\":\"38b7a035-4870-401b-9064-598f05e48697\",\"id\":\"ABEGkYQ1JJGXAhDUQViMZ5kSKKaDsRmi9ZFm\"}}"
+    # {:ok, data} = Ecto.Changeset.apply_action(changeset, :insert)
+    test "audio payload" do
+      payload_string =
+        ~c"{\"botname\":\"productcatloguatbot\",\"channel\":\"whatsapp\",\"contextobj\":{\"channeltype\":\"whatsapp\",\"contexttype\":\"p2p\",\"contextid\":\"whatsapp:918435249197\",\"botname\":\"productcatloguatbot\",\"senderName\":\"Nishu\",\"sourceId\":\"14156493636\"},\"senderobj\":{\"channeltype\":\"whatsapp\",\"channelid\":\"whatsapp:918435249197\",\"display\":\"Nishu\"},\"messageobj\":{\"type\":\"audio\",\"text\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"url\":\"https://filemanager.gupshup.io/fm/wamedia/productcatloguatbot/38b7a035-4870-401b-9064-598f05e48697\",\"from\":\"918435249197\",\"mediaId\":\"38b7a035-4870-401b-9064-598f05e48697\",\"id\":\"ABEGkYQ1JJGXAhDUQViMZ5kSKKaDsRmi9ZFm\"}}"
 
-        {:ok, payload} = Jason.decode(payload_string)
-        changeset = Payload.changeset(%Payload{}, payload)
-        assert changeset.valid? == true
+      {:ok, payload} = Jason.decode(payload_string)
+      changeset = Payload.changeset(%Payload{}, payload)
+      assert changeset.valid? == true
 
-        {:ok, _data} = Ecto.Changeset.apply_action(changeset, :insert)
-      end
+      {:ok, _data} = Ecto.Changeset.apply_action(changeset, :insert)
     end
   end
 
@@ -77,7 +79,7 @@ defmodule DAU.UserMessageTest do
     end
 
     test "add inbox message to new query", context do
-      user_message = context.user_message
+      _user_message = context.user_message
 
       # get user_message
 
@@ -85,7 +87,7 @@ defmodule DAU.UserMessageTest do
       # UserMessage.add_inbox_message_to_query(user_message)
     end
 
-    test "add inbox message to existing query", context do
+    test "add inbox message to existing query", _context do
     end
 
     test "add user query to common feed" do
