@@ -17,6 +17,7 @@ defmodule DAU.UserMessage.Outbox do
     field :approval_status, Ecto.Enum, values: [:ok, :pause, :cancel]
     field :delivery_status, Ecto.Enum, values: [:success, :failure, :error]
     field :delivery_report, :string
+    field :e_id, :string
 
     timestamps(type: :utc_datetime)
   end
@@ -30,7 +31,8 @@ defmodule DAU.UserMessage.Outbox do
       :reply_type,
       :type,
       :text,
-      :message
+      :message,
+      :e_id
     ])
     |> validate_required([
       :sender_number,

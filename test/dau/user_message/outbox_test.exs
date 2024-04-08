@@ -5,7 +5,7 @@ defmodule DAU.UserMessage.OutboxTest do
 
   test "long delivery reports should be sliced before insert" do
     outbox = OutboxFixtures.outbox_fixture()
-    IO.inspect(outbox)
+    # IO.inspect(outbox)
 
     long_report =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lobortis laoreet malesuada. Ut eu fermentum diam, eu feugiat tellus. Nulla facilisi. Quisque bibendum consectetur lorem, sed tempor augue posuere at. Nam vestibulum condimentum vulputate. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse commodo metus purus, nec interdum lacus luctus et. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ut finibus elit. Sed a egestas nibh. Aenean malesuada dolor justo, id luctus nibh hendrerit quis. Curabitur vel libero mauris. Nunc id risus eleifend, vehicula ex sit amet, rutrum augue. "
@@ -17,6 +17,6 @@ defmodule DAU.UserMessage.OutboxTest do
       })
 
     assert String.length(changeset.changes.delivery_report) == 255
-    IO.inspect(changeset)
+    # IO.inspect(changeset)
   end
 end
