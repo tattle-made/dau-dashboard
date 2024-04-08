@@ -6,8 +6,8 @@ defmodule DAU.UserMessage.Query do
 
   schema "user_message_query" do
     field :status, Ecto.Enum, values: [:pending, :error, :done, :corrupt]
-    belongs_to :feed_common_id, Common
-    belongs_to :user_message_outbox_id, Outbox
+    belongs_to :feed_common, Common
+    belongs_to :user_message_outbox, Outbox
 
     timestamps(type: :utc_datetime)
   end
@@ -16,6 +16,5 @@ defmodule DAU.UserMessage.Query do
   def changeset(query, attrs) do
     query
     |> cast(attrs, [:status])
-    |> validate_required([:status])
   end
 end

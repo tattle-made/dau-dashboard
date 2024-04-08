@@ -51,6 +51,20 @@ defmodule DAU.FeedFixtures do
         language: "en"
       }
       |> Feed.add_to_common_feed()
+  end
+
+  def common_with_date(attrs \\ %{}) do
+    {:ok, common} =
+      attrs
+      |> Enum.into(%{
+        media_urls: ["temp/audio-01.wav"],
+        media_type: "audio",
+        sender_number: "0000000000",
+        language: "en",
+        inserted_at: DateTime.now("Etc/UTC") |> elem(1),
+        updated_at: DateTime.now("Etc/UTC") |> elem(1)
+      })
+      |> Feed.add_to_common_feed()
 
     common
   end

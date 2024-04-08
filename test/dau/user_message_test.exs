@@ -92,8 +92,38 @@ defmodule DAU.UserMessageTest do
 
     test "add user query to common feed" do
     end
+  end
 
-    test "add dau response to outbox" do
+  describe "outbox" do
+    setup do
+      # create message in inbox
+      # {:ok, datetime_1} = DateTime.new(~D[2024-03-25], ~T[08:30:00.000], "Etc/UTC")
+      # {:ok, datetime_2} = DateTime.new(~D[2024-03-20], ~T[08:30:00.000], "Etc/UTC")
+      # {:ok, datetime_3} = DateTime.new(~D[2024-03-17], ~T[08:30:00.000], "Etc/UTC")
+
+      # user_messages = [
+      #   %{inserted_at: datetime_1, updated_at: datetime_1, content_id: "UNIQUE_CONTENT_ID"},
+      #   %{inserted_at: datetime_2, updated_at: datetime_2, content_id: "UNIQUE_CONTENT_ID"},
+      #   %{inserted_at: datetime_3, updated_at: datetime_3, content_id: "UNIQUE_CONTENT_ID"}
+      # ]
+
+      # user_messages =
+      #   user_messages
+      #   |> Enum.map(&UserMessageFixtures.inbox_message_with_date_fixture(&1))
+
+      # create query
+      # create common
+      {:ok, datetime_1} = DateTime.new(~D[2024-03-25], ~T[08:30:00.000], "Etc/UTC")
+
+      common_feed_item_a =
+        FeedFixtures.common_with_date(%{inserted_at: datetime_1, updated_at: datetime_1})
+
+      %{common_feed: common_feed_item_a}
+    end
+
+    test "add dau response to outbox", context do
+      # IO.inspect(context.common_feed)
+      # UserMessage.add_to_outbox
     end
 
     test "approve message in outbox" do

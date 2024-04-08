@@ -4,6 +4,7 @@ defmodule DAU.UserMessage do
   """
 
   import Ecto.Query, warn: false
+  alias DAU.Feed.Common
   alias DAU.UserMessage.Query
   alias DAU.UserMessage.Preference
   alias DAU.Repo
@@ -145,5 +146,8 @@ defmodule DAU.UserMessage do
     else
       {:error}
     end
+  end
+
+  def add_to_outbox(%Common{} = common) do
   end
 end

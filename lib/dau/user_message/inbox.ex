@@ -13,6 +13,7 @@ defmodule DAU.UserMessage.Inbox do
     field :caption, :string
     field :file_key, :string
     field :file_hash, :string
+    field :content_id, :string
     belongs_to :query, Query
     timestamps(type: :utc_datetime)
   end
@@ -48,7 +49,8 @@ defmodule DAU.UserMessage.Inbox do
       :user_input_text,
       :caption,
       :inserted_at,
-      :updated_at
+      :updated_at,
+      :content_id
     ])
     # |> validate_required([:source, :payload_id, :payload_type, :sender_phone, :sender_name, :context_id, :context_gsid, :payload_text, :payload_caption, :payload_url, :payload_contenttype])
     |> validate_required([

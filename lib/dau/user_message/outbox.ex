@@ -8,7 +8,7 @@ defmodule DAU.UserMessage.Outbox do
   schema "user_message_outbox" do
     field :sender_number, :string
     field :sender_name, :string
-    field :reply_type, :string
+    field :reply_type, Ecto.Enum, values: [:customer_reply, :notification]
     field :type, :string
     field :text, :string
     field :message, :map
