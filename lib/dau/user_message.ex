@@ -5,12 +5,12 @@ defmodule DAU.UserMessage do
 
   import Ecto.Query, warn: false
   alias DAU.UserMessage.Outbox
+  alias DAU.Accounts.User
   alias DAU.UserMessage
   alias DAU.Feed.Common
   alias DAU.UserMessage.Query
   alias DAU.UserMessage.Preference
   alias DAU.Repo
-
   alias DAU.UserMessage.Inbox
 
   @doc """
@@ -201,6 +201,20 @@ defmodule DAU.UserMessage do
       # create an outbox
       # add association outbox to query
       UserMessage.add_outbox_to_query(query, outbox)
+    end
+  end
+
+  def approve_message_in_outbox(%Outbox{} = outbox, %User{} = user) do
+    if Permission.has_privilege?(user, :approve, Outbox) do
+      result =
+        Repo.get!(Outbox, outbox.id)
+        |> Repo.preload(:approver)
+
+      result
+      |> Outbox.approver_changeset(user)
+      |> Repo.update()
+    else
+      raise PermissionException
     end
   end
 end

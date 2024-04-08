@@ -1,4 +1,7 @@
 defmodule DAU.UserMessageTest do
+  alias DAU.UserMessage.Outbox
+  alias DAU.AccountsFixtures
+  alias DAU.OutboxFixtures
   alias DAU.UserMessage
   use DAU.DataCase
 
@@ -163,6 +166,72 @@ defmodule DAU.UserMessageTest do
     end
 
     test "approve message in outbox" do
+      outbox = OutboxFixtures.outbox_fixture()
+
+      user =
+        AccountsFixtures.valid_user_attributes(%{role: :admin})
+        |> AccountsFixtures.user_fixture()
+
+      # IO.inspect(user)
+      # IO.inspect(outbox)
+
+      {:ok, result} = UserMessage.approve_message_in_outbox(outbox, user)
+      # IO.inspect(result)
+      assert result.approved_by == user.id
+      assert result.approver.id == user.id
+      assert result.id == outbox.id
+      assert result.sender_number == outbox.sender_number
+      # check if users with only a certain role can do this
+    end
+
+    test "permissions to approve message in outbox" do
+      outbox = OutboxFixtures.outbox_fixture()
+
+      admin =
+        AccountsFixtures.valid_user_attributes(%{role: :admin})
+        |> AccountsFixtures.user_fixture()
+
+      secratariat_associate =
+        AccountsFixtures.valid_user_attributes(%{role: :secratariat_associate})
+        |> AccountsFixtures.user_fixture()
+
+      secratariat_manager =
+        AccountsFixtures.valid_user_attributes(%{role: :secratariat_manager})
+        |> AccountsFixtures.user_fixture()
+
+      expert_factchecker =
+        AccountsFixtures.valid_user_attributes(%{role: :expert_factchecker})
+        |> AccountsFixtures.user_fixture()
+
+      expert_forensic =
+        AccountsFixtures.valid_user_attributes(%{role: :expert_forensic})
+        |> AccountsFixtures.user_fixture()
+
+      user =
+        AccountsFixtures.valid_user_attributes(%{role: :user})
+        |> AccountsFixtures.user_fixture()
+
+      assert Permission.has_privilege?(admin, :approve, Outbox) == true
+      assert Permission.has_privilege?(secratariat_manager, :approve, Outbox) == true
+      assert Permission.has_privilege?(secratariat_associate, :approve, Outbox) == true
+
+      assert Permission.has_privilege?(expert_factchecker, :approve, Outbox) == false
+
+      assert_raise PermissionException, fn ->
+        UserMessage.approve_message_in_outbox(outbox, expert_factchecker)
+      end
+
+      assert Permission.has_privilege?(expert_forensic, :approve, Outbox) == false
+
+      assert_raise PermissionException, fn ->
+        UserMessage.approve_message_in_outbox(outbox, expert_forensic)
+      end
+
+      assert Permission.has_privilege?(user, :approve, Outbox) == false
+
+      assert_raise PermissionException, fn ->
+        UserMessage.approve_message_in_outbox(outbox, user)
+      end
     end
 
     test "send message to user " do

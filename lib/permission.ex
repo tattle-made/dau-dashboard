@@ -34,6 +34,7 @@ defmodule Permission do
   the code simple.
   """
   # todo : is it possible to import all schema's somehow?
+  alias DAU.UserMessage.Outbox
   alias DAU.Feed.Common.FactcheckArticle
   alias DAU.Accounts.User
   alias DAU.Feed.Common
@@ -51,11 +52,13 @@ defmodule Permission do
       secratariat_manager:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle})
-        |> MapSet.put({:edit, Common}),
+        |> MapSet.put({:edit, Common})
+        |> MapSet.put({:approve, Outbox}),
       secratariat_associate:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle})
-        |> MapSet.put({:edit, Common}),
+        |> MapSet.put({:edit, Common})
+        |> MapSet.put({:approve, Outbox}),
       expert_factchecker:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle}),
@@ -63,4 +66,8 @@ defmodule Permission do
       user: MapSet.new()
     }
   end
+end
+
+defmodule PermissionException do
+  defexception message: "You don't have the permission to do this operation"
 end
