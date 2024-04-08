@@ -1,4 +1,5 @@
 defmodule DAU.UserMessageTest do
+  alias DAU.UserMessage
   use DAU.DataCase
 
   alias DAU.UserMessageFixtures
@@ -122,8 +123,43 @@ defmodule DAU.UserMessageTest do
     end
 
     test "add dau response to outbox", context do
-      # IO.inspect(context.common_feed)
-      # UserMessage.add_to_outbox
+      common = context.common_feed
+
+      # todo : let UserMessage context decide the reply_type
+      response = %{
+        sender_number: "910000000000",
+        reply_type: "customer_reply",
+        type: "text",
+        text: "hello this is the dau"
+      }
+
+      {:ok, result} = UserMessage.add_response_to_outbox(common, response)
+
+      assert result.user_message_outbox.sender_number == "910000000000"
+      assert result.user_message_outbox.reply_type == :customer_reply
+
+      # todo
+      # get all entities - common, query, inbox, outbox with their associations
+      # write assertions.
+    end
+
+    test "associate outbox to query" do
+      {:ok, query} = UserMessage.create_query(%{status: "pending"})
+
+      {:ok, outbox} =
+        UserMessage.create_outbox(%{
+          sender_number: "910000000000",
+          reply_type: "customer_reply",
+          type: "text",
+          text: "hi"
+        })
+
+      # IO.inspect(outbox)
+      {:ok, result} = UserMessage.add_outbox_to_query(query, outbox)
+
+      assert query.id == result.id
+      assert outbox.id == result.user_message_outbox_id
+      assert outbox.sender_number == result.user_message_outbox.sender_number
     end
 
     test "approve message in outbox" do

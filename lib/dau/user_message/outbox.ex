@@ -9,7 +9,7 @@ defmodule DAU.UserMessage.Outbox do
     field :sender_number, :string
     field :sender_name, :string
     field :reply_type, Ecto.Enum, values: [:customer_reply, :notification]
-    field :type, :string
+    field :type, Ecto.Enum, values: [:text, :json]
     field :text, :string
     field :message, :map
     belongs_to :approved_by, User
@@ -21,7 +21,7 @@ defmodule DAU.UserMessage.Outbox do
   end
 
   @doc false
-  def new_changeset(outbox_message, attrs) do
+  def changeset(outbox_message, attrs) do
     outbox_message
     |> cast(attrs, [
       :sender_number,
@@ -33,7 +33,6 @@ defmodule DAU.UserMessage.Outbox do
     ])
     |> validate_required([
       :sender_number,
-      :sender_name,
       :reply_type,
       :type
     ])
@@ -51,7 +50,7 @@ defmodule DAU.UserMessage.Outbox do
       :text ->
         changeset |> validate_required([:text])
 
-      :map ->
+      :json ->
         changeset |> validate_required([:message])
 
       _ ->

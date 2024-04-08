@@ -4,6 +4,8 @@ defmodule DAU.UserMessage do
   """
 
   import Ecto.Query, warn: false
+  alias DAU.UserMessage.Outbox
+  alias DAU.UserMessage
   alias DAU.Feed.Common
   alias DAU.UserMessage.Query
   alias DAU.UserMessage.Preference
@@ -148,6 +150,57 @@ defmodule DAU.UserMessage do
     end
   end
 
-  def add_to_outbox(%Common{} = common) do
+  def create_query(attrs \\ %{}) do
+    %Query{}
+    |> Query.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_query_with_common(common, attrs \\ %{}) do
+    %Query{}
+    |> Query.changeset(attrs)
+    |> Query.feed_common_changeset(common)
+    |> Repo.insert()
+  end
+
+  def create_outbox(attrs \\ %{}) do
+    %Outbox{}
+    |> Outbox.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def add_outbox_to_query(query, outbox) do
+    result =
+      Repo.get!(Query, query.id)
+      |> Repo.preload(:user_message_outbox)
+
+    Query.associate_outbox(result, outbox)
+    |> Repo.update()
+  end
+
+  @doc """
+
+  todo :
+  use `inner_lateral_join` to limit the number of associations fetched.
+  This could be an issue when there's a lot of data.
+  """
+  def add_response_to_outbox(%Common{} = common, response) do
+    result =
+      Repo.get!(Common, common.id)
+      |> Repo.preload(:queries)
+
+    if length(result.queries) != 0 do
+      raise "Unexpected state"
+    else
+      # create a query with common as association
+      {:ok, query} = UserMessage.create_query_with_common(result, %{status: "pending"})
+
+      {:ok, outbox} =
+        UserMessage.create_outbox(response)
+
+      # create an outbox
+      # add association outbox to query
+      UserMessage.add_outbox_to_query(query, outbox)
+    end
   end
 end

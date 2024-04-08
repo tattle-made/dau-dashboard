@@ -51,6 +51,8 @@ defmodule DAU.FeedFixtures do
         language: "en"
       }
       |> Feed.add_to_common_feed()
+
+    common
   end
 
   def common_with_date(attrs \\ %{}) do

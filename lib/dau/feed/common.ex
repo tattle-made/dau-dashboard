@@ -1,4 +1,5 @@
 defmodule DAU.Feed.Common do
+  alias DAU.UserMessage.Query
   alias DAU.UserMessage.Inbox
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
@@ -39,6 +40,8 @@ defmodule DAU.Feed.Common do
     embeds_one :assessment_report, AssessmentReport, on_replace: :delete
 
     has_many :messages, Inbox, foreign_key: :id
+
+    has_many :queries, Query, foreign_key: :id
 
     timestamps(type: :utc_datetime)
   end
