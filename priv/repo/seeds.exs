@@ -11,6 +11,7 @@
 # and so on) as they will fail if something goes wrong.
 
 alias DAU.Accounts
+alias DAU.Feed
 
 # Create Users
 [
@@ -38,3 +39,37 @@ alias DAU.Accounts
   %{email: "dau_user@email.com", password: "dau_user_pw", role: :user}
 ]
 |> Enum.map(&Accounts.register_user(&1))
+
+[
+  %{
+    media_urls: ["temp/audio-01.wav"],
+    media_type: "audio",
+    sender_number: "0000000000",
+    language: "en"
+  },
+  %{
+    media_urls: ["temp/video-04.mp4"],
+    media_type: "video",
+    sender_number: "0000000000",
+    language: "en"
+  },
+  %{
+    media_urls: ["temp/audio-03.mp4"],
+    media_type: "audio",
+    sender_number: "0000000000",
+    language: "en"
+  },
+  %{
+    media_urls: ["temp/video-02.mp4"],
+    media_type: "video",
+    sender_number: "0000000000",
+    language: "en"
+  },
+  %{
+    media_urls: ["temp/audio-07.wav"],
+    media_type: "audio",
+    sender_number: "0000000000",
+    language: "en"
+  }
+]
+|> Enum.map(&Feed.add_to_common_feed/1)
