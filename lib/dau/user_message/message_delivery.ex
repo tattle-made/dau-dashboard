@@ -41,7 +41,8 @@ defmodule DAU.UserMessage.MessageDelivery do
       format: "json",
       msg_type: "TEXT",
       method: "SENDMESSAGE",
-      msg: message
+      msg: message,
+      msg_id: "002"
     }
 
     HTTPoison.post(gupshup_api_endpoint, "", headers, params: params)

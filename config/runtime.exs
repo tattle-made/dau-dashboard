@@ -62,6 +62,12 @@ gupshup_hsm_password =
     Gupshup HSM password is missing. Please contact tattle admin
     """
 
+slack_webhook_url =
+  System.get_env("SLACK_WEBHOOK_URL") ||
+    raise """
+    Slack webhook url is missing. Please contact tattle admin
+    """
+
 config :dau,
   aws_access_key_id: aws_access_key_id,
   aws_secret_access_key: aws_secret_access_key,
@@ -69,7 +75,8 @@ config :dau,
   gupshup_userid: gupshup_userid,
   gupshup_password: gupshup_password,
   gupshup_hsm_userid: gupshup_hsm_userid,
-  gupshup_hsm_password: gupshup_hsm_password
+  gupshup_hsm_password: gupshup_hsm_password,
+  slack_webhook_url: slack_webhook_url
 
 config :ex_aws,
   region: "ap-south-1",

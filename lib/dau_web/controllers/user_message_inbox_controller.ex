@@ -1,6 +1,8 @@
 defmodule DAUWeb.IncomingMessageController do
   use DAUWeb, :controller
 
+  alias DAU.Vendor.Slack.Message
+  alias DAU.Vendor.Gupshup.DeliveryReport
   alias DAU.UserMessage
   alias DAU.UserMessage.Inbox
   alias FileManager
@@ -62,8 +64,27 @@ defmodule DAUWeb.IncomingMessageController do
     render(conn, :show, incoming_message: incoming_message)
   end
 
-  def receive_delivery_report(conn, payload) do
-    IO.inspect(payload)
-    conn |> Plug.Conn.send_resp(200, [])
+  def receive_delivery_report(conn, params) do
+    try do
+      params = params["_json"]
+      {msg_id, delivery_params} = DeliveryReport.make_delivery_report_for_outbox(params)
+
+      UserMessage.add_delivery_report(msg_id, delivery_params)
+
+      conn
+      |> put_resp_content_type("application/json")
+      |> resp(200, Jason.encode!(%{status: :ok}))
+      |> send_resp()
+    rescue
+      _ ->
+        conn
+        |> put_resp_content_type("application/json")
+        |> resp(400, Jason.encode!(%{status: :invalid_request}))
+        |> send_resp()
+
+        # Message.send(:dau_alerts, "invalid_delivery_report", "Invalid delivery report", params)
+    end
+
+    # |> Plug.Conn.send_resp(200, Jason.encode(%{}))
   end
 end

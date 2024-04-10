@@ -15,7 +15,7 @@ defmodule DAU.UserMessage.Outbox do
     field :message, :map
     belongs_to :approver, User, foreign_key: :approved_by
     field :approval_status, Ecto.Enum, values: [:ok, :pause, :cancel]
-    field :delivery_status, Ecto.Enum, values: [:success, :failure, :error]
+    field :delivery_status, Ecto.Enum, values: [:success, :error, :unknown]
     field :delivery_report, :string
     field :e_id, :string
 
