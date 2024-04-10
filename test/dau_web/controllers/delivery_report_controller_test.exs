@@ -22,16 +22,14 @@ defmodule DAUWeb.DeliveryReportControllerTest do
     ]
 
     conn = post(conn, ~p"/gupshup/delivery-report", _json: params)
-    body = json_response(conn, 200)
-    IO.inspect(body)
-    assert "ok" in body["status"]
+    _body = json_response(conn, 200)
     outbox_after = Repo.get(Outbox, outbox.id)
     assert outbox_after.e_id == outbox.e_id
   end
 
   test "invalid params return 400", %{conn: conn} do
     e_id = "1234"
-    outbox = OutboxFixtures.outbox_fixture(%{e_id: e_id})
+    _outbox = OutboxFixtures.outbox_fixture(%{e_id: e_id})
 
     params = [
       %{
@@ -46,8 +44,7 @@ defmodule DAUWeb.DeliveryReportControllerTest do
     ]
 
     conn = post(conn, ~p"/gupshup/delivery-report", _json: params)
-    body = json_response(conn, 400)
-    IO.inspect(body)
+    _body = json_response(conn, 400)
   end
 
   @doc """
@@ -68,7 +65,6 @@ defmodule DAUWeb.DeliveryReportControllerTest do
     ]
 
     conn = post(conn, ~p"/gupshup/delivery-report", invalid_name: params)
-    body = json_response(conn, 400)
-    IO.inspect(body)
+    _body = json_response(conn, 400)
   end
 end

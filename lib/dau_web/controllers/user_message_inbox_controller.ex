@@ -1,7 +1,7 @@
 defmodule DAUWeb.IncomingMessageController do
   use DAUWeb, :controller
 
-  alias DAU.Vendor.Slack.Message
+  # alias DAU.Vendor.Slack.Message
   alias DAU.Vendor.Gupshup.DeliveryReport
   alias DAU.UserMessage
   alias DAU.UserMessage.Inbox
