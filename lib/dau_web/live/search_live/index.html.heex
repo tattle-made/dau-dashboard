@@ -1,9 +1,9 @@
-<h1 class="text-xl font-normal text-slate-900 mb-2">
-  <%= "Showing all #{@query_count} queries" %>
+<div class="text-xl font-normal text-slate-900 mb-2">
+  <h1><%= "Showing all #{@query_count} queries" %></h1>
   <.link href={~p"/demo/query?page_num=1&sort=newest&media_type=all&verification_status="}>
     <p class="text-gray-400 text-sm">clear filters</p>
   </.link>
-</h1>
+</div>
 
 <div class="flex flex-col sm:flex-row">
   <div class="h-fit w-full sm:w-1/5 sm:h-fit flex flex-row gap-12 sm:gap-4 sm:flex-col mr-4 border-e border-zinc-200">
