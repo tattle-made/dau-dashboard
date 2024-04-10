@@ -1,4 +1,16 @@
 defmodule DAU.UserMessage.Templates.Template do
+  @moduledoc """
+  Transformations to extract structured data out of feed_common and pass to templates
+
+  %Common{}
+  |> Template.change()
+  |> Template.assign_assessment_report()
+  |> Template.assign_factcheck_articles()
+  |> Template.assign_verification_status()
+  |> Template.assign_template_parameters()
+  |> Template.assign_template_name()
+  |> Template.assign_valid()
+  """
   alias DAU.UserMessage.Templates.Template
   alias DAU.Feed.Common
   defstruct [:data, :meta, :function, :template_name]
@@ -21,10 +33,19 @@ defmodule DAU.UserMessage.Templates.Template do
     data = template.data
     factcheck_articles = Map.get(data, :factcheck_articles, [])
 
+    pattern =
+      ~r/boomlive|factcrescendo|factly|indiatoday|thelogicalindian|logicallyfacts|newschecker|newsmeter|newsmobile|thequint|thip|vishvasnews/
+
     value =
       Enum.map(factcheck_articles, fn article ->
+        domain =
+          case Regex.run(pattern, article.url) do
+            nil -> "_"
+            matches -> matches |> hd
+          end
+
         %{
-          domain: "TODO",
+          domain: domain,
           url: article.url
         }
       end)
