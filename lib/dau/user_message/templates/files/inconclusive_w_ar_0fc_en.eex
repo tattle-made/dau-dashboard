@@ -1,6 +1,6 @@
 📢 We reviewed this audio/video and found it to be Inconclusive.
 
-🎯You can read our assessment report here: <%= assessment_report.url %>
+🎯You can read our assessment report here: <%= assessment_report %>
 
 🧠 Please use your discretion in sharing this information. 
 

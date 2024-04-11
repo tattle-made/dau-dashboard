@@ -2,9 +2,9 @@
 
 Fact checkers have also shared the following: 
 
-1. <%= Enum.get(factcheck_articles, 0) |> Map.get(:domain) %>: <%= Enum.get(factcheck_articles, 0) |> Map.get(:url) %>
+1. <%= Enum.at(factcheck_articles, 0) |> Map.get(:domain) %>: <%= Enum.at(factcheck_articles, 0) |> Map.get(:url) %>
 
-2. <%= Enum.get(factcheck_articles, 1) |> Map.get(:domain) %>: <%= Enum.get(factcheck_articles, 1) |> Map.get(:url) %>
+2. <%= Enum.at(factcheck_articles, 1) |> Map.get(:domain) %>: <%= Enum.at(factcheck_articles, 1) |> Map.get(:url) %>
 
 
 🧠 Please use your discretion in sharing this information. 

@@ -24,7 +24,7 @@ defmodule DAU.UserMessage.Templates.Factory do
   alias DAU.Feed.Common
   require EEx
 
-  @base_path "lib/dau/user_message/templates"
+  @base_path "lib/dau/user_message/templates/files"
 
   def process(%Common{} = common) do
     common
@@ -32,6 +32,7 @@ defmodule DAU.UserMessage.Templates.Factory do
     |> Template.assign_assessment_report()
     |> Template.assign_factcheck_articles()
     |> Template.assign_verification_status()
+    |> Template.assign_language()
     |> Template.assign_template_parameters()
     |> Template.assign_template_name()
     |> Template.assign_valid()

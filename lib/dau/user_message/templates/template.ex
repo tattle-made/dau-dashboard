@@ -13,13 +13,12 @@ defmodule DAU.UserMessage.Templates.Template do
   """
   alias DAU.UserMessage.Templates.Template
   alias DAU.Feed.Common
-  defstruct [:data, :meta, :function, :template_name]
+  defstruct [:data, :meta]
 
   def change(%Common{} = common) do
     %Template{}
     |> Map.put(:data, common)
     |> Map.put(:meta, %{})
-    |> Map.put(:function, nil)
   end
 
   def assign_assessment_report(%Template{} = template) do
@@ -66,7 +65,8 @@ defmodule DAU.UserMessage.Templates.Template do
     name_parts = [
       template_name_label(:verification_status, template),
       template_name_label(:assessment_report, template),
-      template_name_label(:factcheck_articles, template)
+      template_name_label(:factcheck_articles, template),
+      template_name_label(:language, template)
     ]
 
     name = Enum.reduce(name_parts, "", fn acc, name -> "#{name}_#{acc}" end)
@@ -94,6 +94,10 @@ defmodule DAU.UserMessage.Templates.Template do
       nil -> "wo_ar"
       _ -> "w_ar"
     end
+  end
+
+  defp template_name_label(:language, %Template{meta: meta}) do
+    Atom.to_string(meta.language)
   end
 
   def assign_valid(%Template{meta: %{template_name: template_name}} = template) do
@@ -132,6 +136,13 @@ defmodule DAU.UserMessage.Templates.Template do
     map_to_keywords = Enum.map(meta, fn {k, v} -> {k, v} end)
 
     new_meta = Map.put(template.meta, :template_parameters, map_to_keywords)
+    Map.put(template, :meta, new_meta)
+  end
+
+  def assign_language(%Template{} = template) do
+    data = template.data
+    value = Map.get(data, :language, :en) || :en
+    new_meta = Map.put(template.meta, :language, value)
     Map.put(template, :meta, new_meta)
   end
 end
