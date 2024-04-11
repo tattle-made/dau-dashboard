@@ -28,6 +28,7 @@ defmodule DAU.Feed.Common do
         :not_manipulated,
         :inconclusive,
         :not_ai_generated,
+        :ai_generated,
         :out_of_scope,
         :spam,
         :unsupported_language

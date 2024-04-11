@@ -46,6 +46,7 @@ defmodule DAU.UserMessage.Templates.Factory do
         )
 
       {:ok, String.trim(text)}
+      # {:ok, text}
     rescue
       File.Error -> {:error, "There is no template file for this configuration."}
     end

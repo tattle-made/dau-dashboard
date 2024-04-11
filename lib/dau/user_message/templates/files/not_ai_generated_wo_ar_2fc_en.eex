@@ -1,0 +1,11 @@
+📢 We didn't find any element of AI generation in this audio/video. But lack of AI-manipulation does not mean that the information provided in the audio/video is accurate.
+
+Fact checkers have also shared the following: 
+
+1. <%= Enum.at(factcheck_articles,0) |> Map.get(:domain) %>: <%= Enum.at(factcheck_articles,0) |> Map.get(:url) %>
+
+2. <%= Enum.get(factcheck_articles,1) |> Map.get(:domain) %>: <%= Enum.at(factcheck_articles,1) |> Map.get(:url) %>
+
+🧠 Please use your discretion in sharing this information. 
+
+Thank you for reaching out to us. We hope you have a good day ahead. 🙏

@@ -1,7 +1,7 @@
 📢 We reviewed this audio/video and found it to be Manipulated.
 
-🎯You can read our assessment report here: {{1}}
+🎯You can read our assessment report here: <%= assessment_report.url %>
 
-🧠 Please use your discretion in sharing this information.
+🧠 Please use your discretion in sharing this information. 
 
 Thank you for reaching out to us. We hope you have a good day ahead. 🙏
