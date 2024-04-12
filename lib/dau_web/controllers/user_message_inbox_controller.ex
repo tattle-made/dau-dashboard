@@ -69,9 +69,6 @@ defmodule DAUWeb.IncomingMessageController do
     IO.inspect(params)
 
     try do
-      params = params["_json"]
-      IO.inspect("here 2")
-      IO.inspect(params)
       {msg_id, delivery_params} = DeliveryReport.make_delivery_report_for_outbox(params)
       IO.inspect("here 3")
       IO.inspect(msg_id)
