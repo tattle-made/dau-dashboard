@@ -74,7 +74,10 @@ defmodule DAUWeb.IncomingMessageController do
       IO.inspect(msg_id)
       IO.inspect(delivery_params)
 
-      UserMessage.add_delivery_report(msg_id, delivery_params)
+      case UserMessage.add_delivery_report(msg_id, delivery_params) do
+        {:ok, _} -> IO.inspect("report added to db")
+        {:error, reason} -> IO.inspect(reason)
+      end
 
       conn
       |> put_resp_content_type("application/json")
