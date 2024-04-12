@@ -232,10 +232,18 @@ defmodule DAU.UserMessage do
 
   def add_delivery_report(id, delivery_report) do
     outbox = Repo.get_by(Outbox, id)
+    IO.inspect("here 4")
+    IO.inspect(outbox)
+
+    outbox =
+      outbox
+      |> Outbox.delivery_report_changeset(delivery_report)
+      |> Repo.update()
+
+    IO.inspect("here 4")
+    IO.inspect(outbox)
 
     outbox
-    |> Outbox.delivery_report_changeset(delivery_report)
-    |> Repo.update()
   end
 
   def add_e_id(txn_id, msg_id) do

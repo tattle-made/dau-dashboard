@@ -75,8 +75,12 @@ defmodule DAUWeb.IncomingMessageController do
       IO.inspect(delivery_params)
 
       case UserMessage.add_delivery_report(msg_id, delivery_params) do
-        {:ok, _} -> IO.inspect("report added to db")
-        {:error, reason} -> IO.inspect(reason)
+        {:ok, _} ->
+          IO.inspect("report added to db")
+
+        {:error, reason} ->
+          IO.inspect("error adding delivery report")
+          IO.inspect(reason)
       end
 
       conn
