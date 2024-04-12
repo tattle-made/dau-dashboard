@@ -15,7 +15,19 @@ defmodule DAU.Vendor.Gupshup.DeliveryReport do
       end
 
     external_id = Map.get(params, "externalId", "ERROR-ERROR")
-    [_txn_id, msg_id] = String.split(external_id, "-")
+
+    length =
+      String.split(external_id, "-")
+      |> hd
+      |> String.length()
+
+    length_plus_one = length + 1
+    length_minus_one = length - 1
+
+    _txn_id = String.slice(external_id, 0..length_minus_one)
+    msg_id = String.slice(external_id, length_plus_one..-1)
+
+    # [_txn_id, msg_id] = String.split(external_id, "-")
 
     delivery_report = "#{error_code} : #{event_type} : #{cause} : #{external_id}"
 
