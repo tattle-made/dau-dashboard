@@ -65,6 +65,8 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def receive_delivery_report(conn, params) do
+    IO.inspect(params)
+
     try do
       params = params["_json"]
       {msg_id, delivery_params} = DeliveryReport.make_delivery_report_for_outbox(params)
