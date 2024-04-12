@@ -14,6 +14,12 @@ defmodule DAU.Feed do
     |> Repo.insert()
   end
 
+  def add_to_common_feed_with_timestamp(attrs \\ %{}) do
+    %Common{}
+    |> Common.changeset_with_timestamp(attrs)
+    |> Repo.insert()
+  end
+
   def add_message_to_query() do
     # if the message is a duplicate of an existing query
     # simply add the query_id to message and update
@@ -148,24 +154,25 @@ defmodule DAU.Feed do
     query = Repo.get(Common, id)
     media_type = query.media_type
 
-    query
-    |> Map.get_and_update(
-      :media_urls,
-      &{&1,
-       Enum.map(&1, fn key ->
-         url =
-           if media_type == :video || media_type == :audio do
-             {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
-             url
-           else
-             key
-           end
+    {_, map} =
+      query
+      |> Map.get_and_update(
+        :media_urls,
+        &{&1,
+         Enum.map(&1, fn key ->
+           url =
+             if media_type == :video || media_type == :audio do
+               {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+               url
+             else
+               key
+             end
 
-         url
-       end)}
-    )
+           url
+         end)}
+      )
 
-    query
+    map
   end
 
   def add_secratariat_notes(%Common{} = common, attrs \\ %{}) do
@@ -221,13 +228,11 @@ defmodule DAU.Feed do
 
     message is a string and target is the user's phone number
   """
-  def send_assessment_report_to_user(id, message) do
-    {:ok, common} =
+  def add_user_response(id, response) do
+    {:ok, _common} =
       Repo.get!(Common, id)
-      |> Common.user_response_changeset(%{user_response: message})
+      |> Common.user_response_changeset(%{user_response: response})
       |> Repo.update()
-
-    MessageDelivery.send_message_to_bsp(common.sender_number, message)
   end
 
   def add_verification_sop(%Common{} = common, attrs) do
