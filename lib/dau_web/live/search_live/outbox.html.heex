@@ -1,0 +1,23 @@
+<div>
+  <h1 class="text-lg">Showing DAU Outbox</h1>
+  <div class="mb-4" />
+
+  <.table id="outbox" rows={@outbox}>
+    <:col :let={query} label="IDs">
+      <div class="flex flex-col gap-1">
+        <p><%= query.id %></p>
+        <p><%= "msg id : #{query.user_message_outbox.id}" %></p>
+        <p><%= "bsp id : #{query.user_message_outbox.e_id}" %></p>
+      </div>
+    </:col>
+    <:col :let={query} label="number"><%= query.user_message_outbox.sender_number %></:col>
+    <:col :let={query} label="reply type"><%= query.user_message_outbox.reply_type %></:col>
+    <:col :let={query} label="text"><%= query.user_message_outbox.text %></:col>
+    <:col :let={query} label="delivery status">
+      <%= query.user_message_outbox.delivery_status %>
+    </:col>
+    <:col :let={query} label="delivery report">
+      <%= query.user_message_outbox.delivery_report %>
+    </:col>
+  </.table>
+</div>

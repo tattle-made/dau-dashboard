@@ -23,8 +23,14 @@ defmodule DAU.UserMessage.Templates.Template do
 
   def assign_assessment_report(%Template{} = template) do
     data = template.data
-    value = Map.get(data, :assessment_report, nil)
-    new_meta = Map.put(template.meta, :assessment_report, value)
+    value = Map.get(data, :assessment_report)
+
+    new_meta =
+      case value do
+        nil -> Map.put(template.meta, :assessment_report, nil)
+        %{url: url} -> Map.put(template.meta, :assessment_report, url)
+      end
+
     Map.put(template, :meta, new_meta)
   end
 
@@ -104,26 +110,24 @@ defmodule DAU.UserMessage.Templates.Template do
     is_valid =
       Enum.member?(
         [
-          "deepfake_w_ar_0fc",
-          "deepfake_wo_ar_2fc",
-          "manipulated_wo_ar_2fc",
-          "manipulated_w_ar_0fc",
-          "not_manipulated_wo_ar_0fc",
-          "not_manipualted_wo_ar_2fc",
-          "inconclusive_w_ar_0fc",
-          "out_of_scope",
-          "not_ai_gen_wo_ar_0fc",
-          "not_ai_gen_wo_ar_2fc"
-
-          # "deepfake_wo_ar_1fc",
-          # "not_manipulated_wo_ar_1fc",
-          # "not_ai_gen_wo_ar_1fc",
-          # "unsupported_language_wo_ar_0fc",
-          # "ai_generated_wo_ar_0fc",
-          # "ai_generated_w_ar_0fc",
-          # "ai_generated_wo_ar_1fc",
-          # "ai_generated_wo_ar_2fc",
-          # "spam_wo_ar_0fc"
+          "deepfake_w_ar_0fc_en",
+          "deepfake_wo_ar_2fc_en",
+          "manipulated_wo_ar_1fc_en",
+          "manipulated_wo_ar_2fc_en",
+          "manipulated_w_ar_0fc_en",
+          "not_manipulated_wo_ar_0fc_en",
+          "not_manipulated_wo_ar_1fc_en",
+          "not_manipualted_wo_ar_2fc_en",
+          "inconclusive_w_ar_0fc_en",
+          "out_of_scope_wo_ar_0fc_en",
+          "not_ai_generated_wo_ar_0fc_en",
+          "not_ai_generated_wo_ar_1fc_en",
+          "not_ai_generated_wo_ar_2fc_en",
+          "unsupported_language_wo_ar_0fc_en",
+          "ai_generated_wo_ar_0fc_en",
+          "ai_generated_w_ar_0fc_en",
+          "ai_generated_wo_ar_1fc_en",
+          "ai_generated_wo_ar_2fc_en"
         ],
         template_name
       )

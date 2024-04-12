@@ -19,4 +19,13 @@ defmodule DAU.UserMessage.OutboxTest do
     assert String.length(changeset.changes.delivery_report) == 255
     # IO.inspect(changeset)
   end
+
+  test "add bsp status to outbox" do
+    response_body =
+      "{\"response\":{\"phone\":\"919605048908\",\"details\":\"\",\"id\":\"5145380278493376596-affbbfbf-f374-410d-b602-5dcad69abd5e\",\"status\":\"success\"}}"
+
+    {:ok, {txn_id, msg_id}} = Outbox.parse_bsp_status_response(response_body)
+    assert txn_id == "5145380278493376596"
+    assert msg_id == "affbbfbf-f374-410d-b602-5dcad69abd5e"
+  end
 end

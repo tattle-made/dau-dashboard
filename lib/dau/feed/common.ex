@@ -66,6 +66,26 @@ defmodule DAU.Feed.Common do
     |> validate_required([:media_urls, :media_type, :sender_number])
   end
 
+  def changeset_with_timestamp(common, attrs \\ %{}) do
+    common
+    |> cast(attrs, [
+      :media_urls,
+      :media_type,
+      :taken_by,
+      :verification_note,
+      :tags,
+      :status,
+      :exact_count,
+      :sender_number,
+      :user_response,
+      :verification_status,
+      :language,
+      :inserted_at,
+      :updated_at
+    ])
+    |> validate_required([:media_urls, :media_type, :sender_number, :inserted_at, :updated_at])
+  end
+
   def annotation_changeset(common, attrs \\ %{}) do
     common
     |> cast(attrs, [:verification_note, :tags])

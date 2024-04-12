@@ -243,6 +243,7 @@
                 {"Public Status: Not Manipulated", "not_manipulated"},
                 {"Public Status: Inconclusive", "inconclusive"},
                 {"Not AI Generated", "not_ai_generated"},
+                {"AI Generated", "ai_generated"},
                 {"Out of Scope", "out_of_scope"},
                 {"Spam", "spam"},
                 {"Unsupported language", "unsupported_language"}
@@ -269,37 +270,38 @@
 
   <div class="flex flex-row gap-1">
     <div class="w-full p-4 rounded-md border border-gray-200">
-      <div class="w-fit flex flex-row gap-2 justify-center">
+      <div class="w-fit flex flex-row gap-2 justify-center items-center">
         <p class="text-lg">User Response</p>
-        <div :if={!@query.verification_status}>
-          <div class="mt-1 w-fit p-1 bg-teal-100 rounded-md">
-            <p class="text-xs">pending</p>
+        <%= if @query.user_response do %>
+          <div class="text-sm px-2 py-1 bg-green-300 rounded-md">
+            <.link navigate={~p"/demo/query/#{@query.id}/user-response/"}>
+              <span>delivery status</span>
+            </.link>
           </div>
-        </div>
+        <% end %>
       </div>
 
       <%= if Permission.has_privilege?(@current_user, :edit, Common) && @query.user_response == nil do %>
         <div class="mt-1">
-          <form phx-submit="send-to-user" class="flex flex-col gap-1">
-            <textarea
-              class="block p-2.5 w-full text-xs text-gray-900 bg-gray-50 rounded-sm border border-gray-300 focus:ring-green-300 focus:border-green-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-              rows="6"
-              id="assessment-report"
-              name="assessment-report"
-            >  <%= get_default_user_response_message(@query) %> </textarea>
-            <button
-              class="border border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer w-fit"
-              type="submit"
-            >
-              <p class="text-xs p-2">Send to User</p>
-            </button>
+          <form phx-submit="approve-response" class="flex flex-col gap-1">
+            <div class="mt-1 border border-gray-100 p-2 center">
+              <p><%= get_templatized_response(@query) %></p>
+            </div>
+            <%= if !@query.user_response do %>
+              <button
+                class="border bg-rose-400 mt-2 rounded-md hover:bg-rose-300 text-slate-800 hover:cursor-pointer w-fit"
+                type="submit"
+              >
+                <p class="text-xs p-2">Approve Response</p>
+              </button>
+            <% end %>
           </form>
         </div>
       <% else %>
         <div>
           <%= if @query.user_response do %>
             <div class="mt-1 border border-gray-100 p-2 center">
-              <p><%= get_default_user_response_message(@query) %></p>
+              <p><%= @query.user_response %></p>
             </div>
           <% end %>
         </div>

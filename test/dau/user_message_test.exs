@@ -120,7 +120,11 @@ defmodule DAU.UserMessageTest do
       {:ok, datetime_1} = DateTime.new(~D[2024-03-25], ~T[08:30:00.000], "Etc/UTC")
 
       common_feed_item_a =
-        FeedFixtures.common_with_date(%{inserted_at: datetime_1, updated_at: datetime_1})
+        FeedFixtures.common_with_date(%{
+          inserted_at: datetime_1,
+          updated_at: datetime_1,
+          user_response: "test message to be sent to user."
+        })
 
       %{common_feed: common_feed_item_a}
     end
@@ -128,18 +132,10 @@ defmodule DAU.UserMessageTest do
     test "add dau response to outbox", context do
       common = context.common_feed
 
-      # todo : let UserMessage context decide the reply_type
-      response = %{
-        sender_number: "910000000000",
-        reply_type: "customer_reply",
-        type: "text",
-        text: "hello this is the dau"
-      }
+      {:ok, result} = UserMessage.add_response_to_outbox(common)
 
-      {:ok, result} = UserMessage.add_response_to_outbox(common, response)
-
-      assert result.user_message_outbox.sender_number == "910000000000"
-      assert result.user_message_outbox.reply_type == :customer_reply
+      assert result.user_message_outbox.sender_number == "0000000000"
+      assert result.user_message_outbox.reply_type == :notification
 
       # todo
       # get all entities - common, query, inbox, outbox with their associations

@@ -21,6 +21,7 @@ defmodule DAUWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/outbox", SearchLive.Outbox
   end
 
   scope "/gupshup", DAUWeb do
@@ -94,6 +95,7 @@ defmodule DAUWeb.Router do
     live "/query/verification/:id", SearchLive.Verification
     live "/query/:id", SearchLive.Detail
     live "/query/components", SearchLive.Component
+    live "/query/:id/user-response/", SearchLive.UserResponse
   end
 
   scope "/admin", DAUWeb do

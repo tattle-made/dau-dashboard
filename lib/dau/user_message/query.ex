@@ -1,4 +1,5 @@
 defmodule DAU.UserMessage.Query do
+  alias DAU.UserMessage.Query
   alias DAU.UserMessage.Outbox
   alias DAU.Feed.Common
   use Ecto.Schema
@@ -15,7 +16,7 @@ defmodule DAU.UserMessage.Query do
   @doc false
   def changeset(query, attrs) do
     query
-    |> cast(attrs, [:status])
+    |> cast(attrs, [:status, :inserted_at])
   end
 
   def feed_common_changeset(query, %Common{} = feed_common) do
@@ -27,5 +28,22 @@ defmodule DAU.UserMessage.Query do
     query
     |> change()
     |> put_assoc(:user_message_outbox, outbox)
+  end
+
+  @doc """
+  Determine which whatsapp business API to use to reply to this query
+
+  Refer to `DAU.UserMessage.Outbox` and field reply_type
+  """
+  def reply_type(%Query{} = query) do
+    received_at = query.inserted_at
+    received_at_plus_1_day = DateTime.add(received_at, 60 * 60 * 24, :second)
+    {:ok, now} = DateTime.now("Etc/UTC")
+
+    case DateTime.compare(now, received_at_plus_1_day) do
+      :gt -> :notification
+      :eq -> :notification
+      :lt -> :customer_reply
+    end
   end
 end

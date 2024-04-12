@@ -62,11 +62,9 @@ defmodule DAU.FeedFixtures do
         media_urls: ["temp/audio-01.wav"],
         media_type: "audio",
         sender_number: "0000000000",
-        language: "en",
-        inserted_at: DateTime.now("Etc/UTC") |> elem(1),
-        updated_at: DateTime.now("Etc/UTC") |> elem(1)
+        language: "en"
       })
-      |> Feed.add_to_common_feed()
+      |> Feed.add_to_common_feed_with_timestamp()
 
     common
   end

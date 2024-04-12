@@ -68,6 +68,12 @@ defmodule DAU.UserMessage.Outbox do
     |> slice_report_to_fit_field_length
   end
 
+  def e_id_changeset(%Outbox{} = outbox, bsp_response \\ %{}) do
+    outbox
+    |> cast(bsp_response, [:e_id])
+    |> validate_required([:e_id])
+  end
+
   defp slice_report_to_fit_field_length(changeset) do
     full_report = get_field(changeset, :delivery_report)
     sliced_report = String.slice(full_report, 0..254)
@@ -80,5 +86,29 @@ defmodule DAU.UserMessage.Outbox do
     outbox
     |> change
     |> put_assoc(:approver, user)
+  end
+
+  def parse_bsp_status_response(response_body) do
+    try do
+      {:ok, response} = Jason.decode(response_body)
+
+      id = response["response"]["id"]
+
+      length =
+        String.split(id, "-")
+        |> hd
+        |> String.length()
+
+      length_plus_one = length + 1
+      length_minus_one = length - 1
+
+      txn_id = String.slice(id, 0..length_minus_one)
+      msg_id = String.slice(id, length_plus_one..-1)
+
+      {:ok, {txn_id, msg_id}}
+    rescue
+      err ->
+        {:error, "Unable to parse bsp resposne"}
+    end
   end
 end

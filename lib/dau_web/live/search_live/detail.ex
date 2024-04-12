@@ -1,4 +1,7 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.UserMessage
+  alias DAU.UserMessage.Templates.Factory
+  alias DAU.UserMessage.Templates.Template
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.FactcheckArticle
   alias DAUWeb.SearchLive.UserResponseTemplate
@@ -48,14 +51,37 @@ defmodule DAUWeb.SearchLive.Detail do
     {:noreply, assign(socket, :query, query)}
   end
 
-  def handle_event("send-to-user", %{"assessment-report" => assessment_report}, socket) do
-    query_id = socket.assigns.query.id
-    Feed.send_assessment_report_to_user(query_id, assessment_report)
+  # def handle_event("send-to-user", %{"assessment-report" => assessment_report}, socket) do
+  #   query_id = socket.assigns.query.id
+  #   Feed.send_assessment_report_to_user(query_id, assessment_report)
 
+  #   socket =
+  #     socket
+  #     |> put_flash(:info, "Assessment report has been sent to user")
+
+  #   {:noreply, socket}
+  # end
+
+  def handle_event("approve-response", _param, socket) do
+    query = socket.assigns.query
+    response = get_templatized_response(query)
+    Feed.add_user_response(query.id, response)
+    common = Feed.get_feed_item_by_id(query.id)
+    # Feed.send_assessment_report_to_user(query_id, assessment_report)
     socket =
-      socket
-      |> put_flash(:info, "Assessment report has been sent to user")
+      case UserMessage.add_response_to_outbox(common) do
+        {:ok, _result} ->
+          socket
+          |> put_flash(:info, "Response Approved")
 
+        {:error, _reason} ->
+          socket
+          |> put_flash(:info, "Error caused while approving response. Please reach out to admin")
+      end
+
+    # common = Feed.get_feed_item_by_id(query.id)
+
+    # {:noreply, assign(socket, :query, common)}
     {:noreply, socket}
   end
 
@@ -133,12 +159,30 @@ defmodule DAUWeb.SearchLive.Detail do
     {:noreply, socket}
   end
 
-  defp get_default_user_response_message(%Common{} = query) do
-    if query.user_response do
-      query.user_response
-    else
-      UserResponseTemplate.get_text(query)
-    end
+  # defp get_default_user_response_message(%Common{} = query) do
+  #   if query.user_response do
+  #     query.user_response
+  #   else
+  #     UserResponseTemplate.get_text(query)
+  #   end
+  # end
+
+  def get_templatized_response(%Common{} = query) do
+    %Template{meta: meta} = template = query |> Factory.process()
+
+    text =
+      case meta.valid do
+        true ->
+          case Factory.eval(template) do
+            {:ok, text} -> text
+            {:error, reason} -> reason
+          end
+
+        false ->
+          "No matching template found yet"
+      end
+
+    IO.inspect(text)
   end
 
   defp sop_text(%Common{} = query) do

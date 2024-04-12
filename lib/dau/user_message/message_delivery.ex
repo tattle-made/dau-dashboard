@@ -1,5 +1,5 @@
 defmodule DAU.UserMessage.MessageDelivery do
-  def send_message_to_bsp(phone_num, message) do
+  def send_message_to_bsp(id, phone_num, message) do
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded"}
     ]
@@ -17,14 +17,15 @@ defmodule DAU.UserMessage.MessageDelivery do
     version = "v=#{URI.encode_www_form("1.1")}"
     format = "format=json"
     msg = "msg=#{URI.encode_www_form(message)}"
+    msg_id = "msg_id=#{URI.encode_www_form(id)}"
 
     body =
-      "#{send_to}&#{msg_type}&#{user_id}&#{auth_scheme}&#{password}&#{method}&#{version}&#{format}&#{msg}"
+      "#{send_to}&#{msg_type}&#{user_id}&#{auth_scheme}&#{password}&#{method}&#{version}&#{format}&#{msg}&#{msg_id}"
 
     HTTPoison.post(gupshup_endpoint, body, headers)
   end
 
-  def send_template_to_bsp(phone_number, message) do
+  def send_template_to_bsp(id, phone_number, message) do
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded"}
     ]
@@ -42,7 +43,7 @@ defmodule DAU.UserMessage.MessageDelivery do
       msg_type: "TEXT",
       method: "SENDMESSAGE",
       msg: message,
-      msg_id: "002"
+      msg_id: id
     }
 
     HTTPoison.post(gupshup_api_endpoint, "", headers, params: params)

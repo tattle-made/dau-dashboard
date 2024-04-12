@@ -4,7 +4,9 @@ defmodule DAU.UserMessage do
   """
 
   import Ecto.Query, warn: false
+  require Logger
   alias DAU.UserMessage.Outbox
+  alias DAU.UserMessage.MessageDelivery
   alias DAU.Accounts.User
   alias DAU.UserMessage
   alias DAU.Feed.Common
@@ -12,6 +14,8 @@ defmodule DAU.UserMessage do
   alias DAU.UserMessage.Preference
   alias DAU.Repo
   alias DAU.UserMessage.Inbox
+
+  # alias Ecto.Multi
 
   @doc """
   Returns the list of incoming_messages.
@@ -184,7 +188,7 @@ defmodule DAU.UserMessage do
   use `inner_lateral_join` to limit the number of associations fetched.
   This could be an issue when there's a lot of data.
   """
-  def add_response_to_outbox(%Common{} = common, response) do
+  def add_response_to_outbox(%Common{} = common) do
     result =
       Repo.get!(Common, common.id)
       |> Repo.preload(:queries)
@@ -192,14 +196,22 @@ defmodule DAU.UserMessage do
     if length(result.queries) != 0 do
       raise "Unexpected state"
     else
-      # create a query with common as association
-      {:ok, query} = UserMessage.create_query_with_common(result, %{status: "pending"})
+      {:ok, query} =
+        UserMessage.create_query_with_common(result, %{
+          status: "pending",
+          inserted_at: common.inserted_at
+        })
+
+      response = %{
+        sender_number: common.sender_number,
+        reply_type: Query.reply_type(query),
+        type: "text",
+        text: common.user_response
+      }
 
       {:ok, outbox} =
         UserMessage.create_outbox(response)
 
-      # create an outbox
-      # add association outbox to query
       UserMessage.add_outbox_to_query(query, outbox)
     end
   end
@@ -224,5 +236,64 @@ defmodule DAU.UserMessage do
     outbox
     |> Outbox.delivery_report_changeset(delivery_report)
     |> Repo.update()
+  end
+
+  def add_e_id(txn_id, msg_id) do
+    Repo.get(Outbox, msg_id)
+    |> Outbox.e_id_changeset(%{e_id: txn_id})
+    |> Repo.update()
+  end
+
+  def list_queries(feed_common_id) do
+    Repo.get_by(Query, feed_common_id: feed_common_id)
+    |> Repo.preload(:user_message_outbox)
+  end
+
+  def list_outbox(page_num \\ 0) do
+    Query
+    |> limit(25)
+    |> offset(25 * ^page_num)
+    |> Repo.all()
+    |> Repo.preload(:user_message_outbox)
+    |> Repo.preload(:feed_common)
+  end
+
+  def send_response(%Outbox{id: id}) do
+    outbox = Repo.get(Outbox, id)
+
+    reply_function =
+      case outbox.reply_type do
+        :customer_reply -> &MessageDelivery.send_message_to_bsp/3
+        :notification -> &MessageDelivery.send_template_to_bsp/3
+      end
+
+    case reply_function.(outbox.id, outbox.sender_number, outbox.text) do
+      {:ok, %HTTPoison.Response{} = response} ->
+        IO.inspect(response.body)
+
+        case Outbox.parse_bsp_status_response(response.body) do
+          {:ok, {txn_id, msg_id}} ->
+            IO.inspect("here 1")
+            IO.inspect(txn_id)
+            IO.inspect(msg_id)
+
+            case UserMessage.add_e_id(txn_id, msg_id) do
+              {:ok, _} ->
+                {:ok}
+
+              {:error, reason} ->
+                Logger.error(reason)
+                {:error, "Unable to update e_id"}
+            end
+
+          {:error, reason} ->
+            Logger.error(reason)
+            {:error, "Unable to update status in database"}
+        end
+
+      {:error, reason} ->
+        Logger.error(reason)
+        {:error, "Error with BSP"}
+    end
   end
 end
