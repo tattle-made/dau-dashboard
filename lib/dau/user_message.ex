@@ -231,7 +231,7 @@ defmodule DAU.UserMessage do
   end
 
   def add_delivery_report(id, delivery_report) do
-    outbox = Repo.get_by(Outbox, e_id: id)
+    outbox = Repo.get_by(Outbox, id)
 
     outbox
     |> Outbox.delivery_report_changeset(delivery_report)
