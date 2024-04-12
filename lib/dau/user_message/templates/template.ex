@@ -41,6 +41,20 @@ defmodule DAU.UserMessage.Templates.Template do
     pattern =
       ~r/boomlive|factcrescendo|factly|indiatoday|thelogicalindian|logicallyfacts|newschecker|newsmeter|newsmobile|thequint|thip|vishvasnews/
 
+    name_map = %{
+      "boomlive" => "Boomlive",
+      "vishvasnews" => "Vishvas News",
+      "factly" => "Factly",
+      "thip" => "THIP",
+      "newschecker" => "Newschecker",
+      "factcrescendo" => "Fact Crescendo",
+      "indiatoday" => "India Today",
+      "newsmobile" => "Newsmobile",
+      "thequint" => "Quint",
+      "logicallyfacts" => "Logically Facts",
+      "newsmeter" => "Newsmeter"
+    }
+
     value =
       Enum.map(factcheck_articles, fn article ->
         domain =
@@ -50,7 +64,7 @@ defmodule DAU.UserMessage.Templates.Template do
           end
 
         %{
-          domain: domain,
+          domain: name_map[domain],
           url: article.url
         }
       end)
