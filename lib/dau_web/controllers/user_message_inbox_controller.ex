@@ -65,11 +65,17 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def receive_delivery_report(conn, params) do
+    IO.inspect("here 1")
     IO.inspect(params)
 
     try do
       params = params["_json"]
+      IO.inspect("here 2")
+      IO.inspect(params)
       {msg_id, delivery_params} = DeliveryReport.make_delivery_report_for_outbox(params)
+      IO.inspect("here 3")
+      IO.inspect(msg_id)
+      IO.inspect(delivery_params)
 
       UserMessage.add_delivery_report(msg_id, delivery_params)
 
@@ -78,7 +84,9 @@ defmodule DAUWeb.IncomingMessageController do
       |> resp(200, Jason.encode!(%{status: :ok}))
       |> send_resp()
     rescue
-      _ ->
+      err ->
+        IO.inspect(err)
+
         conn
         |> put_resp_content_type("application/json")
         |> resp(400, Jason.encode!(%{status: :invalid_request}))

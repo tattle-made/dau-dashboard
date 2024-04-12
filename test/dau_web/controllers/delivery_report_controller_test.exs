@@ -5,7 +5,7 @@ defmodule DAUWeb.DeliveryReportControllerTest do
   use DAUWeb.ConnCase, async: true
 
   test "add delivery report to outbox", %{conn: conn} do
-    e_id = "1234"
+    e_id = "5145722132009541678-004352f6-0511-4d73-be33-e95af041f8a1"
     outbox = OutboxFixtures.outbox_fixture(%{e_id: e_id})
 
     params = [
@@ -28,7 +28,7 @@ defmodule DAUWeb.DeliveryReportControllerTest do
   end
 
   test "invalid params return 400", %{conn: conn} do
-    e_id = "1234"
+    e_id = "5145722132009541678-004352f6-0511-4d73-be33-e95af041f8a1"
     _outbox = OutboxFixtures.outbox_fixture(%{e_id: e_id})
 
     params = [

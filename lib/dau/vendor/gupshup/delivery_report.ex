@@ -1,5 +1,6 @@
 defmodule DAU.Vendor.Gupshup.DeliveryReport do
   def make_delivery_report_for_outbox(params) do
+    params = params["_json"]
     params = params |> hd
     cause = Map.get(params, "cause", "ERROR")
     error_code = Map.get(params, "errorCode", "ERROR")
