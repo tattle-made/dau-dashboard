@@ -25,7 +25,7 @@ defmodule DAU.UserMessage.Templates.Factory do
   require EEx
 
   # @base_path "lib/dau/user_message/templates/files"
-  @base_path Application.app_dir(:dau, "priv/static/gupshup_templates")
+  @base_path "priv/static/gupshup_templates"
 
   def process(%Common{} = common) do
     common
@@ -40,10 +40,12 @@ defmodule DAU.UserMessage.Templates.Factory do
   end
 
   def eval(%Template{} = template) do
+    path_prefix = Application.app_dir(:dau, @base_path)
+
     try do
       text =
         EEx.eval_file(
-          "#{@base_path}/#{template.meta.template_name}.eex",
+          "#{path_prefix}/#{template.meta.template_name}.eex",
           template.meta.template_parameters
         )
 
