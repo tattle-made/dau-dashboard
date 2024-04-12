@@ -111,13 +111,14 @@ defmodule DAU.UserMessage.Templates.Template do
       Enum.member?(
         [
           "deepfake_w_ar_0fc_en",
+          "deepfake_wo_ar_1fc_en",
           "deepfake_wo_ar_2fc_en",
           "manipulated_wo_ar_1fc_en",
           "manipulated_wo_ar_2fc_en",
           "manipulated_w_ar_0fc_en",
           "not_manipulated_wo_ar_0fc_en",
           "not_manipulated_wo_ar_1fc_en",
-          "not_manipualted_wo_ar_2fc_en",
+          "not_manipulated_wo_ar_2fc_en",
           "inconclusive_w_ar_0fc_en",
           "out_of_scope_wo_ar_0fc_en",
           "not_ai_generated_wo_ar_0fc_en",
