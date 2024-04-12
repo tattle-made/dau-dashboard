@@ -125,7 +125,8 @@ defmodule DAU.Feed do
 
         _ ->
           date_string = Keyword.get(search_params, :from)
-          {:ok, from_date} = NaiveDateTime.from_iso8601(date_string <> " 00:00:00")
+          date = Date.from_iso8601!(date_string)
+          from_date = DateTime.new!(date, ~T[00:00:00.000], "Etc/UTC")
 
           query
           |> where([c], c.inserted_at >= ^from_date)
@@ -138,7 +139,8 @@ defmodule DAU.Feed do
 
         _ ->
           date_string = Keyword.get(search_params, :to)
-          {:ok, to_date} = NaiveDateTime.from_iso8601(date_string <> " 23:59:59")
+          date = Date.from_iso8601!(date_string)
+          to_date = DateTime.new!(date, ~T[23:59:59.000], "Etc/UTC")
 
           query
           |> where([c], c.inserted_at <= ^to_date)
