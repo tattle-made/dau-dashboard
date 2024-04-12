@@ -24,7 +24,8 @@ defmodule DAU.UserMessage.Templates.Factory do
   alias DAU.Feed.Common
   require EEx
 
-  @base_path "lib/dau/user_message/templates/files"
+  # @base_path "lib/dau/user_message/templates/files"
+  @base_path Application.app_dir(:dau, "priv/static/gupshup_templates")
 
   def process(%Common{} = common) do
     common
