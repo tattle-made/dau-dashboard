@@ -23,7 +23,7 @@ defmodule DAUWeb.IncomingMessageController do
 
       if Enum.member?(["video", "audio"], media_type) do
         {file_key, file_hash} =
-          FileManager.upload_to_s3(payload["path"])
+          AWSS3.upload_to_s3(payload["path"])
 
         UserMessage.update_user_message_file_metadata(inbox_message, %{
           file_key: file_key,
