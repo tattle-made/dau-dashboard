@@ -55,6 +55,22 @@ defmodule DAU.FeedFixtures do
     common
   end
 
+  def valid_attributes(attrs \\ %{}) do
+    %{
+      "media_urls" => ["temp/audio-01.wav"],
+      "media_type" => "audio",
+      "sender_number" => "0000000000",
+      "verification_note" => "added by dau",
+      "tags" => ["politics", "cheapfake"],
+      "exact_count" => 0,
+      "language" => "en",
+      "taken_by" => "dau_sec_1",
+      "user_response" => "to be sent to user",
+      "verification_sop" => "appears real",
+      "verification_status" => "deepfake"
+    }
+  end
+
   def common_with_date(attrs \\ %{}) do
     {:ok, common} =
       attrs

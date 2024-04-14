@@ -269,6 +269,31 @@ defmodule DAU.Feed do
     |> Repo.update()
   end
 
+  def set_approval_status(query_id, article_id, approval_status) do
+    try do
+      common = Repo.get!(Common, query_id)
+
+      articles =
+        Enum.map(common.factcheck_articles, fn article ->
+          if article.id == article_id do
+            %{id: article.id, approved: approval_status}
+          else
+            %{id: article.id}
+          end
+        end)
+
+      case(
+        Common.query_with_updated_factcheck_article_changeset(common, articles)
+        |> Repo.update()
+      ) do
+        {:ok, common} -> {:ok, common}
+        {:error, _} -> raise "Unable to update in database"
+      end
+    rescue
+      _err -> {:error, "Unable to approve article"}
+    end
+  end
+
   def get_factcheck_articles(query_id) do
     Repo.get!(Common, query_id).factcheck_articles
   end

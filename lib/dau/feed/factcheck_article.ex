@@ -9,11 +9,12 @@ defmodule DAU.Feed.FactcheckArticle do
     field :excerpt, :string
     field :publisher, :string
     field :author, :string
+    field :approved, :boolean, default: false
   end
 
   def changeset(profile, attrs \\ %{}) do
     profile
-    |> cast(attrs, [:url, :title, :excerpt, :publisher, :author])
+    |> cast(attrs, [:url, :title, :excerpt, :publisher, :author, :approved])
     |> validate_required([:username, :url])
   end
 end

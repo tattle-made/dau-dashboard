@@ -1,4 +1,6 @@
 defmodule DAU.FeedTest do
+  alias DAU.Feed
+  alias DAU.Feed.Common
   use DAU.DataCase
 
   alias DAU.UserMessageFixtures
@@ -53,6 +55,47 @@ defmodule DAU.FeedTest do
       # IO.inspect(common)
       # IO.inspect(test)
       # IO.inspect(data)
+    end
+  end
+
+  describe "factcheck article approval" do
+    setup do
+      feed_common =
+        Ecto.Changeset.change(
+          %Common{},
+          media_urls: ["temp/audio-01.wav"],
+          media_type: :audio,
+          language: :en,
+          factcheck_articles: [
+            %{username: "contributor_one", url: "https://site-one.com/article-one"},
+            %{username: "contributor_two", url: "https://site-two.com/article-two"}
+          ]
+        )
+        |> Repo.insert!()
+
+      %{feed_common: feed_common}
+    end
+
+    test "approve fact check article", %{feed_common: feed_common} do
+      assert length(feed_common.factcheck_articles) == 2
+      article_one = Enum.at(feed_common.factcheck_articles, 0)
+      assert article_one.approved == false
+
+      {:ok, common} = Feed.set_approval_status(feed_common.id, article_one.id, true)
+      new_article_one = Enum.at(common.factcheck_articles, 0)
+      assert new_article_one.id == article_one.id
+      assert new_article_one.approved == true
+    end
+
+    test "reject fact check article", %{feed_common: feed_common} do
+      assert length(feed_common.factcheck_articles) == 2
+      article_one = Enum.at(feed_common.factcheck_articles, 0)
+      assert article_one.approved == false
+
+      {:ok, common} = Feed.set_approval_status(feed_common.id, article_one.id, false)
+      new_article_one = Enum.at(common.factcheck_articles, 0)
+      assert new_article_one.id == article_one.id
+      assert new_article_one.approved == false
     end
   end
 end

@@ -125,4 +125,11 @@ defmodule DAU.Feed.Common do
     |> put_embed(:factcheck_articles, [factcheck_article | common.factcheck_articles])
     |> cast_embed(:factcheck_articles, required: true)
   end
+
+  def query_with_updated_factcheck_article_changeset(common, factcheck_articles) do
+    common
+    |> cast(%{}, @all_fields)
+    |> put_embed(:factcheck_articles, factcheck_articles)
+    |> cast_embed(:factcheck_articles, required: true)
+  end
 end
