@@ -285,7 +285,7 @@
         <div class="mt-1">
           <form phx-submit="approve-response" class="flex flex-col gap-1">
             <div class="mt-1 border border-gray-100 p-2 center">
-              <p><%= get_templatized_response(@query) %></p>
+              <p class="whitespace-pre-wrap"><%= get_templatized_response(@query) %></p>
             </div>
             <%= if !@query.user_response do %>
               <button
@@ -301,7 +301,7 @@
         <div>
           <%= if @query.user_response do %>
             <div class="mt-1 border border-gray-100 p-2 center">
-              <p><%= @query.user_response %></p>
+              <p class="whitespace-pre-wrap"><%= @query.user_response %></p>
             </div>
           <% end %>
         </div>
