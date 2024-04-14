@@ -56,7 +56,10 @@ defmodule DAU.UserMessage.Templates.Template do
     }
 
     value =
-      Enum.map(factcheck_articles, fn article ->
+      Enum.filter(factcheck_articles, fn article ->
+        Map.get(article, :approved)
+      end)
+      |> Enum.map(fn article ->
         domain =
           case Regex.run(pattern, article.url) do
             nil -> "_"

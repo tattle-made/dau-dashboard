@@ -70,9 +70,12 @@ defmodule DAUWeb.SearchLive.Detail do
     # Feed.send_assessment_report_to_user(query_id, assessment_report)
     socket =
       case UserMessage.add_response_to_outbox(common) do
-        {:ok, _result} ->
+        {:ok, query} ->
+          query = Feed.get_feed_item_by_id(query.id)
+
           socket
           |> put_flash(:info, "Response Approved")
+          |> assign(:query, query)
 
         {:error, _reason} ->
           socket
@@ -146,10 +149,9 @@ defmodule DAUWeb.SearchLive.Detail do
         {:ok, query} ->
           socket |> assign(:query, query)
 
-        {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, reason} ->
           socket
-          |> put_flash(:error, "could not approve article")
-          |> assign(:form_user_response_label, to_form(changeset))
+          |> put_flash(:error, reason)
       end
 
     {:noreply, socket}
@@ -206,7 +208,7 @@ defmodule DAUWeb.SearchLive.Detail do
           "No matching template found yet"
       end
 
-    IO.inspect(text)
+    text
   end
 
   defp sop_text(%Common{} = query) do

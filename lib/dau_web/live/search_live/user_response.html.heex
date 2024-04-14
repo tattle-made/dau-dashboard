@@ -16,7 +16,11 @@
     </:col>
     <:col :let={query} label="number"><%= query.user_message_outbox.sender_number %></:col>
     <:col :let={query} label="reply type"><%= query.user_message_outbox.reply_type %></:col>
-    <:col :let={query} label="text"><%= query.user_message_outbox.text %></:col>
+    <:col :let={query} label="text">
+      <p class="whitespace-pre-wrap">
+        <%= query.user_message_outbox.text %>
+      </p>
+    </:col>
     <:col :let={query} label="delivery status">
       <%= query.user_message_outbox.delivery_status %>
     </:col>
