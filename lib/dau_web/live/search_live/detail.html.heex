@@ -256,7 +256,15 @@
   <div :if={Permission.has_privilege?(@current_user, :edit, Common)}>
     <div class="flex flex-row gap-1">
       <div class="w-full p-4 rounded-md border border-gray-200">
-        <p class="text-lg">User Response Label</p>
+        <div class="flex flex-row gap-2">
+          <p class="text-lg">User Response Label</p>
+          <div class="flex-grow" />
+          <div :if={@query.verification_status}>
+            <%!-- <button>
+              <.icon name="hero-trash w-4 h-4" />
+            </button> --%>
+          </div>
+        </div>
         <div :if={!@query.verification_status}>
           <.simple_form for={@form_user_response_label} phx-submit="save-user-response-label">
             <.input
@@ -284,7 +292,7 @@
           </.simple_form>
         </div>
         <div :if={@query.verification_status}>
-          <div class="">
+          <div class="mt-2">
             <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">
               <%= @query.verification_status %>
             </span>
