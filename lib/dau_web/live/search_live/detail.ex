@@ -131,6 +131,30 @@ defmodule DAUWeb.SearchLive.Detail do
     {:noreply, socket}
   end
 
+  def handle_event("change-status-factheck-article", params, socket) do
+    query_id = socket.assigns.query.id
+    article_id = params["value"]
+
+    server_response =
+      case params["type"] do
+        "reject" -> Feed.set_approval_status(query_id, article_id, false)
+        "approve" -> Feed.set_approval_status(query_id, article_id, true)
+      end
+
+    socket =
+      case server_response do
+        {:ok, query} ->
+          socket |> assign(:query, query)
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          socket
+          |> put_flash(:error, "could not approve article")
+          |> assign(:form_user_response_label, to_form(changeset))
+      end
+
+    {:noreply, socket}
+  end
+
   def handle_event("add-assessment-report", params, socket) do
     IO.inspect(params)
 
@@ -202,5 +226,12 @@ defmodule DAUWeb.SearchLive.Detail do
 
     # sop = Map.get(query, :verification_sop, default_text)
     IO.inspect(sop)
+  end
+
+  def beautify_url(url) when is_binary(url) do
+    case String.length(url) do
+      x when x > 40 -> String.slice(url, 0..20) <> "..." <> String.slice(url, -20..-1)
+      x when x < 40 -> url
+    end
   end
 end

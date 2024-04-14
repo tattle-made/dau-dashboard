@@ -170,13 +170,39 @@
       </form>
     </div>
     <div :if={@query.factcheck_articles}>
-      <div class="flex flex-row gap-2 flex-wrap mt-2">
+      <div class="flex flex-col gap-2 flex-wrap mt-6">
         <%= for factcheck_article <- @query.factcheck_articles do %>
-          <a href={factcheck_article.url} target="_blank">
-            <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">
-              view article
+          <div class="flex flex-row gap-4">
+            <span class="w-fit text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">
+              <a href={factcheck_article.url} target="_blank">
+                <%= beautify_url(factcheck_article.url) %>
+              </a>
             </span>
-          </a>
+            <div>
+              <div :if={factcheck_article.approved}>
+                <button
+                  id="approve-button"
+                  value={factcheck_article.id}
+                  phx-value-type="reject"
+                  phx-click="change-status-factheck-article"
+                  phx-disable-with="rejecting article"
+                >
+                  <.icon name="hero-x-mark-solid" class="h-4 w-4 color-green-200" />
+                </button>
+              </div>
+              <div :if={!factcheck_article.approved}>
+                <button
+                  id="approve-button"
+                  value={factcheck_article.id}
+                  phx-value-type="approve"
+                  phx-click="change-status-factheck-article"
+                  phx-disable-with="approving article"
+                >
+                  <.icon name="hero-check-solid" class="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>

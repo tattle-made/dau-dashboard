@@ -1,4 +1,5 @@
 defmodule DAUWeb.Search.SearchLiveTest do
+  alias DAUWeb.SearchLive.Detail
   use DAUWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
@@ -21,6 +22,38 @@ defmodule DAUWeb.Search.SearchLiveTest do
 
       # IO.inspect(view)
       # IO.inspect(html)
+    end
+  end
+
+  describe "url preview" do
+    test "url is longer than 40 characters" do
+      url =
+        "https://www.boomlive.in/fact-check/factcheck-car-overturning-incident-in-karnataka-viral-with-false-communal-claim-24887"
+
+      new_url = Detail.beautify_url(url)
+      assert new_url == "https://www.boomlive....communal-claim-24887"
+    end
+
+    test "url is shorter than 40 characters" do
+      url =
+        "https://www.boomlive.in/fact-check/"
+
+      new_url = Detail.beautify_url(url)
+      assert new_url == url
+    end
+
+    test "url is unsupported" do
+      url = nil
+
+      assert_raise FunctionClauseError, fn ->
+        Detail.beautify_url(nil)
+      end
+
+      url = 42
+
+      assert_raise FunctionClauseError, fn ->
+        Detail.beautify_url(nil)
+      end
     end
   end
 end
