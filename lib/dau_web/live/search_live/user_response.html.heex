@@ -28,13 +28,14 @@
       <%= query.user_message_outbox.delivery_report %>
     </:col>
     <:action :let={query}>
-      <%!-- <.link patch={~p"/canon/manipulated_media/#{manipulated_media}/edit"}>Edit</.link> --%>
-      <.link
-        phx-click={JS.push("send-response", value: %{id: query.id})}
-        data-confirm="Are you sure?"
-      >
-        Send
-      </.link>
+      <div :if={Permission.has_privilege?(@current_user, :approve, Outbox)}>
+        <.link
+          phx-click={JS.push("send-response", value: %{id: query.id})}
+          data-confirm="Are you sure?"
+        >
+          Send
+        </.link>
+      </div>
     </:action>
   </.table>
 </div>

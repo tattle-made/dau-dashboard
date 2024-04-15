@@ -1,9 +1,18 @@
 defmodule DAUWeb.SearchLive.UserResponse do
+  alias DAU.Accounts
   alias DAU.UserMessage
+  alias DAU.UserMessage.Outbox
   use DAUWeb, :live_view
   use DAUWeb, :html
 
   def mount(params, session, socket) do
+    user_token = session["user_token"]
+    user = user_token && Accounts.get_user_by_session_token(user_token)
+
+    socket =
+      socket
+      |> assign(:current_user, user)
+
     {:ok, socket}
   end
 

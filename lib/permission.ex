@@ -54,13 +54,13 @@ defmodule Permission do
         |> MapSet.put({:add, FactcheckArticle})
         |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
-        |> MapSet.put({:approve, Outbox}),
+        |> MapSet.put({:view, Outbox}),
       secratariat_associate:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle})
         |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
-        |> MapSet.put({:approve, Outbox}),
+        |> MapSet.put({:view, Outbox}),
       expert_factchecker:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle}),
