@@ -4,7 +4,6 @@ defmodule DAUWeb.SearchLive.Detail do
   alias DAU.UserMessage.Templates.Template
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.FactcheckArticle
-  alias DAUWeb.SearchLive.UserResponseTemplate
   alias DAU.Feed.Resource
   alias DAU.Accounts
   alias DAU.Feed.Common
@@ -43,31 +42,17 @@ defmodule DAUWeb.SearchLive.Detail do
     {:noreply, socket}
   end
 
-  # def handle_event(event, unsigned_params, socket) do
-  # end
-
   def handle_event("test-click", value, socket) do
     query = socket.assigns.query <> value["value"]
     {:noreply, assign(socket, :query, query)}
   end
-
-  # def handle_event("send-to-user", %{"assessment-report" => assessment_report}, socket) do
-  #   query_id = socket.assigns.query.id
-  #   Feed.send_assessment_report_to_user(query_id, assessment_report)
-
-  #   socket =
-  #     socket
-  #     |> put_flash(:info, "Assessment report has been sent to user")
-
-  #   {:noreply, socket}
-  # end
 
   def handle_event("approve-response", _param, socket) do
     query = socket.assigns.query
     response = get_templatized_response(query)
     Feed.add_user_response(query.id, response)
     common = Feed.get_feed_item_by_id(query.id)
-    # Feed.send_assessment_report_to_user(query_id, assessment_report)
+
     socket =
       case UserMessage.add_response_to_outbox(common) do
         {:ok, query} ->
@@ -82,9 +67,6 @@ defmodule DAUWeb.SearchLive.Detail do
           |> put_flash(:info, "Error caused while approving response. Please reach out to admin")
       end
 
-    # common = Feed.get_feed_item_by_id(query.id)
-
-    # {:noreply, assign(socket, :query, common)}
     {:noreply, socket}
   end
 
@@ -185,14 +167,6 @@ defmodule DAUWeb.SearchLive.Detail do
     {:noreply, socket}
   end
 
-  # defp get_default_user_response_message(%Common{} = query) do
-  #   if query.user_response do
-  #     query.user_response
-  #   else
-  #     UserResponseTemplate.get_text(query)
-  #   end
-  # end
-
   def get_templatized_response(%Common{} = query) do
     %Template{meta: meta} = template = query |> Factory.process()
 
@@ -214,7 +188,7 @@ defmodule DAUWeb.SearchLive.Detail do
   defp sop_text(%Common{} = query) do
     default_text = """
     Identify claim or hoax\n
-    Confirm it is fact checkable\n
+    Confirm it is verifiable\n
     Choose what you will focus on\n
     Find the fact\n
     Correct the record\n
