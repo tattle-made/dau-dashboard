@@ -57,11 +57,11 @@ defmodule DAUWeb.SearchLive.Detail do
     socket =
       case UserMessage.add_response_to_outbox(common) do
         {:ok, query} ->
-          query = Feed.get_feed_item_by_id(query.id)
+          Feed.get_feed_item_by_id(query.id)
 
           socket
           |> put_flash(:info, "Response Approved")
-          |> assign(:query, query)
+          |> assign(:query, common)
 
         {:error, _reason} ->
           socket
