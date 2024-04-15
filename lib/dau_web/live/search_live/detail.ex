@@ -3,12 +3,13 @@ defmodule DAUWeb.SearchLive.Detail do
   alias DAU.UserMessage.Templates.Factory
   alias DAU.UserMessage.Templates.Template
   alias DAU.Feed.AssessmentReport
-  alias DAU.Feed.FactcheckArticle
+  alias DAU.Feed.Common
   alias DAU.Feed.Resource
   alias DAU.Accounts
   alias DAU.Feed.Common
   alias DAU.Feed
   alias Permission
+  alias DAU.Feed.FactcheckArticle
   use DAUWeb, :live_view
   use DAUWeb, :html
 

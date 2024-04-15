@@ -35,7 +35,7 @@ defmodule Permission do
   """
   # todo : is it possible to import all schema's somehow?
   alias DAU.UserMessage.Outbox
-  alias DAU.Feed.Common.FactcheckArticle
+  alias DAU.Feed.FactcheckArticle
   alias DAU.Accounts.User
   alias DAU.Feed.Common
 
@@ -52,11 +52,13 @@ defmodule Permission do
       secratariat_manager:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle})
+        |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
         |> MapSet.put({:approve, Outbox}),
       secratariat_associate:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle})
+        |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
         |> MapSet.put({:approve, Outbox}),
       expert_factchecker:

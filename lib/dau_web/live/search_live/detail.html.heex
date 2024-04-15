@@ -178,7 +178,8 @@
                 <%= beautify_url(factcheck_article.url) %>
               </a>
             </span>
-            <div>
+
+            <div :if={Permission.has_privilege?(@current_user, :approve, FactcheckArticle)}>
               <div :if={factcheck_article.approved}>
                 <button
                   id="approve-button"
