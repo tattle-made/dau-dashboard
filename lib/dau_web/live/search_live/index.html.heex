@@ -217,6 +217,11 @@
           <p><%= Map.get(query, :taken_by, "") %></p>
         </div>
       </:col>
+      <:col :let={query} label="response">
+        <div :if={query.user_response}>
+          <.icon name="hero-document-check" class="h-5 w-5 bg-slate-500" />
+        </div>
+      </:col>
       <:col :let={query} label="virality">
         <div class="flex flex-col">
           <p><%= query.exact_count %></p>
