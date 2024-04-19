@@ -533,11 +533,11 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
                "📢 हमनें इस ऑडियो/वीडियो की पड़ताल की और पाया कि इसके साथ छेड़छाड़ नहीं की गई है. \n\nफैक्ट चेकर्स ने यह भी शेयर किया है:\n\n1. Publisher One:https://publisher-one.com/article-1\n\n🧠  कृपया अपने सूझ-बूझ का इस्तेमाल कर ही इस जानकारी को शेयर करें.\n\nहमारी सेवाओं का इस्तेमाल करने के लिए धन्यवाद. आपका दिन शुभ हो. 🙏"
     end
 
-    test "not_manipualted_wo_ar_2fc_hi" do
+    test "not_manipulated_wo_ar_2fc_hi" do
       template = %Template{
         meta: %{
           valid: true,
-          template_name: "not_manipualted_wo_ar_2fc_hi",
+          template_name: "not_manipulated_wo_ar_2fc_hi",
           language: :hi,
           template_parameters: [
             factcheck_articles: [
