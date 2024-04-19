@@ -1,5 +1,4 @@
 defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
-  alias Phoenix.Template
   use DAU.DataCase
 
   alias DAU.UserMessage.Templates.Template
@@ -178,11 +177,11 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
                "📢 We reviewed this audio/video and found it to be Not Manipulated.\n\nFact checkers have also shared the following: \n\n1. Publisher One:https://publisher-one.com/article-1\n\n🧠 Please use your discretion in sharing this information. \n\nThank you for reaching out to us. We hope you have a good day ahead. 🙏"
     end
 
-    test "not_manipualted_wo_ar_2fc_en" do
+    test "not_manipulated_wo_ar_2fc_en" do
       template = %Template{
         meta: %{
           valid: true,
-          template_name: "not_manipualted_wo_ar_2fc_en",
+          template_name: "not_manipulated_wo_ar_2fc_en",
           template_parameters: [
             factcheck_articles: [
               %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
