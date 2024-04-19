@@ -70,6 +70,30 @@ alias DAU.Feed
     media_type: "audio",
     sender_number: "0000000000",
     language: "en"
+  },
+  %{
+    media_urls: [
+      "is this real? https://dau.mcaindia.in/blog/video-of-rajat-sharma-promoting-cure-for-vision-loss-is-manipulated"
+    ],
+    media_type: "text",
+    sender_number: "0000000000",
+    language: "en"
+  },
+  %{
+    media_urls: [
+      "a convoluated example of all kinds of urls. https://example.com or https://www.example.com "
+    ],
+    media_type: "text",
+    sender_number: "0000000000",
+    language: "en"
+  },
+  %{
+    media_urls: [
+      "Now some real examples from social media - https://www.youtube.com/watch?v=LJc6nA6uOJE "
+    ],
+    media_type: "text",
+    sender_number: "0000000000",
+    language: "en"
   }
 ]
 |> Enum.map(&Feed.add_to_common_feed/1)

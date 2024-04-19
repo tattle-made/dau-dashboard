@@ -16,6 +16,7 @@ defmodule DAUWeb.CoreComponents do
   """
   use Phoenix.Component
   alias Phoenix.LiveView.JS
+  import Phoenix.HTML, only: [raw: 1]
 
   @doc """
   Renders a modal.
@@ -625,11 +626,7 @@ defmodule DAUWeb.CoreComponents do
           </audio>
         <% end %>
         <%= if @type=="text" do %>
-          <a href={@url} target="_blank">
-            <p class="p-2  rounded-md bg-blue-100 overflow-clip">
-              <%= String.slice(@url, 0..20) %>
-            </p>
-          </a>
+          <.media_text text={String.slice(@url, 0..20)} />
         <% end %>
       </div>
     </div>
@@ -670,11 +667,7 @@ defmodule DAUWeb.CoreComponents do
           </audio>
         <% end %>
         <%= if @type=="text" do %>
-          <a href={@url} target="_blank">
-            <p class="p-2  rounded-md bg-blue-100 overflow-clip">
-              <%= String.slice(@url, 0..20) %>
-            </p>
-          </a>
+          <.media_text text={@url} />
         <% end %>
       </div>
     </div>
@@ -888,6 +881,25 @@ defmodule DAUWeb.CoreComponents do
         <%= render_slot(@inner_block) %>
       </div>
     </section>
+    """
+  end
+
+  attr :text, :string, required: true
+
+  def media_text(assigns) do
+    expression = ~r/(https?:\/\/(www\.)?\S+[^. |\n])/
+
+    new_text =
+      String.replace(
+        assigns.text,
+        expression,
+        "<a href='\\1' target='_blank' class='underline'>\\1</a>"
+      )
+
+    assigns = assign(assigns, :new_text, new_text)
+
+    ~H"""
+    <p><%= raw(@new_text) %></p>
     """
   end
 end
