@@ -1,5 +1,13 @@
 defmodule DAUWeb.SearchLive.SearchParams do
-  @allowed_filter_keys ["media_type", "page_num", "sort", "verification_status", "from", "to"]
+  @allowed_filter_keys [
+    "media_type",
+    "page_num",
+    "sort",
+    "verification_status",
+    "from",
+    "to",
+    "taken_up_by"
+  ]
 
   def params_to_keyword_list(params) do
     default_filter_params = [
@@ -8,7 +16,8 @@ defmodule DAUWeb.SearchLive.SearchParams do
       media_type: "all",
       from: "2024-03-01",
       to: Date.to_iso8601(Date.utc_today()),
-      verification_status: "all"
+      verification_status: "all",
+      taken_up_by: nil
     ]
 
     {:ok, params} =
@@ -44,6 +53,9 @@ defmodule DAUWeb.SearchLive.SearchParams do
           :verification_status,
           String.to_existing_atom(value["value"])
         )
+
+      "taken_up_by" ->
+        Keyword.put(search_params, :taken_up_by, value["value"])
 
       _ ->
         search_params

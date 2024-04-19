@@ -148,6 +148,31 @@
         />
       </div>
     </div>
+
+    <div>
+      <p class="py-2">Taken up by</p>
+      <div>
+        <.input_radio
+          name="taken_up_by"
+          id="someone"
+          label="Someone"
+          selection={Keyword.get(@search_params, :taken_up_by)}
+        />
+        <.input_radio
+          name="taken_up_by"
+          id="no_one"
+          label="No one"
+          selection={Keyword.get(@search_params, :taken_up_by)}
+        />
+
+        <.input_radio
+          name="taken_up_by"
+          id="all"
+          label="Show all"
+          selection={Keyword.get(@search_params, :taken_up_by)}
+        />
+      </div>
+    </div>
   </div>
 
   <div class="w-full sm:w-4/5 gap-4">
@@ -214,7 +239,7 @@
           :if={Map.get(query, :assignee, "unassigned")}
           class="p-1 text-green-9f00 w-fit rounded-lg"
         >
-          <p><%= Map.get(query, :taken_by, "") %></p>
+          <p class="taken_up_by"><%= Map.get(query, :taken_by, "") %></p>
         </div>
       </:col>
       <:col :let={query} label="response">

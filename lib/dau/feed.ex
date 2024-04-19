@@ -146,6 +146,13 @@ defmodule DAU.Feed do
           |> where([c], c.inserted_at <= ^to_date)
       end
 
+    query =
+      case Keyword.get(search_params, :taken_up_by) do
+        "no_one" -> query |> where([c], is_nil(c.taken_by))
+        "someone" -> query |> where([c], not is_nil(c.taken_by))
+        _ -> query |> IO.inspect(label: "catchall")
+      end
+
     count = query |> Repo.aggregate(:count, :id)
     results = query |> Repo.all() |> bulk_add_s3_media_url
 

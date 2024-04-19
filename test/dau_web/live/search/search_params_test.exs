@@ -7,7 +7,8 @@ defmodule DAUWeb.Search.SearchParamsTest do
     "sort" => "newest",
     "media_type" => "all",
     "from" => "2024-03-01",
-    "to" => "2024-04-14"
+    "to" => "2024-04-14",
+    "taken_up_by" => "someone"
   }
   @valid_partial_search_param %{
     "page_num" => "1",
@@ -20,7 +21,8 @@ defmodule DAUWeb.Search.SearchParamsTest do
     media_type: "all",
     from: "2024-03-01",
     to: "2024-04-14",
-    verification_status: "all"
+    verification_status: "all",
+    taken_up_by: "someone"
   ]
 
   describe "parsing search parameters" do
@@ -45,6 +47,7 @@ defmodule DAUWeb.Search.SearchParamsTest do
         |> Keyword.put(:from, "2024-03-01")
         |> Keyword.put(:to, Date.to_iso8601(Date.utc_today()))
         |> Keyword.put(:verification_status, "all")
+        |> Keyword.put(:taken_up_by, nil)
 
       assert Keyword.equal?(params, expected_params)
     end
@@ -77,7 +80,7 @@ defmodule DAUWeb.Search.SearchParamsTest do
       query_string = SearchParams.search_param_string(@valid_complete_search_keywords)
 
       assert query_string ==
-               "page_num=1&sort=newest&media_type=all&from=2024-03-01&to=2024-04-14&verification_status=all"
+               "page_num=1&sort=newest&media_type=all&from=2024-03-01&to=2024-04-14&verification_status=all&taken_up_by=someone"
     end
 
     test "query string for incomplete param" do
@@ -97,6 +100,19 @@ defmodule DAUWeb.Search.SearchParamsTest do
 
       query_string = SearchParams.search_param_string_for_previous_page(page_num: 1)
       assert query_string == "page_num=1"
+    end
+
+    test "taken up by filter" do
+      params_external = %{
+        # can also be no one
+        "taken_up_by" => "someone"
+      }
+
+      params_keyword_list = SearchParams.params_to_keyword_list(params_external)
+
+      assert Keyword.get(params_keyword_list, :taken_up_by) == "someone"
+
+      # IO.inspect(params_keyword_list)
     end
   end
 end
