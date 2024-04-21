@@ -609,24 +609,26 @@ defmodule DAUWeb.CoreComponents do
   def queryt(assigns) do
     ~H"""
     <div class="flex flex-row gap-1">
-      <div class="w-24 overflow-hidden">
+      <div class="">
         <%= if @type=="image" do %>
-          <div class="w-48">
+          <div class="w-24">
             <img src={@url} />
           </div>
         <% end %>
         <%= if @type=="video" do %>
-          <video class="w-48" controls>
+          <video class="w-24" controls>
             <source src={@url} type="video/mp4" />
           </video>
         <% end %>
         <%= if @type=="audio" do %>
-          <audio class="w-48" controls>
+          <audio class="w-24" controls>
             <source src={@url} />
           </audio>
         <% end %>
         <%= if @type=="text" do %>
-          <.media_text text={String.slice(@url, 0..20)} />
+          <div class="w-48">
+            <.media_text text={@url} />
+          </div>
         <% end %>
       </div>
     </div>
