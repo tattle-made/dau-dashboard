@@ -626,7 +626,7 @@ defmodule DAUWeb.CoreComponents do
           </audio>
         <% end %>
         <%= if @type=="text" do %>
-          <div class="w-48">
+          <div class="w-48 overflow-hidden">
             <.media_text text={@url} />
           </div>
         <% end %>
