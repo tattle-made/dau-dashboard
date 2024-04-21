@@ -20,8 +20,6 @@ defmodule DAUWeb.SearchLive.UserResponse do
     %{"id" => feed_common_id} = unsigned_params
     user_queries = UserMessage.list_queries(feed_common_id)
 
-    IO.inspect(user_queries)
-
     socket =
       socket
       |> assign(:queries, [user_queries])

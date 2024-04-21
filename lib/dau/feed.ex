@@ -149,7 +149,7 @@ defmodule DAU.Feed do
       case Keyword.get(search_params, :taken_up_by) do
         "no_one" -> query |> where([c], is_nil(c.taken_by))
         "someone" -> query |> where([c], not is_nil(c.taken_by))
-        _ -> query |> IO.inspect(label: "catchall")
+        _ -> query
       end
 
     count = query |> Repo.aggregate(:count, :id)

@@ -17,8 +17,6 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def create(conn, payload) do
-    IO.inspect(payload)
-
     with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
       media_type = inbox_message.media_type
 

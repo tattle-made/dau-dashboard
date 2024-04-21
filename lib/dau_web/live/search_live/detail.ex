@@ -89,8 +89,6 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   def handle_event("add-resource", params, socket) do
-    IO.inspect(params)
-
     resource = %Resource{
       username: socket.assigns.current_user_name,
       type: "text",
@@ -103,8 +101,6 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   def handle_event("add-factcheck-article", params, socket) do
-    IO.inspect(params)
-
     factcheck_article = %FactcheckArticle{
       username: socket.assigns.current_user_name,
       url: params["factcheck-article-url"]
@@ -141,8 +137,6 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   def handle_event("add-assessment-report", params, socket) do
-    IO.inspect(params)
-
     assessment_report = %AssessmentReport{
       url: params["assessment-report-url"]
     }

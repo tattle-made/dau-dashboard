@@ -18,8 +18,12 @@ defmodule DAU.Vender.Gupshup.DeliveryReportTest do
       ]
     }
 
-    result = DeliveryReport.make_delivery_report_for_outbox(params)
-    IO.inspect(result)
+    {msg_id, delivery_report} = DeliveryReport.make_delivery_report_for_outbox(params)
+    assert msg_id == "004352f6-0511-4d73-be33-e95af041f8a1"
+    assert delivery_report.delivery_status == "error"
+
+    assert delivery_report.delivery_report ==
+             "101 : FAILED : 24HR_TimeExceed : 5145722132009541678-004352f6-0511-4d73-be33-e95af041f8a1"
   end
 
   test "make read report for outbox" do
@@ -38,11 +42,11 @@ defmodule DAU.Vender.Gupshup.DeliveryReportTest do
       ]
     }
 
-    {msg_id, delivery_report_params} = DeliveryReport.make_delivery_report_for_outbox(params)
+    {msg_id, delivery_report} = DeliveryReport.make_delivery_report_for_outbox(params)
     assert msg_id == "004352f6-0511-4d73-be33-e95af041f8a1"
-    assert delivery_report_params.delivery_status == "success"
+    assert delivery_report.delivery_status == "success"
 
-    assert delivery_report_params.delivery_report ==
+    assert delivery_report.delivery_report ==
              "026 : READ : READ : 5145722132009541678-004352f6-0511-4d73-be33-e95af041f8a1"
   end
 end

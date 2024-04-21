@@ -23,8 +23,6 @@ defmodule DAUWeb.UserMessagePreferenceController do
   end
 
   def fetch(conn, payload) do
-    IO.inspect(payload)
-
     case UserMessage.get_user_preference(payload) do
       {:ok, user_preference} ->
         render(conn, :show, preference: user_preference)

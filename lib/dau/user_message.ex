@@ -270,14 +270,10 @@ defmodule DAU.UserMessage do
 
     case reply_function.(outbox.id, outbox.sender_number, outbox.text) do
       {:ok, %HTTPoison.Response{} = response} ->
-        IO.inspect(response.body)
+        Logger.info(response.body)
 
         case Outbox.parse_bsp_status_response(response.body) do
           {:ok, {txn_id, msg_id}} ->
-            IO.inspect("here 1")
-            IO.inspect(txn_id)
-            IO.inspect(msg_id)
-
             case UserMessage.add_e_id(txn_id, msg_id) do
               {:ok, _} ->
                 {:ok}
