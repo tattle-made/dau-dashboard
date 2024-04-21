@@ -22,7 +22,7 @@ defmodule DAU.Vender.Gupshup.DeliveryReportTest do
     IO.inspect(result)
   end
 
-  test "make red report for outbox" do
+  test "make read report for outbox" do
     params = %{
       "_json" => [
         %{

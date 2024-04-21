@@ -2,6 +2,7 @@ defmodule DAUWeb.IncomingMessageController do
   use DAUWeb, :controller
 
   # alias DAU.Vendor.Slack.Message
+  require Logger
   alias DAU.Vendor.Gupshup.DeliveryReport
   alias DAU.UserMessage
   alias DAU.UserMessage.Inbox
@@ -65,22 +66,15 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def receive_delivery_report(conn, params) do
-    IO.inspect("here 1")
-    IO.inspect(params)
-
     try do
       {msg_id, delivery_params} = DeliveryReport.make_delivery_report_for_outbox(params)
-      IO.inspect("here 3")
-      IO.inspect(msg_id)
-      IO.inspect(delivery_params)
 
       case UserMessage.add_delivery_report(msg_id, delivery_params) do
         {:ok, _} ->
-          IO.inspect("report added to db")
+          Logger.info("report added to db")
 
         {:error, reason} ->
-          IO.inspect("error adding delivery report")
-          IO.inspect(reason)
+          Logger.error(reason)
       end
 
       conn
@@ -88,9 +82,7 @@ defmodule DAUWeb.IncomingMessageController do
       |> resp(200, Jason.encode!(%{status: :ok}))
       |> send_resp()
     rescue
-      err ->
-        IO.inspect(err)
-
+      _err ->
         conn
         |> put_resp_content_type("application/json")
         |> resp(400, Jason.encode!(%{status: :invalid_request}))

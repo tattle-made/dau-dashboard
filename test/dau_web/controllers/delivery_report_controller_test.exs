@@ -4,9 +4,9 @@ defmodule DAUWeb.DeliveryReportControllerTest do
   alias DAU.OutboxFixtures
   use DAUWeb.ConnCase, async: true
 
-  test "add delivery report to outbox", %{conn: conn} do
-    e_id = "5145722132009541678-004352f6-0511-4d73-be33-e95af041f8a1"
-    outbox = OutboxFixtures.outbox_fixture(%{e_id: e_id})
+  test "add valid delivery report to outbox", %{conn: conn} do
+    e_id = "5145722132009541678"
+    %{id: msg_id} = outbox = OutboxFixtures.outbox_fixture(%{e_id: e_id})
 
     params = [
       %{
@@ -16,21 +16,19 @@ defmodule DAUWeb.DeliveryReportControllerTest do
         "errorCode" => "101",
         "eventTs" => 1_712_241_654_000,
         "eventType" => "FAILED",
-        "externalId" => "5139951980916883671-#{e_id}",
+        "externalId" => "5139951980916883671-#{msg_id}",
         "srcAddr" => "TESTSM"
       }
     ]
 
     conn = post(conn, ~p"/gupshup/delivery-report", _json: params)
-    _body = json_response(conn, 200)
+    json_response(conn, 200)
     outbox_after = Repo.get(Outbox, outbox.id)
     assert outbox_after.e_id == outbox.e_id
+    assert outbox.id == msg_id
   end
 
-  test "invalid params return 400", %{conn: conn} do
-    e_id = "5145722132009541678-004352f6-0511-4d73-be33-e95af041f8a1"
-    _outbox = OutboxFixtures.outbox_fixture(%{e_id: e_id})
-
+  test "adding delivery report with incorrect msg_id returns 400", %{conn: conn} do
     params = [
       %{
         "cause" => "24HR_TimeExceed",
@@ -39,12 +37,15 @@ defmodule DAUWeb.DeliveryReportControllerTest do
         "errorCode" => "101",
         "eventTs" => 1_712_241_654_000,
         "eventType" => "FAILED",
-        "srcAddr" => "TESTSM"
+        "srcAddr" => "TESTSM",
+        "externalId" => "5139951980916883671-a-made-up-uuid"
       }
     ]
 
     conn = post(conn, ~p"/gupshup/delivery-report", _json: params)
-    _body = json_response(conn, 400)
+    body = json_response(conn, 400)
+    assert body["status"] == "invalid_request"
+    # IO.inspect(body)
   end
 
   @doc """

@@ -35,8 +35,8 @@ defmodule DAU.Vendor.Gupshup.DeliveryReport do
     {
       msg_id,
       %{
-        "delivery_report" => delivery_report,
-        "delivery_status" => delivery_status
+        delivery_report: delivery_report,
+        delivery_status: delivery_status
       }
     }
   end
