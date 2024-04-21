@@ -8,11 +8,14 @@ defmodule DAU.UserMessage.Templates.FactoryTest do
       feed_common =
         %Common{
           verification_status: :deepfake,
-          assessment_report: "https://dau.mcaindia.in/blog/dummy-url-of-a-video"
+          assessment_report: %{
+            url: "https://dau.mcaindia.in/blog/dummy-url-of-a-video"
+          }
         }
         |> Common.query_with_factcheck_article(%{
           username: "dau_factchecker",
-          url: "https://factcheck-site.com/article-2"
+          url: "https://factcheck-site.com/article-2",
+          approved: true
         })
         |> apply_changes()
 
