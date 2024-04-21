@@ -234,16 +234,15 @@ defmodule DAU.UserMessageTest do
     end
 
     test "store delivery report" do
-      e_id = OutboxFixtures.e_id()
-      outbox = OutboxFixtures.outbox_fixture(%{e_id: e_id})
+      outbox = OutboxFixtures.outbox_fixture(%{e_id: "123213123"})
 
       {:ok, result} =
-        UserMessage.add_delivery_report(outbox.e_id, %{
+        UserMessage.add_delivery_report(outbox.id, %{
           "delivery_status" => "success",
           "delivery_report" => "22 successfully delivered"
         })
 
-      assert result.e_id == e_id
+      assert result.id == outbox.id
       assert result.delivery_status == :success
     end
   end

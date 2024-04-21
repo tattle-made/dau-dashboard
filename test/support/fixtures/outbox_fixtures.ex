@@ -1,8 +1,6 @@
 defmodule DAU.OutboxFixtures do
   alias DAU.UserMessage
 
-  def e_id(), do: "msg-id#{System.unique_integer()}"
-
   def valid_outbox_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       sender_number: "910000000000",
