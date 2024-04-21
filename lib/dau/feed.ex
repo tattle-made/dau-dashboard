@@ -3,7 +3,6 @@ defmodule DAU.Feed do
   alias DAU.Feed.FactcheckArticle
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
-  alias DAU.UserMessage.MessageDelivery
   alias DAU.Repo
 
   alias DAU.Feed.Common

@@ -5,7 +5,7 @@ defmodule DAUWeb.SearchLive.UserResponse do
   use DAUWeb, :live_view
   use DAUWeb, :html
 
-  def mount(params, session, socket) do
+  def mount(_params, session, socket) do
     user_token = session["user_token"]
     user = user_token && Accounts.get_user_by_session_token(user_token)
 

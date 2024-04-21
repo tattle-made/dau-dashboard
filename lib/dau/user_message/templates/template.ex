@@ -15,6 +15,11 @@ defmodule DAU.UserMessage.Templates.Template do
   alias DAU.Feed.Common
   defstruct [:data, :meta]
 
+  @type t :: %__MODULE__{
+          data: Common.t(),
+          meta: %{}
+        }
+
   def change(%Common{} = common) do
     %Template{}
     |> Map.put(:data, common)
@@ -99,6 +104,7 @@ defmodule DAU.UserMessage.Templates.Template do
     Map.put(template, :meta, new_meta)
   end
 
+  @spec template_name_label(atom(), Template.t()) :: String.t()
   defp template_name_label(:verification_status, %Template{meta: meta}) do
     Atom.to_string(meta.verification_status)
   end

@@ -107,7 +107,7 @@ defmodule DAU.UserMessage.Outbox do
 
       {:ok, {txn_id, msg_id}}
     rescue
-      err ->
+      _err ->
         {:error, "Unable to parse bsp resposne"}
     end
   end

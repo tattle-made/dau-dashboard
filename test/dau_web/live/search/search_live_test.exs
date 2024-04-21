@@ -23,10 +23,9 @@ defmodule DAUWeb.Search.SearchLiveTest do
 
       # IO.inspect(view)
 
-      rendered_result =
-        view
-        |> element("#video")
-        |> render_click()
+      view
+      |> element("#video")
+      |> render_click()
 
       # IO.inspect(rendered_result)
 
@@ -36,10 +35,10 @@ defmodule DAUWeb.Search.SearchLiveTest do
 
       # IO.inspect(queries)
 
-      # assert_redirected(
-      #   view,
-      #   "/demo/query?media_type=video&verification_status=all&to=2024-04-10&from=2024-03-01&sort=newest&page_num=1"
-      # )
+      assert_redirected(
+        view,
+        "/demo/query?media_type=video&verification_status=all&to=2024-04-10&from=2024-03-01&sort=newest&page_num=1"
+      )
 
       # |> follow_redirect(
       #   "/demo/query?media_type=video&verification_status=all&to=2024-04-10&from=2024-03-01&sort=newest&page_num=1"
@@ -53,7 +52,7 @@ defmodule DAUWeb.Search.SearchLiveTest do
 
     """
     test "render search results", %{conn: conn} do
-      {:ok, view, html} =
+      {:ok, _view, html} =
         live(
           conn,
           "/demo/query?media_type=video&taken_up_by=&verification_status=all&to=2024-04-17&from=2024-03-01&sort=newest&page_num=1"
@@ -92,13 +91,9 @@ defmodule DAUWeb.Search.SearchLiveTest do
     end
 
     test "url is unsupported" do
-      url = nil
-
       assert_raise FunctionClauseError, fn ->
         Detail.beautify_url(nil)
       end
-
-      url = 42
 
       assert_raise FunctionClauseError, fn ->
         Detail.beautify_url(nil)

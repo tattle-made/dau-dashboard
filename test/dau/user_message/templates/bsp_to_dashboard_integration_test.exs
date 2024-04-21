@@ -3,7 +3,6 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
 
   alias DAU.UserMessage.Templates.Template
   alias DAU.UserMessage.Templates.Factory
-  alias DAU.Feed.Common
 
   describe "data integrity" do
     test "match evaluated template with message in unify portal" do

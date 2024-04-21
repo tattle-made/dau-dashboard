@@ -9,7 +9,7 @@ defmodule DAUWeb.SearchLive.Outbox do
     {:ok, socket}
   end
 
-  def handle_event("send-response", unsigned_params, socket) do
+  def handle_event("send-response", _unsigned_params, socket) do
     {:noreply, socket}
   end
 end

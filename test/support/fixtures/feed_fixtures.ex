@@ -55,7 +55,7 @@ defmodule DAU.FeedFixtures do
     common
   end
 
-  def valid_attributes(attrs \\ %{}) do
+  def valid_attributes(_attrs \\ %{}) do
     %{
       "media_urls" => ["temp/audio-01.wav"],
       "media_type" => "audio",

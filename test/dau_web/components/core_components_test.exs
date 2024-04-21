@@ -21,7 +21,7 @@ defmodule DAUWeb.CoreComponentsTest do
     rendered_urls =
       Enum.map(els, fn el ->
         {_el, _meta, url} = el
-        url = url |> hd
+        url |> hd
       end)
 
     assert rendered_urls == urls
@@ -57,7 +57,7 @@ defmodule DAUWeb.CoreComponentsTest do
     rendered_urls =
       Enum.map(els, fn el ->
         {_el, _meta, url} = el
-        url = url |> hd
+        url |> hd
       end)
 
     assert rendered_urls == urls
