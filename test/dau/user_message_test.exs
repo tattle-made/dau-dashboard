@@ -208,8 +208,8 @@ defmodule DAU.UserMessageTest do
         |> AccountsFixtures.user_fixture()
 
       assert Permission.has_privilege?(admin, :approve, Outbox) == true
-      assert Permission.has_privilege?(secratariat_manager, :approve, Outbox) == true
-      assert Permission.has_privilege?(secratariat_associate, :approve, Outbox) == true
+      assert Permission.has_privilege?(secratariat_manager, :approve, Outbox) == false
+      assert Permission.has_privilege?(secratariat_associate, :approve, Outbox) == false
 
       assert Permission.has_privilege?(expert_factchecker, :approve, Outbox) == false
 
