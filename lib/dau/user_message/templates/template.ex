@@ -170,7 +170,26 @@ defmodule DAU.UserMessage.Templates.Template do
           "not_ai_generated_wo_ar_2fc_hi",
           "inconclusive_w_ar_0fc_hi",
           "out_of_scope_wo_ar_0fc_hi",
-          "unsupported_language_wo_ar_0fc_hi"
+          "unsupported_language_wo_ar_0fc_hi",
+          "deepfake_w_ar_0fc_ta",
+          "deepfake_wo_ar_1fc_ta",
+          "deepfake_wo_ar_2fc_ta",
+          "manipulated_w_ar_0fc_ta",
+          "manipulated_wo_ar_1fc_ta",
+          "manipulated_wo_ar_2fc_ta",
+          "not_manipulated_wo_ar_0fc_ta",
+          "not_manipulated_wo_ar_1fc_ta",
+          "not_manipulated_wo_ar_2fc_ta",
+          "ai_generated_wo_ar_0fc_ta",
+          "ai_generated_w_ar_0fc_ta",
+          "ai_generated_wo_ar_1fc_ta",
+          "ai_generated_wo_ar_2fc_ta",
+          "not_ai_generated_wo_ar_0fc_ta",
+          "not_ai_generated_wo_ar_1fc_ta",
+          "not_ai_generated_wo_ar_2fc_ta",
+          "inconclusive_w_ar_0fc_ta",
+          "out_of_scope_wo_ar_0fc_ta",
+          "	unsupported_language_wo_ar_0fc_ta"
         ],
         template_name
       )
