@@ -142,6 +142,23 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
                "📢 We reviewed this audio/video and found it to be Manipulated.\n\n🎯You can read our assessment report here: https:dau.mcaindia.in/assessment-report-1\n\n🧠 Please use your discretion in sharing this information. \n\nThank you for reaching out to us. We hope you have a good day ahead. 🙏"
     end
 
+    test "manipulated_wo_ar_0fc_en" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "manipulated_wo_ar_0fc_en",
+          template_parameters: [
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 We reviewed this audio/video and found it to be Manipulated.\n\n🧠 Please use your discretion in sharing this information. \n\nThank you for reaching out to us. We hope you have a good day ahead. 🙏"
+    end
+
     test "not_manipulated_wo_ar_0fc_en" do
       template = %Template{
         meta: %{
