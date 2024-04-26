@@ -21,3 +21,18 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  queue:
+    image: rabbitmq@sha256:e2505f78d58dca8c372cde3930e4d6bee5e02ac9001ce85ece5a11df606c1fa3 # rabbitmq:3.12.12-management
+    container_name: rabbitmq
+    hostname: rabbit
+    volumes:
+      - ./.docker/rabbitmq/data:/var/lib/rabbitmq
+      - ./.docker/rabbitmq/logs:/var/log/rabbitmq
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "secret-cookie"
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "Admin123"
+    ports:
+      - 5672:5672
+      - 15672:15672

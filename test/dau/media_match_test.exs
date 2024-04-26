@@ -1,5 +1,4 @@
-defmodule DAU.MediaMatchingTest do
-  alias DAU.UserMessageFixtures
+defmodule DAU.MediaMatchTest do
   use DAU.DataCase
 
   alias DAU.FeedFixtures
@@ -38,6 +37,37 @@ defmodule DAU.MediaMatchingTest do
     end
 
     test "add message to outbox for query after 24 hours" do
+    end
+  end
+
+  describe "duplicates" do
+    import DAU.MediaMatchFixtures
+    alias DAU.MediaMatch
+    import DAU.UserMessageFixtures
+
+    setup do
+      parent = self()
+
+      spawn(fn ->
+        {:ok, %RabbitMQ{} = mq_queue} = RabbitMQ.initialize("test-hash-worker-job-queue")
+        send(parent, {:ok, mq_queue})
+      end)
+
+      state =
+        receive do
+          {:ok, mq_queue} ->
+            %{mq_queue: mq_queue}
+        end
+
+      state
+    end
+
+    test "create valid job", %{mq_queue: mq_queue} do
+      IO.inspect(mq_queue, label: "mq_queue")
+      # inbox = inbox_video_message_fixture(%{})
+      job = MediaMatch.create_job(inbox, :hash_worker, via: :rabbitmq)
+
+      # job_response =
     end
   end
 end

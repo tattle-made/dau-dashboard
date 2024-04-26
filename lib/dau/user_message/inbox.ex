@@ -3,6 +3,19 @@ defmodule DAU.UserMessage.Inbox do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{
+          id: integer,
+          media_type: String.t(),
+          sender_number: String.t(),
+          sender_name: String.t(),
+          user_language_input: :en | :hi | :ta | :te | :und,
+          user_input_text: String.t(),
+          caption: String.t(),
+          file_key: String.t(),
+          file_hash: String.t(),
+          content_id: String.t()
+        }
+
   schema "user_message_inbox" do
     field :media_type, :string
     field :path, :string
