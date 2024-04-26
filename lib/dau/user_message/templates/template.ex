@@ -139,6 +139,7 @@ defmodule DAU.UserMessage.Templates.Template do
           "manipulated_wo_ar_1fc_en",
           "manipulated_wo_ar_2fc_en",
           "manipulated_w_ar_0fc_en",
+          "manipulated_wo_ar_0fc_en",
           "not_manipulated_wo_ar_0fc_en",
           "not_manipulated_wo_ar_1fc_en",
           "not_manipulated_wo_ar_2fc_en",
