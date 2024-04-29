@@ -200,7 +200,7 @@ defmodule DAU.UserMessage.Templates.Template do
           "not_manipulated_wo_ar_1fc_te",
           "not_manipulated_wo_ar_2fc_te",
           "ai_generated_wo_ar_0fc_te",
-          "	ai_generated_w_ar_0fc_te",
+          "ai_generated_w_ar_0fc_te",
           "ai_generated_wo_ar_1fc_te",
           "ai_generated_wo_ar_2fc_te",
           "not_ai_generated_wo_ar_0fc_te",
