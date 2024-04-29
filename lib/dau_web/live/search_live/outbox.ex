@@ -10,11 +10,13 @@ defmodule DAUWeb.SearchLive.Outbox do
   end
 
   def handle_params(params, _uri, socket) do
-    pg = String.to_integer(params["pg"])
+    pg = String.to_integer(params["pg"] || 0)
     outbox = UserMessage.list_outbox(pg)
 
     socket = assign(socket, :outbox, outbox)
     {:noreply, socket}
+  rescue
+    _err -> {:noreply, socket}
   end
 
   def handle_event("send-response", _unsigned_params, socket) do
