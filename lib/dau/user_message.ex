@@ -254,9 +254,9 @@ defmodule DAU.UserMessage do
     Query
     |> limit(25)
     |> offset(25 * ^page_num)
+    |> order_by(desc: :inserted_at)
     |> Repo.all()
     |> Repo.preload(:user_message_outbox)
-    |> Repo.preload(:feed_common)
   end
 
   def send_response(%Outbox{id: id}) do

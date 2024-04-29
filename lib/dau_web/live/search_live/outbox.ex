@@ -9,7 +9,20 @@ defmodule DAUWeb.SearchLive.Outbox do
     {:ok, socket}
   end
 
+  def handle_params(params, _uri, socket) do
+    pg = String.to_integer(params["pg"])
+    outbox = UserMessage.list_outbox(pg)
+
+    socket = assign(socket, :outbox, outbox)
+    {:noreply, socket}
+  end
+
   def handle_event("send-response", _unsigned_params, socket) do
     {:noreply, socket}
+  end
+
+  defp humanize_date(date) do
+    Timex.to_datetime(date, "Asia/Calcutta")
+    |> Calendar.strftime("%a %d-%m-%Y %I:%M %P")
   end
 end

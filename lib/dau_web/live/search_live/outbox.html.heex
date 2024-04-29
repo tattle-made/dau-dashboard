@@ -5,10 +5,15 @@
   <.table id="outbox" rows={@outbox}>
     <:col :let={query} label="IDs">
       <div class="flex flex-col gap-1">
-        <p><%= query.id %></p>
+        <p>
+          <a href={~p"/demo/query/#{query.feed_common_id}"}><%= query.feed_common_id %></a>
+        </p>
         <p><%= "msg id : #{query.user_message_outbox.id}" %></p>
         <p><%= "bsp id : #{query.user_message_outbox.e_id}" %></p>
       </div>
+    </:col>
+    <:col :let={query} label="enqueued at">
+      <p><%= humanize_date(query.inserted_at) %></p>
     </:col>
     <:col :let={query} label="number"><%= query.user_message_outbox.sender_number %></:col>
     <:col :let={query} label="reply type"><%= query.user_message_outbox.reply_type %></:col>
