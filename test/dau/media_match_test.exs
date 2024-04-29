@@ -1,5 +1,6 @@
 defmodule DAU.MediaMatchTest do
   use DAU.DataCase
+  use DAU.JobCase
 
   alias DAU.FeedFixtures
 
