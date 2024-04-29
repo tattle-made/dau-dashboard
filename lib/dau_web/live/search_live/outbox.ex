@@ -10,7 +10,7 @@ defmodule DAUWeb.SearchLive.Outbox do
   end
 
   def handle_params(params, _uri, socket) do
-    pg = String.to_integer(params["pg"] || 0)
+    pg = String.to_integer(params["pg"] || "0")
     outbox = UserMessage.list_outbox(pg)
 
     socket = assign(socket, :outbox, outbox)
