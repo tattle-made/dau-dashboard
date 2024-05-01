@@ -33,16 +33,16 @@ defmodule Queue.RabbitMQ do
     end
   end
 
-  def declare_queue(chan, queue_name) do
-    Queue.declare(chan, queue_name, durable: true)
-  end
-
   @spec initialize!() :: %{channel: AMQP.Channel.t(), queue: binary()}
   def initialize!() do
     case initialize() do
       {:ok, channel} -> channel
       {:error, reason} -> raise reason
     end
+  end
+
+  def declare_queue(chan, queue_name) do
+    Queue.declare(chan, queue_name, durable: true)
   end
 
   @doc """

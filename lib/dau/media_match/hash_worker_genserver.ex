@@ -9,6 +9,7 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
   alias DAU.MediaMatch.RabbitMQQueue
 
   use GenServer
+  use AMQP
 
   @job_queue "count-queue"
   @response_queue "count-report-queue"
@@ -28,7 +29,10 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
     RabbitMQ.declare_queue(channel, @job_queue)
     RabbitMQ.declare_queue(channel, @response_queue)
 
-    AMQP.Basic.consume(channel, @response_queue)
+    # Basic.consume(channel, @response_queue)
+    AMQP.Queue.subscribe(channel, @response_queue, fn payload, _meta ->
+      IO.puts("Received: #{payload}")
+    end)
 
     # AMQP.Queue.subscribe(channel, @response_queue, fn payload, _meta ->
     #   IO.inspect(payload, label: "received")
@@ -58,9 +62,9 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
         chan
       ) do
     # consume(chan, tag, redelivered, payload)
-    IO.puts("message rcvd")
-    IO.puts("#{inspect(payload)}")
-    AMQP.Basic.ack(chan, tag)
+    IO.inspect("message rcvd")
+    IO.inspect("#{inspect(payload)}")
+    Basic.ack(chan, tag)
     {:noreply, chan}
   end
 end

@@ -3,6 +3,7 @@ defmodule DAU.MediaMatch.HashWorkerRequest do
   Job description for feluda's hash worker.
   This job is serialized and added to a Queue in RabbitMQ and taken up by feluda workers.
   """
+  alias DAU.UserMessage.Inbox
   alias DAU.MediaMatch.HashWorkerRequest
   use Ecto.Schema
   import Ecto.Changeset
@@ -47,6 +48,10 @@ defmodule DAU.MediaMatch.HashWorkerRequest do
       true -> {:ok, changes |> apply_changes}
       false -> {:error, "Hash worker request is badly formed"}
     end
+  end
+
+  def new(%Inbox{} = inbox) do
+    _changes = %HashWorkerRequest{} |> changeset()
   end
 
   def changeset(%HashWorkerRequest{} = request, attrs \\ %{}) do
