@@ -158,4 +158,10 @@ defmodule DAUWeb.Router do
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
   end
+
+  scope "/analytics", DAUWeb do
+    pipe_through [:browser]
+
+    get "/", AnalyticsController, :hello_world
+  end
 end
