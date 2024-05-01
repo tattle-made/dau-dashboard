@@ -214,6 +214,11 @@ let all_tags = [
   "Aamir Khan",
   "Amitabh Bachchan",
   "Kangana Ranaut",
+  "Language : English",
+  "Language : Hindi",
+  "Language : Tamil",
+  "Language : Telugu",
+  "Language : Other",
 ];
 
 function make_chip(tag, callback) {
