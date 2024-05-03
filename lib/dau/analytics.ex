@@ -3,12 +3,19 @@ defmodule DAU.Analytics do
   alias DAU.Feed.Common
   alias DAU.Repo
 
-  def fetch_data do
-    query =
-      from(c in Common,
-        select: fragment("jsonb_array_elements_text(?->'factcheck_articles'->'url')", c)
-      )
+  def fetch_author_and_url do
+    Common
+    |> query_author_and_url()
+    |> limit(10)
+    |> offset(0)
+    |> Repo.all()
+  end
 
-    Repo.all(query)
+  defp query_author_and_url(query) do
+    from c in query,
+      select: %{
+        username: fragment("jsonb_array_elements(?)->>'username'", c.factcheck_articles),
+        url: fragment("jsonb_array_elements(?)->>'url'", c.factcheck_articles)
+      }
   end
 end
