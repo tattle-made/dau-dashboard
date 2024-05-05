@@ -14,7 +14,7 @@ defmodule DAU.UserMessage.Query do
   end
 
   @doc false
-  def changeset(query, attrs) do
+  def changeset(query, attrs \\ %{}) do
     query
     |> cast(attrs, [:status, :inserted_at])
   end
@@ -28,6 +28,10 @@ defmodule DAU.UserMessage.Query do
     query
     |> change()
     |> put_assoc(:user_message_outbox, outbox)
+  end
+
+  def associate_feed_common_changeset(%Query{} = query, %Common{} = common) do
+    Query.changeset(query) |> put_assoc(:feed_common, common) |> IO.inspect()
   end
 
   @doc """

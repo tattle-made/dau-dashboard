@@ -11,6 +11,7 @@ defmodule DAU.MediaMatch do
   """
 
   import Ecto.Query, warn: false
+  alias DAU.MediaMatch.Hash
   alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.UserMessage.Inbox
   alias DAU.Repo
@@ -43,5 +44,24 @@ defmodule DAU.MediaMatch do
   end
 
   def create_duplicate(%HashWorkerResponse{}) do
+  end
+
+  @doc """
+  Create a row in mediamatch_hashes table.
+  """
+  def create_hash(%HashWorkerResponse{} = response) do
+    attrs = HashWorkerResponse.get_map(response)
+
+    create_hash(attrs)
+  end
+
+  def create_hash(attrs) do
+    %Hash{}
+    |> Hash.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_inbox_message_by_hash(hash) do
+    Repo.get_by(Hash, %{value: hash}) |> Repo.preload(:inbox)
   end
 end

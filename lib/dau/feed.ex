@@ -13,6 +13,15 @@ defmodule DAU.Feed do
     |> Repo.insert()
   end
 
+  @doc """
+  Added for 0.2.0. Common is now linked to queries and does not store all information related to user along with it.
+  """
+  def add_to_common_feed_with_query(attrs \\ %{}) do
+    %Common{}
+    |> Common.changeset_for_query(attrs)
+    |> Repo.insert()
+  end
+
   def add_to_common_feed_with_timestamp(attrs \\ %{}) do
     %Common{}
     |> Common.changeset_with_timestamp(attrs)

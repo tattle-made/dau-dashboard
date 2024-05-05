@@ -5,6 +5,7 @@ defmodule DAU.UserMessage do
 
   import Ecto.Query, warn: false
   require Logger
+  require Logger
   alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.MessageDelivery
   alias DAU.Accounts.User
@@ -62,6 +63,26 @@ defmodule DAU.UserMessage do
     %Inbox{}
     |> Inbox.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_incoming_message(:queue, attrs) do
+    with {:ok, inbox} <- %Inbox{} |> Inbox.changeset(attrs) |> Repo.insert(),
+         {:ok, query} <- %Query{} |> Query.changeset() |> Repo.insert(),
+         preloaded_inbox <- Repo.get(Inbox, inbox.id) |> Repo.preload(:query),
+         {:ok, updated_inbox} <-
+           preloaded_inbox
+           |> Inbox.add_query_changeset(query)
+           |> Repo.update() do
+      {:ok, updated_inbox}
+    else
+      err ->
+        Logger.error("Could not create incoming message. #{inspect(err)}")
+        {:error, "Unexpected error in creating incoming message. #{inspect(err)}"}
+    end
+  rescue
+    err ->
+      Logger.error("Could not create incoming message. #{inspect(err)}")
+      {:error, "Unexpected error in creating incoming message. #{inspect(err)}"}
   end
 
   @doc """
@@ -292,5 +313,10 @@ defmodule DAU.UserMessage do
         Logger.error(reason)
         {:error, "Error with BSP"}
     end
+  end
+
+  def add_query_to_feed(%Query{} = query, %Common{} = common) do
+    Query.associate_feed_common_changeset(query, common)
+    |> Repo.update()
   end
 end

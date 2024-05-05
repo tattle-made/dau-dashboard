@@ -6,14 +6,14 @@ defmodule DAU.UserMessageFixtures do
   alias DAU.UserMessage
 
   @doc """
-  Generate a inbox message of a video.
+  Generate a inbox message of video.
   """
   def inbox_video_message_fixture(attrs \\ %{}) do
     {:ok, inbox_video_message} =
       attrs
       |> Enum.into(%{
         media_type: "video",
-        path: "temp/audio-01.wav",
+        path: "temp/video-01.wav",
         sender_number: "919999999999",
         sender_name: "test_user"
       })

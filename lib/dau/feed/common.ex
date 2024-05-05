@@ -69,6 +69,12 @@ defmodule DAU.Feed.Common do
     |> validate_required([:media_urls, :media_type, :sender_number])
   end
 
+  def changeset_for_query(common, attrs \\ %{}) do
+    common
+    |> cast(attrs, @all_fields)
+    |> validate_required([:media_urls, :media_type])
+  end
+
   def changeset_with_timestamp(common, attrs \\ %{}) do
     common
     |> cast(attrs, @all_fields ++ [:inserted_at, :updated_at])

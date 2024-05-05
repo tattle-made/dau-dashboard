@@ -7,6 +7,10 @@ defmodule DAU.Application do
 
   @impl true
   def start(_type, _args) do
+    :logger.add_handler(:my_sentry_handler, Sentry.LoggerHandler, %{
+      config: %{metadata: [:file, :line]}
+    })
+
     children = [
       DAUWeb.Telemetry,
       DAU.Repo,
@@ -14,6 +18,7 @@ defmodule DAU.Application do
       {Phoenix.PubSub, name: DAU.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: DAU.Finch},
+      DAU.MediaMatch.HashWorkerGenServer,
       # Start a worker by calling: DAU.Worker.start_link(arg)
       # {DAU.Worker, arg},
       # Start to serve requests, typically the last entry

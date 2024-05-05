@@ -1,4 +1,5 @@
 defmodule DAU.UserMessage.Inbox do
+  alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Query
   use Ecto.Schema
   import Ecto.Changeset
@@ -31,7 +32,7 @@ defmodule DAU.UserMessage.Inbox do
     timestamps(type: :utc_datetime)
   end
 
-  def changeset(incoming_message, attrs) do
+  def changeset(incoming_message, attrs \\ %{}) do
     incoming_message
     |> cast(attrs, [
       :media_type,
@@ -89,8 +90,7 @@ defmodule DAU.UserMessage.Inbox do
   end
 
   def add_query_changeset(user_message_inbox, query) do
-    user_message_inbox
-    |> change()
-    |> put_assoc(:query, query, with: &Query.changeset/2)
+    Inbox.changeset(user_message_inbox)
+    |> put_assoc(:query, query)
   end
 end
