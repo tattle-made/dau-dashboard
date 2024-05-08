@@ -89,7 +89,7 @@ defmodule DAU.UserMessage.Inbox do
     |> validate_required([:file_hash])
   end
 
-  def add_query_changeset(user_message_inbox, query) do
+  def associate_query_changeset(user_message_inbox, query) do
     Inbox.changeset(user_message_inbox)
     |> put_assoc(:query, query)
   end

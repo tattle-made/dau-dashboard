@@ -57,7 +57,7 @@ defmodule DAU.Feed.Common do
 
     has_many :messages, Inbox, foreign_key: :id
 
-    has_many :queries, Query, foreign_key: :id
+    has_many :queries, Query, foreign_key: :feed_common_id
 
     timestamps(type: :utc_datetime)
   end
@@ -69,7 +69,7 @@ defmodule DAU.Feed.Common do
     |> validate_required([:media_urls, :media_type, :sender_number])
   end
 
-  def changeset_for_query(common, attrs \\ %{}) do
+  def changeset_without_user_information(common, attrs \\ %{}) do
     common
     |> cast(attrs, @all_fields)
     |> validate_required([:media_urls, :media_type])

@@ -3,6 +3,7 @@ defmodule DAU.FeedFixtures do
   This module defines test helpers for creating entities
   via the `DAU.Feed` context.
   """
+  alias DAU.UserMessage.Inbox
   alias DAU.Feed
 
   def common_feed_of_five() do
@@ -53,6 +54,15 @@ defmodule DAU.FeedFixtures do
       |> Feed.add_to_common_feed()
 
     common
+  end
+
+  def common(%Inbox{} = inbox) do
+    Feed.add_to_common_feed(%{
+      media_urls: [inbox.file_key],
+      media_type: inbox.media_type,
+      sender_number: inbox.sender_number,
+      language: inbox.user_language_input
+    })
   end
 
   def valid_attributes(_attrs \\ %{}) do

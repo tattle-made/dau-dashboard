@@ -249,7 +249,7 @@
       </:col>
       <:col :let={query} label="virality">
         <div class="flex flex-col">
-          <p><%= query.exact_count %></p>
+          <p><%= if length(query.queries) == 0, do: 1, else: length(query.queries) %></p>
         </div>
       </:col>
       <:col :let={query}>

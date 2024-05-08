@@ -65,18 +65,25 @@ defmodule DAU.UserMessage do
     |> Repo.insert()
   end
 
+  @doc """
+  Creates a incoming_message since v0.3.0
+
+  Till 0.3.0, user messages were added to inbox and directly to feed_common.
+  Inbox messages are now grouped into queries and added to a queue to be processed by a Feluda worker.
+  When a response comes from the worker, only then they are added to common.
+  """
   def create_incoming_message(:queue, attrs) do
-    with {:ok, inbox} <- %Inbox{} |> Inbox.changeset(attrs) |> Repo.insert(),
-         {:ok, query} <- %Query{} |> Query.changeset() |> Repo.insert(),
-         preloaded_inbox <- Repo.get(Inbox, inbox.id) |> Repo.preload(:query),
-         {:ok, updated_inbox} <-
-           preloaded_inbox
-           |> Inbox.add_query_changeset(query)
-           |> Repo.update() do
-      {:ok, updated_inbox}
+    with {:ok, inbox} <- create_inbox(attrs),
+         {:ok, inbox_with_query} <- associate_inbox_to_query(inbox) do
+      {:ok, inbox_with_query}
     else
       err ->
         Logger.error("Could not create incoming message. #{inspect(err)}")
+
+        Sentry.capture_message("Could not create incoming message %s",
+          interpolation_parameters: ["#{inspect(err)}"]
+        )
+
         {:error, "Unexpected error in creating incoming message. #{inspect(err)}"}
     end
   rescue
@@ -84,6 +91,12 @@ defmodule DAU.UserMessage do
       Logger.error("Could not create incoming message. #{inspect(err)}")
       {:error, "Unexpected error in creating incoming message. #{inspect(err)}"}
   end
+
+  def create_inbox(attrs) do
+    %Inbox{} |> Inbox.changeset(attrs) |> Repo.insert()
+  end
+
+  def create_query(atrs)
 
   @doc """
   This is used only for testing purposes. It allows us to set inserted_at and updated_at timestamps.
@@ -95,13 +108,20 @@ defmodule DAU.UserMessage do
     |> Repo.insert()
   end
 
-  def add_user_message_to_query(%Inbox{} = inbox_message, %Query{} = query) do
-    inbox_message
-    |> Inbox.add_query_changeset(query)
-    |> Repo.update()
+  def associate_inbox_to_query(%Inbox{} = inbox) do
+    with {:ok, query} <- %Query{} |> Query.changeset() |> Repo.insert(),
+         preloaded_inbox <- Repo.get(Inbox, inbox.id) |> Repo.preload(:query),
+         {:ok, updated_inbox} <- associate_inbox_to_query(preloaded_inbox, query) do
+      {:ok, updated_inbox}
+    else
+      _ -> {:error, "Could not associate inbox to query"}
+    end
   end
 
-  def add_user_message_to_query(%Inbox{} = _inbox_message, _query_id) do
+  def associate_inbox_to_query(%Inbox{} = inbox_message, %Query{} = query) do
+    inbox_message
+    |> Inbox.associate_query_changeset(query)
+    |> Repo.update()
   end
 
   @doc """

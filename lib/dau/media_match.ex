@@ -15,6 +15,7 @@ defmodule DAU.MediaMatch do
   alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.UserMessage.Inbox
   alias DAU.Repo
+  import Ecto.Query
 
   @type create_job_option :: {:via, :rabbitmq | :memory}
   @type create_job_options :: [create_job_option()]
@@ -61,7 +62,37 @@ defmodule DAU.MediaMatch do
     |> Repo.insert()
   end
 
-  def get_inbox_message_by_hash(hash) do
-    Repo.get_by(Hash, %{value: hash}) |> Repo.preload(:inbox)
+  @doc """
+  Given hash value, get inbox.query.common
+
+  This can then be used to answer the following queries :
+  1. Find response to media with hash h
+  """
+  def get_inbox_by_hash(hash, opts \\ []) do
+    preload = Keyword.get(opts, :preload, false)
+
+    preload_statement = fn query ->
+      if preload, do: Repo.preload(query, inbox: [query: [:feed_common]]), else: query
+    end
+
+    from(h in Hash, where: h.value == ^hash)
+    |> limit(1)
+    |> Repo.all()
+    |> preload_statement.()
+    |> hd
+    |> Map.get(:inbox)
+  end
+
+  @doc """
+  Get user response associated with a media item.
+  """
+  def get_user_response_by_hash(%Hash{} = hash) do
+    inbox = get_inbox_by_hash(hash.value)
+    inbox.query.feed_common.user_response
+  end
+
+  def get_user_response_by_hash(%HashWorkerResponse{} = hash) do
+    inbox = get_inbox_by_hash(hash.value)
+    inbox.query.feed_common.user_response
   end
 end

@@ -10,7 +10,7 @@ defmodule DAU.UserMessage.InboxTest do
     query = query()
 
     inbox = Repo.get(Inbox, inbox.id) |> Repo.preload(:query)
-    new_inbox = Inbox.add_query_changeset(inbox, query) |> Repo.update!()
+    new_inbox = Inbox.associate_query_changeset(inbox, query) |> Repo.update!()
 
     assert new_inbox.id == inbox.id
     assert new_inbox.query_id == query.id

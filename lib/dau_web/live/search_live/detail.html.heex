@@ -16,10 +16,18 @@
               <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
             </p>
           </div>
-          <div :if={@query.language} class="flex flex-col wrap gap-4">
+          <%!-- <div :if={@query.language} class="flex flex-col wrap gap-4">
             <p class="text-xs">
               <%= "user language : #{Map.get(@query, :language, "")}" %>
             </p>
+          </div> --%>
+          <div class="flex p-2 border border-gray-900 rounded-md">
+            <.link navigate={~p"/demo/query/#{@query.id}/queries"}>
+              <div class="flex flex-row gap-2 items-center">
+                <.icon name="hero-chat-bubble-bottom-center" class="w-4 h-4" />
+                <p class="text-sm"><%= "View #{length(@query.queries)} queries" %></p>
+              </div>
+            </.link>
           </div>
         </div>
       </div>

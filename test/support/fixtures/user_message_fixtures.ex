@@ -5,6 +5,18 @@ defmodule DAU.UserMessageFixtures do
   """
   alias DAU.UserMessage
 
+  def get_unique_string(n),
+    do: for(_ <- 1..n, into: "", do: <<Enum.random(~c"0123456789abcdef")>>)
+
+  def inbox_message_attrs(:video) do
+    %{
+      "media_type" => "video",
+      "path" => "https://example.com/#{get_unique_string(5)}.mp4",
+      "sender_number" => "919999999990",
+      "sender_name" => "test_user"
+    }
+  end
+
   @doc """
   Generate a inbox message of video.
   """
@@ -13,11 +25,16 @@ defmodule DAU.UserMessageFixtures do
       attrs
       |> Enum.into(%{
         media_type: "video",
-        path: "temp/video-01.wav",
+        path: "https://example.com/video-01.mp4",
         sender_number: "919999999999",
         sender_name: "test_user"
       })
       |> UserMessage.create_incoming_message()
+
+    UserMessage.update_user_message_file_metadata(inbox_video_message, %{
+      file_key: "temp/video-01.mp4",
+      file_hash: get_unique_string(10)
+    })
 
     inbox_video_message
   end

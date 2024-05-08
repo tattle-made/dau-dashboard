@@ -1,4 +1,6 @@
 defmodule DAU.UserMessage.Query do
+  alias DAU.UserMessage.Inbox
+  alias DAU.Repo
   alias DAU.UserMessage.Query
   alias DAU.UserMessage.Outbox
   alias DAU.Feed.Common
@@ -9,6 +11,7 @@ defmodule DAU.UserMessage.Query do
     field :status, Ecto.Enum, values: [:pending, :error, :done, :corrupt]
     belongs_to :feed_common, Common
     belongs_to :user_message_outbox, Outbox, type: :binary_id
+    has_many :messages, Inbox
 
     timestamps(type: :utc_datetime)
   end
@@ -49,5 +52,9 @@ defmodule DAU.UserMessage.Query do
       :eq -> :notification
       :lt -> :customer_reply
     end
+  end
+
+  def get_with_feed_common(query_id) do
+    Repo.get(Query, query_id) |> Repo.preload(:feed_common)
   end
 end

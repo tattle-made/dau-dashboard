@@ -96,6 +96,7 @@ defmodule DAUWeb.Router do
     live "/query/:id", SearchLive.Detail
     live "/query/components", SearchLive.Component
     live "/query/:id/user-response/", SearchLive.UserResponse
+    get "/query/:id/queries", QueryController, :index
   end
 
   scope "/admin", DAUWeb do
