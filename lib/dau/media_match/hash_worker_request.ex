@@ -41,17 +41,21 @@ defmodule DAU.MediaMatch.HashWorkerRequest do
     {:error, "Hash worker request is badly formed"}
   """
   @spec new(attrs :: any()) :: {:ok, HashWorkerRequest.t()} | {:error, String.t()}
-  def new(attrs \\ %{}) do
+  def new(%Inbox{} = inbox) do
+    inbox_map =
+      Map.take(inbox, Inbox.__schema__(:fields))
+      |> Map.update!(:id, &Integer.to_string(&1))
+
+    %HashWorkerRequest{} |> cast(inbox_map, @required_fields) |> apply_changes()
+  end
+
+  def new(attrs) do
     changes = %HashWorkerRequest{} |> changeset(attrs)
 
     case changes.valid? do
       true -> {:ok, changes |> apply_changes}
       false -> {:error, "Hash worker request is badly formed"}
     end
-  end
-
-  def new(%Inbox{} = inbox) do
-    _changes = %HashWorkerRequest{} |> changeset()
   end
 
   def changeset(%HashWorkerRequest{} = request, attrs \\ %{}) do

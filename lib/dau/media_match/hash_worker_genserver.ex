@@ -6,6 +6,8 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
   Writes to the queue and listens for new item in the report queue.
   """
   require Logger
+  alias DAU.UserMessage
+  alias DAU.MediaMatch
   alias DAU.MediaMatch.HashWorkerResponse
   alias Queue.RabbitMQ
   alias DAU.MediaMatch.RabbitMQQueue
@@ -86,25 +88,31 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
         {:basic_deliver, payload, %{delivery_tag: tag, redelivered: _redelivered}},
         chan
       ) do
-    IO.inspect("message rcvd")
-    IO.inspect(payload)
+    Logger.info("hash worker response")
+    Logger.info(payload)
 
     case HashWorkerResponse.new(payload) do
       {:ok, response} ->
         # todo save in
+        inbox = UserMessage.get_incoming_message!(response.inbox_id)
+        hash = MediaMatch.create_hash(response, inbox)
+        MediaMatch.increment_hash_count(hash)
         Basic.ack(chan, tag)
 
       {:error, reason} ->
         Logger.error("Could not handle hash worker response")
+        Logger.error(payload)
 
         Sentry.capture_message(
-          "Reciever could not handle %s. Reason : %s",
-          interpolation_parameters: ["#{inspect(payload)}", "#{inspect(reason)}"]
+          "Reason : %s Payload : %s",
+          interpolation_parameters: ["#{inspect(reason)}", "#{inspect(payload)}"]
         )
 
         Basic.reject(chan, tag, requeue: false)
     end
 
     {:noreply, chan}
+  rescue
+    error -> Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
   end
 end

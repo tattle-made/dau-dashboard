@@ -11,6 +11,7 @@ defmodule DAU.MediaMatch do
   """
 
   import Ecto.Query, warn: false
+  alias DAU.MediaMatch.HashMeta
   alias DAU.MediaMatch.Hash
   alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.UserMessage.Inbox
@@ -50,8 +51,9 @@ defmodule DAU.MediaMatch do
   @doc """
   Create a row in mediamatch_hashes table.
   """
-  def create_hash(%HashWorkerResponse{} = response) do
+  def create_hash(%HashWorkerResponse{} = response, %Inbox{} = inbox) do
     attrs = HashWorkerResponse.get_map(response)
+    attrs |> Map.put(:user_language, inbox.user_language_input)
 
     create_hash(attrs)
   end
@@ -94,5 +96,12 @@ defmodule DAU.MediaMatch do
   def get_user_response_by_hash(%HashWorkerResponse{} = hash) do
     inbox = get_inbox_by_hash(hash.value)
     inbox.query.feed_common.user_response
+  end
+
+  def increment_hash_count(%Hash{} = hash) do
+    HashMeta
+    |> where(value: ^hash.value)
+    |> where(user_language: ^hash.user_language)
+    |> Repo.update_all(inc: [count: 1])
   end
 end

@@ -1,4 +1,6 @@
 defmodule DAU.UserMessage.MessageDelivery do
+  require Logger
+
   def send_message_to_bsp(id, phone_num, message) do
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded"}

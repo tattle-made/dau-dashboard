@@ -3,9 +3,11 @@ defmodule DAU.MediaMatch.Hash do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "mediamatch_hashes" do
+  schema "hashes" do
     field :value, :string
     field :worker_version, :string
+    field :user_language, Ecto.Enum, values: [:en, :hi, :ta, :te, :und]
+    field :count, :integer
     belongs_to :inbox, Inbox
 
     timestamps(type: :utc_datetime)

@@ -3,6 +3,8 @@ defmodule DAUWeb.IncomingMessageController do
 
   # alias DAU.Vendor.Slack.Message
   require Logger
+  alias DAU.MediaMatch.HashWorkerRequest
+  alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.Vendor.Gupshup.DeliveryReport
   alias DAU.UserMessage
   alias DAU.UserMessage.Inbox
@@ -29,12 +31,17 @@ defmodule DAUWeb.IncomingMessageController do
           file_hash: file_hash
         })
 
-        Feed.add_to_common_feed(%{
-          media_urls: [file_key],
-          media_type: inbox_message.media_type,
-          sender_number: inbox_message.sender_number,
-          language: inbox_message.user_language_input
-        })
+        case HashWorkerRequest.new(inbox_message) do
+          {:ok, request} ->
+            Logger.info("hash worker job added")
+            # todo catch error for this function
+            HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
+
+          {:error, error} ->
+            Sentry.capture_message("#{error}. %s",
+              interpolation_parameters: [inbox_message.id]
+            )
+        end
       end
 
       if media_type == "text" do
