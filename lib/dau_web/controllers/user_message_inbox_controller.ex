@@ -31,6 +31,17 @@ defmodule DAUWeb.IncomingMessageController do
           file_hash: file_hash
         })
 
+        {:ok, common} =
+          Feed.add_to_common_feed(%{
+            media_urls: [file_key],
+            media_type: inbox_message.media_type,
+            sender_number: inbox_message.sender_number,
+            language: inbox_message.user_language_input
+          })
+
+        {:ok, query} = UserMessage.create_query_with_common(common, %{status: "pending"})
+        {:ok, _inbox} = UserMessage.associate_inbox_to_query(inbox_message.id, query)
+
         case HashWorkerRequest.new(inbox_message) do
           {:ok, request} ->
             Logger.info("hash worker job added")

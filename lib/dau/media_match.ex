@@ -64,6 +64,20 @@ defmodule DAU.MediaMatch do
     |> Repo.insert()
   end
 
+  # def create_hashmeta(%HashWorkerResponse{} = response, %Inbox{} = inbox) do
+  #   create_hashmeta
+  # end
+
+  def create_hashmeta(attrs) do
+    %HashMeta{}
+    |> HashMeta.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_hashmeta(value, user_language) do
+    Repo.get_by(HashMeta, %{value: value, user_language: user_language})
+  end
+
   @doc """
   Given hash value, get inbox.query.common
 
@@ -98,10 +112,10 @@ defmodule DAU.MediaMatch do
     inbox.query.feed_common.user_response
   end
 
-  def increment_hash_count(%Hash{} = hash) do
+  def increment_hash_count(value, language) do
     HashMeta
-    |> where(value: ^hash.value)
-    |> where(user_language: ^hash.user_language)
+    |> where(value: ^value)
+    |> where(user_language: ^language)
     |> Repo.update_all(inc: [count: 1])
   end
 end

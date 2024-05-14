@@ -17,6 +17,7 @@ defmodule DAU.UserMessage.Inbox do
           content_id: String.t()
         }
 
+  @derive Jason.Encoder
   schema "user_message_inbox" do
     field :media_type, :string
     field :path, :string

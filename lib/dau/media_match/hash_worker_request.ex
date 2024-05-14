@@ -16,6 +16,7 @@ defmodule DAU.MediaMatch.HashWorkerRequest do
         }
 
   @primary_key false
+  @derive Jason.Encoder
   embedded_schema do
     field :id, :string
     field :path, :string
@@ -42,9 +43,13 @@ defmodule DAU.MediaMatch.HashWorkerRequest do
   """
   @spec new(attrs :: any()) :: {:ok, HashWorkerRequest.t()} | {:error, String.t()}
   def new(%Inbox{} = inbox) do
+    file_key = inbox.file_key
+
     inbox_map =
       Map.take(inbox, Inbox.__schema__(:fields))
       |> Map.update!(:id, &Integer.to_string(&1))
+      |> Map.delete(:path)
+      |> Map.put(:path, file_key)
 
     %HashWorkerRequest{} |> cast(inbox_map, @required_fields) |> apply_changes()
   end

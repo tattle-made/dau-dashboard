@@ -90,18 +90,18 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
       ) do
     Logger.info("hash worker response")
     Logger.info(payload)
+    IO.inspect(payload)
 
     case HashWorkerResponse.new(payload) do
       {:ok, response} ->
         # todo save in
-        inbox = UserMessage.get_incoming_message!(response.inbox_id)
-        hash = MediaMatch.create_hash(response, inbox)
-        MediaMatch.increment_hash_count(hash)
+        # inbox = UserMessage.get_incoming_message!(response.post_id) |> IO.inspect()
+        # hash = MediaMatch.create_hash(response, inbox)
+        # MediaMatch.increment_hash_count(hash)
         Basic.ack(chan, tag)
 
       {:error, reason} ->
-        Logger.error("Could not handle hash worker response")
-        Logger.error(payload)
+        Logger.error(reason)
 
         Sentry.capture_message(
           "Reason : %s Payload : %s",

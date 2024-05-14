@@ -11,5 +11,7 @@ defmodule DAU.Repo.Migrations.CreateHashMeta do
 
       timestamps(type: :utc_datetime)
     end
+
+    create index(:hash_meta, [:value, :user_language], unique: true)
   end
 end

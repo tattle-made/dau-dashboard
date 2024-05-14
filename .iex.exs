@@ -5,6 +5,11 @@ import Ecto.Query
 alias DAU.Feed
 alias DAU.Feed.Common
 alias DAU.UserMessage.Inbox
-alias DAU.MediaMatch.HashWorkerGenServer
-alias DAU.MediaMatch.Hash
-alias DAU.MediaMatch.HashMeta
+
+alias DAU.MediaMatch.{
+  Hash,
+  HashMeta,
+  HashWorkerGenServer,
+  HashWorkerRequest,
+  HashWorkerResponse
+}

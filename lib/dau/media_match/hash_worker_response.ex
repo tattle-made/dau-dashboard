@@ -7,14 +7,14 @@ defmodule DAU.MediaMatch.HashWorkerResponse do
   import Ecto.Changeset
 
   @type t :: %__MODULE__{
-          inbox_id: String.t(),
-          value: String.t()
+          post_id: String.t(),
+          hash_value: integer()
         }
 
   @primary_key false
   embedded_schema do
-    field :inbox_id, :string
-    field :value, :string
+    field :post_id, :integer
+    field :hash_value, :string
   end
 
   @doc """
@@ -23,12 +23,12 @@ defmodule DAU.MediaMatch.HashWorkerResponse do
   Most likely the params will be received from an external response queue like RabbitMQ.
 
   ## Examples
-    iex> {HashWorkerResponse.new(%{"inbox_id" => "123-123-sdf", "value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF" })}
+    iex> HashWorkerResponse.new(%{"post_id" => 1, "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF" })
     {:ok,
     %DAU.MediaMatch.HashWorkerResponse{
       id: nil,
-      inbox_id: "123-123-sdf",
-      value: "ADFSDFJSKDFJSDKFJKSDSDFSDF"
+      post_id: "123-123-sdf",
+      hash_value: "ADFSDFJSKDFJSDKFJKSDSDFSDF"
     }}
 
     iex> HashWorkerResponse.new(%{"value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF" })
@@ -39,6 +39,10 @@ defmodule DAU.MediaMatch.HashWorkerResponse do
     |> new()
   end
 
+  @doc """
+  ## Examples
+    iex>
+  """
   @spec new(attrs :: any()) :: {:ok, HashWorkerResponse.t()} | {:error, String.t()}
   def new(attrs) when is_map(attrs) do
     changes = %HashWorkerResponse{} |> changeset(attrs)
@@ -51,8 +55,8 @@ defmodule DAU.MediaMatch.HashWorkerResponse do
 
   def changeset(%HashWorkerResponse{} = response, attrs) do
     response
-    |> cast(attrs, [:inbox_id, :value])
-    |> validate_required([:inbox_id, :value])
+    |> cast(attrs, [:post_id, :hash_value])
+    |> validate_required([:post_id, :hash_value])
   end
 
   def get_map(%HashWorkerResponse{} = response) do

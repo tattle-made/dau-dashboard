@@ -11,7 +11,6 @@ defmodule DAU.Repo.Migrations.CreateMediamatchHashes do
       timestamps(type: :utc_datetime)
     end
 
-    create index(:hashes, [:inbox_id])
-    create index(:hashes, [:value, :user_language])
+    create index(:hashes, [:inbox_id, :value, :user_language], unique: true)
   end
 end

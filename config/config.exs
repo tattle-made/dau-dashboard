@@ -10,7 +10,8 @@ import Config
 config :dau,
   namespace: DAU,
   ecto_repos: [DAU.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  env: config_env()
 
 # Configures the endpoint
 config :dau, DAUWeb.Endpoint,
@@ -68,6 +69,8 @@ config :sentry,
   environment_name: Mix.env(),
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()]
+
+config :dau, AWSS3, file_prefix: "temp"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -1,4 +1,5 @@
 defmodule DAU.Feed.Common do
+  alias DAU.MediaMatch.HashMeta
   alias DAU.UserMessage.Query
   alias DAU.UserMessage.Inbox
   alias DAU.Feed.AssessmentReport
@@ -20,9 +21,11 @@ defmodule DAU.Feed.Common do
     :user_response,
     :sender_number,
     :verification_sop,
-    :verification_status
+    :verification_status,
+    :hash_meta_id
   ]
 
+  @derive Jason.Encoder
   schema "feed_common" do
     field :status, Ecto.Enum, values: [:published, :in_progress, :not_taken]
     field :media_urls, {:array, :string}
@@ -58,6 +61,8 @@ defmodule DAU.Feed.Common do
     has_many :messages, Inbox, foreign_key: :id
 
     has_many :queries, Query, foreign_key: :feed_common_id
+
+    belongs_to :hash_meta, HashMeta
 
     timestamps(type: :utc_datetime)
   end

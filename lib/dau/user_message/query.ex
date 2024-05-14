@@ -7,6 +7,7 @@ defmodule DAU.UserMessage.Query do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive Jason.Encoder
   schema "user_message_query" do
     field :status, Ecto.Enum, values: [:pending, :error, :done, :corrupt]
     belongs_to :feed_common, Common
@@ -56,5 +57,9 @@ defmodule DAU.UserMessage.Query do
 
   def get_with_feed_common(query_id) do
     Repo.get(Query, query_id) |> Repo.preload(:feed_common)
+  end
+
+  def make_map(%Query{} = query) do
+    Map.take(query, Query.__schema__(:fields))
   end
 end

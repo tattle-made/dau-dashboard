@@ -124,6 +124,13 @@ defmodule DAU.UserMessage do
     |> Repo.update()
   end
 
+  def associate_inbox_to_query(inbox_id, %Query{} = query) do
+    Repo.get(Inbox, inbox_id)
+    |> Repo.preload(:query)
+    |> Inbox.associate_query_changeset(query)
+    |> Repo.update()
+  end
+
   @doc """
   Updates a incoming_message.
 

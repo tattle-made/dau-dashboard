@@ -25,7 +25,7 @@ services:
   queue:
     image: rabbitmq@sha256:e2505f78d58dca8c372cde3930e4d6bee5e02ac9001ce85ece5a11df606c1fa3 # rabbitmq:3.12.12-management
     container_name: rabbitmq
-    hostname: rabbit
+    hostname: rabbitmq
     volumes:
       - ./.docker/rabbitmq/data:/var/lib/rabbitmq
       - ./.docker/rabbitmq/logs:/var/log/rabbitmq
@@ -36,3 +36,19 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+
+  hash_worker:
+    image: tattletech/feluda-operator-hash:worker-amd64-latest
+    container_name: hash_worker
+    depends_on:
+      - queue
+    environment:
+      MQ_USERNAME: admin
+      MQ_PASSWORD: Admin123
+      MQ_HOST: rabbitmq
+      AWS_ACCESS_KEY_ID: AKIAZEOQEMFTJS244746
+      AWS_SECRET_ACCESS_KEY: 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
+      AWS_BUCKET: staging.dau.tattle.co.in
+      AWS_REGION: ap-south-1
+    command: python -m worker.hash.hash_worker
+
