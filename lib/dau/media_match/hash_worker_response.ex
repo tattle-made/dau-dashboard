@@ -13,9 +13,16 @@ defmodule DAU.MediaMatch.HashWorkerResponse do
 
   @primary_key false
   embedded_schema do
+    field :indexer_id, :integer
     field :post_id, :integer
+    field :media_type, :string
     field :hash_value, :string
+    field :status, :string
+    field :status_code, :integer
   end
+
+  @all_fields [:indexer_id, :post_id, :media_type, :hash_value, :status, :status_code]
+  @required_fields [:post_id, :media_type, :hash_value]
 
   @doc """
   Create a valid response from params.
@@ -34,15 +41,6 @@ defmodule DAU.MediaMatch.HashWorkerResponse do
     iex> HashWorkerResponse.new(%{"value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF" })
     {:error, "Hash worker response is badly formed"}
   """
-  def new(attrs) when is_binary(attrs) do
-    Jason.decode!(attrs)
-    |> new()
-  end
-
-  @doc """
-  ## Examples
-    iex>
-  """
   @spec new(attrs :: any()) :: {:ok, HashWorkerResponse.t()} | {:error, String.t()}
   def new(attrs) when is_map(attrs) do
     changes = %HashWorkerResponse{} |> changeset(attrs)
@@ -55,8 +53,8 @@ defmodule DAU.MediaMatch.HashWorkerResponse do
 
   def changeset(%HashWorkerResponse{} = response, attrs) do
     response
-    |> cast(attrs, [:post_id, :hash_value])
-    |> validate_required([:post_id, :hash_value])
+    |> cast(attrs, @all_fields)
+    |> validate_required(@required_fields)
   end
 
   def get_map(%HashWorkerResponse{} = response) do

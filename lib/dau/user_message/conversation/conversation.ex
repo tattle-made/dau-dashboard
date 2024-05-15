@@ -6,6 +6,7 @@ defmodule DAU.UserMessage.Conversation do
   already.
   """
   require Logger
+  alias DAU.UserMessage.Conversation.EventConversationCreated
   alias DAU.Feed
   alias DAU.UserMessage
   alias DAU.UserMessage.Conversation
@@ -81,11 +82,10 @@ defmodule DAU.UserMessage.Conversation do
   end
 
   def save_feed_id(%Conversation{} = conversation) do
-    common =
-      Repo.get(Common, conversation.feed_id)
-      |> Repo.preload(:hash_meta)
-      |> Common.changeset(%{hash_meta_id: 5})
-      |> Repo.update()
+    Repo.get(Common, conversation.feed_id)
+    |> Repo.preload(:hash_meta)
+    |> Common.changeset(%{hash_meta_id: 5})
+    |> Repo.update()
   end
 
   def command_a(inbox_id) do
@@ -123,7 +123,7 @@ defmodule DAU.UserMessage.Conversation do
     "user_language_input" => "hi"
   }
   """
-  def user_message_received(%{"media_type" => media_type} = attrs)
+  def add_message(%{"media_type" => media_type} = attrs)
       when media_type in ["audio", "video"] do
     Logger.info(attrs)
 
@@ -142,22 +142,17 @@ defmodule DAU.UserMessage.Conversation do
              language: inbox.user_language_input
            }),
          {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
-         {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query),
-         {:ok, conversation} <- get(inbox.id) do
-      build(conversation)
+         {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
+      {:ok,
+       %EventConversationCreated{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
     else
-      error ->
-        Logger.error(error)
-        error
+      {:error, reason} ->
+        Logger.error(reason)
+        raise reason
     end
-  rescue
-    error ->
-      Logger.error(error)
-      Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
   end
 
-  def user_message_received(%{"media_type" => media_type} = attrs)
-      when media_type in ["text"] do
+  def add_message(%{"media_type" => "text"} = attrs) do
     IO.inspect("in text")
     Logger.info(attrs)
     # {:ok, inbox} = UserMessage.create_incoming_message(attrs)
@@ -180,5 +175,9 @@ defmodule DAU.UserMessage.Conversation do
     # {:ok, inbox} = UserMessage.associate_inbox_to_query(inbox.id, query)
 
     # build(query)
+  end
+
+  def associate_common_to_hash_meta() do
+    raise "function Not Implemented"
   end
 end

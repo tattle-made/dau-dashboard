@@ -47,6 +47,8 @@ defmodule DAU.UserMessage do
   """
   def get_incoming_message!(id), do: Repo.get!(Inbox, id)
 
+  def get_incoming_message(id), do: Repo.get(Inbox, id)
+
   @doc """
   Creates a incoming_message.
 

@@ -3,10 +3,12 @@ defmodule DAU.MediaMatch.Blake2B.Media do
   A media item is uniquely identified with its hash value and
   the language of the user.
   """
+  alias DAU.UserMessage.Inbox
+  alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.MediaMatch.Blake2B.Media
   defstruct [:hash, :language, :inbox_id]
 
-  def build() do
+  def new() do
     %Media{}
   end
 
@@ -20,5 +22,23 @@ defmodule DAU.MediaMatch.Blake2B.Media do
 
   def set_language(%Media{} = media, language) do
     %{media | language: language}
+  end
+
+  def build(attrs) when is_binary(attrs) do
+    with {:ok, response_map} <- Jason.decode(attrs),
+         {:ok, response} <- HashWorkerResponse.new(response_map),
+         inbox <- UserMessage.get_incoming_message(response.post_id),
+         media <- build(response, inbox) do
+      media
+    else
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  def build(%HashWorkerResponse{} = response, %Inbox{} = inbox) do
+    Media.new()
+    |> Media.set_inbox_id(response.post_id)
+    |> Media.set_hash(response.hash_value)
+    |> Media.set_language(inbox.user_language_input)
   end
 end

@@ -4,35 +4,31 @@ defmodule DAU.MediaMatch.Blake2B do
 
   """
   require Logger
+  alias DAU.UserMessage.Conversation
+  alias DAU.MediaMatch.HashWorkerGenServer
+  alias DAU.MediaMatch.Blake2b.WorkerRequest
   alias DAU.MediaMatch.Hash
   alias DAU.Repo
   alias DAU.MediaMatch.HashMeta
   alias DAU.UserMessage.Inbox
-  alias DAU.MediaMatch
   alias DAU.UserMessage
   alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.MediaMatch.Blake2B.Media
   import Ecto.Query
 
-  def build(hashworker_response_attrs) do
-    {:ok, hash_worker_response} = HashWorkerResponse.new(hashworker_response_attrs)
-    %Inbox{} = inbox = UserMessage.get_incoming_message!(hash_worker_response.post_id)
-
-    Media.build()
-    |> Media.set_inbox_id(hash_worker_response.post_id)
-    |> Media.set_hash(hash_worker_response.hash_value)
-    |> Media.set_language(inbox.user_language_input)
-  end
-
   @doc """
 
   response is unstructured data received from a rabbitmq queue
   example:  %{"post_id" => 1, "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF" }
+
+  If the hash does not exist, create a new hashmeta with count set to 1
+  if the hash already exists, increment its count by 1
   """
-  def worker_response_received(response) do
-    with media <- build(response),
+  def worker_response_received(response_string) do
+    with media <- Media.build(response_string),
          {:ok, hash} <- save_hash(media),
-         {:ok, hashmeta} <- increment_hash_count(media) do
+         {:ok, hashmeta} <- increment_hash_count(media),
+         {:ok, conversation} <- Conversation.associate_common_to_hash_meta(hashmeta) do
       {:ok, {hash, hashmeta}}
     else
       err -> err
@@ -40,7 +36,7 @@ defmodule DAU.MediaMatch.Blake2B do
   rescue
     error ->
       Logger.error(error)
-      Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
+      # Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
   end
 
   @doc """
@@ -79,13 +75,20 @@ defmodule DAU.MediaMatch.Blake2B do
     |> Repo.insert()
   end
 
+  @doc """
+
+  """
   def save_hash_count_plus_one(%Media{} = media) do
-    {num, result} =
+    {_num, _result} =
       HashMeta
       |> where(value: ^media.hash)
       |> where(user_language: ^media.language)
       |> Repo.update_all(inc: [count: 1])
 
     {:ok}
+  end
+
+  def save_job(%WorkerRequest{} = request) do
+    HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
   end
 end

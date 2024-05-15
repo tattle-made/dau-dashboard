@@ -3,6 +3,7 @@ defmodule DAUWeb.IncomingMessageController do
 
   # alias DAU.Vendor.Slack.Message
   require Logger
+  alias DAU.MediaMatch
   alias DAU.MediaMatch.HashWorkerRequest
   alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.Vendor.Gupshup.DeliveryReport
@@ -19,62 +20,86 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def create(conn, payload) do
-    with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
-      media_type = inbox_message.media_type
-
-      if Enum.member?(["video", "audio"], media_type) do
-        {file_key, file_hash} =
-          AWSS3.upload_to_s3(payload["path"])
-
-        UserMessage.update_user_message_file_metadata(inbox_message, %{
-          file_key: file_key,
-          file_hash: file_hash
-        })
-
-        {:ok, common} =
-          Feed.add_to_common_feed(%{
-            media_urls: [file_key],
-            media_type: inbox_message.media_type,
-            sender_number: inbox_message.sender_number,
-            language: inbox_message.user_language_input
-          })
-
-        {:ok, query} = UserMessage.create_query_with_common(common, %{status: "pending"})
-        {:ok, _inbox} = UserMessage.associate_inbox_to_query(inbox_message.id, query)
-
-        case HashWorkerRequest.new(inbox_message) do
-          {:ok, request} ->
-            Logger.info("hash worker job added")
-            # todo catch error for this function
-            HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
-
-          {:error, error} ->
-            Sentry.capture_message("#{error}. %s",
-              interpolation_parameters: [inbox_message.id]
-            )
-        end
+    conversation_created =
+      with {:ok, created_conversation} <- UserMessage.Conversation.add_message(payload) do
+        created_conversation
       end
 
-      if media_type == "text" do
-        UserMessage.update_user_message_text_file_hash(inbox_message, %{
-          file_hash:
-            :crypto.hash(:sha256, inbox_message.user_input_text)
-            |> Base.encode16()
-            |> String.downcase()
-        })
+    conn |> Plug.Conn.send_resp(200, [])
 
-        Feed.add_to_common_feed(%{
-          media_urls: [inbox_message.user_input_text],
-          media_type: inbox_message.media_type,
-          sender_number: inbox_message.sender_number,
-          language: inbox_message.user_language_input
-        })
-      end
+    with {:ok, added_to_job_queue} <- MediaMatch.Blake2B.add_to_job_queue(conversation_created) do
+      added_to_job_queue
+    else
+      {:error, reason} -> raise reason
+    end
+  rescue
+    error ->
+      Logger.error("Error in controller for  POST /gupshup/message. #{inspect(error)}")
+      Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
 
       conn
-      |> Plug.Conn.send_resp(200, [])
-    end
+      |> put_resp_content_type("application/json")
+      |> resp(400, Jason.encode!(%{status: :invalid_request}))
+      |> send_resp()
   end
+
+  # def create(conn, payload) do
+  #   with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
+  #     media_type = inbox_message.media_type
+
+  #     if Enum.member?(["video", "audio"], media_type) do
+  #       {file_key, file_hash} =
+  #         AWSS3.upload_to_s3(payload["path"])
+
+  #       UserMessage.update_user_message_file_metadata(inbox_message, %{
+  #         file_key: file_key,
+  #         file_hash: file_hash
+  #       })
+
+  #       {:ok, common} =
+  #         Feed.add_to_common_feed(%{
+  #           media_urls: [file_key],
+  #           media_type: inbox_message.media_type,
+  #           sender_number: inbox_message.sender_number,
+  #           language: inbox_message.user_language_input
+  #         })
+
+  #       {:ok, query} = UserMessage.create_query_with_common(common, %{status: "pending"})
+  #       {:ok, _inbox} = UserMessage.associate_inbox_to_query(inbox_message.id, query)
+
+  #       case HashWorkerRequest.new(inbox_message) do
+  #         {:ok, request} ->
+  #           Logger.info("hash worker job added")
+  #           # todo catch error for this function
+  #           HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
+
+  #         {:error, error} ->
+  #           Sentry.capture_message("#{error}. %s",
+  #             interpolation_parameters: [inbox_message.id]
+  #           )
+  #       end
+  #     end
+
+  #     if media_type == "text" do
+  #       UserMessage.update_user_message_text_file_hash(inbox_message, %{
+  #         file_hash:
+  #           :crypto.hash(:sha256, inbox_message.user_input_text)
+  #           |> Base.encode16()
+  #           |> String.downcase()
+  #       })
+
+  #       Feed.add_to_common_feed(%{
+  #         media_urls: [inbox_message.user_input_text],
+  #         media_type: inbox_message.media_type,
+  #         sender_number: inbox_message.sender_number,
+  #         language: inbox_message.user_language_input
+  #       })
+  #     end
+
+  #     conn
+  #     |> Plug.Conn.send_resp(200, [])
+  #   end
+  # end
 
   def show(conn, %{"id" => id}) do
     incoming_message = UserMessage.get_incoming_message!(id)

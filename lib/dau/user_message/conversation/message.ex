@@ -2,7 +2,7 @@ defmodule DAU.UserMessage.Conversation.Message do
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Conversation.Message
 
-  defstruct [:file_key, :media_type]
+  defstruct [:id, :file_key, :media_type]
 
   def new() do
     %Message{}
@@ -10,8 +10,13 @@ defmodule DAU.UserMessage.Conversation.Message do
 
   def new(%Inbox{} = inbox) do
     Message.new()
+    |> set_id(inbox.id)
     |> set_file_key(inbox.file_key)
     |> set_media_type(inbox.media_type)
+  end
+
+  def set_id(%Message{} = message, id) do
+    %{message | id: id}
   end
 
   def set_file_key(%Message{} = message, file_key) do

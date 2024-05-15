@@ -6,6 +6,7 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
   Writes to the queue and listens for new item in the report queue.
   """
   require Logger
+  alias DAU.MediaMatch.Blake2B
   alias DAU.UserMessage
   alias DAU.MediaMatch
   alias DAU.MediaMatch.HashWorkerResponse
@@ -90,25 +91,10 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
       ) do
     Logger.info("hash worker response")
     Logger.info(payload)
-    IO.inspect(payload)
 
-    case HashWorkerResponse.new(payload) do
-      {:ok, response} ->
-        # todo save in
-        # inbox = UserMessage.get_incoming_message!(response.post_id) |> IO.inspect()
-        # hash = MediaMatch.create_hash(response, inbox)
-        # MediaMatch.increment_hash_count(hash)
-        Basic.ack(chan, tag)
-
-      {:error, reason} ->
-        Logger.error(reason)
-
-        Sentry.capture_message(
-          "Reason : %s Payload : %s",
-          interpolation_parameters: ["#{inspect(reason)}", "#{inspect(payload)}"]
-        )
-
-        Basic.reject(chan, tag, requeue: false)
+    case Blake2B.worker_response_received(payload) do
+      {:ok, _response} -> Basic.ack(chan, tag)
+      {:error, _reason} -> Basic.reject(chan, tag, requeue: false)
     end
 
     {:noreply, chan}
