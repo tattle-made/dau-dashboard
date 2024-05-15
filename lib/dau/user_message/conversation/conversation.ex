@@ -6,7 +6,7 @@ defmodule DAU.UserMessage.Conversation do
   already.
   """
   require Logger
-  alias DAU.UserMessage.Conversation.EventConversationCreated
+  alias DAU.UserMessage.Conversation.MessageAdded
   alias DAU.Feed
   alias DAU.UserMessage
   alias DAU.UserMessage.Conversation
@@ -81,6 +81,12 @@ defmodule DAU.UserMessage.Conversation do
     {:ok, conversation}
   end
 
+  @doc """
+  Associate `HashMeta` with `Common`.
+
+  This allows you to see how many instances of the media item in a Common
+  have been sent to the dashboard.
+  """
   def save_feed_id(%Conversation{} = conversation) do
     Repo.get(Common, conversation.feed_id)
     |> Repo.preload(:hash_meta)
@@ -143,12 +149,11 @@ defmodule DAU.UserMessage.Conversation do
            }),
          {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
-      {:ok,
-       %EventConversationCreated{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
+      {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
     else
       {:error, reason} ->
         Logger.error(reason)
-        raise reason
+        {:error, reason}
     end
   end
 
@@ -175,9 +180,5 @@ defmodule DAU.UserMessage.Conversation do
     # {:ok, inbox} = UserMessage.associate_inbox_to_query(inbox.id, query)
 
     # build(query)
-  end
-
-  def associate_common_to_hash_meta() do
-    raise "function Not Implemented"
   end
 end

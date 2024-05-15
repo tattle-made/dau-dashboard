@@ -21,26 +21,24 @@ defmodule DAUWeb.IncomingMessageController do
 
   def create(conn, payload) do
     conversation_created =
-      with {:ok, created_conversation} <- UserMessage.Conversation.add_message(payload) do
-        created_conversation
+      case UserMessage.Conversation.add_message(payload) do
+        {:ok, created_conversation} ->
+          conn |> Plug.Conn.send_resp(200, [])
+          created_conversation
+
+        {:error, reason} ->
+          raise reason
       end
 
-    conn |> Plug.Conn.send_resp(200, [])
-
-    with {:ok, added_to_job_queue} <- MediaMatch.Blake2B.add_to_job_queue(conversation_created) do
-      added_to_job_queue
-    else
+    case MediaMatch.Blake2B.save_job(conversation_created) do
+      {:ok, _} -> nil
       {:error, reason} -> raise reason
     end
   rescue
     error ->
       Logger.error("Error in controller for  POST /gupshup/message. #{inspect(error)}")
       Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
-
-      conn
-      |> put_resp_content_type("application/json")
-      |> resp(400, Jason.encode!(%{status: :invalid_request}))
-      |> send_resp()
+      conn |> send_400()
   end
 
   # def create(conn, payload) do
@@ -133,5 +131,12 @@ defmodule DAUWeb.IncomingMessageController do
     end
 
     # |> Plug.Conn.send_resp(200, Jason.encode(%{}))
+  end
+
+  def send_400(conn) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> resp(400, Jason.encode!(%{status: :invalid_request}))
+    |> send_resp()
   end
 end

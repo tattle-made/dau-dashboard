@@ -4,16 +4,17 @@ defmodule DAU.MediaMatch.Blake2B do
 
   """
   require Logger
-  alias DAU.UserMessage.Conversation
-  alias DAU.MediaMatch.HashWorkerGenServer
-  alias DAU.MediaMatch.Blake2b.WorkerRequest
-  alias DAU.MediaMatch.Hash
-  alias DAU.Repo
-  alias DAU.MediaMatch.HashMeta
-  alias DAU.UserMessage.Inbox
   alias DAU.UserMessage
+  alias DAU.UserMessage.Inbox
+  alias DAU.UserMessage.Conversation
+  alias DAU.UserMessage.Conversation.MessageAdded
+  alias DAU.MediaMatch.Hash
+  alias DAU.MediaMatch.HashMeta
+  alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.MediaMatch.HashWorkerResponse
+  alias DAU.MediaMatch.Blake2b.WorkerRequest
   alias DAU.MediaMatch.Blake2B.Media
+  alias DAU.Repo
   import Ecto.Query
 
   @doc """
@@ -28,7 +29,7 @@ defmodule DAU.MediaMatch.Blake2B do
     with media <- Media.build(response_string),
          {:ok, hash} <- save_hash(media),
          {:ok, hashmeta} <- increment_hash_count(media),
-         {:ok, conversation} <- Conversation.associate_common_to_hash_meta(hashmeta) do
+         {:ok, conversation} <- Conversation.save_feed_id(hashmeta) do
       {:ok, {hash, hashmeta}}
     else
       err -> err
@@ -88,7 +89,7 @@ defmodule DAU.MediaMatch.Blake2B do
     {:ok}
   end
 
-  def save_job(%WorkerRequest{} = request) do
+  def save_job(%MessageAdded{} = request) do
     HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
   end
 end
