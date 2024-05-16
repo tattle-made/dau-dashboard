@@ -4,9 +4,11 @@ defmodule DAU.MediaMatch.Blake2B.Media do
   the language of the user.
   """
   alias DAU.UserMessage.Inbox
+  alias DAU.UserMessage.Conversation
+  alias DAU.UserMessage
   alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.MediaMatch.Blake2B.Media
-  defstruct [:hash, :language, :inbox_id]
+  defstruct [:hash, :language, :inbox_id, :count]
 
   def new() do
     %Media{}
@@ -22,6 +24,10 @@ defmodule DAU.MediaMatch.Blake2B.Media do
 
   def set_language(%Media{} = media, language) do
     %{media | language: language}
+  end
+
+  def set_count(%Media{} = media, count) do
+    %{media | count: count}
   end
 
   def build(attrs) when is_binary(attrs) do

@@ -69,7 +69,9 @@ defmodule DAU.UserMessage.Conversation do
   that a query only has one message. That is why, we just take the first message and use it to assign
   the sender_number : `set_sender_number(query.messages |> hd |> Map.get(:sender_number))`
   """
-  def build(%Query{} = query) do
+  def build(inbox_id) do
+    {:ok, %Query{} = query} = get(inbox_id)
+
     conversation =
       Conversation.new()
       |> set_id(query.id)
@@ -81,32 +83,28 @@ defmodule DAU.UserMessage.Conversation do
     {:ok, conversation}
   end
 
+  def get_media_count(%Conversation{} = conversation) do
+    Repo.get(Common, conversation.feed_id)
+    |> Repo.preload(:hash_meta)
+    |> Map.get(:hash_meta)
+    |> Map.get(:count)
+  end
+
+  def get_first_message(%Conversation{} = conversation) do
+    conversation.messages |> hd
+  end
+
   @doc """
   Associate `HashMeta` with `Common`.
 
   This allows you to see how many instances of the media item in a Common
   have been sent to the dashboard.
   """
-  def save_feed_id(%Conversation{} = conversation) do
+  def associate_hashmeta_with_feed(%Conversation{} = conversation, hashmeta_id) do
     Repo.get(Common, conversation.feed_id)
     |> Repo.preload(:hash_meta)
-    |> Common.changeset(%{hash_meta_id: 5})
+    |> Common.changeset(%{hash_meta_id: hashmeta_id})
     |> Repo.update()
-  end
-
-  def command_a(inbox_id) do
-    with {:ok, query} <- get(inbox_id),
-         {:ok, conversation} <- build(query) do
-      {:ok, conversation}
-    else
-      err -> err
-    end
-  end
-
-  def add_count_to_item_in_feed(%Conversation{} = conversation, feed_id) do
-    conversation
-    |> set_feed_id(feed_id)
-    |> save_feed_id
   end
 
   @doc """

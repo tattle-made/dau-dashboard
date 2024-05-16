@@ -20,18 +20,18 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def create(conn, payload) do
-    conversation_created =
+    message_added =
       case UserMessage.Conversation.add_message(payload) do
-        {:ok, created_conversation} ->
+        {:ok, message_added} ->
           conn |> Plug.Conn.send_resp(200, [])
-          created_conversation
+          message_added
 
         {:error, reason} ->
           raise reason
       end
 
-    case MediaMatch.Blake2B.save_job(conversation_created) do
-      {:ok, _} -> nil
+    case MediaMatch.Blake2B.create_job(message_added) do
+      :ok -> nil
       {:error, reason} -> raise reason
     end
   rescue

@@ -8,13 +8,27 @@ defmodule DAU.UserMessageFixtures do
   def get_unique_string(n),
     do: for(_ <- 1..n, into: "", do: <<Enum.random(~c"0123456789abcdef")>>)
 
-  def inbox_message_attrs(:video) do
+  def get_unique_phone_number(),
+    do: for(_ <- 1..10, into: "", do: <<Enum.random(~c"0123456789")>>)
+
+  def inbox_message_attrs(:video, attrs) do
     %{
       "media_type" => "video",
       "path" => "https://example.com/#{get_unique_string(5)}.mp4",
-      "sender_number" => "919999999990",
-      "sender_name" => "test_user"
+      "sender_number" => get_unique_phone_number(),
+      "sender_name" => get_unique_string(6)
     }
+    |> Map.merge(attrs)
+  end
+
+  def inbox_message_attrs(:audio, attrs) do
+    %{
+      "media_type" => "audio",
+      "path" => "https://example.com/#{get_unique_string(5)}.wav",
+      "sender_number" => get_unique_phone_number(),
+      "sender_name" => get_unique_string(6)
+    }
+    |> Map.merge(attrs)
   end
 
   @doc """
