@@ -1,10 +1,9 @@
 defmodule DAU.UserMessage.ConversationBlake2BTest do
   alias DAU.Blake2BFixtures
   alias DAU.UserMessageFixtures
-  alias DAU.Feed.Common
   alias DAU.UserMessage.Conversation.MessageAdded
-  alias DAU.MediaMatch
   alias DAU.UserMessage
+  alias DAU.MediaMatch
   use DAU.DataCase
 
   describe "User sends a message for the first time" do
