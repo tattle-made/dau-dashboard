@@ -60,7 +60,7 @@ defmodule DAU.Feed.Common do
 
     has_many :messages, Inbox, foreign_key: :id
 
-    has_many :queries, Query, foreign_key: :feed_common_id
+    has_one :query, Query, foreign_key: :feed_common_id
 
     belongs_to :hash_meta, HashMeta
 

@@ -16,7 +16,7 @@ defmodule DAU.UserMessage.Conversation do
   alias DAU.UserMessage.Query
   alias DAU.Feed.Common
 
-  defstruct [:id, :sender_number, :feed_id, :response, :messages]
+  defstruct [:id, :sender_number, :feed_id, :response, :messages, :language, :count, :hash]
 
   def new() do
     %Conversation{}
@@ -34,16 +34,20 @@ defmodule DAU.UserMessage.Conversation do
     %{query | messages: messages}
   end
 
-  def set_feed_item(%Conversation{} = query, feed_item) do
-    %{query | feed_item: feed_item}
-  end
-
   def set_response(%Conversation{} = query, response) do
     %{query | response: response}
   end
 
   def set_feed_id(%Conversation{} = query, feed_id) do
     %{query | feed_id: feed_id}
+  end
+
+  def set_count(%Conversation{} = query, count) do
+    %{query | count: count}
+  end
+
+  def set_hash(%Conversation{} = query, hash) do
+    %{query | hash: hash}
   end
 
   @doc """
@@ -62,6 +66,9 @@ defmodule DAU.UserMessage.Conversation do
     end
   end
 
+  def get_by_common_id(common_id) when is_integer(common_id) do
+  end
+
   @doc """
   Build a Conversation.
 
@@ -69,18 +76,19 @@ defmodule DAU.UserMessage.Conversation do
   that a query only has one message. That is why, we just take the first message and use it to assign
   the sender_number : `set_sender_number(query.messages |> hd |> Map.get(:sender_number))`
   """
-  def build(inbox_id) do
+  def build(inbox_id) when is_integer(inbox_id) do
     {:ok, %Query{} = query} = get(inbox_id)
-
-    conversation =
-      Conversation.new()
-      |> set_id(query.id)
-      |> set_sender_number(query.messages |> hd |> Map.get(:sender_number))
-      |> set_messages(Enum.map(query.messages, &Message.new(&1)))
-      |> set_response(query.feed_common.user_response)
-      |> set_feed_id(query.feed_common_id)
-
+    conversation = build(query)
     {:ok, conversation}
+  end
+
+  def build(%Query{} = query) do
+    Conversation.new()
+    |> set_id(query.id)
+    |> set_sender_number(query.messages |> hd |> Map.get(:sender_number))
+    |> set_messages(Enum.map(query.messages, &Message.new(&1)))
+    |> set_response(query.feed_common.user_response)
+    |> set_feed_id(query.feed_common_id)
   end
 
   def get_media_count(%Conversation{} = conversation) do
@@ -178,5 +186,9 @@ defmodule DAU.UserMessage.Conversation do
     # {:ok, inbox} = UserMessage.associate_inbox_to_query(inbox.id, query)
 
     # build(query)
+  end
+
+  def copy_response_fields(%Conversation{} = source, %Conversation{} = target) do
+    # common = Repo.get(Common, )
   end
 end

@@ -1,4 +1,5 @@
 defmodule DAU.UserMessage.Inbox do
+  alias DAU.MediaMatch.Hash
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Query
   use Ecto.Schema
@@ -30,6 +31,7 @@ defmodule DAU.UserMessage.Inbox do
     field :file_hash, :string
     field :content_id, :string
     belongs_to :query, Query
+    has_one :hash, Hash, foreign_key: :inbox_id
     timestamps(type: :utc_datetime)
   end
 
