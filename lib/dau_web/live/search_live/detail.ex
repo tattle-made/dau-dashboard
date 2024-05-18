@@ -1,4 +1,5 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.MediaMatch.Blake2B
   alias DAU.UserMessage
   alias DAU.UserMessage.Templates.Factory
   alias DAU.UserMessage.Templates.Template
@@ -10,6 +11,7 @@ defmodule DAUWeb.SearchLive.Detail do
   alias DAU.Feed
   alias Permission
   alias DAU.Feed.FactcheckArticle
+  alias DAUWeb.Components.MatchReview
   use DAUWeb, :live_view
   use DAUWeb, :html
 
@@ -37,6 +39,7 @@ defmodule DAUWeb.SearchLive.Detail do
     socket =
       socket
       |> assign(:query, query)
+      |> assign_async(:matches, fn -> {:ok, %{matches: Blake2B.get_matches_by_common_id(id)}} end)
       |> assign(:form_user_response_label, form_user_response_label)
       |> stream(:resources, query.resources)
 

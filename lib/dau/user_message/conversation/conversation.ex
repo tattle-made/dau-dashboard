@@ -6,6 +6,7 @@ defmodule DAU.UserMessage.Conversation do
   already.
   """
   require Logger
+  alias DAU.UserMessage.Conversation.Hash
   alias DAU.UserMessage.Conversation.MessageAdded
   alias DAU.Feed
   alias DAU.UserMessage
@@ -42,6 +43,10 @@ defmodule DAU.UserMessage.Conversation do
     %{query | feed_id: feed_id}
   end
 
+  def set_language(%Conversation{} = conversation, language) do
+    %{conversation | language: language}
+  end
+
   def set_count(%Conversation{} = query, count) do
     %{query | count: count}
   end
@@ -58,7 +63,7 @@ defmodule DAU.UserMessage.Conversation do
   def get(inbox_id) when is_integer(inbox_id) do
     inbox =
       Repo.get(Inbox, inbox_id)
-      |> Repo.preload(query: [:feed_common, :user_message_outbox, :messages])
+      |> Repo.preload(query: [:feed_common, :user_message_outbox, messages: [:hash]])
 
     case inbox do
       nil -> {:error, "Conversation associated with inbox id not found"}
@@ -67,6 +72,9 @@ defmodule DAU.UserMessage.Conversation do
   end
 
   def get_by_common_id(common_id) when is_integer(common_id) do
+    Repo.get(Common, common_id)
+    |> Repo.preload(query: [:feed_common, :user_message_outbox, messages: [:hash]])
+    |> Map.get(:query)
   end
 
   @doc """
@@ -89,6 +97,8 @@ defmodule DAU.UserMessage.Conversation do
     |> set_messages(Enum.map(query.messages, &Message.new(&1)))
     |> set_response(query.feed_common.user_response)
     |> set_feed_id(query.feed_common_id)
+    |> set_language(query.messages |> hd |> Map.get(:user_language_input))
+    |> set_hash(Hash.new(query.messages |> hd |> Map.get(:hash)))
   end
 
   def get_media_count(%Conversation{} = conversation) do

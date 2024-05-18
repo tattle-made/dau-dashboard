@@ -38,7 +38,7 @@ defmodule AWSS3 do
         {file_key, file_hash}
 
       _ ->
-        {"temp/adsfadsadsf-adfasdfasdf", "HJKJSKJKJKJKJK-SDSD"}
+        {"temp/video-01.mp4", "HJKJSKJKJKJKJK-SDSD-ADFSDFD"}
     end
   end
 end

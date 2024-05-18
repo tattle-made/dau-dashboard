@@ -249,7 +249,7 @@
       </:col>
       <:col :let={query} label="virality">
         <div class="flex flex-col">
-          <p><%= if length(query.queries) == 0, do: 1, else: length(query.queries) %></p>
+          <%!-- <p><%= if !query, do: 1, else: length(query.query) %></p> --%>
         </div>
       </:col>
       <:col :let={query}>

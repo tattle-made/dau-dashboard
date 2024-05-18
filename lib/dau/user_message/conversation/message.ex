@@ -2,6 +2,7 @@ defmodule DAU.UserMessage.Conversation.Message do
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Conversation.Message
 
+  @derive Jason.Encoder
   defstruct [:id, :file_key, :media_type]
 
   def new() do

@@ -241,10 +241,21 @@ defmodule DAU.UserMessage do
   def add_response_to_outbox(%Common{} = common) do
     result =
       Repo.get!(Common, common.id)
-      |> Repo.preload(:queries)
+      |> Repo.preload(:query)
 
-    if length(result.queries) != 0 do
-      raise "Unexpected state"
+    if result.query != nil do
+      # raise "Unexpected state"
+      response = %{
+        sender_number: common.sender_number,
+        reply_type: Query.reply_type(result.query),
+        type: "text",
+        text: common.user_response
+      }
+
+      {:ok, outbox} =
+        UserMessage.create_outbox(response)
+
+      UserMessage.add_outbox_to_query(result.query, outbox)
     else
       {:ok, query} =
         UserMessage.create_query_with_common(result, %{

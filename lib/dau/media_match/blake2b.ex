@@ -5,6 +5,9 @@ defmodule DAU.MediaMatch.Blake2B do
 
   """
   require Logger
+  alias DAU.Feed.Common
+  alias DAU.MediaMatch.Blake2b.Match
+  alias DAU.UserMessage.Conversation.Hash, as: ConversationHash
   alias DAU.UserMessage
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Conversation
@@ -17,6 +20,7 @@ defmodule DAU.MediaMatch.Blake2B do
   alias DAU.MediaMatch.Blake2B.Media
   alias DAU.Repo
   import Ecto.Query
+  import Ecto.Changeset
 
   @doc """
 
@@ -99,5 +103,52 @@ defmodule DAU.MediaMatch.Blake2B do
 
   def create_job(%MessageAdded{} = request) do
     HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
+  end
+
+  def get_matches(%Hash{} = hash) do
+    conversation_hash = hash |> ConversationHash.new()
+
+    get_matches(conversation_hash)
+  end
+
+  def get_matches(%ConversationHash{} = conversation_hash) do
+    Inbox
+    |> join(:left, [i], h in Hash, on: i.id == h.inbox_id)
+    |> where([i, h], h.value == ^conversation_hash.value)
+    |> where([i, h], h.user_language == ^conversation_hash.language)
+    |> Repo.all()
+    |> Enum.map(&(Conversation.build(&1.id) |> elem(1)))
+    |> Enum.map(&Match.new(&1))
+  end
+
+  def get_matches_by_common_id(common_id) do
+    Repo.get(Common, common_id)
+    |> Repo.preload(query: [:feed_common, :user_message_outbox, messages: [:hash]])
+    |> Map.get(:query)
+    |> Map.get(:messages)
+    |> hd
+    |> Map.get(:hash)
+    |> ConversationHash.new()
+    |> get_matches()
+    |> then(fn matches ->
+      %{count: length(matches), result: matches}
+    end)
+  end
+
+  def copy_response_fields(src, target) do
+    src_common = Repo.get(Common, src)
+
+    to_copy = %{
+      user_response: src_common.user_response,
+      factcheck_articles: src_common.factcheck_articles,
+      assessment_report: src_common.assessment_report
+    }
+
+    new_target =
+      Repo.get(Common, target)
+      |> cast(to_copy, [:user_response])
+      |> Repo.update()
+
+    new_target
   end
 end
