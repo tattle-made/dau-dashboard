@@ -93,12 +93,14 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
     Logger.info(payload)
 
     case Blake2B.worker_response_received(payload) do
-      {:ok, _response} -> Basic.ack(chan, tag)
+      :ok -> Basic.ack(chan, tag)
       {:error, _reason} -> Basic.reject(chan, tag, requeue: false)
     end
 
     {:noreply, chan}
   rescue
-    error -> Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
+    error ->
+      Logger.error(error)
+      Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
   end
 end

@@ -31,20 +31,22 @@ defmodule DAU.MediaMatch.Blake2B do
   if the hash already exists, increment its count by 1
   """
   def worker_response_received(response_string) do
-    with media <- Media.build(response_string),
-         {:ok, _hash} <- save_hash(media),
-         {:ok, hashmeta_id} <- increment_hash_count(media),
-         {:ok, conversation} <- Conversation.build(media.inbox_id),
-         {:ok, _common} <- Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id) do
-      {:ok}
+    with media <- Media.build(response_string) |> IO.inspect(),
+         {:ok, _hash} <- save_hash(media) |> IO.inspect(),
+         {:ok, hashmeta_id} <- increment_hash_count(media) |> IO.inspect(),
+         {:ok, conversation} <- Conversation.build(media.inbox_id) |> IO.inspect(),
+         {:ok, _common} <-
+           Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id) |> IO.inspect() do
+      :ok
     else
       err ->
-        IO.inspect("here 1")
-        IO.inspect(err)
+        Logger.info("here 1")
+        Logger.error(err)
         err
     end
   rescue
     error ->
+      IO.inspect(error)
       Logger.info("here 2")
       Logger.error(error)
       # Sentry.capture_exception(error, stacktrace: __STACKTRACE__)

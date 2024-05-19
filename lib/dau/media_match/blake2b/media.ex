@@ -31,7 +31,12 @@ defmodule DAU.MediaMatch.Blake2B.Media do
   end
 
   def build(attrs) when is_binary(attrs) do
-    with {:ok, response_map} <- Jason.decode(attrs),
+    IO.inspect("here 4")
+    IO.inspect(attrs)
+
+    # todo : fix the double decodes.
+    with {:ok, temp} <- Jason.decode(attrs),
+         {:ok, response_map} <- Jason.decode(temp),
          {:ok, response} <- HashWorkerResponse.new(response_map),
          inbox <- UserMessage.get_incoming_message(response.post_id),
          media <- build(response, inbox) do

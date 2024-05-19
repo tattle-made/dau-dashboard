@@ -36,6 +36,11 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   hash_worker:
     image: tattletech/feluda-operator-hash:worker-amd64-latest
@@ -50,5 +55,10 @@ services:
       AWS_SECRET_ACCESS_KEY: E+I7GfgulxGew89lsRzKZvSEP3dSF4r55Icmhj7P
       AWS_BUCKET: staging.dau.tattle.co.in
       AWS_REGION: ap-south-1
-    command: python -m worker.hash.hash_worker
-
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "sleep for 10sec"
+        sleep 10 
+        python -m worker.hash.hash_worker
