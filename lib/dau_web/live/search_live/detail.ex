@@ -209,7 +209,7 @@ defmodule DAUWeb.SearchLive.Detail do
 
   def humanize_match_count(matches) do
     case matches.count do
-      0 -> "Found no matches"
+      0 -> "pending"
       1 -> "Found 1 match"
       _ -> "Found #{matches.count} matches"
     end
