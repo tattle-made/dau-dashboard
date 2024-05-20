@@ -83,6 +83,14 @@ config :ex_aws,
   access_key_id: {:system, "AWS_ACCESS_KEY_ID"},
   secret_access_key: {:system, "AWS_SECRET_ACCESS_KEY"}
 
+rabbit_mq_url =
+  System.get_env("RABBITMQ_URL") ||
+    raise """
+    Slack webhook url is missing. Please contact tattle admin
+    """
+
+config :dau, RabbitMQ, url: rabbit_mq_url
+
 if config_env() == :prod do
   # database_url =
   #   System.get_env("DATABASE_URL") ||
