@@ -135,6 +135,8 @@ defmodule DAU.MediaMatch.Blake2B do
     |> then(fn matches ->
       %{count: length(matches), result: matches}
     end)
+  rescue
+    _ -> nil
   end
 
   def copy_response_fields(src, target) do

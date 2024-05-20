@@ -14,7 +14,8 @@ defmodule DAU.Backfiling.V040 do
       |> Enum.filter(fn common -> common != nil end)
       |> Enum.map(&attach_matching_inbox(&1))
       |> Enum.map(&do_inbox_operations(&1))
-      |> IO.inspect()
+
+    # |> Enum.map(&IO.inspect(&1))
 
     length(items)
   end

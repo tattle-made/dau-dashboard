@@ -14,8 +14,6 @@ defmodule DAUWeb.Components.MatchReview do
       with {:ok, common} <- Blake2B.copy_response_fields(src, target),
            {:ok, query} <- UserMessage.add_response_to_outbox(common),
            {:ok} <- UserMessage.send_response(query.user_message_outbox) do
-        # hide_modal("#match_review")
-
         socket
         |> redirect(to: ~p"/demo/query/#{target}")
       else
@@ -53,7 +51,8 @@ defmodule DAUWeb.Components.MatchReview do
                   navigate={~p"/demo/query/#{match.feed_id}"}
                   class="text-sm leading-6 text-teal-700 hover:text-teal-500"
                 >
-                  <div class="flex flex-col gap-2">
+                  <div class="flex flex-row gap-1">
+                    <p><%= match.feed_id %></p>
                     <.icon name="hero-arrow-up-right" class="h-5 w-5" />
                   </div>
                 </.link>
