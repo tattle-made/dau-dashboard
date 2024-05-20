@@ -17,7 +17,17 @@ defmodule DAU.UserMessage.Conversation do
   alias DAU.UserMessage.Query
   alias DAU.Feed.Common
 
-  defstruct [:id, :sender_number, :feed_id, :response, :messages, :language, :count, :hash]
+  defstruct [
+    :id,
+    :sender_number,
+    :feed_id,
+    :response,
+    :messages,
+    :language,
+    :count,
+    :hash,
+    :verification_status
+  ]
 
   def new() do
     %Conversation{}
@@ -53,6 +63,10 @@ defmodule DAU.UserMessage.Conversation do
 
   def set_hash(%Conversation{} = query, hash) do
     %{query | hash: hash}
+  end
+
+  def set_verification_status(%Conversation{} = conversation, verification_status) do
+    %{conversation | verification_status: verification_status}
   end
 
   @doc """
@@ -99,6 +113,7 @@ defmodule DAU.UserMessage.Conversation do
     |> set_feed_id(query.feed_common_id)
     |> set_language(query.messages |> hd |> Map.get(:user_language_input))
     |> set_hash(Hash.new(query.messages |> hd |> Map.get(:hash)))
+    |> set_verification_status(query.feed_common.verification_status)
   end
 
   def get_media_count(%Conversation{} = conversation) do
@@ -147,8 +162,6 @@ defmodule DAU.UserMessage.Conversation do
   """
   def add_message(%{"media_type" => media_type} = attrs)
       when media_type in ["audio", "video"] do
-    Logger.info(attrs)
-
     with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
          {file_key, file_hash} <- AWSS3.upload_to_s3(inbox.path),
          {:ok, inbox} <-
@@ -163,39 +176,43 @@ defmodule DAU.UserMessage.Conversation do
              sender_number: inbox.sender_number,
              language: inbox.user_language_input
            }),
-         {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
+         {:ok, query} <-
+           UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
       {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
     else
       {:error, reason} ->
+        Logger.error("Error adding message")
         Logger.error(reason)
         {:error, reason}
     end
   end
 
   def add_message(%{"media_type" => "text"} = attrs) do
-    IO.inspect("in text")
-    Logger.info(attrs)
-    # {:ok, inbox} = UserMessage.create_incoming_message(attrs)
-
-    # {:ok, inbox} =
-    #   UserMessage.update_user_message_file_metadata(inbox, %{
-    #     file_key: "temp/video-01.mp4",
-    #     file_hash: "abc"
-    #   })
-
-    # {:ok, common} =
-    #   Feed.add_to_common_feed(%{
-    #     media_urls: ["temp/video-01.mp4"],
-    #     media_type: inbox.media_type,
-    #     sender_number: inbox.sender_number,
-    #     language: inbox.user_language_input
-    #   })
-
-    # {:ok, query} = UserMessage.create_query_with_common(common, %{status: "pending"})
-    # {:ok, inbox} = UserMessage.associate_inbox_to_query(inbox.id, query)
-
-    # build(query)
+    with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
+         {:ok, inbox} <-
+           UserMessage.update_user_message_text_file_hash(inbox, %{
+             file_hash:
+               :crypto.hash(:sha256, inbox.user_input_text)
+               |> Base.encode16()
+               |> String.downcase()
+           }),
+         {:ok, common} <-
+           Feed.add_to_common_feed(%{
+             media_urls: [inbox.user_input_text],
+             media_type: inbox.media_type,
+             sender_number: inbox.sender_number,
+             language: inbox.user_language_input
+           }),
+         {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
+         {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
+      {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
+    else
+      {:error, reason} ->
+        Logger.error("Error adding message")
+        Logger.error(reason)
+        {:error, reason}
+    end
   end
 
   def copy_response_fields(%Conversation{} = source, %Conversation{} = target) do

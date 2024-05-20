@@ -241,7 +241,7 @@ defmodule DAU.UserMessage do
   def add_response_to_outbox(%Common{} = common) do
     result =
       Repo.get!(Common, common.id)
-      |> Repo.preload(:query)
+      |> Repo.preload(query: [:user_message_outbox])
 
     if result.query != nil do
       # raise "Unexpected state"

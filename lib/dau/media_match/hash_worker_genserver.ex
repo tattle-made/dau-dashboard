@@ -78,6 +78,16 @@ defmodule DAU.MediaMatch.HashWorkerGenServer do
     end
   end
 
+  # Sent by the broker when the consumer is unexpectedly cancelled (such as after a queue deletion)
+  def handle_info({:basic_cancel, %{consumer_tag: consumer_tag}}, chan) do
+    {:stop, :normal, chan}
+  end
+
+  # Confirmation sent by the broker to the consumer process after a Basic.cancel
+  def handle_info({:basic_cancel_ok, %{consumer_tag: consumer_tag}}, chan) do
+    {:noreply, chan}
+  end
+
   # Confirmation sent by the broker after registering this process as a consumer
   def handle_info({:basic_consume_ok, %{consumer_tag: consumer_tag}}, chan) do
     IO.inspect("registered as consumer - #{consumer_tag}}")

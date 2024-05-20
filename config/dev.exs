@@ -87,4 +87,4 @@ config :ex_aws,
 
 config :dau, RabbitMQ, url: "amqp://admin:Admin123@localhost"
 
-config :dau, AWSS3, file_prefix: "temp"
+config :dau, AWSS3, file_prefix: "app-data"

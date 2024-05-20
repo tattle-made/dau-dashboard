@@ -162,13 +162,20 @@ defmodule DAU.Feed do
       end
 
     count = query |> Repo.aggregate(:count, :id)
-    results = query |> Repo.all() |> Repo.preload(:query) |> bulk_add_s3_media_url
+
+    results =
+      query
+      |> Repo.all()
+      |> Repo.preload(:query)
+      |> Repo.preload(:hash_meta)
+      |> bulk_add_s3_media_url
+      |> IO.inspect()
 
     {count, results}
   end
 
   def get_feed_item_by_id(id) do
-    query = Repo.get(Common, id) |> Repo.preload(:query)
+    query = Repo.get(Common, id) |> Repo.preload(:query) |> Repo.preload(:hash_meta)
     media_type = query.media_type
 
     {_, map} =

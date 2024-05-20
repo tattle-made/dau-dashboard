@@ -1,5 +1,6 @@
 defmodule DAUWeb.SearchLive.Index do
   import DAUWeb.SearchLive.SearchParams
+  alias DAU.UserMessage.Query
   alias DAUWeb.SearchLive.SearchParams
   alias DAU.Feed
   alias DAU.Accounts
@@ -129,5 +130,12 @@ defmodule DAUWeb.SearchLive.Index do
   defp humanize_date(date) do
     Timex.to_datetime(date, "Asia/Calcutta")
     |> Calendar.strftime("%a %d-%m-%Y %I:%M %P")
+  end
+
+  def humanize_count(hash_meta) do
+    case hash_meta do
+      nil -> 1
+      _ -> hash_meta.count
+    end
   end
 end

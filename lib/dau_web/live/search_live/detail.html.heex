@@ -16,26 +16,24 @@
               <%= "taken up by : #{Map.get(@query, :taken_by, "no one")}" %>
             </p>
           </div>
-          <%!-- <div :if={@query.language} class="flex flex-col wrap gap-4">
+          <div :if={@query.language} class="flex flex-col wrap gap-4">
             <p class="text-xs">
               <%= "user language : #{Map.get(@query, :language, "")}" %>
             </p>
-          </div> --%>
-          <div class="flex p-2 border border-gray-900 rounded-md">
-            <.link navigate={~p"/demo/query/#{@query.id}/matches"}>
-              <div class="flex flex-row gap-2 items-center">
-                <.icon name="hero-chat-bubble-bottom-center" class="w-4 h-4" />
-                <%!-- <p class="text-sm"><%= "View #{length(@query.query)} queries" %></p> --%>
-                <div :if={@matches.loading}>Loading matches...</div>
-                <div :if={matches = @matches.ok? && @matches.result}>
-                  <%= matches.count %> Matches Found
-                </div>
-              </div>
-            </.link>
+          </div>
+          <div class="flex flex-row gap-2 items-center">
+            <.icon name="hero-chat-bubble-bottom-center" class="w-4 h-4" />
+            <%!-- <p class="text-sm"><%= "View #{length(@query.query)} queries" %></p> --%>
+            <div :if={@matches.loading}>Loading matches...</div>
+            <div :if={matches = @matches.ok? && @matches.result}>
+              <p class="cursor-pointer" phx-click={show_modal("match_suggestions_modal")}>
+                <%= humanize_match_count(matches) %>
+              </p>
+            </div>
           </div>
         </div>
       </div>
-      <p phx-click={show_modal("match_suggestions_modal")}>Found 3 matches</p>
+
       <.modal id="match_suggestions_modal">
         <div class="mt-2">
           <.live_component

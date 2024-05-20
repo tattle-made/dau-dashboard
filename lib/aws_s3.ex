@@ -28,17 +28,11 @@ defmodule AWSS3 do
   end
 
   def upload_to_s3(url) do
-    case Application.get_env(:your_app, :env) do
-      :prod ->
-        {:ok, _, _headers, ref} = :hackney.get(url)
-        {:ok, body} = :hackney.body(ref)
-        file_key = "#{@file_prefix}/#{UUID.uuid4()}"
-        file_hash = :crypto.hash(:sha256, body) |> Base.encode16() |> String.downcase()
-        S3.put_object("staging.dau.tattle.co.in", file_key, body) |> ExAws.request!()
-        {file_key, file_hash}
-
-      _ ->
-        {"temp/video-01.mp4", "HJKJSKJKJKJKJK-SDSD-ADFSDFD"}
-    end
+    {:ok, _, _headers, ref} = :hackney.get(url)
+    {:ok, body} = :hackney.body(ref)
+    file_key = "#{@file_prefix}/#{UUID.uuid4()}"
+    file_hash = :crypto.hash(:sha256, body) |> Base.encode16() |> String.downcase()
+    S3.put_object("staging.dau.tattle.co.in", file_key, body) |> ExAws.request!()
+    {file_key, file_hash}
   end
 end

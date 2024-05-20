@@ -220,6 +220,10 @@
         <p><%= humanize_date(query.inserted_at) %></p>
       </:col>
 
+      <:col :let={query} label="count">
+        <p><%= humanize_count(query.hash_meta) %></p>
+      </:col>
+
       <:col :let={query} label="tags">
         <div class="flex flex-row wrap gap-4">
           <div :if={query.tags}>
@@ -247,11 +251,7 @@
           <.icon name="hero-document-check" class="h-5 w-5 bg-slate-500" />
         </div>
       </:col>
-      <:col :let={query} label="virality">
-        <div class="flex flex-col">
-          <%!-- <p><%= if !query, do: 1, else: length(query.query) %></p> --%>
-        </div>
-      </:col>
+
       <:col :let={query}>
         <div class="flex flex-col gap-2">
           <.link navigate={~p"/demo/query/#{query.id}"}>

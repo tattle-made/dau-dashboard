@@ -31,9 +31,6 @@ defmodule DAU.MediaMatch.Blake2B.Media do
   end
 
   def build(attrs) when is_binary(attrs) do
-    IO.inspect("here 4")
-    IO.inspect(attrs)
-
     # todo : fix the double decodes.
     with {:ok, temp} <- Jason.decode(attrs),
          {:ok, response_map} <- Jason.decode(temp),

@@ -138,17 +138,18 @@ defmodule DAU.MediaMatch.Blake2B do
   end
 
   def copy_response_fields(src, target) do
-    src_common = Repo.get(Common, src)
+    src_common = Repo.get(Common, src) |> Repo.preload(:query)
 
     to_copy = %{
       user_response: src_common.user_response,
       factcheck_articles: src_common.factcheck_articles,
-      assessment_report: src_common.assessment_report
+      assessment_report: src_common.assessment_report,
+      verification_status: src_common.verification_status
     }
 
     new_target =
       Repo.get(Common, target)
-      |> cast(to_copy, [:user_response])
+      |> cast(to_copy, [:user_response, :verification_status])
       |> Repo.update()
 
     new_target
