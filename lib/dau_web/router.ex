@@ -97,7 +97,7 @@ defmodule DAUWeb.Router do
     live "/query/components", SearchLive.Component
     live "/query/:id/user-response/", SearchLive.UserResponse
     get "/query/:id/matches", MatchesController, :index
-    post "/query/import-response/src/:src/target/:target", MatchesController, :import_response
+    # post "/query/import-response/src/:src/target/:target", MatchesController, :import_response
   end
 
   scope "/admin", DAUWeb do
