@@ -3,6 +3,9 @@ defmodule DAUWeb.IncomingMessageController do
 
   # alias DAU.Vendor.Slack.Message
   require Logger
+  alias DAU.MediaMatch
+  alias DAU.MediaMatch.HashWorkerRequest
+  alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.Vendor.Gupshup.DeliveryReport
   alias DAU.UserMessage
   alias DAU.UserMessage.Inbox
@@ -17,45 +20,30 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def create(conn, payload) do
-    with {:ok, %Inbox{} = inbox_message} <- UserMessage.create_incoming_message(payload) do
-      media_type = inbox_message.media_type
+    message_added =
+      case UserMessage.Conversation.add_message(payload) do
+        {:ok, message_added} ->
+          message_added
 
-      if Enum.member?(["video", "audio"], media_type) do
-        {file_key, file_hash} =
-          AWSS3.upload_to_s3(payload["path"])
-
-        UserMessage.update_user_message_file_metadata(inbox_message, %{
-          file_key: file_key,
-          file_hash: file_hash
-        })
-
-        Feed.add_to_common_feed(%{
-          media_urls: [file_key],
-          media_type: inbox_message.media_type,
-          sender_number: inbox_message.sender_number,
-          language: inbox_message.user_language_input
-        })
+        {:error, reason} ->
+          Logger.info("here 4")
+          Logger.error(reason)
       end
 
-      if media_type == "text" do
-        UserMessage.update_user_message_text_file_hash(inbox_message, %{
-          file_hash:
-            :crypto.hash(:sha256, inbox_message.user_input_text)
-            |> Base.encode16()
-            |> String.downcase()
-        })
+    IO.inspect(message_added.media_type)
 
-        Feed.add_to_common_feed(%{
-          media_urls: [inbox_message.user_input_text],
-          media_type: inbox_message.media_type,
-          sender_number: inbox_message.sender_number,
-          language: inbox_message.user_language_input
-        })
-      end
-
-      conn
-      |> Plug.Conn.send_resp(200, [])
+    if(message_added.media_type == "audio" or message_added.media_type == "video") do
+      Task.async(fn -> MediaMatch.Blake2B.create_job(message_added) end)
     end
+
+    conn |> Plug.Conn.send_resp(200, [])
+  rescue
+    error ->
+      Logger.error("Error in controller for  POST /gupshup/message. #{inspect(error)}")
+
+      Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
+      Sentry.capture_message("Could not add message. #{inspect(payload)}")
+      conn |> send_400()
   end
 
   def show(conn, %{"id" => id}) do
@@ -90,5 +78,12 @@ defmodule DAUWeb.IncomingMessageController do
     end
 
     # |> Plug.Conn.send_resp(200, Jason.encode(%{}))
+  end
+
+  def send_400(conn) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> resp(400, Jason.encode!(%{status: :invalid_request}))
+    |> send_resp()
   end
 end

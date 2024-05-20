@@ -21,9 +21,28 @@
               <%= "user language : #{Map.get(@query, :language, "")}" %>
             </p>
           </div>
+          <div class="flex flex-row gap-2 items-center">
+            <.icon name="hero-chat-bubble-bottom-center" class="w-4 h-4" />
+            <%!-- <p class="text-sm"><%= "View #{length(@query.query)} queries" %></p> --%>
+            <div :if={@matches.loading}>Loading matches...</div>
+            <div :if={matches = @matches.ok? && @matches.result}>
+              <p class="cursor-pointer" phx-click={show_modal("match_suggestions_modal")}>
+                <%= humanize_match_count(matches) %>
+              </p>
+              <.modal id="match_suggestions_modal">
+                <div class="mt-2">
+                  <.live_component
+                    module={MatchReview}
+                    id="match_review"
+                    common_id={@query.id}
+                    suggested_matches={[]}
+                  />
+                </div>
+              </.modal>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="w-1/2 border h-fit border-green-50 overflow-hidden"></div>
     </div>
   </div>
 

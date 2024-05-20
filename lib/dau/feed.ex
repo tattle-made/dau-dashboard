@@ -13,6 +13,15 @@ defmodule DAU.Feed do
     |> Repo.insert()
   end
 
+  @doc """
+  Added for 0.2.0. Common is now linked to queries and does not store all information related to user along with it.
+  """
+  def add_to_common_feed("0.2.0", attrs) do
+    %Common{}
+    |> Common.changeset_without_user_information(attrs)
+    |> Repo.insert()
+  end
+
   def add_to_common_feed_with_timestamp(attrs \\ %{}) do
     %Common{}
     |> Common.changeset_with_timestamp(attrs)
@@ -153,13 +162,20 @@ defmodule DAU.Feed do
       end
 
     count = query |> Repo.aggregate(:count, :id)
-    results = query |> Repo.all() |> bulk_add_s3_media_url
+
+    results =
+      query
+      |> Repo.all()
+      |> Repo.preload(:query)
+      |> Repo.preload(:hash_meta)
+      |> bulk_add_s3_media_url
+      |> IO.inspect()
 
     {count, results}
   end
 
   def get_feed_item_by_id(id) do
-    query = Repo.get(Common, id)
+    query = Repo.get(Common, id) |> Repo.preload(:query) |> Repo.preload(:hash_meta)
     media_type = query.media_type
 
     {_, map} =
@@ -302,5 +318,9 @@ defmodule DAU.Feed do
 
   def get_factcheck_articles(query_id) do
     Repo.get!(Common, query_id).factcheck_articles
+  end
+
+  def get_queries(feed_common_id) do
+    Repo.get!(Common, feed_common_id) |> Repo.preload(queries: [:messages])
   end
 end

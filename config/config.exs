@@ -10,7 +10,8 @@ import Config
 config :dau,
   namespace: DAU,
   ecto_repos: [DAU.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  env: config_env()
 
 # Configures the endpoint
 config :dau, DAUWeb.Endpoint,
@@ -61,6 +62,15 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :sentry,
+  dsn:
+    "https://38b2487d72b7a30d5bf6ca606dfd5c25@o4507162180976640.ingest.de.sentry.io/4507163464237136",
+  environment_name: Mix.env(),
+  enable_source_code_context: true,
+  root_source_code_paths: [File.cwd!()]
+
+config :dau, AWSS3, file_prefix: "temp"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

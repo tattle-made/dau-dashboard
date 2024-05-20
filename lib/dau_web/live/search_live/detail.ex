@@ -1,4 +1,5 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.MediaMatch.Blake2B
   alias DAU.UserMessage
   alias DAU.UserMessage.Templates.Factory
   alias DAU.UserMessage.Templates.Template
@@ -10,6 +11,7 @@ defmodule DAUWeb.SearchLive.Detail do
   alias DAU.Feed
   alias Permission
   alias DAU.Feed.FactcheckArticle
+  alias DAUWeb.Components.MatchReview
   use DAUWeb, :live_view
   use DAUWeb, :html
 
@@ -37,6 +39,7 @@ defmodule DAUWeb.SearchLive.Detail do
     socket =
       socket
       |> assign(:query, query)
+      |> assign_async(:matches, fn -> {:ok, %{matches: Blake2B.get_matches_by_common_id(id)}} end)
       |> assign(:form_user_response_label, form_user_response_label)
       |> stream(:resources, query.resources)
 
@@ -55,15 +58,13 @@ defmodule DAUWeb.SearchLive.Detail do
     common = Feed.get_feed_item_by_id(query.id)
 
     socket =
-      case UserMessage.add_response_to_outbox(common) do
-        {:ok, query} ->
-          Feed.get_feed_item_by_id(query.id)
-
-          socket
-          |> put_flash(:info, "Response Approved")
-          |> assign(:query, common)
-
-        {:error, _reason} ->
+      with {:ok, query} <- UserMessage.add_response_to_outbox(common),
+           {:ok} <- UserMessage.send_response(query.user_message_outbox) do
+        socket
+        |> put_flash(:info, "Response Approved")
+        |> assign(:query, common)
+      else
+        _err ->
           socket
           |> put_flash(:info, "Error caused while approving response. Please reach out to admin")
       end
@@ -203,6 +204,14 @@ defmodule DAUWeb.SearchLive.Detail do
     case String.length(url) do
       x when x > 40 -> String.slice(url, 0..20) <> "..." <> String.slice(url, -20..-1)
       x when x < 40 -> url
+    end
+  end
+
+  def humanize_match_count(matches) do
+    case matches.count do
+      0 -> "pending"
+      1 -> "Found 1 match"
+      _ -> "Found #{matches.count} matches"
     end
   end
 end

@@ -1,4 +1,9 @@
 defmodule DAU.UserMessageTest do
+  alias DAU.MediaMatch.HashWorkerGenServer
+  alias DAU.UserMessage.Query
+  alias DAU.Feed.Common
+  alias DAU.Feed
+  alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.UserMessage.Outbox
   alias DAU.AccountsFixtures
   alias DAU.OutboxFixtures
@@ -244,6 +249,74 @@ defmodule DAU.UserMessageTest do
 
       assert result.id == outbox.id
       assert result.delivery_status == :success
+    end
+  end
+
+  describe "new message lifecycle" do
+    test "create user message when a duplicate does not exist" do
+      message = %{
+        "media_type" => "video",
+        "path" => "https://dau.tattle.co.in/path-to-video.mp4",
+        "sender_number" => "0000000000",
+        "sender_name" => "some user",
+        "user_language_input" => "en"
+      }
+
+      {:ok, inbox} = UserMessage.create_incoming_message(:queue, message)
+
+      {:ok, inbox} =
+        UserMessage.update_user_message_file_metadata(inbox, %{
+          file_key: "temp/video-01.mp4",
+          file_hash: "asdfasdfasdfasdfsadfasdf"
+        })
+
+      {:ok, hashworker_response} =
+        HashWorkerResponse.new(%{
+          "inbox_id" => "#{inbox.id}",
+          "value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
+        })
+
+      {:ok, query} = UserMessage.create_query(%{status: "pending"})
+
+      query = Repo.get(Query, query.id) |> Repo.preload(:feed_common)
+
+      {:ok, common} =
+        Feed.add_to_common_feed_with_query(%{
+          media_urls: [inbox.file_key],
+          media_type: inbox.media_type
+        })
+
+      # # link common with query
+      # common = Repo.get(Common, common.id) |> Repo.preload(:queries)
+
+      UserMessage.add_query_to_feed(query, common) |> IO.inspect()
+
+      Repo.get(Common, common.id) |> Repo.preload(:queries) |> IO.inspect()
+    end
+
+    test "create user message when a duplicate exists" do
+      message = %{
+        "media_type" => "video",
+        "path" => "temp/video-01.mp4",
+        "sender_number" => "0000000000",
+        "sender_name" => "some user",
+        "user_language_input" => "en"
+      }
+
+      {:ok, inbox} = UserMessage.create_incoming_message(:queue, message)
+
+      {:ok, hashworker_response} =
+        HashWorkerResponse.new(%{
+          "inbox_id" => "#{inbox.id}",
+          "value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
+        })
+
+      # if response.value exists in query, add query to that feed
+      # if it does not exists, add new query
+    end
+
+    test "ainvayi" do
+      HashWorkerGenServer.status(HashWorkerGenServer) |> IO.inspect()
     end
   end
 end

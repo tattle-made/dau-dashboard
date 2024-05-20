@@ -1,7 +1,9 @@
 defmodule AWSS3 do
+  require Logger
   alias ExAws.S3
 
   @opts [query_params: [{"x-amz-acl", "public-read"}]]
+  @file_prefix Application.compile_env(:dau, [AWSS3, :file_prefix])
 
   @doc """
   Get a short lived URL to file on S3
@@ -28,7 +30,7 @@ defmodule AWSS3 do
   def upload_to_s3(url) do
     {:ok, _, _headers, ref} = :hackney.get(url)
     {:ok, body} = :hackney.body(ref)
-    file_key = "app-data/#{UUID.uuid4()}"
+    file_key = "#{@file_prefix}/#{UUID.uuid4()}"
     file_hash = :crypto.hash(:sha256, body) |> Base.encode16() |> String.downcase()
     S3.put_object("staging.dau.tattle.co.in", file_key, body) |> ExAws.request!()
     {file_key, file_hash}

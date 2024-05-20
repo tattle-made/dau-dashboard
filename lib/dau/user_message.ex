@@ -5,6 +5,7 @@ defmodule DAU.UserMessage do
 
   import Ecto.Query, warn: false
   require Logger
+  require Logger
   alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.MessageDelivery
   alias DAU.Accounts.User
@@ -46,6 +47,8 @@ defmodule DAU.UserMessage do
   """
   def get_incoming_message!(id), do: Repo.get!(Inbox, id)
 
+  def get_incoming_message(id), do: Repo.get(Inbox, id)
+
   @doc """
   Creates a incoming_message.
 
@@ -65,6 +68,39 @@ defmodule DAU.UserMessage do
   end
 
   @doc """
+  Creates a incoming_message since v0.3.0
+
+  Till 0.3.0, user messages were added to inbox and directly to feed_common.
+  Inbox messages are now grouped into queries and added to a queue to be processed by a Feluda worker.
+  When a response comes from the worker, only then they are added to common.
+  """
+  def create_incoming_message(:queue, attrs) do
+    with {:ok, inbox} <- create_inbox(attrs),
+         {:ok, inbox_with_query} <- associate_inbox_to_query(inbox) do
+      {:ok, inbox_with_query}
+    else
+      err ->
+        Logger.error("Could not create incoming message. #{inspect(err)}")
+
+        Sentry.capture_message("Could not create incoming message %s",
+          interpolation_parameters: ["#{inspect(err)}"]
+        )
+
+        {:error, "Unexpected error in creating incoming message. #{inspect(err)}"}
+    end
+  rescue
+    err ->
+      Logger.error("Could not create incoming message. #{inspect(err)}")
+      {:error, "Unexpected error in creating incoming message. #{inspect(err)}"}
+  end
+
+  def create_inbox(attrs) do
+    %Inbox{} |> Inbox.changeset(attrs) |> Repo.insert()
+  end
+
+  def create_query(atrs)
+
+  @doc """
   This is used only for testing purposes. It allows us to set inserted_at and updated_at timestamps.
   This is NOT to be used in application code.
   """
@@ -74,13 +110,27 @@ defmodule DAU.UserMessage do
     |> Repo.insert()
   end
 
-  def add_user_message_to_query(%Inbox{} = inbox_message, %Query{} = query) do
+  def associate_inbox_to_query(%Inbox{} = inbox) do
+    with {:ok, query} <- %Query{} |> Query.changeset() |> Repo.insert(),
+         preloaded_inbox <- Repo.get(Inbox, inbox.id) |> Repo.preload(:query),
+         {:ok, updated_inbox} <- associate_inbox_to_query(preloaded_inbox, query) do
+      {:ok, updated_inbox}
+    else
+      _ -> {:error, "Could not associate inbox to query"}
+    end
+  end
+
+  def associate_inbox_to_query(%Inbox{} = inbox_message, %Query{} = query) do
     inbox_message
-    |> Inbox.add_query_changeset(query)
+    |> Inbox.associate_query_changeset(query)
     |> Repo.update()
   end
 
-  def add_user_message_to_query(%Inbox{} = _inbox_message, _query_id) do
+  def associate_inbox_to_query(inbox_id, %Query{} = query) do
+    Repo.get(Inbox, inbox_id)
+    |> Repo.preload(:query)
+    |> Inbox.associate_query_changeset(query)
+    |> Repo.update()
   end
 
   @doc """
@@ -191,10 +241,21 @@ defmodule DAU.UserMessage do
   def add_response_to_outbox(%Common{} = common) do
     result =
       Repo.get!(Common, common.id)
-      |> Repo.preload(:queries)
+      |> Repo.preload(query: [:user_message_outbox])
 
-    if length(result.queries) != 0 do
-      raise "Unexpected state"
+    if result.query != nil do
+      # raise "Unexpected state"
+      response = %{
+        sender_number: common.sender_number,
+        reply_type: Query.reply_type(result.query),
+        type: "text",
+        text: common.user_response
+      }
+
+      {:ok, outbox} =
+        UserMessage.create_outbox(response)
+
+      UserMessage.add_outbox_to_query(result.query, outbox)
     else
       {:ok, query} =
         UserMessage.create_query_with_common(result, %{
@@ -292,5 +353,10 @@ defmodule DAU.UserMessage do
         Logger.error(reason)
         {:error, "Error with BSP"}
     end
+  end
+
+  def add_query_to_feed(%Query{} = query, %Common{} = common) do
+    Query.associate_feed_common_changeset(query, common)
+    |> Repo.update()
   end
 end
