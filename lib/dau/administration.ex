@@ -5,6 +5,8 @@ defmodule DAU.Administration do
   This is an escape hatch for features that admins need on a day to day basis to
   support with the various dau secratariat workflows
   """
+  alias DAU.UserMessage.Conversation
+  alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.Inbox
   alias DAU.Feed
   alias DAU.Feed.Common
@@ -70,5 +72,27 @@ defmodule DAU.Administration do
     # IO.puts("response")
 
     # response =
+  end
+
+  def get_conversation_by_id(id) do
+    Conversation.get_by_common_id(id)
+    |> Conversation.build()
+  end
+
+  def delete_query_by_id(id) do
+    query = Repo.get_by(Query, %{feed_common_id: id})
+    %{id: query_id, user_message_outbox_id: outbox_id} = query
+
+    # get inbox and hash
+    inbox = Repo.get_by(Inbox, %{query_id: query_id}) |> Repo.preload(:hash)
+    %{id: inbox_id, hash: hash} = inbox
+    %{id: hash_id} = hash
+
+    Repo.get(Hash, hash_id) |> Repo.delete()
+    Repo.get(Inbox, inbox_id) |> Repo.delete()
+    Repo.get(Query, query_id) |> Repo.delete()
+    Repo.get(Outbox, outbox_id) |> Repo.delete()
+
+    Repo.get(Common, id) |> Repo.preload(:query) |> Repo.delete()
   end
 end
