@@ -5,12 +5,13 @@ defmodule DAU.Administration do
   This is an escape hatch for features that admins need on a day to day basis to
   support with the various dau secratariat workflows
   """
+  alias DAU.MediaMatch.Hash
+  alias DAU.UserMessage.Query
   alias DAU.UserMessage.Conversation
   alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.Inbox
   alias DAU.Feed
   alias DAU.Feed.Common
-  import Ecto.Query
   alias DAU.Repo
 
   def get_total_queries() do
@@ -82,16 +83,30 @@ defmodule DAU.Administration do
   def delete_query_by_id(id) do
     query = Repo.get_by(Query, %{feed_common_id: id})
     %{id: query_id, user_message_outbox_id: outbox_id} = query
-
+    IO.puts("query_id : #{query_id}")
+    IO.puts("outbox_id : #{outbox_id}")
     # get inbox and hash
     inbox = Repo.get_by(Inbox, %{query_id: query_id}) |> Repo.preload(:hash)
     %{id: inbox_id, hash: hash} = inbox
-    %{id: hash_id} = hash
+    IO.puts("inbox_id : #{inbox_id}")
+    IO.puts("hash : #{inspect(hash)}")
 
-    Repo.get(Hash, hash_id) |> Repo.delete()
+    hash_id =
+      case hash do
+        nil ->
+          nil
+
+        anything ->
+          %{id: hash_id} = anything
+          hash_id
+      end
+
+    IO.puts("hash_id : #{hash_id}")
+
+    if hash_id != nil, do: Repo.get(Hash, hash_id) |> Repo.delete()
     Repo.get(Inbox, inbox_id) |> Repo.delete()
     Repo.get(Query, query_id) |> Repo.delete()
-    Repo.get(Outbox, outbox_id) |> Repo.delete()
+    if outbox_id != nil, do: Repo.get(Outbox, outbox_id) |> Repo.delete()
 
     Repo.get(Common, id) |> Repo.preload(:query) |> Repo.delete()
   end
