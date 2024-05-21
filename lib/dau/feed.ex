@@ -211,6 +211,12 @@ defmodule DAU.Feed do
     |> Repo.update()
   end
 
+  def delete_user_response_lable(%Common{} = common) do
+    common
+    |> Common.changeset_to_remove_user_response_label()
+    |> Repo.update()
+  end
+
   def take_up(%Common{} = common, user_name) do
     common
     |> Common.take_up_changeset(%{taken_by: user_name})

@@ -277,12 +277,14 @@
     <div class="flex flex-row gap-1">
       <div class="w-full p-4 rounded-md border border-gray-200">
         <div class="flex flex-row gap-2">
-          <p class="text-lg">User Response Label</p>
-          <div class="flex-grow" />
-          <div :if={@query.verification_status}>
-            <%!-- <button>
-              <.icon name="hero-trash w-4 h-4" />
-            </button> --%>
+          <div class="flex flex-row gap-2 flex-wrap w-full">
+            <p class="text-lg">User Response Label</p>
+            <p class="flex-grow"></p>
+            <div :if={@query.verification_status}>
+              <button phx-click="clear-verification-status">
+                <.icon name="hero-trash" class="h-5 w-5 bg-red-500" />
+              </button>
+            </div>
           </div>
         </div>
         <div :if={!@query.verification_status}>

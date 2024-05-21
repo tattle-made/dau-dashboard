@@ -143,4 +143,9 @@ defmodule DAU.Feed.Common do
     |> put_embed(:factcheck_articles, factcheck_articles)
     |> cast_embed(:factcheck_articles, required: true)
   end
+
+  def changeset_to_remove_user_response_label(common) do
+    common
+    |> cast(%{verification_status: nil}, [:verification_status])
+  end
 end

@@ -163,6 +163,26 @@ defmodule DAUWeb.SearchLive.Detail do
     {:noreply, socket}
   end
 
+  def handle_event("clear-verification-status", _val, socket) do
+    query = socket.assigns.query
+
+    socket =
+      case Feed.delete_user_response_lable(query) do
+        {:ok, query} ->
+          socket |> assign(:query, query)
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          IO.inspect(changeset)
+          errors = changeset.errors
+          Keyword.get(errors, :user_response) |> IO.inspect()
+          socket |> assign(:form_user_response_label, to_form(changeset))
+      end
+
+    # socket |> IO.inspect()
+
+    {:noreply, socket}
+  end
+
   def get_templatized_response(%Common{} = query) do
     %Template{meta: meta} = template = query |> Factory.process()
 
