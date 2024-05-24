@@ -316,6 +316,7 @@ defmodule DAU.UserMessage do
     |> limit(25)
     |> offset(25 * ^page_num)
     |> order_by(desc: :inserted_at)
+    |> where([q], not is_nil(q.user_message_outbox_id))
     |> Repo.all()
     |> Repo.preload(:user_message_outbox)
   end
