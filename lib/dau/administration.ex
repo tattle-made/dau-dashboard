@@ -13,6 +13,7 @@ defmodule DAU.Administration do
   alias DAU.Feed
   alias DAU.Feed.Common
   alias DAU.Repo
+  import Ecto.Query
 
   def get_total_queries() do
     Common |> select([c], count(c.id)) |> Repo.all()
