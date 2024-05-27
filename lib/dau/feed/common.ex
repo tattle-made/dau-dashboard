@@ -46,6 +46,7 @@ defmodule DAU.Feed.Common do
         :not_manipulated,
         :inconclusive,
         :not_ai_generated,
+        :cheapfake,
         :ai_generated,
         :out_of_scope,
         :spam,
