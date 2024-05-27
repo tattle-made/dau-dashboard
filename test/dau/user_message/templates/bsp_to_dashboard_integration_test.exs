@@ -394,6 +394,80 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
                "📢 We reviewed this audio/video and found it to be AI-Generated.\n\nFact checkers have also shared the following: \n\n1. Publisher One: https://publisher-one.com/article-1\n\n2.Publisher Two: https://publisher-one.com/article-2\n\n🧠 Please use your discretion in sharing this information. \n\nThank you for reaching out to us. We hope you have a good day ahead. 🙏"
     end
 
+    test "cheapfake_wo_ar_0fc_en" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_0fc_en",
+          template_parameters: [
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 We reviewed this audio/video and found it to be Cheapfake.\n\n🧠 Please use your discretion in sharing this information. \n\nThank you for reaching out to us. We hope you have a good day ahead. 🙏"
+    end
+
+    test "cheapfake_w_ar_0fc_en" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_w_ar_0fc_en",
+          template_parameters: [
+            assessment_report: "https://dau.mcaindia.in/assessment-report-01",
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 We reviewed this audio/video and found it to be a Cheapfake.\n\n🎯You can read our assessment report here: https://dau.mcaindia.in/assessment-report-01\n\n🧠 Please use your discretion in sharing this information.\n\nThank you for reaching out to us. We hope you have a good day ahead. 🙏"
+    end
+
+    test "cheapfake_wo_ar_1fc_en" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_1fc_en",
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 We reviewed this audio/video and found it to be Cheapfake.\n\nFact checkers have also shared the following: \n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 Please use your discretion in sharing this information. \n\nThank you for reaching out to us. We hope you have a good day ahead. 🙏"
+    end
+
+    test "cheapfake_wo_ar_2fc_en" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_2fc_en",
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 We reviewed this audio/video and found it to be a Cheapfake.\n\nFact checkers have also shared the following: \n\n1.Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 Please use your discretion in sharing this information. \n\nThank you for reaching out to us. We hope you have a good day ahead. 🙏"
+    end
+
     test "deepfake_w_ar_0fc_hi" do
       template = %Template{
         meta: %{
@@ -766,6 +840,81 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
 
       assert text ==
                "🫣 क्षमा करें, आपके द्वारा भेजी गई मीडिया फाइल एक ऐसी भाषा में है जिसमे हम अभी पड़ताल नहीं करते हैं. आप इस फाइल को दूसरे फैक्ट चेकर्स के WhatsApp टिपलाइन्स पर भेज सकते हैं, जिनके नंबर निचे मौजूद हैं:\n\n➡️Boom: +91-7700906588\n➡️Vishvas News: +91-9599299372\n➡️Factly: +91-9247052470\n➡️THIP: +91-8507885079\n➡️Newschecker: +91-9999499044\n➡️Fact Crescendo: +91-9049053770\n➡️India Today: +91-7370007000\n➡️Newsmobile:+91-1171279799\n➡️Quint WebQoof: +91-9540511818\n➡️Logically Facts: +91-8640070078\n➡️Newsmeter: +91-7482830440\n\nहमारी सेवाओं का इस्तेमाल करने के लिए धन्यवाद. आपका दिन शुभ हो. 🙏"
+    end
+
+    test "cheapfake_wo_ar_0fc_hi" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_0fc_hi",
+          language: :hi,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 हमनें इस ऑडियो/वीडियो की पड़ताल की और पाया कि यह चीपफेक है.\n\n🧠  कृपया अपने सूझ-बूझ का इस्तेमाल कर ही इस जानकारी को शेयर करें.\n\nहमारी सेवाओं का इस्तेमाल करने के लिए धन्यवाद. आपका दिन शुभ हो. 🙏"
+    end
+
+    test "cheapfake_w_ar_0fc_hi" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_w_ar_0fc_hi",
+          language: :hi,
+          template_parameters: [
+            assessment_report: "https:dau.mcaindia.in/assessment-report-1"
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 हमनें इस ऑडियो/वीडियो की पड़ताल की और पाया कि यह चीपफेक है. \n\n🎯इस ऑडियो/वीडियो को लेकर हमारी पड़ताल को विस्तार से यहाँ पढ़ सकते हैं: https:dau.mcaindia.in/assessment-report-1\n\n🧠  कृपया अपने सूझ-बूझ का इस्तेमाल कर ही इस जानकारी को शेयर करें.\n\nहमारी सेवाओं का इस्तेमाल करने के लिए धन्यवाद. आपका दिन शुभ हो. 🙏"
+    end
+
+    test "cheapfake_wo_ar_1fc_hi" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_1fc_hi",
+          language: :hi,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 हमनें इस ऑडियो/वीडियो की पड़ताल की और पाया कि यह चीपफेक है.\n\nफैक्ट चेकर्स ने यह भी शेयर किया है:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠  कृपया अपने सूझ-बूझ का इस्तेमाल कर ही इस जानकारी को शेयर करें.\n\nहमारी सेवाओं का इस्तेमाल करने के लिए धन्यवाद. आपका दिन शुभ हो. 🙏"
+    end
+
+    test "cheapfake_wo_ar_2fc_hi" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_2fc_hi",
+          language: :hi,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 हमनें इस ऑडियो/वीडियो की पड़ताल की और पाया कि यह चीपफेक है.\n\nफैक्ट चेकर्स ने यह भी शेयर किया है:\n\n1.Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠  कृपया अपने सूझ-बूझ का इस्तेमाल कर ही इस जानकारी को शेयर करें.\n\nहमारी सेवाओं का इस्तेमाल करने के लिए धन्यवाद. आपका दिन शुभ हो. 🙏"
     end
 
     test "deepfake_w_ar_0fc_ta" do
@@ -1145,6 +1294,82 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
                "🫣 மன்னிக்கவும்! நீங்கள் அனுப்பிய மொழியில் உள்ள மீடியாவை எங்களால் தற்போது பரிசோதிக்க இயலாது. எங்களுடைய மற்ற ஃபேக் செக்கர்களின் வாட்ஸப் டிப்லைனுக்கு உங்களுடைய மீடியாவை அனுப்பி பரிசோதித்துக்கொள்ளுங்கள்.\n\n➡️Boom: +91-7700906588\n➡️Vishvas News: +91-9599299372\n➡️Factly: +91-9247052470\n➡️THIP: +91-8507885079\n➡️Newschecker: +91-9999499044\n➡️Fact Crescendo: +91-9049053770\n➡️India Today: +91-7370007000\n➡️Newsmobile:+91-1171279799\n➡️Quint WebQoof: +91-9540511818\n➡️Logically Facts: +91-8640070078\n➡️Newsmeter: +91-7482830440\n\nஎங்களைத் தொடர்பு கொண்டமைக்கு நன்றி 🙏"
     end
 
+    test "cheapfake_wo_ar_0fc_ta" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_0fc_ta",
+          language: :ta,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 இந்த audio/video-ஐ நாங்கள் ஆராய்ந்து கண்டறிந்தது என்னவென்றால் அது ஒரு Cheapfake ஆகும்.\n\n🧠இந்த தகவலைப் பகிரும்முன் கவனமுடன் யோசியுங்கள்.\n\nஎங்களைத் தொடர்பு கொண்டதற்கு நன்றி. இந்த நாள் இனிய நாளாக அமையட்டும் 🙏"
+    end
+
+    test "cheapfake_w_ar_0fc_ta" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_w_ar_0fc_ta",
+          language: :ta,
+          template_parameters: [
+            assessment_report: "https://dau.mcaindia.in/assessment-report-01",
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 இந்த audio/video-ஐ நாங்கள் ஆராய்ந்து கண்டறிந்தது என்னவென்றால் அது ஒரு Cheapfake ஆகும்.\n\n🎯எங்களுடைய ஆய்வு முடிவுகளை இங்கே படியுங்கள்: https://dau.mcaindia.in/assessment-report-01\n\n🧠இந்த தகவலைப் பகிரும்முன் கவனமுடன் யோசியுங்கள்.\n\nஎங்களைத் தொடர்பு கொண்டதற்கு நன்றி. இந்த நாள் இனிய நாளாக அமையட்டும் 🙏"
+    end
+
+    test "cheapfake_wo_ar_1fc_ta" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_1fc_ta",
+          language: :ta,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 இந்த audio/video-ஐ நாங்கள் ஆராய்ந்து கண்டறிந்தது என்னவென்றால் அது ஒரு Cheapfake ஆகும்.\n\nஃபேக்ட் செக்கர்களும் இதுகுறித்து கீழ்கண்டவற்றை பகிர்ந்துள்ளனர்:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 இந்த தகவலைப் பகிரும்முன் கவனமுடன் யோசியுங்கள்.\n\nஎங்களைத் தொடர்பு கொண்டதற்கு நன்றி. இந்த நாள் இனிய நாளாக அமையட்டும் 🙏"
+    end
+
+    test "cheapfake_wo_ar_2fc_ta" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_2fc_ta",
+          language: :ta,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 இந்த audio/video-ஐ நாங்கள் ஆராய்ந்து கண்டறிந்தது என்னவென்றால் அது ஒரு Cheapfake ஆகும்.\n\nஃபேக்ட் செக்கர்களும் இதுகுறித்து கீழ்கண்டவற்றை பகிர்ந்துள்ளனர்:\n\n1.Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 இந்த தகவலைப் பகிரும்முன் கவனமுடன் யோசியுங்கள்.\n\nஎங்களைத் தொடர்பு கொண்டதற்கு நன்றி. இந்த நாள் இனிய நாளாக அமையட்டும் 🙏"
+    end
+
     test "deepfake_w_ar_0fc_te" do
       template = %Template{
         meta: %{
@@ -1520,6 +1745,82 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
 
       assert text ==
                "🫣 మీరు షేర్ చేసిన మీడియా ప్రస్తుతం మేము సపోర్ట్ చేయని భాషలో ఉంది. మీరు కింద లిస్ట్ లో ఉన్న ఇతర ఫాక్ట్ చెకర్స్  వాట్సాప్ టిప్ లైన్ ని సంప్రదించండి:\n\n➡️Boom: +91-7700906588\n➡️Vishvas News: +91-9599299372\n➡️Factly: +91-9247052470\n➡️THIP: +91-8507885079\n➡️Newschecker: +91-9999499044\n➡️Fact Crescendo: +91-9049053770\n➡️India Today: +91-7370007000\n➡️Newsmobile:+91-1171279799\n➡️Quint WebQoof: +91-9540511818\n➡️Logically Facts: +91-8640070078\n➡️Newsmeter: +91-7482830440\n\nమమ్మల్ని సంప్రదించినందుకు ధన్యవాదాలు.🙏"
+    end
+
+    test "cheapfake_wo_ar_0fc_te" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_0fc_te",
+          language: :te,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 మేము ఈ ఆడియో/వీడియోని రివ్యూ చేసి ఇది చీప్‌ఫేక్ అని నిర్ధారించాము.\n\n🧠దయచేసి ఈ సమాచారాన్ని షేర్ చేయడానికి మీ విచక్షణను ఉపయోగించండి.\n\nమమ్మల్ని సంప్రదించినందుకు ధన్యవాదాలు. 🙏"
+    end
+
+    test "cheapfake_w_ar_0fc_te" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_w_ar_0fc_te",
+          language: :te,
+          template_parameters: [
+            assessment_report: "https://dau.mcaindia.in/assessment-report-01",
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 మేము ఈ ఆడియో/వీడియోని రివ్యూ చేసి ఇది చీప్‌ఫేక్ అని నిర్ధారించాము.\n\n🎯మీరు మా అసెస్మెంట్ రిపోర్ట్ ని ఇక్కడ చదవవచ్చు: https://dau.mcaindia.in/assessment-report-01\n\n🧠 దయచేసి ఈ సమాచారాన్ని షేర్ చేయడానికి మీ విచక్షణను ఉపయోగించండి.\n\nమమ్మల్ని సంప్రదించినందుకు ధన్యవాదాలు. 🙏"
+    end
+
+    test "cheapfake_wo_ar_1fc_te" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_1fc_te",
+          language: :te,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 మేము ఈ ఆడియో/వీడియోని రివ్యూ చేసి ఇది చీప్‌ఫేక్ అని నిర్ధారించాము.\n\nఫాక్ట్ చెక్కర్స్ పబ్లిష్ చేసిన ఆర్టికల్స్ కింద చూడవొచ్చు:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 దయచేసి ఈ సమాచారాన్ని షేర్ చేయడానికి మీ విచక్షణను ఉపయోగించండి.\n\nమమ్మల్ని సంప్రదించినందుకు ధన్యవాదాలు. 🙏"
+    end
+
+    test "cheapfake_wo_ar_2fc_te" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_2fc_te",
+          language: :te,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 మేము ఈ ఆడియో/వీడియోని రివ్యూ చేసి ఇది చీప్‌ఫేక్ అని నిర్ధారించాము.\n\nఫాక్ట్ చెక్కర్స్ పబ్లిష్ చేసిన ఆర్టికల్స్ కింద చూడవొచ్చు:\n\n1.Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠దయచేసి ఈ సమాచారాన్ని షేర్ చేయడానికి మీ విచక్షణను ఉపయోగించండి.\n\nమమ్మల్ని సంప్రదించినందుకు ధన్యవాదాలు.🙏"
     end
   end
 end
