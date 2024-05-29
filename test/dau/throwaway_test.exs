@@ -3,6 +3,8 @@ defmodule DAU.ThrowawayTest do
   alias DAU.Feed.Common
   alias DAU.Repo
   alias DAU.UserMessage.Templates.Factory
+  alias DAU.Feed.AssessmentReport
+  alias DAU.Feed.FactcheckArticle
   # use DAU.ConnCase
 
   describe "Blacklist Myntra, Flipkart & Amazon links" do
@@ -11,12 +13,16 @@ defmodule DAU.ThrowawayTest do
     end
 
     def blacklisted_url?(url) do
+      keywords = ~r/(amazon|myntra|flipkart|mnatry|flipkin|amznin)/i
+
       case URI.parse(url) do
-        %{host: nil} ->
-          false
+        %{host: nil, query: "", path: path} ->
+          Regex.match?(keywords, path)
+
+        %{host: nil, query: query} ->
+          Regex.match?(keywords, query)
 
         %{host: domain} ->
-          keywords = ~r/(amazon|myntra|flipkart|mnatry|flipkin|amznin)/i
           Regex.match?(keywords, domain)
 
         _ ->
@@ -32,15 +38,16 @@ defmodule DAU.ThrowawayTest do
         "https://flipkart.com@flipkin.cyou/?festival-day-gift=71716615491518",
         "https://www.flipkart.com/laptop-accessories/keyboards/pr?sid=6bo%2Cai3%2C3oe&sort=popularity&param=33&hpid",
         "https://myntra.com@mnatry.cyou/?in=91716519824017",
-        "https://www.myntra.com/shirts/arrow/arrow-spread-collar-slim-fit-opaque-striped-cotton-formal-shirt/28506318/buy"
+        "https://www.myntra.com/shirts/arrow/arrow-spread-collar-slim-fit-opaque-striped-cotton-formal-shirt/28506318/buy",
+        "hey, is this real? https://www.amazon.com/adfasdfadf",
+        "https://www.amazon.com/adfasdfadf Can you check this for me?",
+        "Some text before link https://www.amazon.com/adfasdfadf Can you check this for me?"
       ]
 
       assert Enum.all?(urls, &blacklisted_url?/1)
       assert blacklisted_url?("https://www.google.com") == false
       assert blacklisted_url?("https://factcheck-site.com/article-about-amazon-com") == false
       assert blacklisted_url?("https://facebook.com") == false
-      assert blacklisted_url?("hey, is this real? https://www.amazon.com/adfasdfadf") == false
-      # IO.inspect(URI.parse("hey, is this real? https://www.amazon.com/adfasdfadf"))
     end
   end
 
@@ -106,9 +113,44 @@ defmodule DAU.ThrowawayTest do
         })
         |> Repo.insert!()
 
+      common_w_label_w_ar_wo_fc =
+        %Common{}
+        |> Common.changeset(%{
+          media_urls: ["https://example.com/video1.mp4"],
+          media_type: :video,
+          sender_number: "1234567899",
+          verification_status: :deepfake
+        })
+        |> Common.query_with_assessment_report_changeset(%AssessmentReport{
+          url: "https://example.com/assessment_report"
+        })
+        |> Repo.insert!()
+
+      common_w_label_wo_ar_w_2fc =
+        %Common{}
+        |> Common.changeset(%{
+          media_urls: ["https://example.com/video1.mp4"],
+          media_type: :video,
+          sender_number: "1234567890",
+          verification_status: :deepfake
+        })
+        |> Common.query_with_updated_factcheck_article_changeset([
+          %FactcheckArticle{
+            username: "Publisher One",
+            url: "https://publisher-one.com/article-1"
+          },
+          %FactcheckArticle{
+            username: "Publisher Two",
+            url: "https://publisher-one.com/article-2"
+          }
+        ])
+        |> Repo.insert!()
+
       {:ok,
        common_wo_label_wo_ar_wo_fc: common_wo_label_wo_ar_wo_fc,
-       common_w_label_wo_ar_wo_fc: common_w_label_wo_ar_wo_fc}
+       common_w_label_wo_ar_wo_fc: common_w_label_wo_ar_wo_fc,
+       common_w_label_w_ar_wo_fc: common_w_label_w_ar_wo_fc,
+       common_w_label_wo_ar_w_2fc: common_w_label_wo_ar_w_2fc}
     end
 
     test "test a", state do
@@ -117,7 +159,9 @@ defmodule DAU.ThrowawayTest do
 
       proc_common_w_label_wo_ar_wo_fc = Factory.process(state.common_w_label_wo_ar_wo_fc)
       assert proc_common_w_label_wo_ar_wo_fc.meta.valid == false
-      # assert proc_common_w_label_wo_ar_wo_fc.verification_status == nil
+
+      proc_common_w_label_w_ar_wo_fc = Factory.process(state.common_w_label_w_ar_wo_fc)
+      assert proc_common_w_label_w_ar_wo_fc.meta.valid == true
     end
   end
 end
