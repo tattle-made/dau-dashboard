@@ -250,4 +250,8 @@ defmodule DAU.UserMessage.Templates.Template do
     new_meta = Map.put(template.meta, :language, value)
     Map.put(template, :meta, new_meta)
   end
+
+  def valid?(%Template{} = template) do
+    template.meta.valid
+  end
 end
