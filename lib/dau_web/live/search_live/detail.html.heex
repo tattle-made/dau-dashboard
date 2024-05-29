@@ -353,7 +353,7 @@
             <div class="mt-1 border border-gray-100 p-2 center">
               <p class="whitespace-pre-wrap"><%= get_templatized_response(@query) %></p>
             </div>
-            <%= if !@query.user_response do %>
+            <%= if !@query.user_response && Feed.validate_approve_response_button(@query) do %>
               <button
                 class="border bg-rose-400 mt-2 rounded-md hover:bg-rose-300 text-slate-800 hover:cursor-pointer w-fit"
                 type="submit"
