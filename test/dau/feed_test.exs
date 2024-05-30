@@ -1,6 +1,7 @@
 defmodule DAU.FeedTest do
   alias DAU.Feed
   alias DAU.Feed.Common
+  alias DAU.Feed.AssessmentReport
   use DAU.DataCase
 
   alias DAU.UserMessageFixtures
@@ -96,6 +97,64 @@ defmodule DAU.FeedTest do
       new_article_one = Enum.at(common.factcheck_articles, 0)
       assert new_article_one.id == article_one.id
       assert new_article_one.approved == false
+    end
+  end
+
+  describe "User response button should become clickable only after a label has been added" do
+    setup do
+      common_wo_label_wo_ar_wo_fc =
+        %Common{}
+        |> Common.changeset(%{
+          media_urls: ["https://example.com/video1.mp4"],
+          media_type: :video,
+          sender_number: "1234567890"
+        })
+        |> Repo.insert!()
+
+      common_w_label_wo_ar_wo_fc =
+        %Common{}
+        |> Common.changeset(%{
+          media_urls: ["https://example.com/video1.mp4"],
+          media_type: :video,
+          sender_number: "1234567890",
+          verification_status: :deepfake
+        })
+        |> Repo.insert!()
+
+      common_w_label_w_ar_wo_fc =
+        %Common{}
+        |> Common.changeset(%{
+          media_urls: ["https://example.com/video1.mp4"],
+          media_type: :video,
+          sender_number: "1234567899",
+          verification_status: :deepfake
+        })
+        |> Common.query_with_assessment_report_changeset(%AssessmentReport{
+          url: "https://example.com/assessment_report"
+        })
+        |> Repo.insert!()
+
+      {:ok,
+       common_wo_label_wo_ar_wo_fc: common_wo_label_wo_ar_wo_fc,
+       common_w_label_wo_ar_wo_fc: common_w_label_wo_ar_wo_fc,
+       common_w_label_w_ar_wo_fc: common_w_label_w_ar_wo_fc}
+    end
+
+    test "enable approve response button", state do
+      valid_template_common_wo_label_wo_ar_wo_fc =
+        Feed.enable_approve_response?(state.common_wo_label_wo_ar_wo_fc)
+
+      assert valid_template_common_wo_label_wo_ar_wo_fc == false
+
+      valid_template_common_w_label_wo_ar_wo_fc =
+        Feed.enable_approve_response?(state.common_w_label_wo_ar_wo_fc)
+
+      assert valid_template_common_w_label_wo_ar_wo_fc == false
+
+      valid_template_common_w_label_w_ar_wo_fc =
+        Feed.enable_approve_response?(state.common_w_label_w_ar_wo_fc)
+
+      assert valid_template_common_w_label_w_ar_wo_fc == true
     end
   end
 end

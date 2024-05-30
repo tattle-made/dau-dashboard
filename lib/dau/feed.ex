@@ -4,8 +4,9 @@ defmodule DAU.Feed do
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
   alias DAU.Repo
-
   alias DAU.Feed.Common
+  alias DAU.UserMessage.Templates.Factory
+  alias DAU.UserMessage.Templates.Template
 
   def add_to_common_feed(attrs \\ %{}) do
     %Common{}
@@ -328,5 +329,10 @@ defmodule DAU.Feed do
 
   def get_queries(feed_common_id) do
     Repo.get!(Common, feed_common_id) |> Repo.preload(queries: [:messages])
+  end
+
+  def enable_approve_response?(common) do
+    template_common = Factory.process(common)
+    Template.valid?(template_common)
   end
 end
