@@ -14,6 +14,19 @@ defmodule DAU.Feed do
   end
 
   @doc """
+  opts : [spam: true]
+  """
+  def add_to_common_feed(attrs, opts) do
+    attrs =
+      case Keyword.get(opts, :spam) do
+        true -> Map.put(attrs, :verification_status, :spam)
+        false -> attrs
+      end
+
+    add_to_common_feed(attrs)
+  end
+
+  @doc """
   Added for 0.2.0. Common is now linked to queries and does not store all information related to user along with it.
   """
   def add_to_common_feed("0.2.0", attrs) do
@@ -328,5 +341,25 @@ defmodule DAU.Feed do
 
   def get_queries(feed_common_id) do
     Repo.get!(Common, feed_common_id) |> Repo.preload(queries: [:messages])
+  end
+
+  def block_specific_urls?(url) do
+    keywords = ~r/(amazon|myntra|flipkart|mnatry|flipkin|amznin)/i
+    # MAKE FUNC RETURN WITH TUPLE OK AND RESULTS (true/FALSE)
+    # Enum.any?(media_urls, fn url ->
+    case URI.parse(url) do
+      %{host: nil, query: "", path: path} ->
+        Regex.match?(keywords, path)
+
+      %{host: nil, query: query} ->
+        Regex.match?(keywords, query)
+
+      %{host: domain} ->
+        Regex.match?(keywords, domain)
+
+      _ ->
+        false
+        # end
+    end
   end
 end
