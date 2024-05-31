@@ -1,4 +1,10 @@
 defmodule AWSS3 do
+  def client() do
+    Application.get_env(:dau, :aws_client)
+  end
+end
+
+defmodule AWSS3.Production do
   require Logger
   alias ExAws.S3
 
@@ -33,6 +39,19 @@ defmodule AWSS3 do
     file_key = "#{@file_prefix}/#{UUID.uuid4()}"
     file_hash = :crypto.hash(:sha256, body) |> Base.encode16() |> String.downcase()
     S3.put_object("staging.dau.tattle.co.in", file_key, body) |> ExAws.request!()
+    {file_key, file_hash}
+  end
+end
+
+defmodule AWSS3.Sandbox do
+  @file_prefix "temp"
+  def presigned_url(bucket, key) do
+    "https://#{bucket}-region.aws.amazon.com/#{key}"
+  end
+
+  def upload_to_s3(url) do
+    file_key = "#{@file_prefix}/#{UUID.uuid4()}"
+    file_hash = :crypto.hash(:sha256, url) |> Base.encode16() |> String.downcase()
     {file_key, file_hash}
   end
 end

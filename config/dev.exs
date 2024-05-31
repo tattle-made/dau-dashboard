@@ -86,3 +86,5 @@ config :ex_aws,
   region: "ap-south-1"
 
 config :dau, AWSS3, file_prefix: "app-data"
+
+config :dau, :aws_client, AWSS3.Sandbox
