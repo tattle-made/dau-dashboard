@@ -83,14 +83,6 @@ config :ex_aws,
   access_key_id: {:system, "AWS_ACCESS_KEY_ID"},
   secret_access_key: {:system, "AWS_SECRET_ACCESS_KEY"}
 
-rabbit_mq_url =
-  System.get_env("RABBITMQ_URL") ||
-    raise """
-    Slack webhook url is missing. Please contact tattle admin
-    """
-
-config :dau, RabbitMQ, url: rabbit_mq_url
-
 if config_env() == :prod do
   # database_url =
   #   System.get_env("DATABASE_URL") ||
@@ -98,6 +90,14 @@ if config_env() == :prod do
   #     environment variable DATABASE_URL is missing.
   #     For example: ecto://USER:PASS@HOST/DATABASE
   #     """
+
+  rabbit_mq_url =
+    System.get_env("RABBITMQ_URL") ||
+      raise """
+      Slack webhook url is missing. Please contact tattle admin
+      """
+
+  config :dau, RabbitMQ, url: rabbit_mq_url
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
