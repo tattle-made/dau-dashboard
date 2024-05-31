@@ -22,3 +22,5 @@ config :logger, level: :info
 config :dau, AWSS3, file_prefix: "app-data"
 
 config :dau, :aws_client, AWSS3.Production
+
+config :dau, :gupshup_client, DAU.UserMessage.MessageDelivery.Production

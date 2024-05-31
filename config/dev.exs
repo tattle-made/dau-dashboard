@@ -88,3 +88,5 @@ config :ex_aws,
 config :dau, AWSS3, file_prefix: "app-data"
 
 config :dau, :aws_client, AWSS3.Sandbox
+
+config :dau, :gupshup_client, DAU.UserMessage.MessageDelivery.Sandbox

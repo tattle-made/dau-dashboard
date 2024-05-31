@@ -326,8 +326,8 @@ defmodule DAU.UserMessage do
 
     reply_function =
       case outbox.reply_type do
-        :customer_reply -> &MessageDelivery.send_message_to_bsp/3
-        :notification -> &MessageDelivery.send_template_to_bsp/3
+        :customer_reply -> &MessageDelivery.client().send_message_to_bsp/3
+        :notification -> &MessageDelivery.client().send_template_to_bsp/3
       end
 
     case reply_function.(outbox.id, outbox.sender_number, outbox.text) do
