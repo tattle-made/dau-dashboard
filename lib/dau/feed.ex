@@ -329,4 +329,14 @@ defmodule DAU.Feed do
   def get_queries(feed_common_id) do
     Repo.get!(Common, feed_common_id) |> Repo.preload(queries: [:messages])
   end
+
+  def auto_tag_spam(common_a, common_b) do
+    if common_a.verification_status == :spam do
+      common_b = Repo.get!(Common, common_b.id)
+
+      common_b
+      |> Common.changeset(%{verification_status: :spam})
+      |> Repo.update()
+    end
+  end
 end
