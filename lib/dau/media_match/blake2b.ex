@@ -167,17 +167,4 @@ defmodule DAU.MediaMatch.Blake2B do
 
     new_target
   end
-
-  def auto_tag_spam(%Media{} = media) do
-    ## SETUP FUNCTION
-    # 1) add user message to converstion, based on its output create a response string using Blake2BFixtures.make_response_string,
-    # 2) pass it on Blake2B.worker func. This should store in hash and hash_meta. NOTE the aws func and a line in Media.build() is commented
-    # 3) now call the get_matches() function whose input should be the hash_value and langauge (this can be fetched from the hash_meta table)
-    #### 3.1 modify get matches to take in Media and extract hash_value and langauge from it.
-    # 4) the get matches function will return an array with all the matches, -->> then only mark the current (response)
-    # matches = get inbox ids where hash matches media.hash
-    #   -> UNK : how to query inbox based on hash_id
-    # for all matches, get the common and see if their verification_status is :spam
-    # DONE if yes, mark current as spam
-  end
 end
