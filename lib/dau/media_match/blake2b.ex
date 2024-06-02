@@ -5,7 +5,9 @@ defmodule DAU.MediaMatch.Blake2B do
 
   """
   require Logger
+  alias DAU.MediaMatch.Blake2B
   alias DAU.Feed.Common
+  alias DAU.Feed
   alias DAU.MediaMatch.Blake2b.Match
   alias DAU.UserMessage.Conversation.Hash, as: ConversationHash
   alias DAU.UserMessage
@@ -36,8 +38,9 @@ defmodule DAU.MediaMatch.Blake2B do
          {:ok, hashmeta_id} <- increment_hash_count(media) |> IO.inspect(),
          {:ok, conversation} <- Conversation.build(media.inbox_id) |> IO.inspect(),
          {:ok, _common} <-
-           Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id) |> IO.inspect() do
-      #  {:ok, matches} <- auto_tag_spam(media) do
+           Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id),
+         {:ok, _spam_matches} <-
+           auto_tag_spam(conversation, media) do
       :ok
     else
       err ->
@@ -166,5 +169,22 @@ defmodule DAU.MediaMatch.Blake2B do
       |> Repo.update()
 
     new_target
+  end
+
+  def auto_tag_spam(conversation, media) do
+    IO.puts("----------INSIDE AUTO TAG FUNCTION---------------")
+    feed_id = conversation.feed_id
+    IO.inspect(feed_id, label: "FEED ID")
+    matches_found = get_matches(media)
+    IO.inspect(matches_found, label: "MATCHES FOUND")
+    IO.inspect(Repo.get!(Common, feed_id), label: "BEFORE COMMON")
+
+    if Enum.any?(matches_found, fn match -> match.verification_status == :spam end) do
+      IO.puts("Spam found")
+      Feed.change_verification_status_to_spam(feed_id)
+      IO.inspect(Repo.get!(Common, feed_id), label: "AFTER COMMON")
+    else
+      IO.puts("No spam detected.")
+    end
   end
 end

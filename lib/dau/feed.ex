@@ -336,7 +336,7 @@ defmodule DAU.Feed do
     Template.valid?(template_common)
   end
 
-  def auto_tag_spam(common_id) do
+  def change_verification_status_to_spam(common_id) do
     common_b = Repo.get!(Common, common_id)
     common_b |> Common.changeset(%{verification_status: :spam}) |> Repo.update()
   end
