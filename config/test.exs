@@ -38,3 +38,7 @@ config :phoenix, :plug_init_mode, :runtime
 config :dau, RabbitMQ, url: "amqp://admin:Admin123@localhost"
 
 config :dau, :aws_client, AWSS3.Sandbox
+
+config :dau, AWSS3, file_prefix: "temp"
+
+config :dau, :gupshup_client, DAU.UserMessage.MessageDelivery.Sandbox

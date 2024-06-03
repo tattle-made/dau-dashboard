@@ -74,7 +74,7 @@ defmodule DAU.Feed do
   #         :media_urls,
   #         &{&1,
   #          Enum.map(&1, fn key ->
-  #            {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+  #            {:ok, url} = AWSS3.client().presigned_url("staging.dau.tattle.co.in", key)
   #            url
   #          end)}
   #       )
@@ -187,7 +187,7 @@ defmodule DAU.Feed do
          Enum.map(&1, fn key ->
            url =
              if media_type == :video || media_type == :audio do
-               {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+               {:ok, url} = AWSS3.client().presigned_url("staging.dau.tattle.co.in", key)
                url
              else
                key
@@ -240,7 +240,7 @@ defmodule DAU.Feed do
            Enum.map(&1, fn key ->
              url =
                if media_type == :video || media_type == :audio do
-                 {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+                 {:ok, url} = AWSS3.client().presigned_url("staging.dau.tattle.co.in", key)
                  url
                else
                  key
