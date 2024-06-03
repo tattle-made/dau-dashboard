@@ -6,6 +6,7 @@ defmodule DAU.UserMessage.Conversation do
   already.
   """
   require Logger
+  alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.Conversation.Hash
   alias DAU.UserMessage.Conversation.MessageAdded
   alias DAU.Feed
@@ -16,6 +17,7 @@ defmodule DAU.UserMessage.Conversation do
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Query
   alias DAU.Feed.Common
+  import Ecto.Query
 
   defstruct [
     :id,
@@ -89,6 +91,16 @@ defmodule DAU.UserMessage.Conversation do
     Repo.get(Common, common_id)
     |> Repo.preload(query: [:feed_common, :user_message_outbox, messages: [:hash]])
     |> Map.get(:query)
+  end
+
+  def get_by_outbox_id(outbox_id) when is_integer(outbox_id) do
+    Query
+    |> join(:left, [q], o in Outbox, on: q.user_message_outbox == o.id)
+    |> where([o, q], o.id == ^outbox_id)
+    |> Repo.all()
+    |> Repo.preload(:feed_common, :user_message_outbox, messages: [:hash])
+    |> hd
+    |> Conversation.build()
   end
 
   @doc """
