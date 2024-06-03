@@ -85,7 +85,7 @@ config :ex_aws,
   secret_access_key: {:system, "AWS_SECRET_ACCESS_KEY"},
   region: "ap-south-1"
 
-config :dau, AWSS3, file_prefix: "app-data"
+config :dau, AWSS3, file_prefix: "temp"
 
 config :dau, :aws_client, AWSS3.Sandbox
 
