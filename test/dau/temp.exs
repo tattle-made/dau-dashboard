@@ -99,7 +99,7 @@ defmodule DAU.Temp do
       incoming_message_id = incoming_conversation.id
       incoming_response_string = Blake2BFixtures.make_response_string(:video, incoming_message_id)
 
-      {:ok, incoming_response_string: incoming_response_string}
+      %{incoming_response_string: incoming_response_string}
     end
 
     test "test a", state do
