@@ -33,10 +33,10 @@ defmodule DAU.MediaMatch.Blake2B do
   if the hash already exists, increment its count by 1
   """
   def worker_response_received(response_string) do
-    with media <- Media.build(response_string) |> IO.inspect(),
-         {:ok, _hash} <- save_hash(media) |> IO.inspect(),
-         {:ok, hashmeta_id} <- increment_hash_count(media) |> IO.inspect(),
-         {:ok, conversation} <- Conversation.build(media.inbox_id) |> IO.inspect(),
+    with media <- Media.build(response_string),
+         {:ok, _hash} <- save_hash(media),
+         {:ok, hashmeta_id} <- increment_hash_count(media),
+         {:ok, conversation} <- Conversation.build(media.inbox_id),
          {:ok, _common} <-
            Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id),
          {:ok} <-
