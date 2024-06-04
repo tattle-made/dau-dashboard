@@ -9,6 +9,9 @@ defmodule DAU.UserMessage.Analytics do
   def get_all_for_feed_common(common_id) do
   end
 
+  def create_secratariate_approval_event(params) do
+  end
+
   def create_delivery_event(params) do
     with {:ok, event} <- Event.build_from_bsp_delivery_report(params),
          {:ok, conversation} <- Conversation.get_by_outbox_id(event.id),
