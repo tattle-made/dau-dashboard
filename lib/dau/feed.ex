@@ -335,4 +335,9 @@ defmodule DAU.Feed do
     template_common = Factory.process(common)
     Template.valid?(template_common)
   end
+
+  def change_verification_status_to_spam(common_id) do
+    common_b = Repo.get!(Common, common_id)
+    common_b |> Common.changeset(%{verification_status: :spam}) |> Repo.update()
+  end
 end
