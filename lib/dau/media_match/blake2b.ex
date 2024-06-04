@@ -44,16 +44,14 @@ defmodule DAU.MediaMatch.Blake2B do
       :ok
     else
       err ->
-        Logger.error("here 1")
         Logger.error(err)
         err
     end
   rescue
     error ->
       IO.inspect(error)
-      Logger.error("here 2")
       Logger.error(error)
-      # Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
+      Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
   end
 
   @doc """
