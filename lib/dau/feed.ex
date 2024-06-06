@@ -4,8 +4,9 @@ defmodule DAU.Feed do
   alias DAU.Feed.AssessmentReport
   alias DAU.Feed.Resource
   alias DAU.Repo
-
   alias DAU.Feed.Common
+  alias DAU.UserMessage.Templates.Factory
+  alias DAU.UserMessage.Templates.Template
 
   def add_to_common_feed(attrs \\ %{}) do
     %Common{}
@@ -86,7 +87,7 @@ defmodule DAU.Feed do
   #         :media_urls,
   #         &{&1,
   #          Enum.map(&1, fn key ->
-  #            {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+  #            {:ok, url} = AWSS3.client().presigned_url("staging.dau.tattle.co.in", key)
   #            url
   #          end)}
   #       )
@@ -199,7 +200,7 @@ defmodule DAU.Feed do
          Enum.map(&1, fn key ->
            url =
              if media_type == :video || media_type == :audio do
-               {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+               {:ok, url} = AWSS3.client().presigned_url("staging.dau.tattle.co.in", key)
                url
              else
                key
@@ -252,7 +253,7 @@ defmodule DAU.Feed do
            Enum.map(&1, fn key ->
              url =
                if media_type == :video || media_type == :audio do
-                 {:ok, url} = AWSS3.presigned_url("staging.dau.tattle.co.in", key)
+                 {:ok, url} = AWSS3.client().presigned_url("staging.dau.tattle.co.in", key)
                  url
                else
                  key
@@ -341,6 +342,16 @@ defmodule DAU.Feed do
 
   def get_queries(feed_common_id) do
     Repo.get!(Common, feed_common_id) |> Repo.preload(queries: [:messages])
+  end
+
+  def enable_approve_response?(common) do
+    template_common = Factory.process(common)
+    Template.valid?(template_common)
+  end
+
+  def change_verification_status_to_spam(common_id) do
+    common_b = Repo.get!(Common, common_id)
+    common_b |> Common.changeset(%{verification_status: :spam}) |> Repo.update()
   end
 
   def block_specific_urls?(url) do

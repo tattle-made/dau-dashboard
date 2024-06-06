@@ -5,7 +5,9 @@ defmodule DAU.MediaMatch.Blake2B do
 
   """
   require Logger
+  alias DAU.MediaMatch.Blake2B
   alias DAU.Feed.Common
+  alias DAU.Feed
   alias DAU.MediaMatch.Blake2b.Match
   alias DAU.UserMessage.Conversation.Hash, as: ConversationHash
   alias DAU.UserMessage
@@ -31,25 +33,25 @@ defmodule DAU.MediaMatch.Blake2B do
   if the hash already exists, increment its count by 1
   """
   def worker_response_received(response_string) do
-    with media <- Media.build(response_string) |> IO.inspect(),
-         {:ok, _hash} <- save_hash(media) |> IO.inspect(),
-         {:ok, hashmeta_id} <- increment_hash_count(media) |> IO.inspect(),
-         {:ok, conversation} <- Conversation.build(media.inbox_id) |> IO.inspect(),
+    with media <- Media.build(response_string),
+         {:ok, _hash} <- save_hash(media),
+         {:ok, hashmeta_id} <- increment_hash_count(media),
+         {:ok, conversation} <- Conversation.build(media.inbox_id),
          {:ok, _common} <-
-           Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id) |> IO.inspect() do
+           Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id),
+         {:ok} <-
+           auto_tag_spam(conversation, media) do
       :ok
     else
       err ->
-        Logger.info("here 1")
         Logger.error(err)
         err
     end
   rescue
     error ->
       IO.inspect(error)
-      Logger.info("here 2")
       Logger.error(error)
-      # Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
+      Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
   end
 
   @doc """
@@ -123,6 +125,16 @@ defmodule DAU.MediaMatch.Blake2B do
     |> Enum.map(&Match.new(&1))
   end
 
+  def get_matches(%Media{} = media) do
+    Inbox
+    |> join(:left, [i], h in Hash, on: i.id == h.inbox_id)
+    |> where([i, h], h.value == ^media.hash)
+    |> where([i, h], h.user_language == ^media.language)
+    |> Repo.all()
+    |> Enum.map(&(Conversation.build(&1.id) |> elem(1)))
+    |> Enum.map(&Match.new(&1))
+  end
+
   def get_matches_by_common_id(common_id) do
     Repo.get(Common, common_id)
     |> Repo.preload(query: [:feed_common, :user_message_outbox, messages: [:hash]])
@@ -155,5 +167,19 @@ defmodule DAU.MediaMatch.Blake2B do
       |> Repo.update()
 
     new_target
+  end
+
+  def auto_tag_spam(conversation, media) do
+    feed_id = conversation.feed_id
+    matches_found = get_matches(media)
+
+    if Enum.any?(matches_found, fn match -> match.verification_status == :spam end) do
+      IO.puts("Spam found")
+      Feed.change_verification_status_to_spam(feed_id)
+      {:ok}
+    else
+      IO.puts("No spam detected.")
+      {:ok}
+    end
   end
 end

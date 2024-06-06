@@ -20,3 +20,7 @@ config :logger, level: :info
 # of environment variables, is done on config/runtime.exs.
 
 config :dau, AWSS3, file_prefix: "app-data"
+
+config :dau, :aws_client, AWSS3.Production
+
+config :dau, :gupshup_client, DAU.UserMessage.MessageDelivery.Production

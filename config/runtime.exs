@@ -78,11 +78,6 @@ config :dau,
   gupshup_hsm_password: gupshup_hsm_password,
   slack_webhook_url: slack_webhook_url
 
-config :ex_aws,
-  region: "ap-south-1",
-  access_key_id: {:system, "AWS_ACCESS_KEY_ID"},
-  secret_access_key: {:system, "AWS_SECRET_ACCESS_KEY"}
-
 rabbit_mq_url =
   System.get_env("RABBITMQ_URL") ||
     raise """
@@ -90,6 +85,11 @@ rabbit_mq_url =
     """
 
 config :dau, RabbitMQ, url: rabbit_mq_url
+
+config :ex_aws,
+  region: "ap-south-1",
+  access_key_id: {:system, "AWS_ACCESS_KEY_ID"},
+  secret_access_key: {:system, "AWS_SECRET_ACCESS_KEY"}
 
 if config_env() == :prod do
   # database_url =

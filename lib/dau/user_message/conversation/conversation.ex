@@ -163,7 +163,7 @@ defmodule DAU.UserMessage.Conversation do
   def add_message(%{"media_type" => media_type} = attrs)
       when media_type in ["audio", "video"] do
     with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
-         {file_key, file_hash} <- AWSS3.upload_to_s3(inbox.path),
+         {file_key, file_hash} <- AWSS3.client().upload_to_s3(inbox.path),
          {:ok, inbox} <-
            UserMessage.update_user_message_file_metadata(inbox, %{
              file_key: file_key,

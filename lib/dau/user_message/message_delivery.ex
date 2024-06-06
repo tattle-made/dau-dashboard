@@ -1,4 +1,10 @@
 defmodule DAU.UserMessage.MessageDelivery do
+  def client() do
+    Application.get_env(:dau, :gupshup_client)
+  end
+end
+
+defmodule DAU.UserMessage.MessageDelivery.Production do
   require Logger
 
   def send_message_to_bsp(id, phone_num, message) do
@@ -49,5 +55,15 @@ defmodule DAU.UserMessage.MessageDelivery do
     }
 
     HTTPoison.post(gupshup_api_endpoint, "", headers, params: params)
+  end
+end
+
+defmodule DAU.UserMessage.MessageDelivery.Sandbox do
+  def send_message_to_bsp(_id, _phone_num, _message) do
+    {:ok}
+  end
+
+  def send_template_to_bsp(_id, _phone_number, _message) do
+    {:ok}
   end
 end
