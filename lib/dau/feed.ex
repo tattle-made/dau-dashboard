@@ -15,6 +15,28 @@ defmodule DAU.Feed do
   end
 
   @doc """
+  opts : [block_spam_urls: true]
+  """
+  def add_to_common_feed(attrs, opts) do
+    attrs =
+      case Keyword.get(opts, :block_spam_urls) do
+        true ->
+          media_url = hd(attrs.media_urls)
+
+          if block_specific_urls?(media_url) do
+            Map.put(attrs, :verification_status, :spam)
+          else
+            attrs
+          end
+
+        false ->
+          attrs
+      end
+
+    add_to_common_feed(attrs)
+  end
+
+  @doc """
   Added for 0.2.0. Common is now linked to queries and does not store all information related to user along with it.
   """
   def add_to_common_feed("0.2.0", attrs) do
@@ -339,5 +361,22 @@ defmodule DAU.Feed do
   def change_verification_status_to_spam(common_id) do
     common_b = Repo.get!(Common, common_id)
     common_b |> Common.changeset(%{verification_status: :spam}) |> Repo.update()
+  end
+
+  @blocklist ~r/(amazon|myntra|flipkart|mnatry|flipkin|amznin)/i
+  def block_specific_urls?(url) do
+    case URI.parse(url) do
+      %{host: nil, query: "", path: path} ->
+        Regex.match?(@blocklist, path)
+
+      %{host: nil, query: query} ->
+        Regex.match?(@blocklist, query)
+
+      %{host: domain} ->
+        Regex.match?(@blocklist, domain)
+
+      _ ->
+        false
+    end
   end
 end

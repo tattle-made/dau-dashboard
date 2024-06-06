@@ -157,4 +157,33 @@ defmodule DAU.FeedTest do
       assert valid_template_common_w_label_w_ar_wo_fc == true
     end
   end
+
+  describe "block urls from certain domains" do
+    setup do
+      %{}
+    end
+
+    test "test on different urls" do
+      urls = [
+        "https://amazon.in@amznin.cyou/?a=71716710208694",
+        "https://www.amazon.in/Redmi-Starlight-Storage-MediaTek-Dimensity/dp/B0CNX89QR8/?_encoding=UTF8&ref_=dlx_gate_sd_dcl_tlt_5db6bdf8_dt_pd_hp_d_atf_unk",
+        "https://amazon.in@amznin.cyou/?a=71716708185229",
+        "https://flipkart.com@flipkin.cyou/?festival-day-gift=71716615491518",
+        "https://www.flipkart.com/laptop-accessories/keyboards/pr?sid=6bo%2Cai3%2C3oe&sort=popularity&param=33&hpid",
+        "https://myntra.com@mnatry.cyou/?in=91716519824017",
+        "https://www.myntra.com/shirts/arrow/arrow-spread-collar-slim-fit-opaque-striped-cotton-formal-shirt/28506318/buy",
+        "hey, is this real? https://www.amazon.com/adfasdfadf",
+        "https://www.amazon.com/adfasdfadf Can you check this for me?",
+        "Some text before link https://www.amazon.com/adfasdfadf Can you check this for me?"
+      ]
+
+      assert Enum.all?(urls, &Feed.block_specific_urls?/1)
+      assert Feed.block_specific_urls?("https://www.google.com") == false
+
+      assert Feed.block_specific_urls?("https://factcheck-site.com/article-about-amazon-com") ==
+               false
+
+      assert Feed.block_specific_urls?("https://facebook.com") == false
+    end
+  end
 end
