@@ -15,13 +15,22 @@ defmodule DAU.Feed do
   end
 
   @doc """
-  opts : [spam: true]
+  opts : [block_spam_urls: true]
   """
   def add_to_common_feed(attrs, opts) do
     attrs =
-      case Keyword.get(opts, :spam) do
-        true -> Map.put(attrs, :verification_status, :spam)
-        false -> attrs
+      case Keyword.get(opts, :block_spam_urls) do
+        true ->
+          media_url = hd(attrs.media_urls)
+
+          if block_specific_urls?(media_url) do
+            Map.put(attrs, :verification_status, :spam)
+          else
+            attrs
+          end
+
+        false ->
+          attrs
       end
 
     add_to_common_feed(attrs)
@@ -356,8 +365,7 @@ defmodule DAU.Feed do
 
   def block_specific_urls?(url) do
     keywords = ~r/(amazon|myntra|flipkart|mnatry|flipkin|amznin)/i
-    # MAKE FUNC RETURN WITH TUPLE OK AND RESULTS (true/FALSE)
-    # Enum.any?(media_urls, fn url ->
+
     case URI.parse(url) do
       %{host: nil, query: "", path: path} ->
         Regex.match?(keywords, path)
@@ -370,7 +378,6 @@ defmodule DAU.Feed do
 
       _ ->
         false
-        # end
     end
   end
 end

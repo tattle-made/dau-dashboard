@@ -198,12 +198,15 @@ defmodule DAU.UserMessage.Conversation do
                |> String.downcase()
            }),
          {:ok, common} <-
-           Feed.add_to_common_feed(%{
-             media_urls: [inbox.user_input_text],
-             media_type: inbox.media_type,
-             sender_number: inbox.sender_number,
-             language: inbox.user_language_input
-           }),
+           Feed.add_to_common_feed(
+             %{
+               media_urls: [inbox.user_input_text],
+               media_type: inbox.media_type,
+               sender_number: inbox.sender_number,
+               language: inbox.user_language_input
+             },
+             block_spam_urls: true
+           ),
          {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
       {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
