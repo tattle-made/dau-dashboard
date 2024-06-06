@@ -363,18 +363,17 @@ defmodule DAU.Feed do
     common_b |> Common.changeset(%{verification_status: :spam}) |> Repo.update()
   end
 
+  @blocklist ~r/(amazon|myntra|flipkart|mnatry|flipkin|amznin)/i
   def block_specific_urls?(url) do
-    keywords = ~r/(amazon|myntra|flipkart|mnatry|flipkin|amznin)/i
-
     case URI.parse(url) do
       %{host: nil, query: "", path: path} ->
-        Regex.match?(keywords, path)
+        Regex.match?(@blocklist, path)
 
       %{host: nil, query: query} ->
-        Regex.match?(keywords, query)
+        Regex.match?(@blocklist, query)
 
       %{host: domain} ->
-        Regex.match?(keywords, domain)
+        Regex.match?(@blocklist, domain)
 
       _ ->
         false
