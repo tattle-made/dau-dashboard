@@ -71,7 +71,7 @@ defmodule DAUWeb.SearchLive.Detail do
           |> put_flash(:info, "Error caused while approving response. Please reach out to admin")
       end
 
-    Task.async(fn -> Analytics.create_secratariate_approval_event(query.id) end)
+    Task.async(fn -> Analytics.create_secratariat_approval_event(query.id) end)
 
     {:noreply, socket}
   end

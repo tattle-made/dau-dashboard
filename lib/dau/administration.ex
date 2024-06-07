@@ -78,7 +78,6 @@ defmodule DAU.Administration do
 
   def get_conversation_by_id(id) do
     Conversation.get_by_common_id(id)
-    |> Conversation.build()
   end
 
   def delete_query_by_id(id) do
