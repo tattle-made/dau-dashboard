@@ -11,6 +11,8 @@ defmodule DAU.UserMessageFixtures do
   def get_unique_phone_number(),
     do: for(_ <- 1..10, into: "", do: <<Enum.random(~c"0123456789")>>)
 
+  def inbox_message_attrs(media_type, attrs \\ %{})
+
   def inbox_message_attrs(:video, attrs) do
     %{
       "media_type" => "video",

@@ -9,7 +9,10 @@ defmodule DAU.UserMessage.Analytics do
   def get_all_for_feed_common(common_id) do
   end
 
-  def create_secratariate_approval_event(params) do
+  def create_secratariat_approval_event(params) do
+    with do
+    else
+    end
   end
 
   def create_delivery_event(params) do

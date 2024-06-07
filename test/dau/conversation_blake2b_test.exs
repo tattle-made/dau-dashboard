@@ -120,7 +120,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
       existing_worker_func = Blake2B.worker_response_received(existing_response_string)
       existing_media = Media.build(existing_response_string)
       {:ok, existing_query} = Conversation.get(existing_conversation.id)
-      existing_conversation_build = Conversation.build(existing_query)
+      {:ok, existing_conversation_build} = Conversation.build(existing_query)
       existing_common = Repo.get!(Common, existing_conversation_build.feed_id)
       existing_common |> Common.changeset(%{verification_status: :spam}) |> Repo.update()
 
@@ -138,7 +138,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
       incoming_response_string = Blake2BFixtures.make_response_string(:video, incoming_message_id)
       incoming_media = Media.build(incoming_response_string)
       {:ok, incoming_query} = Conversation.get(incoming_conversation.id)
-      incoming_conversation_build = Conversation.build(incoming_query)
+      {:ok, incoming_conversation_build} = Conversation.build(incoming_query)
 
       %{incoming_conversation_build: incoming_conversation_build, incoming_media: incoming_media}
     end
