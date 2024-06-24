@@ -97,6 +97,9 @@ defmodule DAUWeb.Router do
     live "/query/components", SearchLive.Component
     live "/query/:id/user-response/", SearchLive.UserResponse
     get "/query/:id/matches", MatchesController, :index
+    get "/query/:id/assessment-report/metadata", AssessmentReportMetadataController, :show
+    get "/query/:id/assessment-report/metadata/edit", AssessmentReportMetadataController, :edit
+    post "/query/:id/assessment-report/metadata", AssessmentReportMetadataController, :create
     # post "/query/import-response/src/:src/target/:target", MatchesController, :import_response
   end
 
