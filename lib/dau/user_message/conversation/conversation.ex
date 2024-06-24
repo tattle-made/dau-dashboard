@@ -195,7 +195,13 @@ defmodule DAU.UserMessage.Conversation do
          {:ok, query} <-
            UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
-      {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
+      {:ok,
+       %MessageAdded{
+         id: inbox.id,
+         common_id: common.id,
+         path: inbox.file_key,
+         media_type: inbox.media_type
+       }}
     else
       {:error, reason} ->
         Logger.error("Error adding message")

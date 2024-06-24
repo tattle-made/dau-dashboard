@@ -1,4 +1,7 @@
 defmodule DAU.UserMessage.AnalyticsTest do
+  alias DAU.UserMessage.Analytics
+  alias DAU.BSP.GupshupFixture
+  alias DAU.UserMessage.Analytics.Event
   alias DAU.UserMessage
   alias DAU.Feed
   alias DAU.UserMessageFixtures
@@ -7,32 +10,30 @@ defmodule DAU.UserMessage.AnalyticsTest do
   alias DAU.OutboxFixtures
   use DAU.DataCase, async: true
   alias DAU.Repo
+  require IEx
 
-  describe "create secratariat approval event" do
+  describe "delivery report events" do
     @inbox_attrs %{"user_language_input" => "hi"}
     @user_response "here goes the dau response"
     @outbox_attrs %{e_id: "5145722132009541678"}
 
     setup do
-      with message <- UserMessageFixtures.inbox_message_attrs(:video, @inbox_attrs),
-           {:ok, message_added} <- Conversation.add_message(message),
-           {:ok, conversation} <- Conversation.build(message_added.id),
-           common <- Feed.get_feed_item_by_id(conversation.feed_id),
-           {:ok, common} <- Feed.add_user_response(common.id, @user_response),
-           {:ok, _query} <- UserMessage.add_response_to_outbox(common),
-           {:ok, conversation} <- Conversation.get_by_common_id(common.id),
-           %{id: outbox_id} <- OutboxFixtures.outbox_fixture(@outbox_attrs) do
-        %{conversation: conversation, outbox_id: outbox_id}
-      end
+      message = UserMessageFixtures.inbox_message_attrs(:video, @inbox_attrs)
+      {:ok, message_added} = Conversation.add_message(message)
+      {:ok, common} = Feed.add_user_response(message_added.common_id, @user_response)
+      {:ok, _query} = UserMessage.add_response_to_outbox(common)
+      {:ok, conversation} = Conversation.get_by_common_id(common.id)
+      %{id: outbox_id} = OutboxFixtures.outbox_fixture(@outbox_attrs)
+
+      %{conversation: conversation, outbox_id: outbox_id}
     end
 
     test "add failed delivery report", %{conversation: conversation, outbox_id: outbox_id} do
-      # Repo.get(Outbox, msg_id) |> IO.inspect()
-      IO.inspect(conversation, label: "conversation")
-      IO.inspect(outbox_id, label: "outbox id")
+      delivery_report_failed_params = GupshupFixture.failure_report(@outbox_attrs.e_id, outbox_id)
 
-      # Analytics.create_secratariat_approval_event(conversation) :: %UserMessage.Analytics.Event{id}
-      # assert if
+      event = Analytics.create_delivery_event(delivery_report_failed_params)
+
+      IO.inspect(event)
     end
   end
 
