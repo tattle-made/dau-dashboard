@@ -387,6 +387,46 @@ defmodule DAUWeb.CoreComponents do
   end
 
   @doc """
+  Provides a radio group input for a given form field.
+
+  ## Examples
+
+      <.radio_group field={@form[:tip]}>
+        <:radio value="0">No Tip</:radio>
+        <:radio value="10">10%</:radio>
+        <:radio value="20">20%</:radio>
+      </.radio_group>
+  """
+  attr :field, Phoenix.HTML.FormField, required: true
+
+  slot :radio, required: true do
+    attr :value, :string, required: true
+  end
+
+  slot :inner_block
+
+  def radio_group(assigns) do
+    ~H"""
+    <div>
+      <%= render_slot(@inner_block) %>
+      <div :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}>
+        <input
+          type="radio"
+          name={@field.name}
+          id={"#{@field.id}-#{idx}"}
+          value={value}
+          checked={to_string(@field.value) == to_string(value)}
+          class="rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+        />
+        <label for={"#{@field.id}-#{idx}"} class="ms-2 text-xs dark:text-gray-300 text-zinc-800">
+          <%= render_slot(rad) %>
+        </label>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a label.
   """
   attr :for, :string, default: nil
