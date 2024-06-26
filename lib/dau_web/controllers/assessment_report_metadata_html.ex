@@ -39,7 +39,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
         <.input field={@form[:link_of_ar]} label="Link Of Assessment Report" />
         <.input field={@form[:who_is_post_targeting]} label="Who is the post/claim targeting?" />
         <.input
-          field={@form[:language_used]}
+          field={@form[:language]}
           type="select"
           label="The language used in the audio/video"
           prompt="Choose Language"
