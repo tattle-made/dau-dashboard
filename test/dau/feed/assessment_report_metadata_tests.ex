@@ -27,10 +27,8 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         feed_common_id: state.feed_common_id
       }
 
-      assessment_report_meta_entry =
-        %AssessmentReportMetadata{}
-        |> AssessmentReportMetadata.changeset(attrs)
-        |> Repo.insert!()
+      {:ok, assessment_report_meta_entry} =
+        AssessmentReportMetadata.create_assessment_report_metadata(attrs)
 
       assert assessment_report_meta_entry.link_of_ar == "https://example.com/assessment-report"
       assert assessment_report_meta_entry.who_is_post_targeting == "someone"
@@ -47,13 +45,12 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         feed_common_id: state.feed_common_id
       }
 
-      assessment_report_meta_entry =
-        %AssessmentReportMetadata{}
-        |> AssessmentReportMetadata.changeset(attrs)
-        |> Repo.insert!()
+      {:ok, assessment_report_meta_entry} =
+        AssessmentReportMetadata.create_assessment_report_metadata(attrs)
 
       # Fetch based on feed_common_id
-      fetched_entry = Repo.get_by!(AssessmentReportMetadata, feed_common_id: state.feed_common_id)
+      fetched_entry =
+        AssessmentReportMetadata.get_assessment_report_metadata_by_common_id(state.feed_common_id)
 
       assert fetched_entry.link_of_ar == "https://example.com/assessment-report"
       assert fetched_entry.who_is_post_targeting == "someone"
@@ -70,10 +67,8 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         feed_common_id: state.feed_common_id
       }
 
-      assessment_report_meta_entry =
-        %AssessmentReportMetadata{}
-        |> AssessmentReportMetadata.changeset(attrs)
-        |> Repo.insert!()
+      {:ok, assessment_report_meta_entry} =
+        AssessmentReportMetadata.create_assessment_report_metadata(attrs)
 
       # update the record
       updated_attrs = %{
@@ -83,11 +78,11 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         feed_common_id: state.feed_common_id
       }
 
-      updated_entry =
-        AssessmentReportMetadata
-        |> Repo.get_by!(feed_common_id: state.feed_common_id)
-        |> AssessmentReportMetadata.changeset(updated_attrs)
-        |> Repo.update!()
+      {:ok, updated_entry} =
+        AssessmentReportMetadata.update_assessment_report_metadata(
+          state.feed_common_id,
+          updated_attrs
+        )
 
       assert updated_entry.link_of_ar == "https://example.com/assessment-report"
       assert updated_entry.who_is_post_targeting == "none"
@@ -104,16 +99,12 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         feed_common_id: state.feed_common_id
       }
 
-      assessment_report_meta_entry =
-        %AssessmentReportMetadata{}
-        |> AssessmentReportMetadata.changeset(attrs)
-        |> Repo.insert!()
+      {:ok, assessment_report_meta_entry} =
+        AssessmentReportMetadata.create_assessment_report_metadata(attrs)
 
       # delete it - takes entire changeset
-      deleted_entry =
-        AssessmentReportMetadata
-        |> Repo.get_by(feed_common_id: state.feed_common_id)
-        |> Repo.delete!()
+      {:ok, deleted_entry} =
+        AssessmentReportMetadata.delete_assessment_report_metadata(state.feed_common_id)
 
       assert_raise Ecto.NoResultsError, fn ->
         AssessmentReportMetadata
