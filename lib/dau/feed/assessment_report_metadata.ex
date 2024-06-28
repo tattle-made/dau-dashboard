@@ -14,6 +14,7 @@ defmodule DAU.Feed.AssessmentReportMetadata do
     :secondary_theme,
     :third_theme,
     :claim_is_sectarian,
+    :gender,
     :content_disturbing,
     :claim_category,
     :claim_logo,
@@ -30,6 +31,7 @@ defmodule DAU.Feed.AssessmentReportMetadata do
     field :secondary_theme, :integer
     field :third_theme, :string
     field :claim_is_sectarian, :string
+    field :gender, {:array, :string}
     field :content_disturbing, :integer
     field :claim_category, :integer
     field :claim_logo, :integer

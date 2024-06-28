@@ -11,6 +11,7 @@ defmodule DAUWeb.AssessmentReportMetadataController do
       secondary_theme: "",
       third_theme: "",
       claim_is_sectarian: "",
+      gender: [],
       content_disturbing: "",
       claim_category: "",
       claim_logo: "",

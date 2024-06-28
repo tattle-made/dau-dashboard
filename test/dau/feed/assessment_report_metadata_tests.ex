@@ -28,6 +28,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         secondary_theme: 1,
         third_theme: "some theme",
         claim_is_sectarian: "yes",
+        gender: ["male", "female"],
         content_disturbing: 0,
         claim_category: 1,
         claim_logo: 0,
@@ -58,6 +59,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         secondary_theme: 1,
         third_theme: "some theme",
         claim_is_sectarian: "yes",
+        gender: ["male", "female"],
         content_disturbing: 0,
         claim_category: 1,
         claim_logo: 0,
@@ -78,6 +80,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
       assert fetched_entry.link == "https://example.com/assessment-report"
       assert fetched_entry.language == :en
       assert fetched_entry.medium_of_content == :video
+      assert fetched_entry.gender == ["male", "female"]
     end
 
     test "update values of assessment report metadata", state do
@@ -90,6 +93,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         secondary_theme: 1,
         third_theme: "some theme",
         claim_is_sectarian: "yes",
+        gender: ["male", "female"],
         content_disturbing: 0,
         claim_category: 1,
         claim_logo: 0,
@@ -111,6 +115,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         secondary_theme: 5,
         third_theme: "some theme",
         claim_is_sectarian: "yes",
+        gender: ["trans_male", "female", "trans_female", "lgbqia"],
         content_disturbing: 0,
         claim_category: 1,
         claim_logo: 0,
@@ -130,6 +135,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
       assert updated_entry.language == :hi
       assert updated_entry.org_logo == "some-org-edit"
       assert updated_entry.medium_of_content == :audio
+      assert updated_entry.gender == ["trans_male", "female", "trans_female", "lgbqia"]
     end
 
     test "delete a entry in assessment report metadata", state do
@@ -142,6 +148,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         secondary_theme: 1,
         third_theme: "some theme",
         claim_is_sectarian: "yes",
+        gender: ["male", "female"],
         content_disturbing: 0,
         claim_category: 1,
         claim_logo: 0,

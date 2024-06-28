@@ -369,7 +369,6 @@ defmodule DAUWeb.CoreComponents do
       <.label for={@id}><%= @label %></.label>
       <div class="mt-1 w-full shadow-sm pl-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-black focus:border-black sm:text-sm">
         <div class="grid grid-cols-1 gap-1 text-sm items-baseline">
-          <input type="hidden" name={@name} value="" />
           <div :for={{label, value} <- @options} class="flex items-center">
             <label for={"#{@name}-#{value}"} class="ms-2 text-xs dark:text-gray-300 text-zinc-800">
               <input

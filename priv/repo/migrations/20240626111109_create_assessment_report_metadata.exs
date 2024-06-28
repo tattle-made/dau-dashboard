@@ -11,6 +11,7 @@ defmodule DAU.Repo.Migrations.CreateAssessmentReportMetadata do
       add :secondary_theme, :integer
       add :third_theme, :string
       add :claim_is_sectarian, :string
+      add :gender, {:array, :string}
       add :content_disturbing, :integer
       add :claim_category, :integer
       add :claim_logo, :integer
