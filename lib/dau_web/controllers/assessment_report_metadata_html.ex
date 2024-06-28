@@ -2,36 +2,36 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
   use DAUWeb, :html
 
   def show(assigns) do
-    theme_radio_labels = [
-      "Civic Issues (matters of infrastructure, eg., potholes, accidents, breakdown of infrastructure)",
-      "Government Schemes (related to policies or schemes e.g., generative text misrepresenting policy priorities)",
-      "Political (includes matters dealing with politicians or political parties e.g., campaigns, leader speeches, party worker deeds etc.)",
-      "Communal (in cases where negative sentiments are associated with religion/ethnic identity)",
-      "Defense (matters tied to the Indian defense forces e.g., scripted imagery of military exercises)",
-      "Crime (Robbery/ murder/ cyber crime/ bribery/raids)",
-      "Economy (Includes budget, taxes, GST, road cess, Petrol & LPG prices)",
-      "Scams (Job scams/ financial scams & phishing attempts/ Promises of car et al)",
-      "Health (health hoaxes, quack advice e.g., Dr Naresh Trehan Deepfake)",
-      "IT & Science (tech related matters e.g., cybertruck accidents)",
-      "Entertainment (deals with celeb conduct, movie related matters)",
-      "Sports (deals with sporting events, sportsman conduct)",
-      "Tragedy (Freak incidents, natural disasters, loss of lives e.g.,)",
-      "Foreign Affairs (matters pertaining to other countries including, internal politics/policies/economy)",
-      "Judiciary (Court orders/ news about some judge/ pending cases)",
-      "Religion (opposed to 'communal', this one is to be used in cases of positive sentiment accompanying claims)",
-      "Culture (similar to above, but more generalised like cuisine, dance form etc.)",
-      "International Boundary Dispute (e.g., secession, incursions, skirmishes around border, eg., Indo-China, Indo-Pakistan)",
-      "Business (Generative content targeting companies and/or their figureheads)",
-      "Influencer/Public Figure"
-    ]
+    # theme_radio_labels = [
+    #   "Civic Issues (matters of infrastructure, eg., potholes, accidents, breakdown of infrastructure)",
+    #   "Government Schemes (related to policies or schemes e.g., generative text misrepresenting policy priorities)",
+    #   "Political (includes matters dealing with politicians or political parties e.g., campaigns, leader speeches, party worker deeds etc.)",
+    #   "Communal (in cases where negative sentiments are associated with religion/ethnic identity)",
+    #   "Defense (matters tied to the Indian defense forces e.g., scripted imagery of military exercises)",
+    #   "Crime (Robbery/ murder/ cyber crime/ bribery/raids)",
+    #   "Economy (Includes budget, taxes, GST, road cess, Petrol & LPG prices)",
+    #   "Scams (Job scams/ financial scams & phishing attempts/ Promises of car et al)",
+    #   "Health (health hoaxes, quack advice e.g., Dr Naresh Trehan Deepfake)",
+    #   "IT & Science (tech related matters e.g., cybertruck accidents)",
+    #   "Entertainment (deals with celeb conduct, movie related matters)",
+    #   "Sports (deals with sporting events, sportsman conduct)",
+    #   "Tragedy (Freak incidents, natural disasters, loss of lives e.g.,)",
+    #   "Foreign Affairs (matters pertaining to other countries including, internal politics/policies/economy)",
+    #   "Judiciary (Court orders/ news about some judge/ pending cases)",
+    #   "Religion (opposed to 'communal', this one is to be used in cases of positive sentiment accompanying claims)",
+    #   "Culture (similar to above, but more generalised like cuisine, dance form etc.)",
+    #   "International Boundary Dispute (e.g., secession, incursions, skirmishes around border, eg., Indo-China, Indo-Pakistan)",
+    #   "Business (Generative content targeting companies and/or their figureheads)",
+    #   "Influencer/Public Figure"
+    # ]
 
-    checkbox_labels = [
-      "Male",
-      "Female",
-      "Male (Trans Male)",
-      "Female (Trans Female)",
-      "LGBQIA+"
-    ]
+    # checkbox_labels = [
+    #   "Male",
+    #   "Female",
+    #   "Male (Trans Male)",
+    #   "Female (Trans Female)",
+    #   "LGBQIA+"
+    # ]
 
     ~H"""
     <div>
@@ -50,7 +50,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             {"Telugu", "te"}
           ]}
         />
-        <div>
+        <%!-- <div>
           <label class="block text-sm font-semibold leading-6 text-zinc-800">
             Primary Theme of claim (Explicit subject of the claim)
           </label>
@@ -63,7 +63,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
                 selection={@form[:primary_theme].value}
               />
             <% end %>
-            <%!-- <.input field={@form[:primary_theme]} type="radio" label="Health" value="health" /> --%>
+            <.input field={@form[:primary_theme]} type="radio" label="Health" value="health" />
           </div>
         </div>
         <.radio_group field={@form[:tip]}>
@@ -99,7 +99,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             Is the claim targeting a gender? If so, please specify the group targeted.
           </label>
           <div class="mt-2">
-            <%!-- <%= for label <- checkbox_labels do %>
+            <%= for label <- checkbox_labels do %>
               <.input
                 field={@form[:gender]}
                 type="checkbox"
@@ -115,7 +115,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
                 group="gender-group"
                 selection={@form[:gender].value || []}
               />
-            <% end %> --%>
+            <% end %>
             <%= checkbox(%{
               id: "gender-male",
               label: "Male",
@@ -286,6 +286,32 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             {"Video", "video"},
             {"Audio", "audio"},
             {"Link", "link"}
+          ]}
+        />  --%>
+        <:actions>
+          <.button class="p-2 border-black">Save</.button>
+        </:actions>
+      </.simple_form>
+    </div>
+    """
+  end
+
+  def edit(assigns) do
+    ~H"""
+    <div>
+      <.simple_form for={@form} action={"/demo/query/#{@id}/assessment-report/metadata/edit"}>
+        <.input field={@form[:link_of_ar]} label="Link Of Assessment Report" />
+        <.input field={@form[:who_is_post_targeting]} label="Who is the post/claim targeting?" />
+        <.input
+          field={@form[:language]}
+          type="select"
+          label="The language used in the audio/video"
+          prompt="Choose Language"
+          options={[
+            {"English", "en"},
+            {"Hindi", "hi"},
+            {"Tamil", "ta"},
+            {"Telugu", "te"}
           ]}
         />
         <:actions>

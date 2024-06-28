@@ -1,11 +1,17 @@
 defmodule DAUWeb.AssessmentReportMetadataController do
+  alias DAU.Feed.AssessmentReportMetadata
   use DAUWeb, :controller
-  # use DAUWeb, :html
 
   def show(conn, params) do
-    form = %{email: "denny@gmail.com", username: "denny"}
-    form = Phoenix.HTML.FormData.to_form(form, as: :my_form)
+    # form = %{email: "denny@gmail.com", username: "denny"}
+    # form = Phoenix.HTML.FormData.to_form(form, as: :my_form)
+    form = %{
+      link_of_ar: "",
+      who_is_post_targeting: "",
+      language: ""
+    }
 
+    form = Phoenix.HTML.FormData.to_form(form, as: :my_form)
     # to_form(form) |> IO.inspect(label: "FORM")
 
     render(conn, :show, form: form, id: params["id"])
@@ -14,11 +20,66 @@ defmodule DAUWeb.AssessmentReportMetadataController do
 
   def create(conn, params) do
     id = params["id"]
-    IO.inspect(params, label: "SUBMITTED VALUES")
-    redirect(conn, to: "/demo/query/#{id}")
+    form_data = params["my_form"]
+    form_data = Map.put(form_data, "feed_common_id", id)
+    IO.inspect(form_data, label: "SUBMITTED VALUES")
+
+    case AssessmentReportMetadata.create_assessment_report_metadata(form_data) do
+      {:ok, _metadata} ->
+        conn
+        |> put_flash(:info, "Assessment Report Metadata Added!")
+        |> redirect(to: "/demo/query/#{id}")
+
+      {:error, changeset} ->
+        conn
+        |> put_flash(:error, "Error creating Assessment Report Metadata://.")
+        |> render(:show, form: changeset, id: id)
+    end
+
+    # redirect(conn, to: "/demo/query/#{id}")
   end
 
-  def edit(conn, _params) do
-    conn |> Plug.Conn.send_resp(200, [])
+  def edit(conn, params) do
+    id = params["id"]
+
+    assessment_report_metadata =
+      AssessmentReportMetadata.get_assessment_report_metadata_by_common_id(id)
+
+    changeset = Ecto.Changeset.change(assessment_report_metadata)
+
+    form = Phoenix.HTML.FormData.to_form(changeset, as: :my_form)
+    IO.inspect(form)
+
+    render(conn, :edit, form: form, id: id)
+  end
+
+  def update(conn, %{"id" => id, "my_form" => form_data}) do
+    case AssessmentReportMetadata.update_assessment_report_metadata(id, form_data) do
+      {:ok, _metadata} ->
+        conn
+        |> put_flash(:info, "Assessment Report Metadata Updated.")
+        |> redirect(to: "/demo/query/#{id}")
+
+      {:error, changeset} ->
+        conn
+        |> put_flash(:error, "Error Updating Assessment Report Metadata://.")
+        |> render(:edit, form: changeset, id: id)
+    end
+  end
+
+  def delete(conn, params) do
+    id = params["id"]
+
+    case AssessmentReportMetadata.delete_assessment_report_metadata(id) do
+      {:ok, _metadata} ->
+        conn
+        # |> put_flash(:info, "assessment report metadata deleted successfully.")
+        |> redirect(to: "/demo/query/#{id}")
+
+      {:error, :not_found} ->
+        conn
+        # |> put_flash(:error, "Error deleting assessment report metadata.")
+        |> redirect(to: "/demo/query/#{id}")
+    end
   end
 end

@@ -30,7 +30,7 @@ defmodule DAU.Feed.AssessmentReportMetadata do
   end
 
   def get_assessment_report_metadata_by_common_id(feed_common_id) do
-    Repo.get_by!(AssessmentReportMetadata, feed_common_id: feed_common_id)
+    Repo.get_by(AssessmentReportMetadata, feed_common_id: feed_common_id)
   end
 
   def update_assessment_report_metadata(feed_common_id, attrs) do
@@ -52,6 +52,13 @@ defmodule DAU.Feed.AssessmentReportMetadata do
 
       assessment_report_metadata ->
         Repo.delete(assessment_report_metadata)
+    end
+  end
+
+  def report_exists?(feed_common_id) do
+    case get_assessment_report_metadata_by_common_id(feed_common_id) do
+      nil -> false
+      _ -> true
     end
   end
 end
