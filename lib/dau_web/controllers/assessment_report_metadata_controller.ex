@@ -24,19 +24,19 @@ defmodule DAUWeb.AssessmentReportMetadataController do
     form_data = Map.put(form_data, "feed_common_id", id)
     IO.inspect(form_data, label: "SUBMITTED VALUES")
 
-    case AssessmentReportMetadata.create_assessment_report_metadata(form_data) do
-      {:ok, _metadata} ->
-        conn
-        |> put_flash(:info, "Assessment Report Metadata Added!")
-        |> redirect(to: "/demo/query/#{id}")
+    # case AssessmentReportMetadata.create_assessment_report_metadata(form_data) do
+    #   {:ok, _metadata} ->
+    #     conn
+    #     |> put_flash(:info, "Assessment Report Metadata Added!")
+    #     |> redirect(to: "/demo/query/#{id}")
 
-      {:error, changeset} ->
-        conn
-        |> put_flash(:error, "Error creating Assessment Report Metadata://.")
-        |> render(:show, form: changeset, id: id)
-    end
+    #   {:error, changeset} ->
+    #     conn
+    #     |> put_flash(:error, "Error creating Assessment Report Metadata://.")
+    #     |> render(:show, form: changeset, id: id)
+    # end
 
-    # redirect(conn, to: "/demo/query/#{id}")
+    redirect(conn, to: "/demo/query/#{id}")
   end
 
   def edit(conn, params) do

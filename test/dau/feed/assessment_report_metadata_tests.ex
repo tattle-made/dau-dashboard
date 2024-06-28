@@ -21,27 +21,49 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
 
     test "create form entry", state do
       attrs = %{
-        link_of_ar: "https://example.com/assessment-report",
-        who_is_post_targeting: "someone",
-        language: "en",
+        link: "https://example.com/assessment-report",
+        target: "someone",
+        language: :en,
+        primary_theme: 0,
+        secondary_theme: 1,
+        third_theme: "some theme",
+        claim_is_sectarian: "yes",
+        content_disturbing: 0,
+        claim_category: 1,
+        claim_logo: 0,
+        org_logo: "Some Organization",
+        frame_org: 0,
+        medium_of_content: :video,
         feed_common_id: state.feed_common_id
       }
 
       {:ok, assessment_report_meta_entry} =
         AssessmentReportMetadata.create_assessment_report_metadata(attrs)
 
-      assert assessment_report_meta_entry.link_of_ar == "https://example.com/assessment-report"
-      assert assessment_report_meta_entry.who_is_post_targeting == "someone"
-      assert assessment_report_meta_entry.language == "en"
       assert assessment_report_meta_entry.feed_common_id == state.feed_common_id
+      assert assessment_report_meta_entry.link == "https://example.com/assessment-report"
+      assert assessment_report_meta_entry.target == "someone"
+      assert assessment_report_meta_entry.language == :en
+      assert assessment_report_meta_entry.content_disturbing == 0
+      assert assessment_report_meta_entry.medium_of_content == :video
     end
 
     test "fetch assessment report metadata by feed_common_id", state do
       # Add data to assessment report metadata table
       attrs = %{
-        link_of_ar: "https://example.com/assessment-report",
-        who_is_post_targeting: "someone",
-        language: "hi",
+        link: "https://example.com/assessment-report",
+        target: "someone",
+        language: :en,
+        primary_theme: 0,
+        secondary_theme: 1,
+        third_theme: "some theme",
+        claim_is_sectarian: "yes",
+        content_disturbing: 0,
+        claim_category: 1,
+        claim_logo: 0,
+        org_logo: "Some Organization",
+        frame_org: 0,
+        medium_of_content: :video,
         feed_common_id: state.feed_common_id
       }
 
@@ -52,18 +74,28 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
       fetched_entry =
         AssessmentReportMetadata.get_assessment_report_metadata_by_common_id(state.feed_common_id)
 
-      assert fetched_entry.link_of_ar == "https://example.com/assessment-report"
-      assert fetched_entry.who_is_post_targeting == "someone"
-      assert fetched_entry.language == "hi"
       assert fetched_entry.feed_common_id == state.feed_common_id
+      assert fetched_entry.link == "https://example.com/assessment-report"
+      assert fetched_entry.language == :en
+      assert fetched_entry.medium_of_content == :video
     end
 
     test "update values of assessment report metadata", state do
       # create an exisiting record
       attrs = %{
-        link_of_ar: "https://example.com/assessment-report",
-        who_is_post_targeting: "someone",
-        language: "en",
+        link: "https://example.com/assessment-report",
+        target: "someone",
+        language: :en,
+        primary_theme: 0,
+        secondary_theme: 1,
+        third_theme: "some theme",
+        claim_is_sectarian: "yes",
+        content_disturbing: 0,
+        claim_category: 1,
+        claim_logo: 0,
+        org_logo: "Some Organization",
+        frame_org: 0,
+        medium_of_content: :video,
         feed_common_id: state.feed_common_id
       }
 
@@ -72,9 +104,19 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
 
       # update the record
       updated_attrs = %{
-        link_of_ar: "https://example.com/assessment-report",
-        who_is_post_targeting: "none",
-        language: "ta",
+        link: "https://example.com/assessment-report",
+        target: "someone-edit",
+        language: :hi,
+        primary_theme: 4,
+        secondary_theme: 5,
+        third_theme: "some theme",
+        claim_is_sectarian: "yes",
+        content_disturbing: 0,
+        claim_category: 1,
+        claim_logo: 0,
+        org_logo: "some-org-edit",
+        frame_org: 0,
+        medium_of_content: :audio,
         feed_common_id: state.feed_common_id
       }
 
@@ -84,18 +126,28 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
           updated_attrs
         )
 
-      assert updated_entry.link_of_ar == "https://example.com/assessment-report"
-      assert updated_entry.who_is_post_targeting == "none"
-      assert updated_entry.language == "ta"
-      assert updated_entry.feed_common_id == state.feed_common_id
+      assert updated_entry.target == "someone-edit"
+      assert updated_entry.language == :hi
+      assert updated_entry.org_logo == "some-org-edit"
+      assert updated_entry.medium_of_content == :audio
     end
 
     test "delete a entry in assessment report metadata", state do
       # create an exisiting record
       attrs = %{
-        link_of_ar: "https://example.com/assessment-report",
-        who_is_post_targeting: "someone",
-        language: "en",
+        link: "https://example.com/assessment-report",
+        target: "someone",
+        language: :en,
+        primary_theme: 0,
+        secondary_theme: 1,
+        third_theme: "some theme",
+        claim_is_sectarian: "yes",
+        content_disturbing: 0,
+        claim_category: 1,
+        claim_logo: 0,
+        org_logo: "Some Organization",
+        frame_org: 0,
+        medium_of_content: :video,
         feed_common_id: state.feed_common_id
       }
 

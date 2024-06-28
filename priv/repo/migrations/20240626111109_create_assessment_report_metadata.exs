@@ -3,10 +3,20 @@ defmodule DAU.Repo.Migrations.CreateAssessmentReportMetadata do
 
   def change do
     create table(:assessment_report_metadata) do
-      add :link_of_ar, :string
-      add :who_is_post_targeting, :string
-      add :language, :string
       add :feed_common_id, references(:feed_common, on_delete: :nothing)
+      add :link, :string
+      add :target, :string
+      add :language, :string
+      add :primary_theme, :integer
+      add :secondary_theme, :integer
+      add :third_theme, :string
+      add :claim_is_sectarian, :string
+      add :content_disturbing, :integer
+      add :claim_category, :integer
+      add :claim_logo, :integer
+      add :org_logo, :string
+      add :frame_org, :integer
+      add :medium_of_content, :string
 
       timestamps(type: :utc_datetime)
     end
