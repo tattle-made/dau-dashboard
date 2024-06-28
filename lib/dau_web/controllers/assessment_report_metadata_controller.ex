@@ -53,7 +53,10 @@ defmodule DAUWeb.AssessmentReportMetadataController do
     render(conn, :edit, form: form, id: id)
   end
 
-  def update(conn, %{"id" => id, "my_form" => form_data}) do
+  def update(conn, params) do
+    id = params["id"]
+    form_data = params["my_form"]
+
     case AssessmentReportMetadata.update_assessment_report_metadata(id, form_data) do
       {:ok, _metadata} ->
         conn
