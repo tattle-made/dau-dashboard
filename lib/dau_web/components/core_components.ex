@@ -417,6 +417,7 @@ defmodule DAUWeb.CoreComponents do
           value={value}
           checked={to_string(@field.value) == to_string(value)}
           class="rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+          required={@required}
         />
         <label for={"#{@field.id}-#{idx}"} class="ms-2 text-xs dark:text-gray-300 text-zinc-800">
           <%= render_slot(rad) %>
