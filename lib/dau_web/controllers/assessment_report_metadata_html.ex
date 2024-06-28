@@ -25,7 +25,6 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
       "Influencer/Public Figure"
     ]
 
-    checkbox_labels = ["Male", "Female", "Male (Trans Male)", "Female (Trans Female)", "LGBQIA+"]
     yes_no_labels = ["Yes", "No"]
     claim_categories = ["Graphic", "Pornographic/Sexual", "Violent", "Expletives"]
     pos_neg_labels = ["Positive", "Negative", "Neutral", "Inconclusive"]
@@ -79,15 +78,19 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
           field={@form[:claim_is_sectarian]}
           label="If the claim is sectarian in nature, identify the community targeted by the claim?"
         />
-        <%!-- <div>
-          <label class="block text-sm font-semibold leading-6 text-zinc-800">
-            Is the claim targeting a gender? If so, please specify the group targeted.
-          </label>
-          <div class="mt-2">
-            <.input field={@form[:gender]} type="checkbox" label="hi" value="helllooo" />
-            <.input field={@form[:gender2]} type="checkbox" label="hello" value="helllooo" />
-          </div>
-        </div> --%>
+        <.input
+          field={@form[:gender]}
+          type="checkgroup"
+          label="Is the claim targeting a gender? If so, please specify the group targeted."
+          multiple={true}
+          options={[
+            {"Male", "male"},
+            {"Female", "female"},
+            {"Male (Trans Male)", "trans_male"},
+            {"Female (Trans Female)", "trans_female"},
+            {"LGBQIA+", "lgbqia"}
+          ]}
+        />
         <div>
           <label class="block text-sm font-semibold leading-6 text-zinc-800">
             Is the content of the question disturbing or triggering?
@@ -182,7 +185,6 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
       "Influencer/Public Figure"
     ]
 
-    checkbox_labels = ["Male", "Female", "Male (Trans Male)", "Female (Trans Female)", "LGBQIA+"]
     yes_no_labels = ["Yes", "No"]
     claim_categories = ["Graphic", "Pornographic/Sexual", "Violent", "Expletives"]
     pos_neg_labels = ["Positive", "Negative", "Neutral", "Inconclusive"]
@@ -236,15 +238,19 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
           field={@form[:claim_is_sectarian]}
           label="If the claim is sectarian in nature, identify the community targeted by the claim?"
         />
-        <%!-- <div>
-          <label class="block text-sm font-semibold leading-6 text-zinc-800">
-            Is the claim targeting a gender? If so, please specify the group targeted.
-          </label>
-          <div class="mt-2">
-            <.input field={@form[:gender]} type="checkbox" label="hi" value="helllooo" />
-            <.input field={@form[:gender2]} type="checkbox" label="hello" value="helllooo" />
-          </div>
-        </div> --%>
+        <.input
+          field={@form[:gender]}
+          type="checkgroup"
+          label="Is the claim targeting a gender? If so, please specify the group targeted."
+          multiple={true}
+          options={[
+            {"Male", "male"},
+            {"Female", "female"},
+            {"Male (Trans Male)", "trans_male"},
+            {"Female (Trans Female)", "trans_female"},
+            {"LGBQIA+", "lgbqia"}
+          ]}
+        />
         <div>
           <label class="block text-sm font-semibold leading-6 text-zinc-800">
             Is the content of the question disturbing or triggering?
