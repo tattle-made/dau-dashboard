@@ -236,64 +236,56 @@
       </div>
     </div>
   </.section>
-  <div class="flex flex-row">
-    <div class="flex-grow">
-      <.section label="Assessment Report">
-        <div :if={
-          Permission.has_privilege?(@current_user, :edit, Common) && !@query.assessment_report
-        }>
-          <form phx-submit="add-assessment-report">
-            <div class="mt-4 flex flex-row gap-2">
-              <input
-                class="grow text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                type="text"
-                id="assessment-report-url"
-                name="assessment-report-url"
-                placeholder="Add URL of the assessment report on DAU microsite"
-              />
-              <button type="submit">
-                <.icon name="hero-paper-airplane" />
-              </button>
-            </div>
-          </form>
-        </div>
-        <div :if={@query.assessment_report}>
-          <div class="mt-2">
-            <a href={@query.assessment_report.url} target="_blank">
-              <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">
-                view report
-              </span>
-            </a>
-          </div>
-        </div>
-
-        <div :if={!@query.assessment_report} class="mt-2">
-          <span class="text-rose-900 bg-rose-200 text-xs px-2 py-1 rounded-sm">
-            pending
-          </span>
-        </div>
-      </.section>
-    </div>
-    <div class="w-1/10">
+  <.section_assessment_report label="Assessment Report">
+    <:form_button>
       <div :if={Feed.AssessmentReportMetadata.report_exists?(@query.id) == false}>
         <a href={"/demo/query/#{@query.id}/assessment-report/metadata"}>
-          <button class="border border-green-200 bg-green-100 mt-2 rounded-md hover:bg-green-200 hover:cursor-pointer px-2 py-1 w-fit">
+          <button class="border border-green-200 bg-green-100 rounded-md hover:bg-green-200 hover:cursor-pointer px-2 py-1 w-fit">
             Create Form
           </button>
         </a>
       </div>
       <div :if={Feed.AssessmentReportMetadata.report_exists?(@query.id) == true}>
         <a href={"/demo/query/#{@query.id}/assessment-report/metadata/edit"}>
-          <button class="border border-yellow-200 bg-yellow-100 mt-2 rounded-md hover:bg-yellow-200 hover:cursor-pointer px-2 py-1 w-fit">
+          <button class="border border-yellow-200 bg-yellow-100 rounded-md hover:bg-yellow-200 hover:cursor-pointer px-2 py-1 w-fit">
             Edit Form
           </button>
         </a>
-        <%!-- <button class="border border-red-200 bg-red-100 mt-2 rounded-md hover:bg-red-200 hover:cursor-pointer px-2 py-1 w-fit">
-          Delete Form
-        </button> --%>
+      </div>
+    </:form_button>
+    <div :if={
+      Permission.has_privilege?(@current_user, :edit, Common) && !@query.assessment_report
+    }>
+      <form phx-submit="add-assessment-report">
+        <div class="mt-4 flex flex-row gap-2">
+          <input
+            class="grow text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            type="text"
+            id="assessment-report-url"
+            name="assessment-report-url"
+            placeholder="Add URL of the assessment report on DAU microsite"
+          />
+          <button type="submit">
+            <.icon name="hero-paper-airplane" />
+          </button>
+        </div>
+      </form>
+    </div>
+    <div :if={@query.assessment_report}>
+      <div class="mt-2">
+        <a href={@query.assessment_report.url} target="_blank">
+          <span class="text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">
+            view report
+          </span>
+        </a>
       </div>
     </div>
-  </div>
+    <div :if={!@query.assessment_report} class="mt-2">
+      <span class="text-rose-900 bg-rose-200 text-xs px-2 py-1 rounded-sm">
+        pending
+      </span>
+    </div>
+  </.section_assessment_report>
   <!--
     <div class="flex flex-row gap-1">
     <div class="w-full p-4 rounded-md border border-gray-200">

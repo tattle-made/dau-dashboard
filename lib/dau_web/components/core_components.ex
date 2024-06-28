@@ -927,6 +927,21 @@ defmodule DAUWeb.CoreComponents do
     """
   end
 
+  def section_assessment_report(assigns) do
+    ~H"""
+    <section class="flex flex-row justify-between gap-1">
+      <div class="w-full p-4 rounded-md border border-gray-200">
+        <div class="flex justify-between items-center">
+          <p class="text-lg"><%= @label %></p>
+          <%= render_slot(@form_button) %>
+        </div>
+        <div class="h-2" />
+        <%= render_slot(@inner_block) %>
+      </div>
+    </section>
+    """
+  end
+
   attr :text, :string, required: true
 
   def media_text(assigns) do
