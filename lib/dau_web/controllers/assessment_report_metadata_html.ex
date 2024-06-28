@@ -33,7 +33,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
     <div class="flex justify-center">
       <div class="w-full max-w-2xl mx-4 sm:mx-0">
         <.simple_form for={@form} action={"/demo/query/#{@id}/assessment-report/metadata"}>
-          <.input field={@form[:link]} label="Link Of Assessment Report *" required />
+          <.input field={@form[:link]} label="Link Of Assessment Report *" type="url" required />
           <.input field={@form[:target]} label="Who is the post/claim targeting?" />
           <.input
             field={@form[:language]}
@@ -196,7 +196,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
     <div class="flex justify-center">
       <div class="w-full max-w-2xl mx-4 sm:mx-0">
         <.simple_form for={@form} action={"/demo/query/#{@id}/assessment-report/metadata/edit"}>
-          <.input field={@form[:link]} label="Link Of Assessment Report *" required />
+          <.input field={@form[:link]} label="Link Of Assessment Report *" type="url" required />
           <.input field={@form[:target]} label="Who is the post/claim targeting?" />
           <.input
             field={@form[:language]}
