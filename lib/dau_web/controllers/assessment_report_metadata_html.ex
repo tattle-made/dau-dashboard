@@ -128,6 +128,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
         <div>
           <label class="block text-sm font-semibold leading-6 text-zinc-800">
             Was this A.I.-generated misinformation used to frame the image of an individual/organisation in a negative or positive light?
+            <span class="text-red-700">*</span>
           </label>
           <div class="mt-2">
             <%= for {label, value} <- Enum.with_index(pos_neg_labels) do %>
@@ -140,7 +141,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
         <.input
           field={@form[:medium_of_content]}
           type="select"
-          label="Medium of content (Note - we should be able to capture the source eventually if possible)"
+          label="Medium of content (Note - we should be able to capture the source eventually if possible) *"
           prompt="Choose"
           options={[
             {"Video", "video"},
@@ -189,7 +190,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
     ~H"""
     <div>
       <.simple_form for={@form} action={"/demo/query/#{@id}/assessment-report/metadata/edit"}>
-        <.input field={@form[:link]} label="Link Of Assessment Report" />
+        <.input field={@form[:link]} label="Link Of Assessment Report *" required />
         <.input field={@form[:target]} label="Who is the post/claim targeting?" />
         <.input
           field={@form[:language]}
@@ -205,11 +206,11 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
         />
         <div>
           <label class="block text-sm font-semibold leading-6 text-zinc-800">
-            Primary Theme of claim (Explicit subject of the claim)
+            Primary Theme of claim (Explicit subject of the claim) <span class="text-red-700">*</span>
           </label>
           <div class="mt-2">
             <%= for {label, value} <- Enum.with_index(theme_radio_labels) do %>
-              <.radio_group field={@form[:primary_theme]}>
+              <.radio_group field={@form[:primary_theme]} required={true}>
                 <:radio value={value}><%= label %></:radio>
               </.radio_group>
             <% end %>
@@ -221,7 +222,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
           </label>
           <div class="mt-2">
             <%= for {label, value} <- Enum.with_index(theme_radio_labels) do %>
-              <.radio_group field={@form[:secondary_theme]}>
+              <.radio_group field={@form[:secondary_theme]} required={false}>
                 <:radio value={value}><%= label %></:radio>
               </.radio_group>
             <% end %>
@@ -250,7 +251,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
           </label>
           <div class="mt-2">
             <%= for {label, value} <- Enum.with_index(yes_no_labels) do %>
-              <.radio_group field={@form[:content_disturbing]}>
+              <.radio_group field={@form[:content_disturbing]} required={false}>
                 <:radio value={value}><%= label %></:radio>
               </.radio_group>
             <% end %>
@@ -262,7 +263,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
           </label>
           <div class="mt-2">
             <%= for {label, value} <- Enum.with_index(claim_categories) do %>
-              <.radio_group field={@form[:claim_category]}>
+              <.radio_group field={@form[:claim_category]} required={false}>
                 <:radio value={value}><%= label %></:radio>
               </.radio_group>
             <% end %>
@@ -274,7 +275,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
           </label>
           <div class="mt-2">
             <%= for {label, value} <- Enum.with_index(yes_no_labels) do %>
-              <.radio_group field={@form[:claim_logo]}>
+              <.radio_group field={@form[:claim_logo]} required={false}>
                 <:radio value={value}><%= label %></:radio>
               </.radio_group>
             <% end %>
@@ -284,10 +285,11 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
         <div>
           <label class="block text-sm font-semibold leading-6 text-zinc-800">
             Was this A.I.-generated misinformation used to frame the image of an individual/organisation in a negative or positive light?
+            <span class="text-red-700">*</span>
           </label>
           <div class="mt-2">
             <%= for {label, value} <- Enum.with_index(pos_neg_labels) do %>
-              <.radio_group field={@form[:frame_org]}>
+              <.radio_group field={@form[:frame_org]} required={true}>
                 <:radio value={value}><%= label %></:radio>
               </.radio_group>
             <% end %>
@@ -296,13 +298,14 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
         <.input
           field={@form[:medium_of_content]}
           type="select"
-          label="Medium of content (Note - we should be able to capture the source eventually if possible)"
+          label="Medium of content (Note - we should be able to capture the source eventually if possible) *"
           prompt="Choose"
           options={[
             {"Video", "video"},
             {"Audio", "audio"},
             {"Link", "link"}
           ]}
+          required
         />
         <:actions>
           <.button class="p-2 border-black">Save</.button>
