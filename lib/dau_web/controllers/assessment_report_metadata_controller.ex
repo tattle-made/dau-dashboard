@@ -3,19 +3,24 @@ defmodule DAUWeb.AssessmentReportMetadataController do
   use DAUWeb, :controller
 
   def show(conn, params) do
-    # form = %{email: "denny@gmail.com", username: "denny"}
-    # form = Phoenix.HTML.FormData.to_form(form, as: :my_form)
     form = %{
-      link_of_ar: "",
-      who_is_post_targeting: "",
-      language: ""
+      link: "",
+      target: "",
+      language: "",
+      primary_theme: "",
+      secondary_theme: "",
+      third_theme: "",
+      claim_is_sectarian: "",
+      content_disturbing: "",
+      claim_category: "",
+      claim_logo: "",
+      org_logo: "",
+      frame_org: "",
+      medium_of_content: ""
     }
 
     form = Phoenix.HTML.FormData.to_form(form, as: :my_form)
-    # to_form(form) |> IO.inspect(label: "FORM")
-
     render(conn, :show, form: form, id: params["id"])
-    # conn |> Plug.Conn.send_resp(200, [])
   end
 
   def create(conn, params) do
@@ -24,17 +29,17 @@ defmodule DAUWeb.AssessmentReportMetadataController do
     form_data = Map.put(form_data, "feed_common_id", id)
     IO.inspect(form_data, label: "SUBMITTED VALUES")
 
-    # case AssessmentReportMetadata.create_assessment_report_metadata(form_data) do
-    #   {:ok, _metadata} ->
-    #     conn
-    #     |> put_flash(:info, "Assessment Report Metadata Added!")
-    #     |> redirect(to: "/demo/query/#{id}")
+    case AssessmentReportMetadata.create_assessment_report_metadata(form_data) do
+      {:ok, _metadata} ->
+        conn
+        |> put_flash(:info, "Assessment Report Metadata Added!")
+        |> redirect(to: "/demo/query/#{id}")
 
-    #   {:error, changeset} ->
-    #     conn
-    #     |> put_flash(:error, "Error creating Assessment Report Metadata://.")
-    #     |> render(:show, form: changeset, id: id)
-    # end
+      {:error, changeset} ->
+        conn
+        |> put_flash(:error, "Error creating Assessment Report Metadata://.")
+        |> render(:show, form: changeset, id: id)
+    end
 
     redirect(conn, to: "/demo/query/#{id}")
   end
