@@ -38,6 +38,7 @@ defmodule Permission do
   alias DAU.Feed.FactcheckArticle
   alias DAU.Accounts.User
   alias DAU.Feed.Common
+  alias DAU.Feed.AssessmentReportMetadata
 
   def has_privilege?(%User{} = user, action, resource) do
     case user.role do
@@ -54,12 +55,14 @@ defmodule Permission do
         |> MapSet.put({:add, FactcheckArticle})
         |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
+        |> MapSet.put({:edit, AssessmentReportMetadata})
         |> MapSet.put({:view, Outbox}),
       secratariat_associate:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle})
         |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
+        |> MapSet.put({:edit, AssessmentReportMetadata})
         |> MapSet.put({:view, Outbox}),
       expert_factchecker:
         MapSet.new()

@@ -238,19 +238,21 @@
   </.section>
   <.section_assessment_report label="Assessment Report">
     <:form_button>
-      <div :if={Feed.AssessmentReportMetadata.report_exists?(@query.id) == false}>
-        <a href={"/demo/query/#{@query.id}/assessment-report/metadata"}>
-          <button class="border border-green-200 bg-green-100 rounded-md hover:bg-green-200 hover:cursor-pointer px-2 py-1 w-fit">
-            Create Form
-          </button>
-        </a>
-      </div>
-      <div :if={Feed.AssessmentReportMetadata.report_exists?(@query.id) == true}>
-        <a href={"/demo/query/#{@query.id}/assessment-report/metadata/edit"}>
-          <button class="border border-yellow-200 bg-yellow-100 rounded-md hover:bg-yellow-200 hover:cursor-pointer px-2 py-1 w-fit">
-            Edit Form
-          </button>
-        </a>
+      <div :if={Permission.has_privilege?(@current_user, :edit, Feed.AssessmentReportMetadata)}>
+        <div :if={Feed.AssessmentReportMetadata.report_exists?(@query.id) == false}>
+          <a href={"/demo/query/#{@query.id}/assessment-report/metadata"}>
+            <button class="border border-green-200 bg-green-100 rounded-md hover:bg-green-200 hover:cursor-pointer px-2 py-1 w-fit">
+              Create Form
+            </button>
+          </a>
+        </div>
+        <div :if={Feed.AssessmentReportMetadata.report_exists?(@query.id) == true}>
+          <a href={"/demo/query/#{@query.id}/assessment-report/metadata/edit"}>
+            <button class="border border-yellow-200 bg-yellow-100 rounded-md hover:bg-yellow-200 hover:cursor-pointer px-2 py-1 w-fit">
+              Edit Form
+            </button>
+          </a>
+        </div>
       </div>
     </:form_button>
     <div :if={
