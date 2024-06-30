@@ -450,6 +450,7 @@ defmodule DAUWeb.CoreComponents do
       </.radio_group>
   """
   attr :field, Phoenix.HTML.FormField, required: true
+  attr :required, :boolean, default: false
 
   slot :radio, required: true do
     attr :value, :string, required: true
