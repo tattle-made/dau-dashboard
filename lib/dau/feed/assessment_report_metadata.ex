@@ -88,4 +88,8 @@ defmodule DAU.Feed.AssessmentReportMetadata do
       _ -> true
     end
   end
+
+  def fetch_all_assessment_report_metadata do
+    Repo.all(AssessmentReportMetadata)
+  end
 end
