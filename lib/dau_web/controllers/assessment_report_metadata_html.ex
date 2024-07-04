@@ -33,7 +33,6 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
     <div class="flex justify-center">
       <div class="w-full max-w-2xl mx-4 sm:mx-0">
         <.simple_form for={@form} action={"/demo/query/#{@id}/assessment-report/metadata"}>
-          <.input field={@form[:link]} label="Link Of Assessment Report *" type="url" required />
           <.input field={@form[:target]} label="Who is the post/claim targeting?" />
           <.input
             field={@form[:language]}
@@ -196,7 +195,6 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
     <div class="flex justify-center">
       <div class="w-full max-w-2xl mx-4 sm:mx-0">
         <.simple_form for={@form} action={"/demo/query/#{@id}/assessment-report/metadata/edit"}>
-          <.input field={@form[:link]} label="Link Of Assessment Report *" type="url" required />
           <.input field={@form[:target]} label="Who is the post/claim targeting?" />
           <.input
             field={@form[:language]}
@@ -332,59 +330,67 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
     <div class="flex justify-center">
       <h1 class="text-xl font-bold">Assessment Report Metadata</h1>
     </div>
-    <.table id="table-metadata" rows={@metadata}>
-      <:col :let={data} label="Feed Query ID"><%= data.feed_common_id %></:col>
-      <:col :let={data} label="Link Of Assessment Report"><%= data.link %></:col>
-      <:col :let={data} label="Who is the post/claim targeting?"><%= data.target %></:col>
-      <:col :let={data} label="The language used in the audio/video"><%= data.language %></:col>
-      <:col :let={data} label="Primary Theme of claim (Explicit subject of the claim)">
-        <%= data.primary_theme %>
-      </:col>
-      <:col :let={data} label="Secondary theme of that claim"><%= data.secondary_theme %></:col>
-      <:col
-        :let={data}
-        label="Follow-up to previous question, is there a third claim category that you'd like to mention?"
-      >
-        <%= data.third_theme %>
-      </:col>
-      <:col
-        :let={data}
-        label="If the claim is sectarian in nature, identify the community targeted by the claim?"
-      >
-        <%= data.claim_is_sectarian %>
-      </:col>
-      <:col
-        :let={data}
-        label="Is the claim targeting a gender? If so, please specify the group targeted."
-      >
-        <%= data.gender %>
-      </:col>
-      <:col :let={data} label="Is the content of the question disturbing or triggering?">
-        <%= data.content_disturbing %>
-      </:col>
-      <:col
-        :let={data}
-        label="If yes to the previous question, did the claim fall under any of the following categories?"
-      >
-        <%= data.claim_category %>
-      </:col>
-      <:col
-        :let={data}
-        label="Did the claim carry a logo similar to that of recognised organisation (Imposter content)"
-      >
-        <%= data.claim_logo %>
-      </:col>
-      <:col :let={data} label="If yes, which organisation's logo did it imitate?">
-        <%= data.org_logo %>
-      </:col>
-      <:col
-        :let={data}
-        label="Was this A.I.-generated misinformation used to frame the image of an individual/organisation in a negative or positive light?"
-      >
-        <%= data.frame_org %>
-      </:col>
-      <:col :let={data} label="Medium of content"><%= data.medium_of_content %></:col>
-    </.table>
+    <div>
+      <.table id="table-metadata" rows={@metadata}>
+        <:col :let={data} label="Feed Query ID"><%= data.feed_common_id %></:col>
+        <:col :let={data} label="Link Of Assessment Report">
+          <%= if data.assessment_report_url != "" do %>
+            <a href={data.assessment_report_url} target="_blank" class="underline">
+              <%= data.assessment_report_url %>
+            </a>
+          <% end %>
+        </:col>
+        <:col :let={data} label="Who is the post/claim targeting?"><%= data.target %></:col>
+        <:col :let={data} label="The language used in the audio/video"><%= data.language %></:col>
+        <:col :let={data} label="Primary Theme of claim (Explicit subject of the claim)">
+          <%= data.primary_theme %>
+        </:col>
+        <:col :let={data} label="Secondary theme of that claim"><%= data.secondary_theme %></:col>
+        <:col
+          :let={data}
+          label="Follow-up to previous question, is there a third claim category that you'd like to mention?"
+        >
+          <%= data.third_theme %>
+        </:col>
+        <:col
+          :let={data}
+          label="If the claim is sectarian in nature, identify the community targeted by the claim?"
+        >
+          <%= data.claim_is_sectarian %>
+        </:col>
+        <:col
+          :let={data}
+          label="Is the claim targeting a gender? If so, please specify the group targeted."
+        >
+          <%= data.gender %>
+        </:col>
+        <:col :let={data} label="Is the content of the question disturbing or triggering?">
+          <%= data.content_disturbing %>
+        </:col>
+        <:col
+          :let={data}
+          label="If yes to the previous question, did the claim fall under any of the following categories?"
+        >
+          <%= data.claim_category %>
+        </:col>
+        <:col
+          :let={data}
+          label="Did the claim carry a logo similar to that of recognised organisation (Imposter content)"
+        >
+          <%= data.claim_logo %>
+        </:col>
+        <:col :let={data} label="If yes, which organisation's logo did it imitate?">
+          <%= data.org_logo %>
+        </:col>
+        <:col
+          :let={data}
+          label="Was this A.I.-generated misinformation used to frame the image of an individual/organisation in a negative or positive light?"
+        >
+          <%= data.frame_org %>
+        </:col>
+        <:col :let={data} label="Medium of content"><%= data.medium_of_content %></:col>
+      </.table>
+    </div>
     """
   end
 end

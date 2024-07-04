@@ -7,7 +7,6 @@ defmodule DAU.Feed.AssessmentReportMetadata do
 
   @all_fields [
     :feed_common_id,
-    :link,
     :target,
     :language,
     :primary_theme,
@@ -24,7 +23,6 @@ defmodule DAU.Feed.AssessmentReportMetadata do
   ]
 
   schema "assessment_report_metadata" do
-    field :link, :string
     field :target, :string
     field :language, Ecto.Enum, values: [:en, :hi, :ta, :te, :und]
     field :primary_theme, :integer
@@ -46,7 +44,7 @@ defmodule DAU.Feed.AssessmentReportMetadata do
   def changeset(metadata, attrs \\ %{}) do
     metadata
     |> cast(attrs, @all_fields)
-    |> validate_required([:feed_common_id, :link, :primary_theme, :frame_org, :medium_of_content])
+    |> validate_required([:feed_common_id, :primary_theme, :frame_org, :medium_of_content])
     |> foreign_key_constraint(:feed_common_id)
   end
 
@@ -91,5 +89,21 @@ defmodule DAU.Feed.AssessmentReportMetadata do
 
   def fetch_all_assessment_report_metadata do
     Repo.all(AssessmentReportMetadata)
+  end
+
+  def get_assessment_report_url_by_common_id(feed_common_id) do
+    case Repo.get(DAU.Feed.Common, feed_common_id) do
+      nil ->
+        nil
+
+      feed_common ->
+        case feed_common.assessment_report do
+          nil ->
+            nil
+
+          assessment_report ->
+            assessment_report.url
+        end
+    end
   end
 end

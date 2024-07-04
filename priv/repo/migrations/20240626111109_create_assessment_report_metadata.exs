@@ -4,7 +4,6 @@ defmodule DAU.Repo.Migrations.CreateAssessmentReportMetadata do
   def change do
     create table(:assessment_report_metadata) do
       add :feed_common_id, references(:feed_common, on_delete: :nothing)
-      add :link, :string
       add :target, :string
       add :language, :string
       add :primary_theme, :integer

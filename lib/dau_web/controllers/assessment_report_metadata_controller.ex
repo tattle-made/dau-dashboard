@@ -4,7 +4,6 @@ defmodule DAUWeb.AssessmentReportMetadataController do
 
   def show(conn, params) do
     form = %{
-      link: "",
       target: "",
       language: "",
       primary_theme: "",
@@ -146,23 +145,39 @@ defmodule DAUWeb.AssessmentReportMetadataController do
     }
 
     translate_gender = fn gender_list ->
-      Enum.map(gender_list, &Map.get(gender_labels, &1)) |> Enum.join(", ")
+      Enum.map(gender_list, &Map.get(gender_labels, &1, "")) |> Enum.join(", ")
     end
 
     transformed_metadata =
       Enum.map(metadata, fn data ->
         %{
           data
-          | primary_theme: Enum.at(theme_labels, data.primary_theme),
-            secondary_theme: Enum.at(theme_labels, data.secondary_theme),
-            gender: translate_gender.(data.gender),
-            content_disturbing: Enum.at(yes_no_labels, data.content_disturbing),
-            claim_category: Enum.at(claim_categories, data.claim_category),
-            claim_logo: Enum.at(yes_no_labels, data.claim_logo),
-            frame_org: Enum.at(pos_neg_labels, data.frame_org),
-            language: Map.get(language_labels, data.language),
-            medium_of_content: Map.get(medium_of_content_labels, data.medium_of_content)
+          | primary_theme:
+              if(data.primary_theme, do: Enum.at(theme_labels, data.primary_theme), else: ""),
+            secondary_theme:
+              if(data.secondary_theme, do: Enum.at(theme_labels, data.secondary_theme), else: ""),
+            gender: if(data.gender, do: translate_gender.(data.gender), else: ""),
+            content_disturbing:
+              if(data.content_disturbing,
+                do: Enum.at(yes_no_labels, data.content_disturbing),
+                else: ""
+              ),
+            claim_category:
+              if(data.claim_category,
+                do: Enum.at(claim_categories, data.claim_category),
+                else: ""
+              ),
+            claim_logo:
+              if(data.claim_logo, do: Enum.at(yes_no_labels, data.claim_logo), else: ""),
+            frame_org: if(data.frame_org, do: Enum.at(pos_neg_labels, data.frame_org), else: ""),
+            language: Map.get(language_labels, data.language, ""),
+            medium_of_content: Map.get(medium_of_content_labels, data.medium_of_content, "")
         }
+        |> Map.put_new(
+          :assessment_report_url,
+          AssessmentReportMetadata.get_assessment_report_url_by_common_id(data.feed_common_id) ||
+            ""
+        )
       end)
 
     render(conn, :fetch, metadata: transformed_metadata)

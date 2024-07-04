@@ -21,7 +21,6 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
 
     test "create form entry", state do
       attrs = %{
-        link: "https://example.com/assessment-report",
         target: "someone",
         language: :en,
         primary_theme: 0,
@@ -42,7 +41,6 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         AssessmentReportMetadata.create_assessment_report_metadata(attrs)
 
       assert assessment_report_meta_entry.feed_common_id == state.feed_common_id
-      assert assessment_report_meta_entry.link == "https://example.com/assessment-report"
       assert assessment_report_meta_entry.target == "someone"
       assert assessment_report_meta_entry.language == :en
       assert assessment_report_meta_entry.content_disturbing == 0
@@ -52,7 +50,6 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
     test "fetch assessment report metadata by feed_common_id", state do
       # Add data to assessment report metadata table
       attrs = %{
-        link: "https://example.com/assessment-report",
         target: "someone",
         language: :en,
         primary_theme: 0,
@@ -77,7 +74,6 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
         AssessmentReportMetadata.get_assessment_report_metadata_by_common_id(state.feed_common_id)
 
       assert fetched_entry.feed_common_id == state.feed_common_id
-      assert fetched_entry.link == "https://example.com/assessment-report"
       assert fetched_entry.language == :en
       assert fetched_entry.medium_of_content == :video
       assert fetched_entry.gender == ["male", "female"]
@@ -86,7 +82,6 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
     test "update values of assessment report metadata", state do
       # create an exisiting record
       attrs = %{
-        link: "https://example.com/assessment-report",
         target: "someone",
         language: :en,
         primary_theme: 0,
@@ -108,7 +103,6 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
 
       # update the record
       updated_attrs = %{
-        link: "https://example.com/assessment-report",
         target: "someone-edit",
         language: :hi,
         primary_theme: 4,
@@ -141,7 +135,6 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
     test "delete a entry in assessment report metadata", state do
       # create an exisiting record
       attrs = %{
-        link: "https://example.com/assessment-report",
         target: "someone",
         language: :en,
         primary_theme: 0,
