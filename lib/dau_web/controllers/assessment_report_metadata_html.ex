@@ -1,34 +1,8 @@
 defmodule DAUWeb.AssessmentReportMetadataHTML do
   use DAUWeb, :html
+  alias DAUWeb.AssessmentReportMetadataController, as: Controller
 
   def show(assigns) do
-    theme_radio_labels = [
-      "Civic Issues (matters of infrastructure, eg., potholes, accidents, breakdown of infrastructure)",
-      "Government Schemes (related to policies or schemes e.g., generative text misrepresenting policy priorities)",
-      "Political (includes matters dealing with politicians or political parties e.g., campaigns, leader speeches, party worker deeds etc.)",
-      "Communal (in cases where negative sentiments are associated with religion/ethnic identity)",
-      "Defense (matters tied to the Indian defense forces e.g., scripted imagery of military exercises)",
-      "Crime (Robbery/ murder/ cyber crime/ bribery/raids)",
-      "Economy (Includes budget, taxes, GST, road cess, Petrol & LPG prices)",
-      "Scams (Job scams/ financial scams & phishing attempts/ Promises of car et al)",
-      "Health (health hoaxes, quack advice e.g., Dr Naresh Trehan Deepfake)",
-      "IT & Science (tech related matters e.g., cybertruck accidents)",
-      "Entertainment (deals with celeb conduct, movie related matters)",
-      "Sports (deals with sporting events, sportsman conduct)",
-      "Tragedy (Freak incidents, natural disasters, loss of lives e.g.,)",
-      "Foreign Affairs (matters pertaining to other countries including, internal politics/policies/economy)",
-      "Judiciary (Court orders/ news about some judge/ pending cases)",
-      "Religion (opposed to 'communal', this one is to be used in cases of positive sentiment accompanying claims)",
-      "Culture (similar to above, but more generalised like cuisine, dance form etc.)",
-      "International Boundary Dispute (e.g., secession, incursions, skirmishes around border, eg., Indo-China, Indo-Pakistan)",
-      "Business (Generative content targeting companies and/or their figureheads)",
-      "Influencer/Public Figure"
-    ]
-
-    yes_no_labels = ["Yes", "No"]
-    claim_categories = ["Graphic", "Pornographic/Sexual", "Violent", "Expletives"]
-    pos_neg_labels = ["Positive", "Negative", "Neutral", "Inconclusive"]
-
     ~H"""
     <div class="flex justify-center">
       <div class="w-full max-w-2xl mx-4 sm:mx-0">
@@ -39,12 +13,11 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             type="select"
             label="The language used in the audio/video"
             prompt="Choose Language"
-            options={[
-              {"English", "en"},
-              {"Hindi", "hi"},
-              {"Tamil", "ta"},
-              {"Telugu", "te"}
-            ]}
+            options={
+              Enum.map(Controller.static_labels_data().language_labels, fn {key, value} ->
+                {value, key}
+              end)
+            }
           />
           <div>
             <label class="block text-sm font-semibold leading-6 text-zinc-800">
@@ -52,7 +25,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               <span class="text-red-700">*</span>
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(theme_radio_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().theme_radio_labels) do %>
                 <.radio_group field={@form[:primary_theme]} required={true}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -64,7 +37,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Secondary theme of that claim
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(theme_radio_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().theme_radio_labels) do %>
                 <.radio_group field={@form[:secondary_theme]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -84,20 +57,18 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             type="checkgroup"
             label="Is the claim targeting a gender? If so, please specify the group targeted."
             multiple={true}
-            options={[
-              {"Male", "male"},
-              {"Female", "female"},
-              {"Male (Trans Male)", "trans_male"},
-              {"Female (Trans Female)", "trans_female"},
-              {"LGBQIA+", "lgbqia"}
-            ]}
+            options={
+              Enum.map(Controller.static_labels_data().gender_labels, fn {key, value} ->
+                {value, key}
+              end)
+            }
           />
           <div>
             <label class="block text-sm font-semibold leading-6 text-zinc-800">
               Is the content of the question disturbing or triggering?
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(yes_no_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().yes_no_labels) do %>
                 <.radio_group field={@form[:content_disturbing]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -109,7 +80,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               If yes to the previous question, did the claim fall under any of the following categories?
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(claim_categories) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().claim_categories) do %>
                 <.radio_group field={@form[:claim_category]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -121,7 +92,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Did the claim carry a logo similar to that of recognised organisation (Imposter content)
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(yes_no_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().yes_no_labels) do %>
                 <.radio_group field={@form[:claim_logo]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -135,7 +106,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               <span class="text-red-700">*</span>
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(pos_neg_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().pos_neg_labels) do %>
                 <.radio_group field={@form[:frame_org]} required={true}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -147,11 +118,11 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             type="select"
             label="Medium of content (Note - we should be able to capture the source eventually if possible) *"
             prompt="Choose"
-            options={[
-              {"Video", "video"},
-              {"Audio", "audio"},
-              {"Link", "link"}
-            ]}
+            options={
+              Enum.map(Controller.static_labels_data().medium_of_content_labels, fn {key, value} ->
+                {value, key}
+              end)
+            }
             required
           />
           <:actions>
@@ -164,33 +135,6 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
   end
 
   def edit(assigns) do
-    theme_radio_labels = [
-      "Civic Issues (matters of infrastructure, eg., potholes, accidents, breakdown of infrastructure)",
-      "Government Schemes (related to policies or schemes e.g., generative text misrepresenting policy priorities)",
-      "Political (includes matters dealing with politicians or political parties e.g., campaigns, leader speeches, party worker deeds etc.)",
-      "Communal (in cases where negative sentiments are associated with religion/ethnic identity)",
-      "Defense (matters tied to the Indian defense forces e.g., scripted imagery of military exercises)",
-      "Crime (Robbery/ murder/ cyber crime/ bribery/raids)",
-      "Economy (Includes budget, taxes, GST, road cess, Petrol & LPG prices)",
-      "Scams (Job scams/ financial scams & phishing attempts/ Promises of car et al)",
-      "Health (health hoaxes, quack advice e.g., Dr Naresh Trehan Deepfake)",
-      "IT & Science (tech related matters e.g., cybertruck accidents)",
-      "Entertainment (deals with celeb conduct, movie related matters)",
-      "Sports (deals with sporting events, sportsman conduct)",
-      "Tragedy (Freak incidents, natural disasters, loss of lives e.g.,)",
-      "Foreign Affairs (matters pertaining to other countries including, internal politics/policies/economy)",
-      "Judiciary (Court orders/ news about some judge/ pending cases)",
-      "Religion (opposed to 'communal', this one is to be used in cases of positive sentiment accompanying claims)",
-      "Culture (similar to above, but more generalised like cuisine, dance form etc.)",
-      "International Boundary Dispute (e.g., secession, incursions, skirmishes around border, eg., Indo-China, Indo-Pakistan)",
-      "Business (Generative content targeting companies and/or their figureheads)",
-      "Influencer/Public Figure"
-    ]
-
-    yes_no_labels = ["Yes", "No"]
-    claim_categories = ["Graphic", "Pornographic/Sexual", "Violent", "Expletives"]
-    pos_neg_labels = ["Positive", "Negative", "Neutral", "Inconclusive"]
-
     ~H"""
     <div class="flex justify-center">
       <div class="w-full max-w-2xl mx-4 sm:mx-0">
@@ -201,12 +145,11 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             type="select"
             label="The language used in the audio/video"
             prompt="Choose Language"
-            options={[
-              {"English", "en"},
-              {"Hindi", "hi"},
-              {"Tamil", "ta"},
-              {"Telugu", "te"}
-            ]}
+            options={
+              Enum.map(Controller.static_labels_data().language_labels, fn {key, value} ->
+                {value, key}
+              end)
+            }
           />
           <div>
             <label class="block text-sm font-semibold leading-6 text-zinc-800">
@@ -214,7 +157,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               <span class="text-red-700">*</span>
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(theme_radio_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().theme_radio_labels) do %>
                 <.radio_group field={@form[:primary_theme]} required={true}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -226,7 +169,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Secondary theme of that claim
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(theme_radio_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().theme_radio_labels) do %>
                 <.radio_group field={@form[:secondary_theme]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -246,20 +189,18 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             type="checkgroup"
             label="Is the claim targeting a gender? If so, please specify the group targeted."
             multiple={true}
-            options={[
-              {"Male", "male"},
-              {"Female", "female"},
-              {"Male (Trans Male)", "trans_male"},
-              {"Female (Trans Female)", "trans_female"},
-              {"LGBQIA+", "lgbqia"}
-            ]}
+            options={
+              Enum.map(Controller.static_labels_data().gender_labels, fn {key, value} ->
+                {value, key}
+              end)
+            }
           />
           <div>
             <label class="block text-sm font-semibold leading-6 text-zinc-800">
               Is the content of the question disturbing or triggering?
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(yes_no_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().yes_no_labels) do %>
                 <.radio_group field={@form[:content_disturbing]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -271,7 +212,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               If yes to the previous question, did the claim fall under any of the following categories?
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(claim_categories) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().claim_categories) do %>
                 <.radio_group field={@form[:claim_category]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -283,7 +224,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Did the claim carry a logo similar to that of recognised organisation (Imposter content)
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(yes_no_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().yes_no_labels) do %>
                 <.radio_group field={@form[:claim_logo]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -297,7 +238,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               <span class="text-red-700">*</span>
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(pos_neg_labels) do %>
+              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().pos_neg_labels) do %>
                 <.radio_group field={@form[:frame_org]} required={true}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -309,11 +250,11 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
             type="select"
             label="Medium of content (Note - we should be able to capture the source eventually if possible) *"
             prompt="Choose"
-            options={[
-              {"Video", "video"},
-              {"Audio", "audio"},
-              {"Link", "link"}
-            ]}
+            options={
+              Enum.map(Controller.static_labels_data().medium_of_content_labels, fn {key, value} ->
+                {value, key}
+              end)
+            }
             required
           />
           <:actions>
