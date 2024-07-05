@@ -84,7 +84,7 @@ defmodule DAUWeb.AssessmentReportMetadataController do
     form_data = params["my_form"]
     form_data = Map.put(form_data, "feed_common_id", id)
 
-    case AssessmentReportMetadata.create_assessment_report_metadata(form_data) do
+    case AssessmentReportMetadata.create(form_data) do
       {:ok, _metadata} ->
         conn
         |> put_flash(:info, "Assessment Report Metadata Added!")
@@ -103,7 +103,7 @@ defmodule DAUWeb.AssessmentReportMetadataController do
     id = params["id"]
 
     assessment_report_metadata =
-      AssessmentReportMetadata.get_assessment_report_metadata_by_common_id(id)
+      AssessmentReportMetadata.get_assessment_report_metadata(id)
 
     changeset = Ecto.Changeset.change(assessment_report_metadata)
     form = Phoenix.HTML.FormData.to_form(changeset, as: :my_form)
@@ -114,7 +114,7 @@ defmodule DAUWeb.AssessmentReportMetadataController do
     id = params["id"]
     form_data = params["my_form"]
 
-    case AssessmentReportMetadata.update_assessment_report_metadata(id, form_data) do
+    case AssessmentReportMetadata.update(id, form_data) do
       {:ok, _metadata} ->
         conn
         |> put_flash(:info, "Assessment Report Metadata Updated.")
@@ -130,7 +130,7 @@ defmodule DAUWeb.AssessmentReportMetadataController do
   def delete(conn, params) do
     id = params["id"]
 
-    case AssessmentReportMetadata.delete_assessment_report_metadata(id) do
+    case AssessmentReportMetadata.delete(id) do
       {:ok, _metadata} ->
         conn
         # |> put_flash(:info, "assessment report metadata deleted successfully.")
@@ -144,7 +144,7 @@ defmodule DAUWeb.AssessmentReportMetadataController do
   end
 
   def fetch(conn, _params) do
-    metadata = AssessmentReportMetadata.fetch_all_assessment_report_metadata()
+    metadata = AssessmentReportMetadata.fetch_all()
 
     translate_gender = fn gender_list ->
       gender_list
@@ -190,7 +190,7 @@ defmodule DAUWeb.AssessmentReportMetadataController do
         }
         |> Map.put_new(
           :assessment_report_url,
-          AssessmentReportMetadata.get_assessment_report_url_by_common_id(data.feed_common_id) ||
+          AssessmentReportMetadata.get_assessment_report_url(data.feed_common_id) ||
             ""
         )
       end)

@@ -1,6 +1,7 @@
 defmodule DAU.Feed.AssessmentReportMetadataTest do
   alias DAU.Feed.Common
   alias DAU.Feed.AssessmentReportMetadata
+  alias DAU.Feed.AssessmentReportMetadataAggregate
   alias DAU.Repo
   use DAU.DataCase
 
@@ -38,7 +39,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
       }
 
       {:ok, assessment_report_meta_entry} =
-        AssessmentReportMetadata.create_assessment_report_metadata(attrs)
+        AssessmentReportMetadata.create(attrs)
 
       assert assessment_report_meta_entry.feed_common_id == state.feed_common_id
       assert assessment_report_meta_entry.target == "someone"
@@ -67,11 +68,11 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
       }
 
       {:ok, assessment_report_meta_entry} =
-        AssessmentReportMetadata.create_assessment_report_metadata(attrs)
+        AssessmentReportMetadata.create(attrs)
 
       # Fetch based on feed_common_id
       fetched_entry =
-        AssessmentReportMetadata.get_assessment_report_metadata_by_common_id(state.feed_common_id)
+        AssessmentReportMetadata.get_assessment_report_metadata(state.feed_common_id)
 
       assert fetched_entry.feed_common_id == state.feed_common_id
       assert fetched_entry.language == :en
@@ -99,7 +100,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
       }
 
       {:ok, assessment_report_meta_entry} =
-        AssessmentReportMetadata.create_assessment_report_metadata(attrs)
+        AssessmentReportMetadata.create(attrs)
 
       # update the record
       updated_attrs = %{
@@ -120,7 +121,7 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
       }
 
       {:ok, updated_entry} =
-        AssessmentReportMetadata.update_assessment_report_metadata(
+        AssessmentReportMetadata.update(
           state.feed_common_id,
           updated_attrs
         )
@@ -152,19 +153,19 @@ defmodule DAU.Feed.AssessmentReportMetadataTest do
       }
 
       {:ok, assessment_report_meta_entry} =
-        AssessmentReportMetadata.create_assessment_report_metadata(attrs)
+        AssessmentReportMetadata.create(attrs)
 
       # delete it - takes entire changeset
       {:ok, deleted_entry} =
-        AssessmentReportMetadata.delete_assessment_report_metadata(state.feed_common_id)
+        AssessmentReportMetadata.delete(state.feed_common_id)
 
       assert_raise Ecto.NoResultsError, fn ->
-        AssessmentReportMetadata
+        AssessmentReportMetadataAggregate
         |> Repo.get_by!(feed_common_id: state.feed_common_id)
       end
 
       assert_raise Ecto.NoResultsError, fn ->
-        AssessmentReportMetadata
+        AssessmentReportMetadataAggregate
         |> Repo.get!(deleted_entry.id)
       end
     end
