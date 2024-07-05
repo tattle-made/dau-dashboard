@@ -170,41 +170,30 @@ defmodule DAUWeb.AssessmentReportMetadataController do
       |> Enum.join(", ")
     end
 
+    translate_label = fn labels, key ->
+      case Enum.find(labels, fn {label_key, _value} -> label_key == key end) do
+        {_key, value} -> value
+        nil -> ""
+      end
+    end
+
     transformed_metadata =
       Enum.map(metadata, fn data ->
         %{
           data
-          | primary_theme:
-              if(data.primary_theme,
-                do: Enum.at(@theme_radio_labels, data.primary_theme),
-                else: ""
-              ),
-            secondary_theme:
-              if(data.secondary_theme,
-                do: Enum.at(@theme_radio_labels, data.secondary_theme),
-                else: ""
-              ),
+          | primary_theme: translate_label.(@theme_radio_labels, data.primary_theme),
+            secondary_theme: translate_label.(@theme_radio_labels, data.secondary_theme),
             gender: if(data.gender, do: translate_gender.(data.gender), else: ""),
-            content_disturbing:
-              if(data.content_disturbing,
-                do: Enum.at(@yes_no_labels, data.content_disturbing),
-                else: ""
-              ),
-            claim_category:
-              if(data.claim_category,
-                do: Enum.at(@claim_categories, data.claim_category),
-                else: ""
-              ),
-            claim_logo:
-              if(data.claim_logo, do: Enum.at(@yes_no_labels, data.claim_logo), else: ""),
-            frame_org: if(data.frame_org, do: Enum.at(@pos_neg_labels, data.frame_org), else: ""),
-            language: Keyword.get(@language_labels, data.language, ""),
-            medium_of_content: Keyword.get(@medium_of_content_labels, data.medium_of_content, "")
+            content_disturbing: translate_label.(@yes_no_labels, data.content_disturbing),
+            claim_category: translate_label.(@claim_categories, data.claim_category),
+            claim_logo: translate_label.(@yes_no_labels, data.claim_logo),
+            frame_org: translate_label.(@pos_neg_labels, data.frame_org),
+            language: translate_label.(@language_labels, data.language),
+            medium_of_content: translate_label.(@medium_of_content_labels, data.medium_of_content)
         }
         |> Map.put_new(
           :assessment_report_url,
-          AssessmentReportMetadata.get_assessment_report_url(data.feed_common_id) ||
-            ""
+          AssessmentReportMetadata.get_assessment_report_url(data.feed_common_id) || ""
         )
       end)
 
