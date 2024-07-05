@@ -3,30 +3,43 @@ defmodule DAUWeb.AssessmentReportMetadataController do
   use DAUWeb, :controller
 
   @theme_radio_labels [
-    "Civic Issues (matters of infrastructure, eg., potholes, accidents, breakdown of infrastructure)",
-    "Government Schemes (related to policies or schemes e.g., generative text misrepresenting policy priorities)",
-    "Political (includes matters dealing with politicians or political parties e.g., campaigns, leader speeches, party worker deeds etc.)",
-    "Communal (in cases where negative sentiments are associated with religion/ethnic identity)",
-    "Defense (matters tied to the Indian defense forces e.g., scripted imagery of military exercises)",
-    "Crime (Robbery/ murder/ cyber crime/ bribery/raids)",
-    "Economy (Includes budget, taxes, GST, road cess, Petrol & LPG prices)",
-    "Scams (Job scams/ financial scams & phishing attempts/ Promises of car et al)",
-    "Health (health hoaxes, quack advice e.g., Dr Naresh Trehan Deepfake)",
-    "IT & Science (tech related matters e.g., cybertruck accidents)",
-    "Entertainment (deals with celeb conduct, movie related matters)",
-    "Sports (deals with sporting events, sportsman conduct)",
-    "Tragedy (Freak incidents, natural disasters, loss of lives e.g.,)",
-    "Foreign Affairs (matters pertaining to other countries including, internal politics/policies/economy)",
-    "Judiciary (Court orders/ news about some judge/ pending cases)",
-    "Religion (opposed to 'communal', this one is to be used in cases of positive sentiment accompanying claims)",
-    "Culture (similar to above, but more generalised like cuisine, dance form etc.)",
-    "International Boundary Dispute (e.g., secession, incursions, skirmishes around border, eg., Indo-China, Indo-Pakistan)",
-    "Business (Generative content targeting companies and/or their figureheads)",
-    "Influencer/Public Figure"
+    {1,
+     "Civic Issues (matters of infrastructure, eg., potholes, accidents, breakdown of infrastructure)"},
+    {2,
+     "Government Schemes (related to policies or schemes e.g., generative text misrepresenting policy priorities)"},
+    {3,
+     "Political (includes matters dealing with politicians or political parties e.g., campaigns, leader speeches, party worker deeds etc.)"},
+    {4,
+     "Communal (in cases where negative sentiments are associated with religion/ethnic identity)"},
+    {5,
+     "Defense (matters tied to the Indian defense forces e.g., scripted imagery of military exercises)"},
+    {6, "Crime (Robbery/ murder/ cyber crime/ bribery/raids)"},
+    {7, "Economy (Includes budget, taxes, GST, road cess, Petrol & LPG prices)"},
+    {8, "Scams (Job scams/ financial scams & phishing attempts/ Promises of car et al)"},
+    {9, "Health (health hoaxes, quack advice e.g., Dr Naresh Trehan Deepfake)"},
+    {10, "IT & Science (tech related matters e.g., cybertruck accidents)"},
+    {11, "Entertainment (deals with celeb conduct, movie related matters)"},
+    {12, "Sports (deals with sporting events, sportsman conduct)"},
+    {13, "Tragedy (Freak incidents, natural disasters, loss of lives e.g.,)"},
+    {14,
+     "Foreign Affairs (matters pertaining to other countries including, internal politics/policies/economy)"},
+    {15, "Judiciary (Court orders/ news about some judge/ pending cases)"},
+    {16,
+     "Religion (opposed to 'communal', this one is to be used in cases of positive sentiment accompanying claims)"},
+    {17, "Culture (similar to above, but more generalised like cuisine, dance form etc.)"},
+    {18,
+     "International Boundary Dispute (e.g., secession, incursions, skirmishes around border, eg., Indo-China, Indo-Pakistan)"},
+    {19, "Business (Generative content targeting companies and/or their figureheads)"},
+    {20, "Influencer/Public Figure"}
   ]
-  @yes_no_labels ["Yes", "No"]
-  @claim_categories ["Graphic", "Pornographic/Sexual", "Violent", "Expletives"]
-  @pos_neg_labels ["Positive", "Negative", "Neutral", "Inconclusive"]
+  @yes_no_labels [{1, "Yes"}, {2, "No"}]
+  @claim_categories [
+    {1, "Graphic"},
+    {2, "Pornographic/Sexual"},
+    {3, "Violent"},
+    {4, "Expletives"}
+  ]
+  @pos_neg_labels [{1, "Positive"}, {2, "Negative"}, {3, "Neutral"}, {4, "Inconclusive"}]
   @language_labels [
     {:en, "English"},
     {:hi, "Hindi"},

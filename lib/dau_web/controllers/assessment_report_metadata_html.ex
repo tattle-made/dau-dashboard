@@ -25,7 +25,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               <span class="text-red-700">*</span>
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().theme_radio_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().theme_radio_labels do %>
                 <.radio_group field={@form[:primary_theme]} required={true}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -37,7 +37,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Secondary theme of that claim
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().theme_radio_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().theme_radio_labels do %>
                 <.radio_group field={@form[:secondary_theme]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -68,7 +68,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Is the content of the question disturbing or triggering?
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().yes_no_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().yes_no_labels do %>
                 <.radio_group field={@form[:content_disturbing]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -80,7 +80,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               If yes to the previous question, did the claim fall under any of the following categories?
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().claim_categories) do %>
+              <%= for {value, label} <- Controller.static_labels_data().claim_categories do %>
                 <.radio_group field={@form[:claim_category]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -92,7 +92,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Did the claim carry a logo similar to that of recognised organisation (Imposter content)
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().yes_no_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().yes_no_labels do %>
                 <.radio_group field={@form[:claim_logo]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -106,7 +106,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               <span class="text-red-700">*</span>
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().pos_neg_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().pos_neg_labels do %>
                 <.radio_group field={@form[:frame_org]} required={true}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -157,7 +157,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               <span class="text-red-700">*</span>
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().theme_radio_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().theme_radio_labels do %>
                 <.radio_group field={@form[:primary_theme]} required={true}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -169,7 +169,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Secondary theme of that claim
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().theme_radio_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().theme_radio_labels do %>
                 <.radio_group field={@form[:secondary_theme]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -200,7 +200,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Is the content of the question disturbing or triggering?
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().yes_no_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().yes_no_labels do %>
                 <.radio_group field={@form[:content_disturbing]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -212,7 +212,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               If yes to the previous question, did the claim fall under any of the following categories?
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().claim_categories) do %>
+              <%= for {value, label} <- Controller.static_labels_data().claim_categories do %>
                 <.radio_group field={@form[:claim_category]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -224,7 +224,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               Did the claim carry a logo similar to that of recognised organisation (Imposter content)
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().yes_no_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().yes_no_labels do %>
                 <.radio_group field={@form[:claim_logo]} required={false}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
@@ -238,7 +238,7 @@ defmodule DAUWeb.AssessmentReportMetadataHTML do
               <span class="text-red-700">*</span>
             </label>
             <div class="mt-2">
-              <%= for {label, value} <- Enum.with_index(Controller.static_labels_data().pos_neg_labels) do %>
+              <%= for {value, label} <- Controller.static_labels_data().pos_neg_labels do %>
                 <.radio_group field={@form[:frame_org]} required={true}>
                   <:radio value={value}><%= label %></:radio>
                 </.radio_group>
