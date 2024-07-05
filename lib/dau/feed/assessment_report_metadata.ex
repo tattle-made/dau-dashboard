@@ -1,64 +1,48 @@
 defmodule DAU.Feed.AssessmentReportMetadata do
-  alias DAU.Feed.AssessmentReportMetadataAggregate
   alias DAU.Feed.Common
-  alias DAU.Repo
+  use Ecto.Schema
+  import Ecto.Changeset
 
-  def create(attrs \\ %{}) do
-    %AssessmentReportMetadataAggregate{}
-    |> AssessmentReportMetadataAggregate.changeset(attrs)
-    |> Repo.insert()
+  @all_fields [
+    :feed_common_id,
+    :target,
+    :language,
+    :primary_theme,
+    :secondary_theme,
+    :third_theme,
+    :claim_is_sectarian,
+    :gender,
+    :content_disturbing,
+    :claim_category,
+    :claim_logo,
+    :org_logo,
+    :frame_org,
+    :medium_of_content
+  ]
+
+  schema "assessment_report_metadata" do
+    field :target, :string
+    field :language, Ecto.Enum, values: [:en, :hi, :ta, :te, :und]
+    field :primary_theme, :integer
+    field :secondary_theme, :integer
+    field :third_theme, :string
+    field :claim_is_sectarian, :string
+    field :gender, {:array, :string}
+    field :content_disturbing, :integer
+    field :claim_category, :integer
+    field :claim_logo, :integer
+    field :org_logo, :string
+    field :frame_org, :integer
+    field :medium_of_content, Ecto.Enum, values: [:video, :audio, :link]
+    belongs_to :feed_common, Common
+
+    timestamps(type: :utc_datetime)
   end
 
-  def get_assessment_report_metadata(feed_common_id) do
-    Repo.get_by(AssessmentReportMetadataAggregate, feed_common_id: feed_common_id)
-  end
-
-  def update(feed_common_id, attrs) do
-    case get_assessment_report_metadata(feed_common_id) do
-      nil ->
-        {:error, :not_found}
-
-      assessment_report_metadata ->
-        assessment_report_metadata
-        |> AssessmentReportMetadataAggregate.changeset(attrs)
-        |> Repo.update()
-    end
-  end
-
-  def delete(feed_common_id) do
-    case get_assessment_report_metadata(feed_common_id) do
-      nil ->
-        {:error, :not_found}
-
-      assessment_report_metadata ->
-        Repo.delete(assessment_report_metadata)
-    end
-  end
-
-  def report_exists?(feed_common_id) do
-    case get_assessment_report_metadata(feed_common_id) do
-      nil -> false
-      _ -> true
-    end
-  end
-
-  def fetch_all do
-    Repo.all(AssessmentReportMetadataAggregate)
-  end
-
-  def get_assessment_report_url(feed_common_id) do
-    case Repo.get(Common, feed_common_id) do
-      nil ->
-        nil
-
-      feed_common ->
-        case feed_common.assessment_report do
-          nil ->
-            nil
-
-          assessment_report ->
-            assessment_report.url
-        end
-    end
+  def changeset(metadata, attrs \\ %{}) do
+    metadata
+    |> cast(attrs, @all_fields)
+    |> validate_required([:feed_common_id, :primary_theme, :frame_org, :medium_of_content])
+    |> foreign_key_constraint(:feed_common_id)
   end
 end
