@@ -272,7 +272,7 @@ defmodule DAUWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea time url week)
+               range radio search select tel text textarea time url week checkgroup)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -363,6 +363,33 @@ defmodule DAUWeb.CoreComponents do
     """
   end
 
+  def input(%{type: "checkgroup"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name} class="text-sm">
+      <.label for={@id}><%= @label %></.label>
+      <div class="mt-1 w-full shadow-sm pl-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-black focus:border-black sm:text-sm">
+        <div class="grid grid-cols-1 gap-1 text-sm items-baseline">
+          <div :for={{label, value} <- @options} class="flex items-center">
+            <label for={"#{@name}-#{value}"} class="ms-2 text-xs dark:text-gray-300 text-zinc-800">
+              <input
+                type="checkbox"
+                id={"#{@name}-#{value}"}
+                name={@name}
+                value={value}
+                checked={@value && value in @value}
+                class="mr-2 h-4 w-4 rounded border-gray-300 text-black focus:ring-black transition duration-150 ease-in-out"
+                {@rest}
+              />
+              <%= label %>
+            </label>
+          </div>
+        </div>
+      </div>
+      <.error :for={msg <- @errors}><%= msg %></.error>
+    </div>
+    """
+  end
+
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
@@ -382,6 +409,73 @@ defmodule DAUWeb.CoreComponents do
         {@rest}
       />
       <.error :for={msg <- @errors}><%= msg %></.error>
+    </div>
+    """
+  end
+
+  @doc """
+  Generate a checkbox group for multi-select.
+  This code has been sourced from -> https://gist.github.com/brainlid/9dcf78386e68ca03d279ae4a9c8c2373
+  """
+  attr :id, :any
+  attr :name, :any
+  attr :label, :string, default: nil
+
+  attr :field, Phoenix.HTML.FormField,
+    doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
+  attr :errors, :list
+  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :rest, :global, include: ~w(disabled form readonly)
+  attr :class, :string, default: nil
+
+  def checkgroup(assigns) do
+    new_assigns =
+      assigns
+      |> assign(:multiple, true)
+      |> assign(:type, "checkgroup")
+
+    input(new_assigns)
+  end
+
+  @doc """
+  Provides a radio group input for a given form field.
+
+  ## Examples
+
+      <.radio_group field={@form[:tip]}>
+        <:radio value="0">No Tip</:radio>
+        <:radio value="10">10%</:radio>
+        <:radio value="20">20%</:radio>
+      </.radio_group>
+  """
+  attr :field, Phoenix.HTML.FormField, required: true
+  attr :required, :boolean, default: false
+
+  slot :radio, required: true do
+    attr :value, :string, required: true
+  end
+
+  slot :inner_block
+
+  def radio_group(assigns) do
+    ~H"""
+    <div>
+      <%= render_slot(@inner_block) %>
+      <div :for={{%{value: value} = rad, idx} <- Enum.with_index(@radio)}>
+        <input
+          type="radio"
+          name={@field.name}
+          id={"#{@field.id}-#{idx}"}
+          value={value}
+          checked={to_string(@field.value) == to_string(value)}
+          class="rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+          required={@required}
+        />
+        <label for={"#{@field.id}-#{idx}"} class="ms-2 text-xs dark:text-gray-300 text-zinc-800">
+          <%= render_slot(rad) %>
+        </label>
+      </div>
     </div>
     """
   end
@@ -879,6 +973,21 @@ defmodule DAUWeb.CoreComponents do
     <section class="flex flex-row gap-1">
       <div class="w-full p-4 rounded-md border border-gray-200">
         <p class="text-lg"><%= @label %></p>
+        <div class="h-2" />
+        <%= render_slot(@inner_block) %>
+      </div>
+    </section>
+    """
+  end
+
+  def section_assessment_report(assigns) do
+    ~H"""
+    <section class="flex flex-row justify-between gap-1">
+      <div class="w-full p-4 rounded-md border border-gray-200">
+        <div class="flex justify-between items-center">
+          <p class="text-lg"><%= @label %></p>
+          <%= render_slot(@form_button) %>
+        </div>
         <div class="h-2" />
         <%= render_slot(@inner_block) %>
       </div>
