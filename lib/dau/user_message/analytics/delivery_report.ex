@@ -40,6 +40,7 @@ defmodule DAU.UserMessage.Analytics.DeliveryReport do
   defp event_type_atom("READ"), do: :read
   defp event_type_atom("FAILED"), do: :failed
   defp event_type_atom(nil), do: :unexpected
+  defp event_type_atom(_), do: :unexpected
 
   def event_name(%__MODULE__{event_type: :success}), do: "success"
   def event_name(%__MODULE__{event_type: :delivered}), do: "message delivered"

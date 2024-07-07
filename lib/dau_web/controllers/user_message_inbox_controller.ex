@@ -65,7 +65,7 @@ defmodule DAUWeb.IncomingMessageController do
           Logger.error(reason)
       end
 
-      Task.async(fn -> Analytics.save_delivery_event(params) end)
+      Task.async(fn -> Analytics.create_delivery_event(params) end)
 
       conn
       |> put_resp_content_type("application/json")

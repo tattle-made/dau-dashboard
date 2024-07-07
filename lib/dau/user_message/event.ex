@@ -15,10 +15,9 @@ defmodule DAU.UserMessage.Event do
     %Event{event | timestamp: inserted_at}
   end
 
-  @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :query_id])
+    |> validate_required([:name, :query_id])
   end
 end

@@ -6,6 +6,7 @@ defmodule DAU.UserMessage do
   import Ecto.Query, warn: false
   require Logger
   require Logger
+  alias DAU.UserMessage.Analytics
   alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.MessageDelivery
   alias DAU.Accounts.User

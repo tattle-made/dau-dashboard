@@ -21,17 +21,23 @@ defmodule DAU.UserMessage.AnalyticsTest do
       message = UserMessageFixtures.inbox_message_attrs(:video, @inbox_attrs)
       {:ok, message_added} = Conversation.add_message(message)
       {:ok, common} = Feed.add_user_response(message_added.common_id, @user_response)
-      {:ok, _query} = UserMessage.add_response_to_outbox(common)
+      {:ok, query} = UserMessage.add_response_to_outbox(common)
       {:ok, conversation} = Conversation.get_by_common_id(common.id)
-      %{id: outbox_id} = OutboxFixtures.outbox_fixture(@outbox_attrs)
+      {:ok, outbox} = UserMessage.add_e_id(@outbox_attrs.e_id, query.user_message_outbox_id)
 
-      %{conversation: conversation, outbox_id: outbox_id}
+      %{conversation: conversation, outbox_id: query.user_message_outbox_id}
     end
 
     test "add failed delivery report", %{conversation: conversation, outbox_id: outbox_id} do
       delivery_report_failed_params = GupshupFixture.failure_report(@outbox_attrs.e_id, outbox_id)
 
       event = Analytics.create_delivery_event(delivery_report_failed_params)
+
+      IO.inspect(event)
+    end
+
+    test "add secratariate events", %{conversation: conversation} do
+      event = Analytics.create_message_sent_event(conversation.feed_id)
 
       IO.inspect(event)
     end
