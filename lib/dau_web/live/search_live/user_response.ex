@@ -1,4 +1,5 @@
 defmodule DAUWeb.SearchLive.UserResponse do
+  alias DAU.UserMessage.Analytics
   alias DAU.Accounts
   alias DAU.UserMessage
   alias DAU.UserMessage.Outbox
@@ -23,6 +24,9 @@ defmodule DAUWeb.SearchLive.UserResponse do
     socket =
       socket
       |> assign(:queries, [user_queries])
+      |> assign_async(:events, fn ->
+        {:ok, %{events: Analytics.get_all_for_feed_common(feed_common_id)}}
+      end)
 
     {:noreply, socket}
   end

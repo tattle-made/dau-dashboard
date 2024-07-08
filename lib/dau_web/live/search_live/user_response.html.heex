@@ -6,6 +6,7 @@
       <p><%= query.id %></p>
     </div>
   <% end %> --%>
+
   <.table id="user_queries" rows={@queries}>
     <:col :let={query} label="IDs">
       <div class="flex flex-col gap-1">
@@ -37,5 +38,10 @@
         </.link>
       </div>
     </:action>
+  </.table>
+
+  <.table id="events" rows={@events}>
+    <:col :let={event} label="event"><%= event.name %></:col>
+    <:col :let={event} label="timestamp"><%= event.inserted_at %></:col>
   </.table>
 </div>

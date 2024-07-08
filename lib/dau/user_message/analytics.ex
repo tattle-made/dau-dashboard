@@ -13,6 +13,12 @@ defmodule DAU.UserMessage.Analytics do
   end
 
   def get_all_for_feed_common(common_id) do
+    with common <- Repo.get!(Common, common_id) |> Repo.preload(:query),
+         events <- AnalyticsRepo.get_by_query_id(common.query.id) do
+      {:ok, events}
+    else
+      _err -> {:error, "We were unable to load events for this conversation"}
+    end
   end
 
   def create_message_sent_event(common_id) do
