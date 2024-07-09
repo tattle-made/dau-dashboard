@@ -21,11 +21,14 @@ defmodule DAUWeb.SearchLive.UserResponse do
     %{"id" => feed_common_id} = unsigned_params
     user_queries = UserMessage.list_queries(feed_common_id)
 
+    # require IEx
+    # IEx.pry()
+
     socket =
       socket
       |> assign(:queries, [user_queries])
       |> assign_async(:events, fn ->
-        {:ok, %{events: Analytics.get_all_for_feed_common(feed_common_id)}}
+        {:ok, %{events: Analytics.get_all_for_feed_common!(feed_common_id)}}
       end)
 
     {:noreply, socket}
@@ -49,5 +52,10 @@ defmodule DAUWeb.SearchLive.UserResponse do
       end
 
     {:noreply, socket}
+  end
+
+  def humanize_date(date) do
+    Timex.to_datetime(date, "Asia/Calcutta")
+    |> Calendar.strftime("%a %d-%m-%Y %I:%M %P")
   end
 end

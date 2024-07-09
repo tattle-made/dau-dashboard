@@ -21,6 +21,11 @@ defmodule DAU.UserMessage.Analytics do
     end
   end
 
+  def get_all_for_feed_common!(common_id) do
+    {:ok, events} = get_all_for_feed_common(common_id)
+    events
+  end
+
   def create_message_sent_event(common_id) do
     with common <- Repo.get!(Common, common_id) |> Repo.preload(:query),
          event_created <- DAUEvent.message_sent_by_secratariat!(common.query.id),

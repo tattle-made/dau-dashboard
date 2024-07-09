@@ -40,8 +40,12 @@
     </:action>
   </.table>
 
-  <.table id="events" rows={@events}>
-    <:col :let={event} label="event"><%= event.name %></:col>
-    <:col :let={event} label="timestamp"><%= event.inserted_at %></:col>
-  </.table>
+  <h2 class="mt-8 mb-4 font-normal text-xl">Message Events</h2>
+  <div :if={@events.loading}>Loading events...</div>
+  <div :if={events = @events.ok? && @events.result}>
+    <.table id="events" rows={events}>
+      <:col :let={event} label="event"><%= event.name %></:col>
+      <:col :let={event} label="timestamp"><%= humanize_date(event.inserted_at) %></:col>
+    </.table>
+  </div>
 </div>

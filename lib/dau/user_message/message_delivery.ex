@@ -59,6 +59,9 @@ defmodule DAU.UserMessage.MessageDelivery.Production do
 end
 
 defmodule DAU.UserMessage.MessageDelivery.Sandbox do
+  @moduledoc """
+  todo: add a mock http post repsonse
+  """
   def send_message_to_bsp(_id, _phone_num, _message) do
     {:ok}
   end
