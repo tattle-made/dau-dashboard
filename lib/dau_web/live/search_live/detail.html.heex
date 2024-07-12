@@ -238,7 +238,7 @@
   </.section>
   <.section_assessment_report label="Assessment Report">
     <:form_button>
-      <div :if={
+      <%!-- <div :if={
         Permission.has_privilege?(@current_user, :edit, Feed.AssessmentReportMetadataRepository)
       }>
         <div :if={Feed.AssessmentReportMetadataRepository.report_exists?(@query.id) == false}>
@@ -255,7 +255,7 @@
             </button>
           </a>
         </div>
-      </div>
+      </div> --%>
     </:form_button>
     <div :if={
       Permission.has_privilege?(@current_user, :edit, Common) && !@query.assessment_report
