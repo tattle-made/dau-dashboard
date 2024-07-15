@@ -35,6 +35,7 @@ defmodule DAU.UserMessage.Analytics.DeliveryReport do
     end
   end
 
+  defp event_type_atom("SENT"), do: :sent
   defp event_type_atom("SUCCESS"), do: :success
   defp event_type_atom("DELIVERED"), do: :delivered
   defp event_type_atom("READ"), do: :read
@@ -42,6 +43,7 @@ defmodule DAU.UserMessage.Analytics.DeliveryReport do
   defp event_type_atom(nil), do: :unexpected
   defp event_type_atom(_), do: :unexpected
 
+  def event_name(%__MODULE__{event_type: :sent}), do: "message sent by bsp"
   def event_name(%__MODULE__{event_type: :success}), do: "success"
   def event_name(%__MODULE__{event_type: :delivered}), do: "message delivered"
   def event_name(%__MODULE__{event_type: :read}), do: "message has been read by the user"

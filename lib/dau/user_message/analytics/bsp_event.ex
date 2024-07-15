@@ -39,6 +39,14 @@ defmodule DAU.UserMessage.Analytics.BSPEvent do
     }
   end
 
+  def message_sent_by_bsp(query_id) do
+    %Event{
+      name: "event.bsp.message_sent",
+      query_id: query_id
+    }
+  end
+
+  def event(:sent, id), do: message_sent_by_bsp(id)
   def event(:success, id), do: message_received_by_user_success(id)
   def event(:delivered, id), do: message_received_by_user_delivered(id)
   def event(:read, id), do: message_received_by_user_read(id)
