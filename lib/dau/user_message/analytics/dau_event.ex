@@ -6,14 +6,14 @@ defmodule DAU.UserMessage.Analytics.DAUEvent do
 
   def message_sent_by_secratariat!(query_id) do
     %Event{
-      name: "message_sent_by_secratariat.user_response",
+      name: "secratariat.message_sent",
       query_id: query_id
     }
   end
 
   def message_approved_by_secratariat!(query_id) do
     %Event{
-      name: "message_approved_by_secratariat.user_response",
+      name: "secratariat.message_approved",
       query_id: query_id
     }
   end
