@@ -4,38 +4,38 @@ defmodule DAU.UserMessage.Analytics.BSPEvent do
   """
   alias DAU.UserMessage.Analytics.Event
 
-  def message_received_by_user_success(common_id) do
+  def message_received_by_user_success(query_id) do
     %Event{
       name: "event.bsp.message_delivery_success",
-      query_id: common_id
+      query_id: query_id
     }
   end
 
-  def message_received_by_user_failed(common_id) do
+  def message_received_by_user_failed(query_id) do
     %Event{
       name: "event.bsp.message_delivery_failed",
-      query_id: common_id
+      query_id: query_id
     }
   end
 
-  def message_received_by_user_read(common_id) do
+  def message_received_by_user_read(query_id) do
     %Event{
       name: "event.bsp.message_read",
-      query_id: common_id
+      query_id: query_id
     }
   end
 
-  def message_received_by_user_delivered(common_id) do
+  def message_received_by_user_delivered(query_id) do
     %Event{
       name: "event.bsp.message_delivered",
-      query_id: common_id
+      query_id: query_id
     }
   end
 
-  def message_received_by_user_unexpected(common_id) do
+  def message_received_by_user_unexpected(query_id) do
     %Event{
       name: "event.bsp.unexpected_delivery_report",
-      query_id: common_id
+      query_id: query_id
     }
   end
 
