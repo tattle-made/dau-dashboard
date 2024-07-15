@@ -3,6 +3,8 @@ defmodule DAUWeb.IncomingMessageController do
 
   # alias DAU.Vendor.Slack.Message
   require Logger
+  alias DAU.UserMessage.Analytics
+  alias DAU.UserMessage.Analytics.Event
   alias DAU.MediaMatch
   alias DAU.MediaMatch.HashWorkerRequest
   alias DAU.MediaMatch.HashWorkerGenServer
@@ -62,6 +64,8 @@ defmodule DAUWeb.IncomingMessageController do
         {:error, reason} ->
           Logger.error(reason)
       end
+
+      Task.async(fn -> Analytics.create_delivery_event(params) end)
 
       conn
       |> put_resp_content_type("application/json")

@@ -1,4 +1,5 @@
 defmodule DAU.UserMessage.Outbox do
+  alias DAU.UserMessage.Query
   alias DAU.Accounts.User
   use Ecto.Schema
   import Ecto.Changeset
@@ -18,6 +19,7 @@ defmodule DAU.UserMessage.Outbox do
     field :delivery_status, Ecto.Enum, values: [:success, :error, :unknown]
     field :delivery_report, :string
     field :e_id, :string
+    has_one :query, Query, foreign_key: :user_message_outbox_id
 
     timestamps(type: :utc_datetime)
   end

@@ -1,4 +1,6 @@
 defmodule DAUWeb.SearchLive.Detail do
+  alias DAU.UserMessage.Analytics
+  alias DAU.UserMessage.Analytics.Event
   alias DAU.MediaMatch.Blake2B
   alias DAU.UserMessage
   alias DAU.UserMessage.Templates.Factory
@@ -68,6 +70,8 @@ defmodule DAUWeb.SearchLive.Detail do
           socket
           |> put_flash(:info, "Error caused while approving response. Please reach out to admin")
       end
+
+    Task.async(fn -> Analytics.create_message_sent_event(common.id) end)
 
     {:noreply, socket}
   end

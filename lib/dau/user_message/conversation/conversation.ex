@@ -6,6 +6,7 @@ defmodule DAU.UserMessage.Conversation do
   already.
   """
   require Logger
+  alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.Conversation.Hash
   alias DAU.UserMessage.Conversation.MessageAdded
   alias DAU.Feed
@@ -16,6 +17,7 @@ defmodule DAU.UserMessage.Conversation do
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Query
   alias DAU.Feed.Common
+  import Ecto.Query
 
   defstruct [
     :id,
@@ -85,10 +87,22 @@ defmodule DAU.UserMessage.Conversation do
     end
   end
 
+  # @type get_by_common_id(common_id: integer()) :: Conversation.t()
   def get_by_common_id(common_id) when is_integer(common_id) do
     Repo.get(Common, common_id)
     |> Repo.preload(query: [:feed_common, :user_message_outbox, messages: [:hash]])
     |> Map.get(:query)
+    |> build()
+  end
+
+  def get_by_outbox_id(outbox_id) when is_integer(outbox_id) do
+    Query
+    |> join(:left, [q], o in Outbox, on: q.user_message_outbox == o.id)
+    |> where([o, q], o.id == ^outbox_id)
+    |> Repo.all()
+    |> Repo.preload(:feed_common, :user_message_outbox, messages: [:hash])
+    |> hd
+    |> Conversation.build()
   end
 
   @doc """
@@ -100,20 +114,22 @@ defmodule DAU.UserMessage.Conversation do
   """
   def build(inbox_id) when is_integer(inbox_id) do
     {:ok, %Query{} = query} = get(inbox_id)
-    conversation = build(query)
-    {:ok, conversation}
+    build(query)
   end
 
   def build(%Query{} = query) do
-    Conversation.new()
-    |> set_id(query.id)
-    |> set_sender_number(query.messages |> hd |> Map.get(:sender_number))
-    |> set_messages(Enum.map(query.messages, &Message.new(&1)))
-    |> set_response(query.feed_common.user_response)
-    |> set_feed_id(query.feed_common_id)
-    |> set_language(query.messages |> hd |> Map.get(:user_language_input))
-    |> set_hash(Hash.new(query.messages |> hd |> Map.get(:hash)))
-    |> set_verification_status(query.feed_common.verification_status)
+    conversation =
+      Conversation.new()
+      |> set_id(query.id)
+      |> set_sender_number(query.messages |> hd |> Map.get(:sender_number))
+      |> set_messages(Enum.map(query.messages, &Message.new(&1)))
+      |> set_response(query.feed_common.user_response)
+      |> set_feed_id(query.feed_common_id)
+      |> set_language(query.messages |> hd |> Map.get(:user_language_input))
+      |> set_hash(Hash.new(query.messages |> hd |> Map.get(:hash)))
+      |> set_verification_status(query.feed_common.verification_status)
+
+    {:ok, conversation}
   end
 
   def get_media_count(%Conversation{} = conversation) do
@@ -179,7 +195,13 @@ defmodule DAU.UserMessage.Conversation do
          {:ok, query} <-
            UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
-      {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
+      {:ok,
+       %MessageAdded{
+         id: inbox.id,
+         common_id: common.id,
+         path: inbox.file_key,
+         media_type: inbox.media_type
+       }}
     else
       {:error, reason} ->
         Logger.error("Error adding message")

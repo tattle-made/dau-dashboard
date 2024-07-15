@@ -99,6 +99,14 @@ if config_env() == :prod do
   #     For example: ecto://USER:PASS@HOST/DATABASE
   #     """
 
+  rabbit_mq_url =
+    System.get_env("RABBITMQ_URL") ||
+      raise """
+      Slack webhook url is missing. Please contact tattle admin
+      """
+
+  config :dau, RabbitMQ, url: rabbit_mq_url
+
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :dau, DAU.Repo,
