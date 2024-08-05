@@ -263,7 +263,21 @@ let all_tags = [
   "West Bengal",
   "Bihar",
   "Uttar Pradesh",
-  "Alia Bhatt"
+  "Alia Bhatt",
+  "Ratan Tata",
+  "NCSI",
+  "Sonakshi Sinha",
+  "Finance",
+  "Nita Ambani",
+  "Lip-sync",
+  "Kamala Harris",
+  "Jill Biden",
+  "US politics",
+  "Voice Clone",
+  "Narayana Murthy",
+  "Wion",
+  "Financial Advice",
+  "Hate speech",
 ];
 
 function make_chip(tag, callback) {
