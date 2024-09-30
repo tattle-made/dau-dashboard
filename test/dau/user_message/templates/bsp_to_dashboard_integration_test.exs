@@ -1859,7 +1859,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے ڈیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے ڈیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "deepfake_wo_ar_2fc_ur" do
@@ -1880,7 +1880,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے ڈیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n2. <فیکٹ چیکر کا نام>:Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے ڈیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "cheapfake_wo_ar_0fc_ur" do
@@ -1935,7 +1935,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے چیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے چیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "cheapfake_wo_ar_2fc_ur" do
@@ -1956,7 +1956,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے چیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n2. <فیکٹ چیکر کا نام>:Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے چیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "manipulated_w_ar_0fc_ur" do
@@ -1995,7 +1995,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "manipulated_wo_ar_2fc_ur" do
@@ -2016,7 +2016,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n2. <فیکٹ چیکر کا نام>:Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "manipulated_wo_ar_0fc_ur" do
@@ -2068,7 +2068,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ نہیں کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One:https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ نہیں کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One:https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "not_manipulated_wo_ar_2fc_ur" do
@@ -2089,7 +2089,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ نہیں کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n2. <فیکٹ چیکر کا نام>:Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ نہیں کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "ai_generated_wo_ar_0fc_ur" do
@@ -2144,7 +2144,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اسے AI کی مدد سے بنایا گیا ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اسے AI کی مدد سے بنایا گیا ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "ai_generated_wo_ar_2fc_ur" do
@@ -2165,7 +2165,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اسے AI کی مدد سے بنایا گیا ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n2. <فیکٹ چیکر کا نام>:Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اسے AI کی مدد سے بنایا گیا ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "not_ai_generated_wo_ar_0fc_ur" do
@@ -2201,7 +2201,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہمیں اس آڈیو/ویڈیو میں AI جنریشن کا کوئی عنصر نہیں ملا۔ لیکن AI کا استعمال نہ ہونے کا مطلب یہ نہیں ہے کہ آڈیو/ویڈیو میں فراہم کردہ معلومات درست ہیں۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One:https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہمیں اس آڈیو/ویڈیو میں AI جنریشن کا کوئی عنصر نہیں ملا۔ لیکن AI کا استعمال نہ ہونے کا مطلب یہ نہیں ہے کہ آڈیو/ویڈیو میں فراہم کردہ معلومات درست ہیں۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One:https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "not_ai_generated_wo_ar_2fc_ur" do
@@ -2222,7 +2222,7 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       {:ok, text} = Factory.eval(template)
 
       assert text ==
-               "📢 ہمیں اس آڈیو/ویڈیو میں AI جنریشن کا کوئی عنصر نہیں ملا۔ لیکن AI کا استعمال نہ ہونے کا مطلب یہ نہیں ہے کہ آڈیو/ویڈیو میں فراہم کردہ معلومات درست ہیں۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. <فیکٹ چیکر کا نام>: Publisher One: https://publisher-one.com/article-1\n\n2. <فیکٹ چیکر کا نام>:Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+               "📢 ہمیں اس آڈیو/ویڈیو میں AI جنریشن کا کوئی عنصر نہیں ملا۔ لیکن AI کا استعمال نہ ہونے کا مطلب یہ نہیں ہے کہ آڈیو/ویڈیو میں فراہم کردہ معلومات درست ہیں۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
 
     test "inconclusive_w_ar_0fc_ur" do
@@ -2271,7 +2271,9 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       }
 
       {:ok, text} = Factory.eval(template)
-      IO.inspect(text)
+
+      assert text ==
+               "🫣 افوہ! آپ کی جانب سے شیئر کئے گئےمیڈیا کی زبان کو ہم فی الحال سپورٹ نہیں کرتے ہیں۔ آپ اسے نیچے دی گئی واٹس ایپ ٹپ لائنز پر دوسرے فیکٹ چیکرس کے ساتھ شیئر کر سکتے ہیں۔\n\n➡️Boom: +91-7700906588\n➡️Vishvas News: +91-9599299372\n➡️Factly: +91-9247052470\n➡️THIP: +91-8507885079\n➡️Newschecker: +91-9999499044\n➡️Fact Crescendo: +91-9049053770\n➡️India Today: +91-7370007000\n➡️Newsmobile:+91-1171279799\n➡️Quint WebQoof: +91-9540511818\n➡️Logically Facts: +91-8640070078\n➡️Newsmeter: +91-7482830440\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
     end
   end
 end

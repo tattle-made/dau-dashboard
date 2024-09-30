@@ -2,7 +2,7 @@
 
 فیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:
 
-1. <فیکٹ چیکر کا نام>: <%= Enum.at(factcheck_articles,0) |> Map.get(:domain) %>: <%= Enum.at(factcheck_articles,0) |> Map.get(:url) %>
+1. <%= Enum.at(factcheck_articles,0) |> Map.get(:domain) %>: <%= Enum.at(factcheck_articles,0) |> Map.get(:url) %>
 
 🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔
 
