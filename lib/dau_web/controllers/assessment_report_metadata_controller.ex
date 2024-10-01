@@ -44,7 +44,8 @@ defmodule DAUWeb.AssessmentReportMetadataController do
     {:en, "English"},
     {:hi, "Hindi"},
     {:ta, "Tamil"},
-    {:te, "Telugu"}
+    {:te, "Telugu"},
+    {:ur, "Urdu"}
   ]
   @gender_labels [
     {"male", "Male"},

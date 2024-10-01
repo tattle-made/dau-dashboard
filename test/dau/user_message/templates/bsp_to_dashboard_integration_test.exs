@@ -1822,5 +1822,458 @@ defmodule DAU.UserMessage.Templates.BspToDashboardIntegrationTest do
       assert text ==
                "📢 మేము ఈ ఆడియో/వీడియోని రివ్యూ చేసి ఇది చీప్‌ఫేక్ అని నిర్ధారించాము.\n\nఫాక్ట్ చెక్కర్స్ పబ్లిష్ చేసిన ఆర్టికల్స్ కింద చూడవొచ్చు:\n\n1.Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠దయచేసి ఈ సమాచారాన్ని షేర్ చేయడానికి మీ విచక్షణను ఉపయోగించండి.\n\nమమ్మల్ని సంప్రదించినందుకు ధన్యవాదాలు.🙏"
     end
+
+    test "deepfake_w_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "deepfake_w_ar_0fc_ur",
+          language: :ur,
+          template_parameters: [
+            assessment_report: "https://dau.mcaindia.in/assessment-report-01",
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے ڈیپ فیک پایا۔\n\n🎯آپ ہماری تشخیصی رپورٹ یہاں پڑھ سکتے ہیں: https://dau.mcaindia.in/assessment-report-01\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "deepfake_wo_ar_1fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "deepfake_wo_ar_1fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے ڈیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "deepfake_wo_ar_2fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "deepfake_wo_ar_2fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے ڈیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "cheapfake_wo_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_0fc_ur",
+          language: :ur,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے چیپ فیک پایا۔\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "cheapfake_w_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_w_ar_0fc_ur",
+          language: :ur,
+          template_parameters: [
+            assessment_report: "https://dau.mcaindia.in/assessment-report-01",
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے چیپ فیک پایا۔\n\n🎯آپ ہماری تشخیصی رپورٹ یہاں پڑھ سکتے ہیں: https://dau.mcaindia.in/assessment-report-01\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "cheapfake_wo_ar_1fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_1fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے چیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "cheapfake_wo_ar_2fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "cheapfake_wo_ar_2fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے چیپ فیک پایا۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "manipulated_w_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "manipulated_w_ar_0fc_ur",
+          language: :ur,
+          template_parameters: [
+            assessment_report: "https://dau.mcaindia.in/assessment-report-01",
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اس میں چھیڑ چھاڑ کی گئی ہے۔\n\n🎯آپ ہماری تشخیصی رپورٹ یہاں پڑھ سکتے ہیں: https://dau.mcaindia.in/assessment-report-01\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "manipulated_wo_ar_1fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "manipulated_wo_ar_1fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "manipulated_wo_ar_2fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "manipulated_wo_ar_2fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "manipulated_wo_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "manipulated_wo_ar_0fc_ur",
+          language: :ur,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اس میں چھیڑ چھاڑ کی گئی ہے۔\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "not_manipulated_wo_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "not_manipulated_wo_ar_0fc_ur",
+          language: :ur,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اس میں چھیڑ چھاڑ  نہیں کی گئی ہے۔\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "not_manipulated_wo_ar_1fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "not_manipulated_wo_ar_1fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ نہیں کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One:https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "not_manipulated_wo_ar_2fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "not_manipulated_wo_ar_2fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اورپایا کہ اس میں چھیڑ چھاڑ نہیں کی گئی ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "ai_generated_wo_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "ai_generated_wo_ar_0fc_ur",
+          language: :ur,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اسے AI کی مدد سے بنایا گیا ہے۔\n\n🎯حالانکہ اس آڈیو/ویڈیو کو بنانے میں AI کا استعمال کیا گیا ہے لیکن اس میں نقصان دہ مواد شامل نہیں ہے۔ اس معاملے میں ایسا لگتا ہے کہ AI کو تخلیقی مقصد کے لیے استعمال کیا گیا ہے۔\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "ai_generated_w_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "ai_generated_w_ar_0fc_ur",
+          language: :ur,
+          template_parameters: [
+            assessment_report: "https://dau.mcaindia.in/assessment-report-01",
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اسے AI کی مدد سے بنایا گیا ہے۔\n\n🎯آپ ہماری تشخیصی رپورٹ یہاں پڑھ سکتے ہیں: https://dau.mcaindia.in/assessment-report-01\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "ai_generated_wo_ar_1fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "ai_generated_wo_ar_1fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اسے AI کی مدد سے بنایا گیا ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "ai_generated_wo_ar_2fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "ai_generated_wo_ar_2fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور پایا کہ اسے AI کی مدد سے بنایا گیا ہے۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "not_ai_generated_wo_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "not_ai_generated_wo_ar_0fc_ur",
+          language: :ur,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہمیں اس آڈیو/ویڈیو میں AI جنریشن کا کوئی عنصر نہیں ملا۔ لیکن AI کا استعمال نہ ہونے کا مطلب یہ نہیں ہے کہ آڈیو/ویڈیو میں فراہم کردہ معلومات درست ہیں۔\n\nاگر آپ اس آڈیو/ویڈیو پر فیکٹ چیک چاہتے ہیں تو آپ اسے نیچے دی گئی دیگر واٹس ایپ ٹپ لائنز کے ساتھ شیئر کر سکتے ہیں:\n\n➡️Boom: +91-7700906588\n➡️Vishvas News: +91-9599299372\n➡️Factly: +91-9247052470\n➡️THIP: +91-8507885079\n➡️Newschecker: +91-9999499044\n➡️Fact Crescendo: +91-9049053770\n➡️India Today: +91-7370007000\n➡️Newsmobile:+91-1171279799\n➡️Quint WebQoof: +91-9540511818\n➡️Logically Facts: +91-8640070078\n➡️Newsmeter: +91-7482830440\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "not_ai_generated_wo_ar_1fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "not_ai_generated_wo_ar_1fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہمیں اس آڈیو/ویڈیو میں AI جنریشن کا کوئی عنصر نہیں ملا۔ لیکن AI کا استعمال نہ ہونے کا مطلب یہ نہیں ہے کہ آڈیو/ویڈیو میں فراہم کردہ معلومات درست ہیں۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One:https://publisher-one.com/article-1\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "not_ai_generated_wo_ar_2fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "not_ai_generated_wo_ar_2fc_ur",
+          language: :ur,
+          template_parameters: [
+            factcheck_articles: [
+              %{domain: "Publisher One", url: "https://publisher-one.com/article-1"},
+              %{domain: "Publisher Two", url: "https://publisher-one.com/article-2"}
+            ]
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہمیں اس آڈیو/ویڈیو میں AI جنریشن کا کوئی عنصر نہیں ملا۔ لیکن AI کا استعمال نہ ہونے کا مطلب یہ نہیں ہے کہ آڈیو/ویڈیو میں فراہم کردہ معلومات درست ہیں۔\n\nفیکٹ چیکرس نے بھی درج ذیل کا اشتراک کیا ہے:\n\n1. Publisher One: https://publisher-one.com/article-1\n\n2. Publisher Two: https://publisher-one.com/article-2\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "inconclusive_w_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "inconclusive_w_ar_0fc_ur",
+          language: :ur,
+          template_parameters: [
+            assessment_report: "https://dau.mcaindia.in/assessment-report-01",
+            factcheck_articles: []
+          ]
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "📢 ہم نے اس آڈیو/ویڈیو کا تجزیہ کیا اور اسے غیر نتیجہ خیز پایا۔\n\n🎯آپ ہماری تشخیصی رپورٹ یہاں پڑھ سکتے ہیں: https://dau.mcaindia.in/assessment-report-01\n\n🧠 براہ کرم اس معلومات کو شیئر کرنے میں اپنے شعور کا استعمال کریں۔\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "out_of_scope_wo_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "out_of_scope_wo_ar_0fc_ur",
+          language: :ur,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "ہم اس آڈیو/ویڈیو کو بھیجنے میں لگے آپ کے وقت کا احترام کرتے ہیں۔ 🙌\n\nہم مھض وہ آڈیو/ویڈیو چیک کرتے ہیں جو مفاد عامہ کے ہوں اور جن میں  لوگوں کو گمراہ کرنے کا امکان ہو۔ ہم ذاتی اور نجی آڈیو/ویڈیو کا تجزیہ نہیں کرتے ہیں۔\n\nاگر آپ کو کوئی ایسی چیز نظر آتی ہے جو مشکوک یا گمراہ کن ہو، تو براہ کرم ہم سے دوبارہ رابطہ کرنے میں ہچکچاہٹ محسوس نہ کریں۔\n\nہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
+
+    test "unsupported_language_wo_ar_0fc_ur" do
+      template = %Template{
+        meta: %{
+          valid: true,
+          template_name: "unsupported_language_wo_ar_0fc_ur",
+          language: :ur,
+          template_parameters: []
+        }
+      }
+
+      {:ok, text} = Factory.eval(template)
+
+      assert text ==
+               "🫣 افوہ! آپ کی جانب سے شیئر کئے گئےمیڈیا کی زبان کو ہم فی الحال سپورٹ نہیں کرتے ہیں۔ آپ اسے نیچے دی گئی واٹس ایپ ٹپ لائنز پر دوسرے فیکٹ چیکرس کے ساتھ شیئر کر سکتے ہیں۔\n\n➡️Boom: +91-7700906588\n➡️Vishvas News: +91-9599299372\n➡️Factly: +91-9247052470\n➡️THIP: +91-8507885079\n➡️Newschecker: +91-9999499044\n➡️Fact Crescendo: +91-9049053770\n➡️India Today: +91-7370007000\n➡️Newsmobile:+91-1171279799\n➡️Quint WebQoof: +91-9540511818\n➡️Logically Facts: +91-8640070078\n➡️Newsmeter: +91-7482830440\n\nہم سے رابطہ کرنے کے لئے آپ کا شکریہ۔ ہم امید کرتے ہیں کہ آپ کا دن اچھا گزرے گا۔ 🙏"
+    end
   end
 end

@@ -33,7 +33,7 @@ defmodule DAU.Feed.Common do
     field :tags, {:array, :string}
     field :exact_count, :integer
     field :media_type, Ecto.Enum, values: [:video, :audio, :image, :text, :mixed]
-    field :language, Ecto.Enum, values: [:en, :hi, :ta, :te, :und]
+    field :language, Ecto.Enum, values: [:en, :hi, :ta, :te, :ur, :und]
     field :taken_by, :string
     field :user_response, :string
     field :sender_number, :string
