@@ -6,7 +6,7 @@ defmodule DAU.MediaMatch.Hash do
   schema "hashes" do
     field :value, :string
     field :worker_version, :string
-    field :user_language, Ecto.Enum, values: [:en, :hi, :ta, :te, :und]
+    field :user_language, Ecto.Enum, values: [:en, :hi, :ta, :te, :ur, :und]
     belongs_to :inbox, Inbox
 
     timestamps(type: :utc_datetime)
