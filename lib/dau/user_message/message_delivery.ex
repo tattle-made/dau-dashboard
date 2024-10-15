@@ -57,43 +57,82 @@ defmodule DAU.UserMessage.MessageDelivery.Production do
   #   HTTPoison.post(gupshup_api_endpoint, "", headers, params: params)
   # end
 
-  def send_template_to_bsp(phone_number, message) do
+  def send_template_to_bsp(phone_number, template_name, lang_code,params) do
     # turn_token = Application.get_env(:dau, :turn_token)
     turn_token = System.get_env("TURN_TOKEN")
+    turn_namespace = System.get_env("TURN_NAMESPACE")
+
     headers = [
       {"Content-Type", "application/json"},
       {"Authorization", "Bearer #{turn_token}"}
-
     ]
-#DAU.UserMessage.MessageDelivery.Production.send_template_to_bsp("919999999999","test-test")
-    body = """
-    {
-        "to": "#{phone_number}",
-        "type": "template",
-        "template": {
-            "namespace": "0863995f_325c_4cd7_a1b5_0c488c30311f",
-            "name": "cheapfake_w_ar_0fc_en",
-            "language": {
-                "code": "en",
-                "policy": "deterministic"
-            },
-            "components": [
-                {
-                    "type": "body",
-                    "parameters": [
-                        {
-                            "type": "text",
-                            "text": "https://www.dau.mcaindia.in/blog/video-of-sudha-murty-promoting-a-financial-program-is-fake"
-                        }
-                    ]
-                }
-            ]
+'''
+    params = [
+      %{type: "text", text: "Factly"},
+      %{
+        type: "text",
+        text:
+          "https://factly.in/a-clipped-video-is-shared-as-visuals-of-modi-commenting-against-the-reservation-system/"
+      },
+      %{type: "text", text: "Vishvas News"},
+      %{
+        type: "text",
+        text:
+          "https://www.vishvasnews.com/viral/fact-check-chhattisgarh-cm-vishnu-deo-sai-did-not-appeal-to-voters-in-favor-of-congress-candidate-bhupesh-baghel-a-viral-video-is-fake-and-altered/"
+      }
+    ]
+      '''
+
+    parameters =
+      case Jason.encode(params) do
+        {:ok, json} ->
+          json
+
+        {:error, reason} ->
+          # Handle the error case
+          IO.puts("Failed to encode: #{reason}")
+          :error
+      end
+
+   test =  """
+
+    DAU.UserMessage.MessageDelivery.Production.send_template_to_bsp("919409425391","cheapfake_wo_ar_2fc_en","en",[
+        %{type: "text", text: "Factly"},
+        %{
+          type: "text",
+          text:
+            "https://factly.in/a-clipped-video-is-shared-as-visuals-of-modi-commenting-against-the-reservation-system/"
+        },
+        %{type: "text", text: "Vishvas News"},
+        %{
+          type: "text",
+          text:
+            "https://www.vishvasnews.com/viral/fact-check-chhattisgarh-cm-vishnu-deo-sai-did-not-appeal-to-voters-in-favor-of-congress-candidate-bhupesh-baghel-a-viral-video-is-fake-and-altered/"
         }
-    }
-"""
-
-
-    HTTPoison.post("https://whatsapp.turn.io/v1/messages", body, headers)
+      ])
+      """
+    body = """
+        {
+            "to": "#{phone_number}",
+            "type": "template",
+            "template": {
+                "namespace": "#{turn_namespace}",
+                "name": "#{template_name}",
+                "language": {
+                    "code": "#{lang_code}",
+                    "policy": "deterministic"
+                },
+                "components": [
+                    {
+                        "type": "body",
+                        "parameters": #{parameters}
+                    }
+                ]
+            }
+        }
+    """
+    endpoint = System.get_env("TURN_TEMPLATE_ENDPOINT")
+    HTTPoison.post(endpoint, body, headers)
   end
 end
 
