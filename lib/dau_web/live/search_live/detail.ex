@@ -56,12 +56,13 @@ defmodule DAUWeb.SearchLive.Detail do
   def handle_event("approve-response", _param, socket) do
     query = socket.assigns.query
     response = get_templatized_response(query)
+    response_params = get_templatized_response_paramters(query)
     Feed.add_user_response(query.id, response)
     common = Feed.get_feed_item_by_id(query.id)
 
     socket =
       with {:ok, query} <- UserMessage.add_response_to_outbox(common),
-           {:ok} <- UserMessage.send_response(query.user_message_outbox) do
+           {:ok} <- UserMessage.send_response(query.user_message_outbox, response_params) do
         socket
         |> put_flash(:info, "Response Approved")
         |> assign(:query, common)
@@ -203,6 +204,18 @@ defmodule DAUWeb.SearchLive.Detail do
       end
 
     text
+  end
+
+  def get_templatized_response_paramters(%Common{} = query) do
+    %Template{meta: meta} = query |> Factory.process()
+
+    case meta.valid do
+      true ->
+        meta
+
+      false ->
+        "No matching template found yet"
+    end
   end
 
   defp sop_text(%Common{} = query) do

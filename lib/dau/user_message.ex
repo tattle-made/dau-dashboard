@@ -321,34 +321,64 @@ defmodule DAU.UserMessage do
     |> Repo.preload(:user_message_outbox)
   end
 
-  def send_response(%Outbox{id: id}) do
+  def send_response(%Outbox{id: id}, template_meta) do
     outbox = Repo.get(Outbox, id)
 
-    reply_function =
-      case outbox.reply_type do
-        :customer_reply -> &MessageDelivery.client().send_message_to_bsp/3
-        :notification -> &MessageDelivery.client().send_template_to_bsp/3
+    %{
+      template_name: template_name,
+      language: language,
+      assessment_report: assessment_report,
+      factcheck_articles: factcheck_articles
+    } = template_meta
+
+    params = []
+
+    params =
+      if assessment_report != nil do
+        [%{type: "text", text: assessment_report} | params]
+      else
+        params
       end
 
-    case reply_function.(outbox.id, outbox.sender_number, outbox.text) do
+    params =
+      if factcheck_articles != [] do
+        factcheck_articles
+        |> Enum.reduce(params, fn article, acc ->
+          domain_param = %{type: "text", text: article.domain}
+          url_param = %{type: "text", text: article.url}
+          [domain_param, url_param | acc]
+        end)
+      else
+        params
+      end
+
+    params = Enum.reverse(params)
+
+    IO.puts("#########################################")
+    IO.inspect(params)
+
+    reply_function = &MessageDelivery.client().send_template_to_bsp/4
+
+    # TODO: figure out how to bring, template_name, lang_code, template_variables here
+    case reply_function.(outbox.sender_number, template_name, language, params) do
       {:ok, %HTTPoison.Response{} = response} ->
         Logger.info(response.body)
 
-        case Outbox.parse_bsp_status_response(response.body) do
-          {:ok, {txn_id, msg_id}} ->
-            case UserMessage.add_e_id(txn_id, msg_id) do
-              {:ok, _} ->
-                {:ok}
+      # case Outbox.parse_bsp_status_response(response.body) do
+      #   {:ok, {txn_id, msg_id}} ->
+      #     case UserMessage.add_e_id(txn_id, msg_id) do
+      #       {:ok, _} ->
+      #         {:ok}
 
-              {:error, reason} ->
-                Logger.error(reason)
-                {:error, "Unable to update e_id"}
-            end
+      #       {:error, reason} ->
+      #         Logger.error(reason)
+      #         {:error, "Unable to update e_id"}
+      #     end
 
-          {:error, reason} ->
-            Logger.error(reason)
-            {:error, "Unable to update status in database"}
-        end
+      #   {:error, reason} ->
+      #     Logger.error(reason)
+      #     {:error, "Unable to update status in database"}
+      # end
 
       {:error, reason} ->
         Logger.error(reason)
