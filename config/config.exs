@@ -11,7 +11,8 @@ config :dau,
   namespace: DAU,
   ecto_repos: [DAU.Repo],
   generators: [timestamp_type: :utc_datetime],
-  env: config_env()
+  env: config_env(),
+  bsp: DAU.Vendor.Turn
 
 # Configures the endpoint
 config :dau, DAUWeb.Endpoint,
