@@ -25,10 +25,13 @@ defmodule DAU.Vendor.Turn do
     HTTPoison.post(endpoint, body, headers)
   end
 
-  def send_template_to_bsp(phone_number, template_name, lang_code, params) do
+  # def send_template_to_bsp(phone_number, template_name, lang_code, params) do
+    def send_template_to_bsp(phone_number, template_meta) do
     # turn_token = Application.get_env(:dau, :turn_token)
     turn_token = System.get_env("TURN_TOKEN")
     turn_namespace = System.get_env("TURN_NAMESPACE")
+
+    %{template_name: template_name, language: lang_code, params: params} = make_template(template_meta)
 
     headers = [
       {"Content-Type", "application/json"},
@@ -127,5 +130,44 @@ defmodule DAU.Vendor.Turn do
       _err ->
         {:error, "Unable to parse bsp resposne"}
     end
+  end
+
+
+  def make_template(template_meta) do
+    %{
+      template_name: template_name,
+      language: language,
+      assessment_report: assessment_report,
+      factcheck_articles: factcheck_articles
+    } = template_meta
+
+    params = []
+
+    params =
+      if assessment_report != nil do
+        [%{type: "text", text: assessment_report} | params]
+      else
+        params
+      end
+
+    params =
+      if factcheck_articles != [] do
+        factcheck_articles
+        |> Enum.reduce(params, fn article, acc ->
+          domain_param = %{type: "text", text: article.domain}
+          url_param = %{type: "text", text: article.url}
+          [domain_param, url_param | acc]
+        end)
+      else
+        params
+      end
+
+    params = Enum.reverse(params)
+
+    %{
+      template_name: template_name,
+      language: language,
+      params: params
+    }
   end
 end
