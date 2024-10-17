@@ -3,6 +3,7 @@ defmodule DAUWeb.Components.MatchReview do
   alias DAU.Feed.Common
   alias DAU.Repo
   alias DAU.MediaMatch.Blake2B
+  alias DAUWeb.SearchLive.Detail
   use DAUWeb, :live_component
   require Logger
 
@@ -10,10 +11,12 @@ defmodule DAUWeb.Components.MatchReview do
     src = value["value"] |> String.to_integer()
     target = socket.assigns.common_id
 
+
     socket =
       with {:ok, common} <- Blake2B.copy_response_fields(src, target),
            {:ok, query} <- UserMessage.add_response_to_outbox(common),
-           {:ok} <- UserMessage.send_response(query.user_message_outbox) do
+           template_meta <- Detail.get_templatized_response_paramters(common),
+           {:ok} <- UserMessage.send_response(query.user_message_outbox,template_meta) do
         socket
         |> redirect(to: ~p"/demo/query/#{target}")
       else

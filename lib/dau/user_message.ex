@@ -326,12 +326,6 @@ defmodule DAU.UserMessage do
     outbox = Repo.get(Outbox, id)
     bsp = Application.fetch_env!(:dau, :bsp)
 
-    # reply_function =
-    #   case outbox.reply_type do
-    #     :customer_reply -> &MessageDelivery.client().send_message_to_bsp/3
-    #     :notification -> &MessageDelivery.client().send_template_to_bsp/3
-    #   end
-
     %{
       template_name: template_name,
       language: language,
@@ -362,9 +356,6 @@ defmodule DAU.UserMessage do
 
     params = Enum.reverse(params)
 
-    IO.puts("#########################################")
-    IO.inspect(params)
-
     reply_function =
       case outbox.reply_type do
         :customer_reply -> fn -> bsp.send_message_to_bsp(outbox.sender_number,outbox.text) end
@@ -376,25 +367,21 @@ defmodule DAU.UserMessage do
       {:ok, %HTTPoison.Response{} = response} ->
         Logger.info(response.body)
 
-      # case Outbox.parse_bsp_status_response(response.body) do
-      #   {:ok, {txn_id, msg_id}} ->
-      #     case UserMessage.add_e_id(txn_id, msg_id) do
-      #       {:ok, _} ->
-      #         {:ok}
-
-      #       {:error, reason} ->
-      #         Logger.error(reason)
-      #         {:error, "Unable to update e_id"}
-      #     end
-
-      #   {:error, reason} ->
-      #     Logger.error(reason)
-      #     {:error, "Unable to update status in database"}
-      # end
+      case bsp.parse_status_response(response.body) do
+        {:ok,res_msg_id} ->
+          case UserMessage.add_e_id(res_msg_id, id) do
+            {:ok,_}->
+              {:ok}
+          end
+          {:error, reason} ->
+            Logger.error(reason)
+            {:error, "Unable to update e_id"}
+        end
 
       {:error, reason} ->
         Logger.error(reason)
-        {:error, "Error with BSP"}
+        {:error, "Unable to update status in database"}
+
     end
   end
 
