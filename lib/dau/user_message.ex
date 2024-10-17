@@ -15,6 +15,7 @@ defmodule DAU.UserMessage do
   alias DAU.UserMessage.Preference
   alias DAU.Repo
   alias DAU.UserMessage.Inbox
+  alias DAU.Vendor.Turn
 
   # alias Ecto.Multi
 
@@ -324,6 +325,12 @@ defmodule DAU.UserMessage do
   def send_response(%Outbox{id: id}, template_meta) do
     outbox = Repo.get(Outbox, id)
 
+    # reply_function =
+    #   case outbox.reply_type do
+    #     :customer_reply -> &MessageDelivery.client().send_message_to_bsp/3
+    #     :notification -> &MessageDelivery.client().send_template_to_bsp/3
+    #   end
+
     %{
       template_name: template_name,
       language: language,
@@ -357,10 +364,14 @@ defmodule DAU.UserMessage do
     IO.puts("#########################################")
     IO.inspect(params)
 
-    reply_function = &MessageDelivery.client().send_template_to_bsp/4
+    reply_function =
+      case outbox.reply_type do
+        :customer_reply -> fn -> Turn.send_message_to_bsp(outbox.sender_number,outbox.text) end
+        :notification -> fn -> Turn.send_template_to_bsp(outbox.sender_number, template_name, language, params) end
+      end
 
-    # TODO: figure out how to bring, template_name, lang_code, template_variables here
-    case reply_function.(outbox.sender_number, template_name, language, params) do
+
+    case reply_function.() do
       {:ok, %HTTPoison.Response{} = response} ->
         Logger.info(response.body)
 
