@@ -25,7 +25,6 @@ defmodule DAU.Vendor.Turn do
     HTTPoison.post(endpoint, body, headers)
   end
 
-  # def send_template_to_bsp(phone_number, template_name, lang_code, params) do
     def send_template_to_bsp(phone_number, template_meta) do
     # turn_token = Application.get_env(:dau, :turn_token)
     turn_token = System.get_env("TURN_TOKEN")
@@ -38,26 +37,6 @@ defmodule DAU.Vendor.Turn do
       {"Authorization", "Bearer #{turn_token}"}
     ]
 
-    # Params Sturcture
-
-
-    # """
-    # params = [
-    # %{type: "text", text: "Factly"},
-    # %{
-    #   type: "text",
-    #   text:
-    #     "https://factly.in/a-clipped-video-is-shared-as-visuals-of-modi-commenting-against-the-reservation-system/"
-    # },
-    # %{type: "text", text: "Vishvas News"},
-    # %{
-    #   type: "text",
-    #   text:
-    #     "https://www.vishvasnews.com/viral/fact-check-chhattisgarh-cm-vishnu-deo-sai-did-not-appeal-to-voters-in-favor-of-congress-candidate-bhupesh-baghel-a-viral-video-is-fake-and-altered/"
-    # }
-    # ]
-    # """
-
     parameters =
       case Jason.encode(params) do
         {:ok, json} ->
@@ -68,26 +47,6 @@ defmodule DAU.Vendor.Turn do
           IO.puts("Failed to encode: #{reason}")
           :error
       end
-
-    # To test in IEX shell
-
-    # test = """
-
-    # DAU.UserMessage.MessageDelivery.Production.send_template_to_bsp("919999999999","cheapfake_wo_ar_2fc_en","en",[
-    #   %{type: "text", text: "Factly"},
-    #   %{
-    #     type: "text",
-    #     text:
-    #       "https://factly.in/a-clipped-video-is-shared-as-visuals-of-modi-commenting-against-the-reservation-system/"
-    #   },
-    #   %{type: "text", text: "Vishvas News"},
-    #   %{
-    #     type: "text",
-    #     text:
-    #       "https://www.vishvasnews.com/viral/fact-check-chhattisgarh-cm-vishnu-deo-sai-did-not-appeal-to-voters-in-favor-of-congress-candidate-bhupesh-baghel-a-viral-video-is-fake-and-altered/"
-    #   }
-    # ])
-    # """
 
     body = """
         {
