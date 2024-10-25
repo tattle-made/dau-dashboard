@@ -54,10 +54,15 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def receive_delivery_report(conn, params) do
-    try do
-      {msg_id, delivery_params} = DeliveryReport.make_delivery_report_for_outbox(params)
 
-      case UserMessage.add_delivery_report(msg_id, delivery_params) do
+    bsp = Application.fetch_env!(:dau, :bsp)
+
+    try do
+      # {msg_id, delivery_params} = DeliveryReport.make_delivery_report_for_outbox(params) # Used before Turn Bsp
+
+      {msg_id, delivery_params} = bsp.make_delivery_report_for_outbox(params)
+
+      case UserMessage.add_delivery_report_by_eid(msg_id, delivery_params) do
         {:ok, _} ->
           Logger.info("report added to db")
 

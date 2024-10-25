@@ -291,10 +291,20 @@ defmodule DAU.UserMessage do
       raise PermissionException
     end
   end
-
+# Used before Turn bsp
   def add_delivery_report(id, delivery_report) do
     outbox =
       Repo.get(Outbox, id)
+      |> Outbox.delivery_report_changeset(delivery_report)
+      |> Repo.update()
+
+    outbox
+  end
+# To be used for Turn BSP
+  def add_delivery_report_by_eid(id, delivery_report) do
+    outbox =
+
+      Repo.get_by(Outbox, e_id: id)
       |> Outbox.delivery_report_changeset(delivery_report)
       |> Repo.update()
 

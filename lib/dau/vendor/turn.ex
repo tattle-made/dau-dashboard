@@ -129,4 +129,54 @@ defmodule DAU.Vendor.Turn do
       params: params
     }
   end
+
+  def make_delivery_report_for_outbox(params) do
+
+    params = params["statuses"]
+    params = params |> hd
+
+     cause = "SUCCESS"
+
+    errors = List.first(params["errors"] || [%{}]) # Extract the first error
+
+    # Update Cause if there is an error
+    cause = if map_size(errors) > 0 do
+      errors["title"]
+    else
+      cause
+    end
+
+    error_code = Map.get(errors, "code", "ERROR")#Only code for the first error
+
+
+    # Possible known values : {sent, delivered, read, failed, success}
+    event_type = Map.get(params, "status", "ERROR")
+
+    delivery_status =
+      case event_type do
+        type when type in ["sent", "delivered", "read"] -> "success"
+        "failed" -> "error"
+        _ -> "unknown"
+      end
+
+    external_id = Map.get(params, "id", "ERROR-ERROR")
+
+    msg_id = external_id
+
+    delivery_report = "#{error_code} : #{event_type} : #{cause} : #{external_id}"
+
+    IO.inspect(delivery_report, label: "delivery_report: ")
+
+    res = {
+      msg_id,
+      %{
+        delivery_report: delivery_report,
+        delivery_status: delivery_status
+      }
+    }
+
+    IO.inspect(res, label: "Response IS: ")
+
+    res
+  end
 end
