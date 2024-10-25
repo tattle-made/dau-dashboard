@@ -1,7 +1,7 @@
 defmodule DAU.Vendor.Turn do
   require Logger
 
-  def send_message_to_bsp(phone_number, message) do
+  def send_message_to_bsp(outbox) do
     turn_token = System.get_env("TURN_TOKEN")
 
     headers = [
@@ -13,10 +13,10 @@ defmodule DAU.Vendor.Turn do
       %{
         "preview_url" => false,
         "recipient_type" => "individual",
-        "to" => phone_number,
+        "to" => outbox.sender_number,
         "type" => "text",
         "text" => %{
-          "body" => message
+          "body" => outbox.text
         }
       }
       |> Jason.encode!()
@@ -25,12 +25,13 @@ defmodule DAU.Vendor.Turn do
     HTTPoison.post(endpoint, body, headers)
   end
 
-    def send_template_to_bsp(phone_number, template_meta) do
+  def send_template_to_bsp(outbox, template_meta) do
     # turn_token = Application.get_env(:dau, :turn_token)
     turn_token = System.get_env("TURN_TOKEN")
     turn_namespace = System.get_env("TURN_NAMESPACE")
 
-    %{template_name: template_name, language: lang_code, params: params} = make_template(template_meta)
+    %{template_name: template_name, language: lang_code, params: params} =
+      make_template(template_meta)
 
     headers = [
       {"Content-Type", "application/json"},
@@ -50,7 +51,7 @@ defmodule DAU.Vendor.Turn do
 
     body = """
         {
-            "to": "#{phone_number}",
+            "to": "#{outbox.sender_number}",
             "type": "template",
             "template": {
                 "namespace": "#{turn_namespace}",
@@ -91,7 +92,6 @@ defmodule DAU.Vendor.Turn do
     end
   end
 
-
   def make_template(template_meta) do
     %{
       template_name: template_name,
@@ -131,23 +131,24 @@ defmodule DAU.Vendor.Turn do
   end
 
   def make_delivery_report_for_outbox(params) do
-
     params = params["statuses"]
     params = params |> hd
 
-     cause = "SUCCESS"
+    cause = ""
 
-    errors = List.first(params["errors"] || [%{}]) # Extract the first error
+    # Extract the first error
+    errors = List.first(params["errors"] || [%{}])
 
     # Update Cause if there is an error
-    cause = if map_size(errors) > 0 do
-      errors["title"]
-    else
-      cause
-    end
+    cause =
+      if map_size(errors) > 0 do
+        errors["title"]
+      else
+        cause
+      end
 
-    error_code = Map.get(errors, "code", "ERROR")#Only code for the first error
-
+    # Only code for the first error
+    error_code = Map.get(errors, "code", "SUCCESS")
 
     # Possible known values : {sent, delivered, read, failed, success}
     event_type = Map.get(params, "status", "ERROR")
@@ -163,7 +164,12 @@ defmodule DAU.Vendor.Turn do
 
     msg_id = external_id
 
-    delivery_report = "#{error_code} : #{event_type} : #{cause} : #{external_id}"
+    delivery_report =
+      if cause == "" do
+        "#{error_code} : #{event_type} : #{external_id}"
+      else
+        "#{error_code} : #{event_type} : #{cause} : #{external_id}"
+      end
 
     IO.inspect(delivery_report, label: "delivery_report: ")
 

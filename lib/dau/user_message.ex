@@ -338,8 +338,8 @@ defmodule DAU.UserMessage do
 
     reply_function =
       case outbox.reply_type do
-        :customer_reply -> fn -> bsp.send_message_to_bsp(outbox.sender_number,outbox.text) end
-        :notification -> fn -> bsp.send_template_to_bsp(outbox.sender_number, template_meta) end
+        :customer_reply -> fn -> bsp.send_message_to_bsp(outbox) end
+        :notification -> fn -> bsp.send_template_to_bsp(outbox, template_meta) end
       end
 
 
