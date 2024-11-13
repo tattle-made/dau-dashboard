@@ -10,7 +10,7 @@ defmodule DAU.UserMessage.Inbox do
           media_type: String.t(),
           sender_number: String.t(),
           sender_name: String.t(),
-          user_language_input: :en | :hi | :ta | :te | :ur | :und,
+          user_language_input: :en | :hi | :ta | :te | :ur | :mr | :und,
           user_input_text: String.t(),
           caption: String.t(),
           file_key: String.t(),
@@ -24,7 +24,7 @@ defmodule DAU.UserMessage.Inbox do
     field :path, :string
     field :sender_number, :string
     field :sender_name, :string
-    field :user_language_input, Ecto.Enum, values: [:en, :hi, :ta, :te, :ur, :und]
+    field :user_language_input, Ecto.Enum, values: [:en, :hi, :ta, :te, :ur, :mr, :und]
     field :user_input_text, :string
     field :caption, :string
     field :file_key, :string
