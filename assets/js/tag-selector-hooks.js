@@ -218,6 +218,8 @@ let all_tags = [
   "Language : Hindi",
   "Language : Tamil",
   "Language : Telugu",
+  "Language : Urdu",
+  "Language : Marathi",
   "Language : Other",
   "Atishi Marlena Singh",
   "Rashmika Mandanna",
@@ -278,6 +280,7 @@ let all_tags = [
   "Wion",
   "Financial Advice",
   "Hate speech",
+  "Sundar Pichai",
 ];
 
 function make_chip(tag, callback) {
