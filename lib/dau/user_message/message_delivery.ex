@@ -3,7 +3,7 @@ defmodule DAU.UserMessage.MessageDelivery do
     Application.get_env(:dau, :gupshup_client)
   end
 end
-
+# This Module is not being used for TURN BSP. For that refer module DAU.Vendor.Turn
 defmodule DAU.UserMessage.MessageDelivery.Production do
   require Logger
 
@@ -69,4 +69,5 @@ defmodule DAU.UserMessage.MessageDelivery.Sandbox do
   def send_template_to_bsp(_id, _phone_number, _message) do
     {:ok}
   end
+
 end

@@ -15,6 +15,7 @@ defmodule DAU.UserMessage do
   alias DAU.UserMessage.Preference
   alias DAU.Repo
   alias DAU.UserMessage.Inbox
+  alias DAU.Vendor.Turn
 
   # alias Ecto.Multi
 
@@ -290,10 +291,20 @@ defmodule DAU.UserMessage do
       raise PermissionException
     end
   end
-
+# Used before Turn bsp
   def add_delivery_report(id, delivery_report) do
     outbox =
       Repo.get(Outbox, id)
+      |> Outbox.delivery_report_changeset(delivery_report)
+      |> Repo.update()
+
+    outbox
+  end
+# To be used for Turn BSP
+  def add_delivery_report_by_eid(id, delivery_report) do
+    outbox =
+
+      Repo.get_by(Outbox, e_id: id)
       |> Outbox.delivery_report_changeset(delivery_report)
       |> Repo.update()
 
@@ -321,38 +332,36 @@ defmodule DAU.UserMessage do
     |> Repo.preload(:user_message_outbox)
   end
 
-  def send_response(%Outbox{id: id}) do
+  def send_response(%Outbox{id: id}, template_meta) do
     outbox = Repo.get(Outbox, id)
+    bsp = Application.fetch_env!(:dau, :bsp)
 
     reply_function =
       case outbox.reply_type do
-        :customer_reply -> &MessageDelivery.client().send_message_to_bsp/3
-        :notification -> &MessageDelivery.client().send_template_to_bsp/3
+        :customer_reply -> fn -> bsp.send_message_to_bsp(outbox) end
+        :notification -> fn -> bsp.send_template_to_bsp(outbox, template_meta) end
       end
 
-    case reply_function.(outbox.id, outbox.sender_number, outbox.text) do
+
+    case reply_function.() do
       {:ok, %HTTPoison.Response{} = response} ->
         Logger.info(response.body)
 
-        case Outbox.parse_bsp_status_response(response.body) do
-          {:ok, {txn_id, msg_id}} ->
-            case UserMessage.add_e_id(txn_id, msg_id) do
-              {:ok, _} ->
-                {:ok}
-
-              {:error, reason} ->
-                Logger.error(reason)
-                {:error, "Unable to update e_id"}
-            end
-
+      case bsp.parse_status_response(response.body) do
+        {:ok,res_msg_id} ->
+          case UserMessage.add_e_id(res_msg_id, id) do
+            {:ok,_}->
+              {:ok}
+          end
           {:error, reason} ->
             Logger.error(reason)
-            {:error, "Unable to update status in database"}
+            {:error, "Unable to update e_id"}
         end
 
       {:error, reason} ->
         Logger.error(reason)
-        {:error, "Error with BSP"}
+        {:error, "Unable to update status in database"}
+
     end
   end
 

@@ -37,7 +37,8 @@ defmodule DAU.UserMessage.Analytics do
   end
 
   def create_delivery_event(params) do
-    with {:ok, report} <- DeliveryReport.build(params),
+    # with {:ok, report} <- DeliveryReport.build(params), # Used Before Turn bsp
+    with {:ok, report} <- DeliveryReport.build_event(params),
          {:ok, event_created} <- create_event(report),
          {:ok, event_saved} <- AnalyticsRepo.save(event_created) do
       {:ok, event_saved}
@@ -49,7 +50,8 @@ defmodule DAU.UserMessage.Analytics do
   end
 
   defp create_event(%DeliveryReport{} = report) do
-    with outbox <- Repo.get(Outbox, report.outbox_id) |> Repo.preload(:query),
+    # with outbox <- Repo.get(Outbox, report.outbox_id) |> Repo.preload(:query), # Used Before Turn bsp
+    with outbox <- Repo.get_by(Outbox, e_id: report.outbox_id) |> Repo.preload(:query),
          event <- BSPEvent.event(report.event_type, outbox.query.id) do
       {:ok, event}
     else
