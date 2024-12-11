@@ -23,7 +23,7 @@ defmodule DAUWeb.IncomingMessageController do
 
   def create(conn, payload) do
     inbox =
-      case UserMessage.Conversation.add_message(payload) do
+      case UserMessage.Conversation.add_inbox(payload) do
         {:ok, inbox} ->
           inbox
 

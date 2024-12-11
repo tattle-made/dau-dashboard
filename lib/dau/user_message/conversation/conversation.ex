@@ -177,41 +177,76 @@ defmodule DAU.UserMessage.Conversation do
     "user_language_input" => "hi"
   }
   """
-  # def add_message(%{"media_type" => media_type} = attrs) when media_type in ["audio", "video"] do
-
-  #   with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
-  #        {file_key, file_hash} <- AWSS3.client().upload_to_s3(inbox.path),
-  #        {:ok, inbox} <-
-  #          UserMessage.update_user_message_file_metadata(inbox, %{
-  #            file_key: file_key,
-  #            file_hash: file_hash
-  #          }),
-  #        {:ok, common} <-
-  #          Feed.add_to_common_feed(%{
-  #            media_urls: [inbox.file_key],
-  #            media_type: inbox.media_type,
-  #            sender_number: inbox.sender_number,
-  #            language: inbox.user_language_input
-  #          }),
-  #        {:ok, query} <-
-  #          UserMessage.create_query_with_common(common, %{status: "pending"}),
-  #        {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
-  #     {:ok,
-  #      %MessageAdded{
-  #        id: inbox.id,
-  #        common_id: common.id,
-  #        path: inbox.file_key,
-  #        media_type: inbox.media_type
-  #      }}
-  #   else
-  #     {:error, reason} ->
-  #       Logger.error("Error adding message")
-  #       Logger.error(reason)
-  #       {:error, reason}
-  #   end
-  # end
-
   def add_message(%{"media_type" => media_type} = attrs) when media_type in ["audio", "video"] do
+
+    with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
+         {file_key, file_hash} <- AWSS3.client().upload_to_s3(inbox.path),
+         {:ok, inbox} <-
+           UserMessage.update_user_message_file_metadata(inbox, %{
+             file_key: file_key,
+             file_hash: file_hash
+           }),
+         {:ok, common} <-
+           Feed.add_to_common_feed(%{
+             media_urls: [inbox.file_key],
+             media_type: inbox.media_type,
+             sender_number: inbox.sender_number,
+             language: inbox.user_language_input
+           }),
+         {:ok, query} <-
+           UserMessage.create_query_with_common(common, %{status: "pending"}),
+         {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
+      {:ok,
+       %MessageAdded{
+         id: inbox.id,
+         common_id: common.id,
+         path: inbox.file_key,
+         media_type: inbox.media_type
+       }}
+    else
+      {:error, reason} ->
+        Logger.error("Error adding message")
+        Logger.error(reason)
+        {:error, reason}
+    end
+  end
+
+  def add_message(%{"media_type" => "text"} = attrs) do
+    with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
+         {:ok, inbox} <-
+           UserMessage.update_user_message_text_file_hash(inbox, %{
+             file_hash:
+               :crypto.hash(:sha256, inbox.user_input_text)
+               |> Base.encode16()
+               |> String.downcase()
+           }),
+         {:ok, common} <-
+           Feed.add_to_common_feed(
+             %{
+               media_urls: [inbox.user_input_text],
+               media_type: inbox.media_type,
+               sender_number: inbox.sender_number,
+               language: inbox.user_language_input
+             },
+             block_spam_urls: true
+           ),
+         {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
+         {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
+      {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
+    else
+      {:error, reason} ->
+        Logger.error("Error adding message")
+        Logger.error(reason)
+        {:error, reason}
+
+      err ->
+        Logger.error("Could not add message!!")
+
+        Logger.error(err)
+    end
+  end
+
+  def add_inbox(%{"media_type" => media_type} = attrs) when media_type in ["audio", "video"] do
 
      case UserMessage.create_incoming_message(attrs) do
       {:ok, inbox} ->
@@ -224,7 +259,7 @@ defmodule DAU.UserMessage.Conversation do
 
   end
 
-  def add_message(%{"media_type" => "text"} = attrs) do
+  def add_inbox(%{"media_type" => "text"} = attrs) do
     with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
          {:ok, inbox} <-
            UserMessage.update_user_message_text_file_hash(inbox, %{
