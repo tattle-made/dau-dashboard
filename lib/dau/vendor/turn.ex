@@ -111,17 +111,15 @@ defmodule DAU.Vendor.Turn do
 
     params =
       if factcheck_articles != [] do
-        factcheck_articles
-        |> Enum.reduce(params, fn article, acc ->
+        Enum.reduce(factcheck_articles, [], fn article, acc ->
           domain_param = %{type: "text", text: article.domain}
           url_param = %{type: "text", text: article.url}
-          [domain_param, url_param | acc]
+
+          acc ++ [domain_param, url_param]
         end)
       else
         params
       end
-
-    params = Enum.reverse(params)
 
     %{
       template_name: template_name,
