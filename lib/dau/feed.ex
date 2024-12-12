@@ -23,10 +23,15 @@ defmodule DAU.Feed do
         true ->
           media_url = hd(attrs.media_urls)
 
-          if block_specific_urls?(media_url) do
-            Map.put(attrs, :verification_status, :spam)
-          else
-            attrs
+          try do
+            if block_specific_urls?(media_url) do
+              Map.put(attrs, :verification_status, :spam)
+            else
+              attrs
+            end
+          rescue
+            # If block_specific_urls? raises an error, return original attrs
+            _e -> attrs
           end
 
         false ->
