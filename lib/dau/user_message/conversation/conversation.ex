@@ -295,7 +295,7 @@ defmodule DAU.UserMessage.Conversation do
     end
   end
 
-  def add_message_async(%Inbox{} = inbox) do
+  def add_message_properties(%Inbox{} = inbox) do
 
     IO.inspect(inbox, label: "INBOX IS: ")
 

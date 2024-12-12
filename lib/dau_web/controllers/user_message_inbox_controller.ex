@@ -35,7 +35,7 @@ defmodule DAUWeb.IncomingMessageController do
     IO.inspect(inbox.media_type)
 
     if(inbox.media_type == "audio" or inbox.media_type == "video") do
-      Task.async(fn -> add_msg_async(inbox) end)
+      Task.async(fn -> process_message(inbox) end)
     end
 
     conn |> Plug.Conn.send_resp(200, [])
@@ -48,9 +48,9 @@ defmodule DAUWeb.IncomingMessageController do
       conn |> send_400()
   end
 
-  def add_msg_async(%Inbox{} = inbox) do
+  def process_message(%Inbox{} = inbox) do
 
-    case UserMessage.Conversation.add_message_async(inbox) do
+    case UserMessage.Conversation.add_message_properties(inbox) do
       {:ok, message_added}->
         Task.async(fn -> MediaMatch.Blake2B.create_job(message_added) end)
       {:error, reason}->
