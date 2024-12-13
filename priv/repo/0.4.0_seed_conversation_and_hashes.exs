@@ -50,7 +50,7 @@ payloads = [
 
 conversations =
   payloads
-  |> Enum.map(&(Conversation.add_message(&1) |> elem(1)))
+  |> Enum.map(&(Conversation.add_message(&1, :message_added) |> elem(1)))
   |> Enum.map(&(Conversation.build(&1.id) |> elem(1)))
 
 conversations

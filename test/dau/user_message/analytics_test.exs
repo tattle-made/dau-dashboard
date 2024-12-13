@@ -19,7 +19,7 @@ defmodule DAU.UserMessage.AnalyticsTest do
 
     setup do
       message = UserMessageFixtures.inbox_message_attrs(:video, @inbox_attrs)
-      {:ok, message_added} = Conversation.add_message(message)
+      {:ok, message_added} = Conversation.add_message(message, :message_added)
       {:ok, common} = Feed.add_user_response(message_added.common_id, @user_response)
       {:ok, query} = UserMessage.add_response_to_outbox(common)
       {:ok, conversation} = Conversation.get_by_common_id(common.id)

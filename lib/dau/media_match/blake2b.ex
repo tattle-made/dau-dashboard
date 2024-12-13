@@ -109,6 +109,20 @@ defmodule DAU.MediaMatch.Blake2B do
     HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
   end
 
+  def create_job_async(%Task{} = async_message) do
+    Task.async(fn-> process_async_msg(async_message) end)
+
+    :ok
+  end
+
+  def process_async_msg(%Task{} = async_message) do
+
+    message_added = Task.await(async_message)
+
+    create_job(message_added)
+
+  end
+
   def get_matches(%Hash{} = hash) do
     conversation_hash = hash |> ConversationHash.new()
 

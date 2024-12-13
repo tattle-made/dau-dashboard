@@ -21,7 +21,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
         "user_language_input" => "hi"
       }
 
-      {:ok, message_added} = UserMessage.Conversation.add_message(payload)
+      {:ok, message_added} = UserMessage.Conversation.add_message(payload, :message_added)
 
       assert %MessageAdded{id: id, path: path, media_type: "audio"} =
                message_added
@@ -41,7 +41,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
         "user_language_input" => "hi"
       }
 
-      {:ok, message_added} = Conversation.add_message(payload)
+      {:ok, message_added} = Conversation.add_message(payload, :message_added)
       {:ok, conversation} = Conversation.build(message_added.id)
 
       %{conversation: conversation, message_added: message_added}
@@ -83,7 +83,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
 
       conversations =
         payloads
-        |> Enum.map(&(Conversation.add_message(&1) |> elem(1)))
+        |> Enum.map(&(Conversation.add_message(&1, :message_added) |> elem(1)))
         |> Enum.map(&(Conversation.build(&1.id) |> elem(1)))
 
       %{conversations: conversations}
@@ -114,7 +114,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
         "user_language_input" => "hi"
       }
 
-      {:ok, existing_conversation} = Conversation.add_message(existing_message)
+      {:ok, existing_conversation} = Conversation.add_message(existing_message, :message_added)
       existing_message_id = existing_conversation.id
       existing_response_string = Blake2BFixtures.make_response_string(:video, existing_message_id)
       existing_worker_func = Blake2B.worker_response_received(existing_response_string)
@@ -133,7 +133,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
         "user_language_input" => "hi"
       }
 
-      {:ok, incoming_conversation} = Conversation.add_message(incoming_message)
+      {:ok, incoming_conversation} = Conversation.add_message(incoming_message, :message_added)
       incoming_message_id = incoming_conversation.id
       incoming_response_string = Blake2BFixtures.make_response_string(:video, incoming_message_id)
       incoming_media = Media.build(incoming_response_string)
