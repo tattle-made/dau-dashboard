@@ -32,12 +32,12 @@ defmodule DAUWeb.IncomingMessageController do
         Task.start(fn ->
           if inbox.media_type in ["audio", "video"] do
             with {:ok, properites_added} <- Conversation.add_message_properties(inbox),
-                 {:ok, job_added} <- Blake2B.create_job(properites_added) do
+                 _ <- Blake2B.create_job(properites_added) do
             end
           end
         end)
 
-      {:error, reason} ->
+      {:error, _reason} ->
         conn |> send_400()
     end
   rescue
