@@ -21,7 +21,8 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
         "user_language_input" => "hi"
       }
 
-      {:ok, message_added} = UserMessage.Conversation.add_message(payload, :message_added)
+
+      {:ok, message_added} = UserMessage.Conversation.add_to_inbox(payload) |> UserMessage.Conversation.add_message_properties()
 
       assert %MessageAdded{id: id, path: path, media_type: "audio"} =
                message_added
@@ -41,7 +42,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
         "user_language_input" => "hi"
       }
 
-      {:ok, message_added} = Conversation.add_message(payload, :message_added)
+      {:ok, message_added} = Conversation.add_to_inbox(payload) |> Conversation.add_message_properties()
       {:ok, conversation} = Conversation.build(message_added.id)
 
       %{conversation: conversation, message_added: message_added}
@@ -83,7 +84,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
 
       conversations =
         payloads
-        |> Enum.map(&(Conversation.add_message(&1, :message_added) |> elem(1)))
+        |> Enum.map(&(Conversation.add_to_inbox(&1) |> Conversation.add_message_properties() |> elem(1)))
         |> Enum.map(&(Conversation.build(&1.id) |> elem(1)))
 
       %{conversations: conversations}
@@ -114,7 +115,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
         "user_language_input" => "hi"
       }
 
-      {:ok, existing_conversation} = Conversation.add_message(existing_message, :message_added)
+      {:ok, existing_conversation} = Conversation.add_to_inbox(existing_message) |> Conversation.add_message_properties()
       existing_message_id = existing_conversation.id
       existing_response_string = Blake2BFixtures.make_response_string(:video, existing_message_id)
       existing_worker_func = Blake2B.worker_response_received(existing_response_string)
@@ -133,7 +134,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
         "user_language_input" => "hi"
       }
 
-      {:ok, incoming_conversation} = Conversation.add_message(incoming_message, :message_added)
+      {:ok, incoming_conversation} = Conversation.add_to_inbox(incoming_message) |> Conversation.add_message_properties()
       incoming_message_id = incoming_conversation.id
       incoming_response_string = Blake2BFixtures.make_response_string(:video, incoming_message_id)
       incoming_media = Media.build(incoming_response_string)
