@@ -164,26 +164,88 @@ defmodule DAU.FeedTest do
     end
 
     test "test on different urls" do
-      urls = [
+      blocked_urls = [
+        # Standard domains
+        "https://amazon.com",
+        "http://amazon.in",
+        "amazon.in",
+        "myntra.in",
+        "www.myntra.com",
+        "amazon.co.in",
+        "myntra.co.in",
+        "flipkart.in",
+        # Subdomains
+        "shop.amazon.com",
+        "aws.amazon.com",
+        "www.myntra.com",
+        "store.myntra.in",
+        "hop.amznin.co.in",
+        # URLs with paths and query parameters
+        "https://www.amazon.com/product/details",
+        "flipkart.com/electronics?category=phones",
+        "https://myntra.com/men/shirts?brand=levis",
+        # URLs with additional parameters
         "https://amazon.in@amznin.cyou/?a=71716710208694",
-        "https://www.amazon.in/Redmi-Starlight-Storage-MediaTek-Dimensity/dp/B0CNX89QR8/?_encoding=UTF8&ref_=dlx_gate_sd_dcl_tlt_5db6bdf8_dt_pd_hp_d_atf_unk",
-        "https://amazon.in@amznin.cyou/?a=71716708185229",
         "https://flipkart.com@flipkin.cyou/?festival-day-gift=71716615491518",
-        "https://www.flipkart.com/laptop-accessories/keyboards/pr?sid=6bo%2Cai3%2C3oe&sort=popularity&param=33&hpid",
-        "https://myntra.com@mnatry.cyou/?in=91716519824017",
-        "https://www.myntra.com/shirts/arrow/arrow-spread-collar-slim-fit-opaque-striped-cotton-formal-shirt/28506318/buy",
-        "hey, is this real? https://www.amazon.com/adfasdfadf",
-        "https://www.amazon.com/adfasdfadf Can you check this for me?",
-        "Some text before link https://www.amazon.com/adfasdfadf Can you check this for me?"
+        # Embedded in text
+        "Check out this link: amazon.com for great deals",
+        "Visit www.myntra.com for the latest fashion",
+        "Hi, can you check this for me? amazon.com",
+        "amazon.co.in is the new shopping website, check it out!!",
+        # Text with multiple domains
+        "This text contains multiple domains: www.amazon.com and www.google.com",
+        # Complex URLs
+        "https://seller.amazon.co.in/marketplace",
+        "http://international.flipkart.com/global-store",
+        # URLs with ports (though uncommon)
+        "http://amazon.com:8080/path"
       ]
 
-      assert Enum.all?(urls, &Feed.block_specific_urls?/1)
-      assert Feed.block_specific_urls?("https://www.google.com") == false
+      # URLs that should return false (not blocked)
+      non_blocked_urls = [
+        # Different domains
+        "https://google.com",
+        "www.github.com",
+        "facebook.com",
+        "linkedin.com",
+        "www.google.com",
+        "google.com",
+        "help.com",
+        "here is the website google.com",
+        "can you check this for me facebook.com",
+        "google.com is the webpage, check it out",
+        "what is up with google.com, is it down? this is the site www.google.com",
+        # URLs mentioning blocked domains (not in domain)
+        "https://factcheck-site.com/article-about-amazon-com",
+        "randomsite.com/amazon-review",
+        "blog.example.com/myntra-fashion-trends",
+        # random text
+        "A blog post discussing myntra's business model",
+        "a shoping website called flipkart",
+        "hi, how are you?",
+        "this is some text for testing -- testing",
+        "what is this tipline about??, I am curious",
+        # Unusual formats
+        "localhost",
+        "127.0.0.1",
+        "subdomain.randomsite.com",
+        # Potential typo domains
+        "amaz0n.com",
+        "myntr.com",
+        "flipcart.com"
+      ]
 
-      assert Feed.block_specific_urls?("https://factcheck-site.com/article-about-amazon-com") ==
-               false
+      # Test all blocked URLs return true
+      Enum.each(blocked_urls, fn url ->
+        assert Feed.block_specific_urls?(url) == true,
+               "Failed to block URL: #{url}"
+      end)
 
-      assert Feed.block_specific_urls?("https://facebook.com") == false
+      # Test all non-blocked URLs return false
+      Enum.each(non_blocked_urls, fn url ->
+        assert Feed.block_specific_urls?(url) == false,
+               "Incorrectly blocked URL: #{url}"
+      end)
     end
   end
 end

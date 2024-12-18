@@ -23,10 +23,15 @@ defmodule DAU.Feed do
         true ->
           media_url = hd(attrs.media_urls)
 
-          if block_specific_urls?(media_url) do
-            Map.put(attrs, :verification_status, :spam)
-          else
-            attrs
+          try do
+            if block_specific_urls?(media_url) do
+              Map.put(attrs, :verification_status, :spam)
+            else
+              attrs
+            end
+          rescue
+            # If block_specific_urls? raises an error, return original attrs
+            _e -> attrs
           end
 
         false ->
@@ -364,19 +369,43 @@ defmodule DAU.Feed do
   end
 
   @blocklist ~r/(amazon|myntra|flipkart|mnatry|flipkin|amznin)/i
-  def block_specific_urls?(url) do
-    case URI.parse(url) do
-      %{host: nil, query: "", path: path} ->
-        Regex.match?(@blocklist, path)
+  @url_regex ~r/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/\S*)?)/i
+  def block_specific_urls?(text) do
+    urls =
+      Regex.scan(@url_regex, text)
+      |> Enum.map(fn [full_match | _] -> full_match end)
+      |> Enum.map(fn url ->
+        # Ensure URL has a scheme for URI.parse
+        parsed_url =
+          if String.starts_with?(url, ["http://", "https://"]) do
+            URI.parse(url)
+          else
+            URI.parse("http://" <> url)
+          end
 
-      %{host: nil, query: query} ->
-        Regex.match?(@blocklist, query)
+        # Extract domain
+        case parsed_url do
+          %{host: host} when not is_nil(host) ->
+            parts = String.split(host, ".")
 
-      %{host: domain} ->
-        Regex.match?(@blocklist, domain)
+            case length(parts) do
+              1 -> host
+              _ -> Enum.slice(parts, -2..-1) |> Enum.join(".")
+            end
 
-      _ ->
-        false
-    end
+          _ ->
+            # Fallback regex extraction if URI.parse fails
+            case Regex.run(@url_regex, url) do
+              [_, domain] -> domain
+              _ -> nil
+            end
+        end
+      end)
+      |> Enum.filter(&(&1 != nil))
+
+    # Check if any extracted domain matches the blocklist
+    Enum.any?(urls, fn domain ->
+      Regex.match?(@blocklist, domain)
+    end)
   end
 end
