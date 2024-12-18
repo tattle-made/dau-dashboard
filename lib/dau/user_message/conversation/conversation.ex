@@ -178,8 +178,6 @@ defmodule DAU.UserMessage.Conversation do
   }
   """
 
-
-
   # def add_message(%{"media_type" => media_type} = attrs) when media_type in ["audio", "video"] do
 
   #   with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
@@ -298,69 +296,12 @@ defmodule DAU.UserMessage.Conversation do
   #   end
   # end
 
-  def add_message(%{"media_type" => media_type} = attrs, :inbox) when media_type in ["audio", "video"] do
-
-    case UserMessage.create_incoming_message(attrs) do
-      {:ok, inbox} ->
-        {:ok, inbox}
-
-      {:error, reason} ->
-        Logger.error("Error while creating a new inbox")
-        Logger.error(reason)
-     end
+  def add_to_inbox(attrs) do
+    UserMessage.create_incoming_message(attrs)
   end
 
-  def add_message(%{"media_type" => _media_type} = attrs, :inbox) do
-
-    case UserMessage.create_incoming_message(attrs) do
-      {:ok, inbox} ->
-        {:ok, _message_added} = add_message_properties_priv(inbox)
-        {:ok, inbox}
-
-      {:error, reason} ->
-        Logger.error("Error while creating a new inbox")
-        Logger.error(reason)
-     end
-
-  end
-
-  def add_message(%{"media_type" => media_type} = attrs, :message_added) when media_type in ["audio", "video"] do
-
-    case UserMessage.create_incoming_message(attrs) do
-      {:ok, inbox} ->
-        {:ok, message_added} = add_message_properties_priv(inbox)
-        {:ok, message_added}
-
-      {:error, reason} ->
-        Logger.error("Error while creating a new inbox")
-        Logger.error(reason)
-     end
-  end
-
-  def add_message(%{"media_type" => _media_type} = attrs, :message_added) do
-
-    case UserMessage.create_incoming_message(attrs) do
-      {:ok, inbox} ->
-        {:ok, message_added} = add_message_properties_priv(inbox)
-        {:ok, message_added}
-
-      {:error, reason} ->
-        Logger.error("Error while creating a new inbox")
-        Logger.error(reason)
-     end
-
-  end
-
-  def add_message_properties(%Inbox{} = inbox) do
-    {:ok, message_added} = add_message_properties_priv(inbox)
-    {:ok, message_added}
-  end
-
-
-  defp add_message_properties_priv(%Inbox{} = inbox) do
-
-    IO.inspect(inbox, label: "INBOX IS: ")
-
+  def add_message_properties(%Inbox{media_type: media_type} = inbox)
+      when media_type in ["video", "audio"] do
     with {file_key, file_hash} <- AWSS3.client().upload_to_s3(inbox.path),
          {:ok, inbox} <-
            UserMessage.update_user_message_file_metadata(inbox, %{
@@ -390,10 +331,40 @@ defmodule DAU.UserMessage.Conversation do
         Logger.error(reason)
         {:error, reason}
     end
-
   end
 
+  def add_message_properties(%Inbox{media_type: type} = inbox) when type == "text" do
+    with {:ok, inbox} <-
+           UserMessage.update_user_message_text_file_hash(inbox, %{
+             file_hash:
+               :crypto.hash(:sha256, inbox.user_input_text)
+               |> Base.encode16()
+               |> String.downcase()
+           }),
+         {:ok, common} <-
+           Feed.add_to_common_feed(
+             %{
+               media_urls: [inbox.user_input_text],
+               media_type: inbox.media_type,
+               sender_number: inbox.sender_number,
+               language: inbox.user_language_input
+             },
+             block_spam_urls: true
+           ),
+         {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
+         {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
+      {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
+    else
+      {:error, reason} ->
+        Logger.error("Error adding message")
+        Logger.error(reason)
+        {:error, reason}
 
+      err ->
+        Logger.error("Could not add message!!")
+        Logger.error(err)
+    end
+  end
 
   def copy_response_fields(%Conversation{} = source, %Conversation{} = target) do
     # common = Repo.get(Common, )

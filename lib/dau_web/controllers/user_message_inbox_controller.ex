@@ -21,72 +21,32 @@ defmodule DAUWeb.IncomingMessageController do
     render(conn, :index, incoming_messages: incoming_messages)
   end
 
-
   def create(conn, payload) do
-    inbox =
-      case UserMessage.Conversation.add_message(payload, :inbox) do
-        {:ok, inbox} ->
-          inbox
+    alias UserMessage.Conversation
+    alias MediaMatch.Blake2B
 
-        {:error, reason} ->
-          Logger.info("here 4")
-          Logger.error(reason)
-      end
+    case Conversation.add_to_inbox(payload) do
+      {:ok, inbox} ->
+        conn |> Plug.Conn.send_resp(200, [])
 
-    IO.inspect(inbox.media_type)
+        Task.start(fn ->
+          if inbox.media_type in ["audio", "video"] do
+            with {:ok, properites_added} <- Conversation.add_message_properties(inbox),
+                 {:ok, job_added} <- Blake2B.create_job(properites_added) do
+            end
+          end
+        end)
 
-    if(inbox.media_type == "audio" or inbox.media_type == "video") do
-      Task.async(fn -> process_message(inbox) end)
+      {:error, reason} ->
+        conn |> send_400()
     end
-
-    conn |> Plug.Conn.send_resp(200, [])
   rescue
     error ->
       Logger.error("Error in controller for  POST /gupshup/message. #{inspect(error)}")
-
       Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
       Sentry.capture_message("Could not add message. #{inspect(payload)}")
       conn |> send_400()
   end
-
-  def process_message(%Inbox{} = inbox) do
-
-    case UserMessage.Conversation.add_message_properties(inbox) do
-      {:ok, message_added}->
-        Task.async(fn -> MediaMatch.Blake2B.create_job(message_added) end)
-      {:error, reason}->
-        Logger.error("Error while adding message")
-        Logger.error(reason)
-    end
-  end
-
-
-  # def create(conn, payload) do
-  #   message_added =
-  #     case UserMessage.Conversation.add_message(payload) do
-  #       {:ok, message_added} ->
-  #         message_added
-
-  #       {:error, reason} ->
-  #         Logger.info("here 4")
-  #         Logger.error(reason)
-  #     end
-
-  #   IO.inspect(message_added.media_type)
-
-  #   if(message_added.media_type == "audio" or message_added.media_type == "video") do
-  #     Task.async(fn -> MediaMatch.Blake2B.create_job(message_added) end)
-  #   end
-
-  #   conn |> Plug.Conn.send_resp(200, [])
-  # rescue
-  #   error ->
-  #     Logger.error("Error in controller for  POST /gupshup/message. #{inspect(error)}")
-
-  #     Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
-  #     Sentry.capture_message("Could not add message. #{inspect(payload)}")
-  #     conn |> send_400()
-  # end
 
   def show(conn, %{"id" => id}) do
     incoming_message = UserMessage.get_incoming_message!(id)
@@ -94,7 +54,6 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def receive_delivery_report(conn, params) do
-
     bsp = Application.fetch_env!(:dau, :bsp)
 
     try do
