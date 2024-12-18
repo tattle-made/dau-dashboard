@@ -3,7 +3,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
   alias DAU.MediaMatch.Blake2B.Media
   alias DAU.Blake2BFixtures
   alias DAU.UserMessageFixtures
-  alias DAU.UserMessage.Conversation.MessageAdded
+  alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.UserMessage.Conversation
   alias DAU.UserMessage
   alias DAU.MediaMatch
@@ -24,7 +24,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
 
       {:ok, message_added} = UserMessage.Conversation.add_to_inbox(payload) |> UserMessage.Conversation.add_message_properties()
 
-      assert %MessageAdded{id: id, path: path, media_type: "audio"} =
+      assert %MessagePropertiesAdded{id: id, path: path, media_type: "audio"} =
                message_added
     end
   end

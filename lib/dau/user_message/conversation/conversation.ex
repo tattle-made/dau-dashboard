@@ -9,7 +9,7 @@ defmodule DAU.UserMessage.Conversation do
   alias ElixirSense.Log
   alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.Conversation.Hash
-  alias DAU.UserMessage.Conversation.MessageAdded
+  alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.Feed
   alias DAU.UserMessage
   alias DAU.UserMessage.Conversation
@@ -201,7 +201,7 @@ defmodule DAU.UserMessage.Conversation do
            UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
       {:ok,
-       %MessageAdded{
+       %MessagePropertiesAdded{
          id: inbox.id,
          common_id: common.id,
          path: inbox.file_key,
@@ -235,7 +235,7 @@ defmodule DAU.UserMessage.Conversation do
            ),
          {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
-      {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
+      {:ok, %MessagePropertiesAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
     else
       {:error, reason} ->
         Logger.error("Error adding message")
