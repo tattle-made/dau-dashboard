@@ -86,11 +86,30 @@ defmodule AWSS3.Sandbox do
   end
 
   def upload_to_s3(url) do
-    {:ok, _, _headers, ref} = :hackney.get(url)
+    options = [timeout: 60000, recv_timeout: 60000]
+
+    Logger.debug("Starting upload_to_s3 with URL: #{url}")
+
+    {:ok, _, _headers, ref} = :hackney.get(url, [], "", options)
+    Logger.debug("Hackney GET successful, ref: #{inspect(ref)}")
+
     {:ok, body} = :hackney.body(ref)
+    Logger.debug("Hackney response body received")
+
     file_key = "#{@file_prefix}/#{UUID.uuid4()}"
+    Logger.debug("Generated file key: #{file_key}")
+
     file_hash = :crypto.hash(:sha256, body) |> Base.encode16() |> String.downcase()
+    Logger.debug("Generated file hash: #{file_hash}")
+
     S3.put_object("staging.dau.tattle.co.in", file_key, body) |> ExAws.request!()
+    Logger.info("File uploaded successfully to S3, key: #{file_key}")
+
     {file_key, file_hash}
+  rescue
+    error ->
+      Logger.error("Error in upload_to_s3: #{inspect(error)}")
+      {:error, error}
   end
+
 end

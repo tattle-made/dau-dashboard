@@ -6,9 +6,10 @@ defmodule DAU.UserMessage.Conversation do
   already.
   """
   require Logger
+  alias ElixirSense.Log
   alias DAU.UserMessage.Outbox
   alias DAU.UserMessage.Conversation.Hash
-  alias DAU.UserMessage.Conversation.MessageAdded
+  alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.Feed
   alias DAU.UserMessage
   alias DAU.UserMessage.Conversation
@@ -176,10 +177,14 @@ defmodule DAU.UserMessage.Conversation do
     "user_language_input" => "hi"
   }
   """
-  def add_message(%{"media_type" => media_type} = attrs)
-      when media_type in ["audio", "video"] do
-    with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
-         {file_key, file_hash} <- AWSS3.client().upload_to_s3(inbox.path),
+
+  def add_to_inbox(attrs) do
+    UserMessage.create_incoming_message(attrs)
+  end
+
+  def add_message_properties(%Inbox{media_type: media_type} = inbox)
+      when media_type in ["video", "audio"] do
+    with {file_key, file_hash} <- AWSS3.client().upload_to_s3(inbox.path),
          {:ok, inbox} <-
            UserMessage.update_user_message_file_metadata(inbox, %{
              file_key: file_key,
@@ -196,7 +201,7 @@ defmodule DAU.UserMessage.Conversation do
            UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
       {:ok,
-       %MessageAdded{
+       %MessagePropertiesAdded{
          id: inbox.id,
          common_id: common.id,
          path: inbox.file_key,
@@ -204,15 +209,14 @@ defmodule DAU.UserMessage.Conversation do
        }}
     else
       {:error, reason} ->
-        Logger.error("Error adding message")
+        Logger.error("Error adding message asynchronously ")
         Logger.error(reason)
         {:error, reason}
     end
   end
 
-  def add_message(%{"media_type" => "text"} = attrs) do
-    with {:ok, inbox} <- UserMessage.create_incoming_message(attrs),
-         {:ok, inbox} <-
+  def add_message_properties(%Inbox{media_type: type} = inbox) when type == "text" do
+    with {:ok, inbox} <-
            UserMessage.update_user_message_text_file_hash(inbox, %{
              file_hash:
                :crypto.hash(:sha256, inbox.user_input_text)
@@ -231,12 +235,16 @@ defmodule DAU.UserMessage.Conversation do
            ),
          {:ok, query} <- UserMessage.create_query_with_common(common, %{status: "pending"}),
          {:ok, inbox} <- UserMessage.associate_inbox_to_query(inbox.id, query) do
-      {:ok, %MessageAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
+      {:ok, %MessagePropertiesAdded{id: inbox.id, path: inbox.file_key, media_type: inbox.media_type}}
     else
       {:error, reason} ->
         Logger.error("Error adding message")
         Logger.error(reason)
         {:error, reason}
+
+      err ->
+        Logger.error("Could not add message!!")
+        Logger.error(err)
     end
   end
 
