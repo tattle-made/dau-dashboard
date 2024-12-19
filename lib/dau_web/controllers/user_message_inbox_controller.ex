@@ -27,24 +27,27 @@ defmodule DAUWeb.IncomingMessageController do
 
     case Conversation.add_to_inbox(payload) do
       {:ok, inbox} ->
+        conn = conn |> Plug.Conn.send_resp(200, [])
+
+        Task.start(fn ->
+          with {:ok, properties_added} <- Conversation.add_message_properties(inbox),
+               :ok <-
+                 if(inbox.media_type in ["audio", "video"],
+                   do: Blake2B.create_job(properties_added),
+                   else: :ok
+                 ) do
+          else
+            error ->
+              Logger.error("Error in processing message in background #{inspect(error)}")
+              Sentry.capture_message("Could not process message. #{inspect(error)}")
+          end
+        end)
+
         conn
-        |> Plug.Conn.send_resp(200, [])
-        |> case do
-          conn ->
-            {:ok, properties_added} = Conversation.add_message_properties(inbox)
-
-            if inbox.media_type in ["audio", "video"] do
-              Task.start(fn -> Blake2B.create_job(properties_added) end)
-            end
-
-            conn
-        end
 
       {:error, _reason} ->
-        conn
-        |> send_400()
+        conn |> send_400()
     end
-
   rescue
     error ->
       Logger.error("Error in controller for POST /gupshup/message. #{inspect(error)}")
@@ -52,7 +55,6 @@ defmodule DAUWeb.IncomingMessageController do
       Sentry.capture_message("Could not add message. #{inspect(payload)}")
       conn |> send_400()
   end
-
 
   def show(conn, %{"id" => id}) do
     incoming_message = UserMessage.get_incoming_message!(id)
