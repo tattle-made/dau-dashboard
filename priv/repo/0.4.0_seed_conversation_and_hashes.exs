@@ -50,7 +50,7 @@ payloads = [
 
 conversations =
   payloads
-  |> Enum.map(&(Conversation.add_to_inbox(&1) |> Conversation.add_message_properties() |> elem(1)))
+  |> Enum.map(&(Conversation.add_to_inbox(&1) |> elem(1) |> Conversation.add_message_properties() |> elem(1)))
   |> Enum.map(&(Conversation.build(&1.id) |> elem(1)))
 
 conversations
