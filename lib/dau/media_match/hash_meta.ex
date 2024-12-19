@@ -8,7 +8,7 @@ defmodule DAU.MediaMatch.HashMeta do
     field :label, :string
     field :description, :string
     field :value, :string
-    field :user_language, Ecto.Enum, values: [:en, :hi, :ta, :te, :ur, :mr, :und]
+    field :user_language, Ecto.Enum, values: [:en, :hi, :ta, :te, :ur, :mr, :bn, :und]
 
     timestamps(type: :utc_datetime)
   end
