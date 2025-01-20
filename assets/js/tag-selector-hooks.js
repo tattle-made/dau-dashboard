@@ -13,6 +13,7 @@ let all_tags = [
   "AI Video, Real Voice",
   "AI Video, AI Voice",
   "Real Video, Real Voice",
+  "Real Video",
   "Trigger warning",
   "Sexual content",
   "Graphic content",
@@ -220,6 +221,7 @@ let all_tags = [
   "Language : Telugu",
   "Language : Urdu",
   "Language : Marathi",
+  "Language : Bangla",
   "Language : Other",
   "Atishi Marlena Singh",
   "Rashmika Mandanna",
@@ -281,6 +283,14 @@ let all_tags = [
   "Financial Advice",
   "Hate speech",
   "Sundar Pichai",
+  "Weather/Climate Hoax",
+  "Broken Link",
+  "Nirmala Sitharaman",
+  "Shaktikanta Das",
+  "Rahil Chaudhary",
+  "Naresh Trehan",
+  "Devi Prasad Shetty",
+  "Imran Khan"
 ];
 
 function make_chip(tag, callback) {
