@@ -1,6 +1,5 @@
 defmodule DAUWeb.SearchLive.Index do
   import DAUWeb.SearchLive.SearchParams
-  alias DAU.UserMessage.Query
   alias DAUWeb.SearchLive.SearchParams
   alias DAU.Feed
   alias DAU.Accounts

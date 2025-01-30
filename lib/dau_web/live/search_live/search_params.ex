@@ -6,7 +6,8 @@ defmodule DAUWeb.SearchLive.SearchParams do
     "verification_status",
     "from",
     "to",
-    "taken_up_by"
+    "taken_up_by",
+    "filter_unattended"
   ]
 
   def params_to_keyword_list(params) do
@@ -17,7 +18,8 @@ defmodule DAUWeb.SearchLive.SearchParams do
       from: "2024-03-01",
       to: Date.to_iso8601(Date.utc_today()),
       verification_status: "all",
-      taken_up_by: nil
+      taken_up_by: nil,
+      filter_unattended: false
     ]
 
     {:ok, params} =
@@ -26,12 +28,20 @@ defmodule DAUWeb.SearchLive.SearchParams do
       |> Enum.map(fn {key, value} -> {String.to_existing_atom(key), value} end)
       |> Keyword.validate(default_filter_params)
 
-    params |> convert_page_num_to_integer
+    params |> convert_page_num_to_integer |> convert_filter_unattended_to_bool
   end
 
   defp convert_page_num_to_integer(params_keyword) do
     Keyword.update(params_keyword, :page_num, 1, fn value -> String.to_integer(value) end)
   end
+
+  defp convert_filter_unattended_to_bool(params) do
+    Keyword.update(params, :filter_unattended, false, fn val -> to_boolean(val) end)
+  end
+
+  defp to_boolean(value) when value in [true, "true"], do: true
+  defp to_boolean(_), do: false
+
 
   def update_search_param(search_params, value) do
     case value["name"] do
@@ -56,6 +66,9 @@ defmodule DAUWeb.SearchLive.SearchParams do
 
       "taken_up_by" ->
         Keyword.put(search_params, :taken_up_by, value["value"])
+
+      "filter_unattended"->
+        Keyword.put(search_params, :filter_unattended, !Keyword.get(search_params, :filter_unattended))
 
       _ ->
         search_params

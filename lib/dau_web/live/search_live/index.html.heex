@@ -39,6 +39,20 @@
         </div>
       </div>
     </div>
+
+    <div>
+      <p class="py-2">Unattented Messages</p>
+      <div>
+        <.checkbox
+          id="filter_unattended"
+          group="filter_unattended"
+          label="Show only Unattended Messages"
+          selection={if Keyword.get(@search_params, :filter_unattended) in [true, "true"] do ["filter_unattended"] else [""] end}
+        />
+
+      </div>
+    </div>
+
     <div>
       <p class="py-2">Media Type</p>
       <div>
