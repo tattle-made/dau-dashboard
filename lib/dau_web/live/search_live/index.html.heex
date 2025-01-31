@@ -116,6 +116,7 @@
           id="spam"
           value="spam"
           label="Spam"
+          disabled = {Keyword.get(@search_params, :filter_unattended)}
           selection={Keyword.get(@search_params, :verification_status)}
         />
         <.input_radio
