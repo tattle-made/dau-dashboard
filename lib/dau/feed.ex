@@ -7,6 +7,7 @@ defmodule DAU.Feed do
   alias DAU.Feed.Common
   alias DAU.UserMessage.Templates.Factory
   alias DAU.UserMessage.Templates.Template
+  alias DAU.UserMessage.Query
 
   def add_to_common_feed(attrs \\ %{}) do
     %Common{}
@@ -189,6 +190,21 @@ defmodule DAU.Feed do
         _ -> query
       end
 
+    query =
+      case Keyword.get(search_params, :filter_unattended) do
+        true ->
+          query
+          |> join(:left, [c], q in Query, on: c.id == q.feed_common_id)
+          |> where(
+            [c, q],
+            (c.verification_status != :spam or is_nil(c.verification_status)) and
+              is_nil(q.user_message_outbox_id)
+          )
+
+        _ ->
+          query
+      end
+
     count = query |> Repo.aggregate(:count, :id)
 
     results =
@@ -197,7 +213,7 @@ defmodule DAU.Feed do
       |> Repo.preload(:query)
       |> Repo.preload(:hash_meta)
       |> bulk_add_s3_media_url
-      |> IO.inspect()
+    # |> IO.inspect()
 
     {count, results}
   end

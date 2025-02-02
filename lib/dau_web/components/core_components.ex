@@ -784,7 +784,7 @@ defmodule DAUWeb.CoreComponents do
       |> assign(:checked, checked)
 
     ~H"""
-    <div class="flex items-center mb-2">
+    <div class="flex items-center">
       <input
         id="default-checkbox"
         type="checkbox"
@@ -800,7 +800,7 @@ defmodule DAUWeb.CoreComponents do
       <label
         for="default-checkbox"
         class={[
-          "ms-2 text-xs dark:text-gray-300",
+          "ms-2 text-xs dark:text-gray-300 mt-1",
           @text_color,
           @text_decoration
         ]}

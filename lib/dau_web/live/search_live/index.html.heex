@@ -39,6 +39,22 @@
         </div>
       </div>
     </div>
+
+    <div class="mt-4">
+      <.checkbox
+        id="filter_unattended"
+        group="filter_unattended"
+        label="Unattended Messages"
+        selection={
+          if Keyword.get(@search_params, :filter_unattended) in [true, "true"] do
+            ["filter_unattended"]
+          else
+            [""]
+          end
+        }
+      />
+    </div>
+
     <div>
       <p class="py-2">Media Type</p>
       <div>
@@ -102,6 +118,7 @@
           id="spam"
           value="spam"
           label="Spam"
+          disabled={Keyword.get(@search_params, :filter_unattended)}
           selection={Keyword.get(@search_params, :verification_status)}
         />
         <.input_radio
