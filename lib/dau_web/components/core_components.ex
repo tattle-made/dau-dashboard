@@ -702,7 +702,7 @@ defmodule DAUWeb.CoreComponents do
 
   def queryt(assigns) do
     ~H"""
-    <div class="flex flex-row gap-1">
+    <div class="flex flex-row gap-1 max-h-48 ">
       <div class="">
         <%= if @type=="image" do %>
           <div class="w-24">
@@ -720,7 +720,7 @@ defmodule DAUWeb.CoreComponents do
           </audio>
         <% end %>
         <%= if @type=="text" do %>
-          <div class="w-48 overflow-hidden">
+          <div class="w-48 h-full ">
             <.media_text text={@url} />
           </div>
         <% end %>
@@ -998,19 +998,70 @@ defmodule DAUWeb.CoreComponents do
   attr :text, :string, required: true
 
   def media_text(assigns) do
-    expression = ~r/(https?:\/\/(www\.)?\S+[^. |\n])/
+    # expression = ~r/(https?:\/\/(www\.)?\S+[^. |\n])/
+
+    ex = ~r/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/\S*)?)/i
+
+    urls =
+      Regex.scan(ex, assigns.text)
+      |> Enum.map(fn [full_match | _] -> full_match end)
+
+    # |> Enum.map(fn url ->
+    #   # Ensure URL has a scheme for URI.parse
+    #   parsed_url =
+    #     if String.starts_with?(url, ["http://", "https://"]) do
+    #       URI.parse(url)
+    #     else
+    #       URI.parse("http://" <> url)
+    #     end
+    #   end
+    # )
+
+    IO.inspect(urls, label: "URLS")
 
     new_text =
       String.replace(
         assigns.text,
-        expression,
+        ex,
         "<a href='\\1' target='_blank' class='underline'>\\1</a>"
       )
 
-    assigns = assign(assigns, :new_text, new_text)
+    assigns = assign(assigns, new_text: new_text, urls: urls)
 
     ~H"""
-    <p><%= raw(@new_text) %></p>
+    <p class="overflow-hidden line-clamp-2  text-sm"><%= raw(@new_text) %></p>
+
+    <% modal_id = "text_preview_#{:erlang.unique_integer([:positive])}" %>
+
+    <%= if String.length(@text) > 57 do %>
+      <button
+        class="flex ml-auto mr-2 text-xs text-blue-600 underline"
+        phx-click={show_modal(modal_id)}
+      >
+        show full text
+      </button>
+    <% end %>
+
+    <.modal id={modal_id}>
+      <p><%= raw(@new_text) %></p>
+    </.modal>
+    <div class="max-h-[80%] overflow-y-auto overflow-x-hidden mt-2">
+      <ul class="list-inside list-disc text-xs flex flex-col gap-1 py-1">
+        <%= for url <- @urls do %>
+          <li class="flex ">
+            <span class="mr-2">•</span>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500 underline break-all"
+              href={url}
+            >
+              <%= url %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
     """
   end
 end
