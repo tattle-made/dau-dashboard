@@ -1032,7 +1032,7 @@ defmodule DAUWeb.CoreComponents do
     <.modal id={modal_id}>
       <p><%= raw(@new_text) %></p>
     </.modal>
-    <div class="max-h-[80%] overflow-y-auto overflow-x-hidden mt-2">
+    <div class="max-h-[75%] overflow-y-auto overflow-x-hidden mt-2">
       <ul class="list-inside list-disc text-xs flex flex-col gap-1 py-1">
         <%= for url <- @urls do %>
           <li class="flex ">
