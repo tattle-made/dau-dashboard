@@ -998,24 +998,11 @@ defmodule DAUWeb.CoreComponents do
   attr :text, :string, required: true
 
   def media_text(assigns) do
-    # expression = ~r/(https?:\/\/(www\.)?\S+[^. |\n])/
-
     ex = ~r/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/\S*)?)/i
 
     urls =
       Regex.scan(ex, assigns.text)
       |> Enum.map(fn [full_match | _] -> full_match end)
-
-    # |> Enum.map(fn url ->
-    #   # Ensure URL has a scheme for URI.parse
-    #   parsed_url =
-    #     if String.starts_with?(url, ["http://", "https://"]) do
-    #       URI.parse(url)
-    #     else
-    #       URI.parse("http://" <> url)
-    #     end
-    #   end
-    # )
 
     IO.inspect(urls, label: "URLS")
 
