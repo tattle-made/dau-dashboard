@@ -1004,8 +1004,6 @@ defmodule DAUWeb.CoreComponents do
       Regex.scan(ex, assigns.text)
       |> Enum.map(fn [full_match | _] -> full_match end)
 
-    IO.inspect(urls, label: "URLS")
-
     new_text =
       String.replace(
         assigns.text,
