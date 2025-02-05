@@ -194,11 +194,10 @@ defmodule DAU.Feed do
       case Keyword.get(search_params, :filter_unattended) do
         true ->
           query
-          |> join(:left, [c], q in Query, on: c.id == q.feed_common_id)
           |> where(
-            [c, q],
+            [c],
             (c.verification_status != :spam or is_nil(c.verification_status)) and
-              is_nil(q.user_message_outbox_id)
+              is_nil(c.user_response)
           )
 
         _ ->
@@ -213,6 +212,7 @@ defmodule DAU.Feed do
       |> Repo.preload(:query)
       |> Repo.preload(:hash_meta)
       |> bulk_add_s3_media_url
+
     # |> IO.inspect()
 
     {count, results}
