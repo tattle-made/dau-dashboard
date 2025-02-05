@@ -1014,39 +1014,52 @@ defmodule DAUWeb.CoreComponents do
     assigns = assign(assigns, new_text: new_text, urls: urls)
 
     ~H"""
-    <p class="overflow-hidden line-clamp-2  text-sm"><%= raw(@new_text) %></p>
-
     <% modal_id = "text_preview_#{:erlang.unique_integer([:positive])}" %>
 
-    <%= if String.length(@text) > 57 do %>
-      <button
-        class="flex ml-auto mr-2 text-xs text-blue-600 underline"
-        phx-click={show_modal(modal_id)}
-      >
-        show full text
-      </button>
-    <% end %>
-
     <.modal id={modal_id}>
-      <p><%= raw(@new_text) %></p>
+      <p class="max-h-60 overflow-hidden overflow-y-auto mb-2"><%= raw(@new_text) %></p>
+      <div>
+        <p class="text-brand">All URLs:</p>
+        <div class="mt-2">
+          <ul class=" text-xs flex flex-col gap-2">
+            <%= for url <- @urls do %>
+              <li class="flex ">
+                <span class="mr-2">•</span>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 break-all"
+                  href={url}
+                >
+                  <%= url %>
+                </a>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
     </.modal>
-    <div class="max-h-[75%] overflow-y-auto overflow-x-hidden mt-2">
-      <ul class="list-inside list-disc text-xs flex flex-col gap-1 py-1">
-        <%= for url <- @urls do %>
+    <div class="overflow-y-auto overflow-x-hidden mt-2 custom-scrollbar">
+      <ul class=" text-xs flex flex-col gap-2">
+        <%= for url <- Enum.take(@urls, 4) do %>
           <li class="flex ">
-            <span class="mr-2">•</span>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-blue-500 underline break-all"
-              href={url}
-            >
+            <a target="_blank" rel="noopener noreferrer" class="text-blue-600 truncate" href={url}>
               <%= url %>
             </a>
           </li>
         <% end %>
       </ul>
     </div>
+    <button
+      phx-click={show_modal(modal_id)}
+      class="text-brand hover:underline hover: underline-brand text-sm"
+    >
+      <%= if length(@urls) > 4 do
+        "view full text with all #{length(@urls)} URLs"
+      else
+        "view full text"
+      end %>
+    </button>
     """
   end
 end
