@@ -702,7 +702,7 @@ defmodule DAUWeb.CoreComponents do
 
   def queryt(assigns) do
     ~H"""
-    <div class="flex flex-row gap-1">
+    <div class="flex flex-row gap-1 max-h-48 ">
       <div class="">
         <%= if @type=="image" do %>
           <div class="w-24">
@@ -720,7 +720,7 @@ defmodule DAUWeb.CoreComponents do
           </audio>
         <% end %>
         <%= if @type=="text" do %>
-          <div class="w-48 overflow-hidden">
+          <div class="w-48 h-full ">
             <.media_text text={@url} />
           </div>
         <% end %>
@@ -998,19 +998,68 @@ defmodule DAUWeb.CoreComponents do
   attr :text, :string, required: true
 
   def media_text(assigns) do
-    expression = ~r/(https?:\/\/(www\.)?\S+[^. |\n])/
+    ex = ~r/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/\S*)?)/i
+
+    urls =
+      Regex.scan(ex, assigns.text)
+      |> Enum.map(fn [full_match | _] -> full_match end)
 
     new_text =
       String.replace(
         assigns.text,
-        expression,
+        ex,
         "<a href='\\1' target='_blank' class='underline'>\\1</a>"
       )
 
-    assigns = assign(assigns, :new_text, new_text)
+    assigns = assign(assigns, new_text: new_text, urls: urls)
 
     ~H"""
-    <p><%= raw(@new_text) %></p>
+    <% modal_id = "text_preview_#{:erlang.unique_integer([:positive])}" %>
+
+    <.modal id={modal_id}>
+      <p class="max-h-60 overflow-hidden overflow-y-auto mb-2"><%= raw(@new_text) %></p>
+      <div>
+        <p class="text-brand">All URLs:</p>
+        <div class="mt-2">
+          <ul class=" text-xs flex flex-col gap-2">
+            <%= for url <- @urls do %>
+              <li class="flex ">
+                <span class="mr-2">•</span>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 break-all"
+                  href={url}
+                >
+                  <%= url %>
+                </a>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </.modal>
+    <div class="overflow-y-auto overflow-x-hidden mt-2 custom-scrollbar">
+      <ul class=" text-xs flex flex-col gap-2">
+        <%= for url <- Enum.take(@urls, 4) do %>
+          <li class="flex ">
+            <a target="_blank" rel="noopener noreferrer" class="text-blue-600 truncate" href={url}>
+              <%= url %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <button
+      phx-click={show_modal(modal_id)}
+      class="text-brand hover:underline hover: underline-brand text-sm"
+    >
+      <%= if length(@urls) > 4 do
+        "view full text with all #{length(@urls)} URLs"
+      else
+        "view full text"
+      end %>
+    </button>
     """
   end
 end
