@@ -124,6 +124,7 @@ let all_tags = [
   "Mamata Banerjee",
   "Rajnath Singh",
   "Arvind Kejriwal",
+  "Rekha Gupta",
   "Mohan Bhagwat",
   "Manohar Lal Khattar",
   "Asaduddin Owaisi",
@@ -244,6 +245,8 @@ let all_tags = [
   "Joe Biden",
   "Emmanuel Macron",
   "Rishi Sunak",
+  "Donald Trump",
+  "Kash Patel",
   "Ebrahim Raisi",
   "Akhilesh Yadav",
   "COVID-19",
@@ -290,7 +293,8 @@ let all_tags = [
   "Rahil Chaudhary",
   "Naresh Trehan",
   "Devi Prasad Shetty",
-  "Imran Khan"
+  "Imran Khan",
+  "Sanjay Malhotra"
 ];
 
 function make_chip(tag, callback) {
