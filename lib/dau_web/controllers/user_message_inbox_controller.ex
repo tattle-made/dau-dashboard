@@ -84,12 +84,13 @@ defmodule DAUWeb.IncomingMessageController do
       |> resp(200, Jason.encode!(%{status: :ok}))
       |> send_resp()
     rescue
-      _err ->
+      error ->
         conn
         |> put_resp_content_type("application/json")
         |> resp(400, Jason.encode!(%{status: :invalid_request}))
         |> send_resp()
 
+        Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
         # Message.send(:dau_alerts, "invalid_delivery_report", "Invalid delivery report", params)
     end
 
