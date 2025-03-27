@@ -108,9 +108,44 @@
         />
         <.input_radio
           name="verification_status"
+          id="ai_generated"
+          value="ai_generated"
+          label="AI Generated"
+          selection={Keyword.get(@search_params, :verification_status)}
+        />
+        <.input_radio
+          name="verification_status"
+          id="not_ai_generated"
+          value="not_ai_generated"
+          label="Not AI Generated"
+          selection={Keyword.get(@search_params, :verification_status)}
+        />
+        <.input_radio
+          name="verification_status"
           id="inconclusive"
           value="inconclusive"
           label="Inconclusive"
+          selection={Keyword.get(@search_params, :verification_status)}
+        />
+        <.input_radio
+          name="verification_status"
+          id="cheapfake"
+          value="cheapfake"
+          label="Cheapfake"
+          selection={Keyword.get(@search_params, :verification_status)}
+        />
+        <.input_radio
+          name="verification_status"
+          id="out_of_scope"
+          value="out_of_scope"
+          label="Out of Scope"
+          selection={Keyword.get(@search_params, :verification_status)}
+        />
+        <.input_radio
+          name="verification_status"
+          id="unsupported_language"
+          value="unsupported_language"
+          label="Unsupported Language"
           selection={Keyword.get(@search_params, :verification_status)}
         />
         <.input_radio
