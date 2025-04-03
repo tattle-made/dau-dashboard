@@ -144,7 +144,12 @@ defmodule DAU.Feed do
         "deepfake" -> query |> where([c], c.verification_status == :deepfake)
         "manipulated" -> query |> where([c], c.verification_status == :manipulated)
         "not_manipulated" -> query |> where([c], c.verification_status == :not_manipulated)
+        "ai_generated" -> query |> where([c], c.verification_status == :ai_generated)
+        "not_ai_generated" -> query |> where([c], c.verification_status == :not_ai_generated)
         "inconclusive" -> query |> where([c], c.verification_status == :inconclusive)
+        "cheapfake" -> query |> where([c], c.verification_status == :cheapfake)
+        "out_of_scope" -> query |> where([c], c.verification_status == :out_of_scope)
+        "unsupported_language" -> query |> where([c], c.verification_status == :unsupported_language)
         "spam" -> query |> where([c], c.verification_status == :spam)
         "all" -> query
         nil -> query
