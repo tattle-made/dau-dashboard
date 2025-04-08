@@ -10,9 +10,10 @@ Deepfake Analysis Unit(DAU) is a collaborative space for analyzing deepfakes
 4. elixir : 1.15.0
 5. Erlang/OTP : 26.0 
 
-**Setup infrastructure dependencies**
+### 1. Setup infrastructure dependencies**
 
-`docker-compose up`
+- Run `source env.dev` to setup enviroment variables.
+- `docker-compose up`
 Visit `localhost:8080` to access adminer. Login with following fields
 
 | | |
@@ -22,20 +23,18 @@ Visit `localhost:8080` to access adminer. Login with following fields
 |Username|tattle|
 |Password|weak_password|
 
-**Fetch Credentials**
+### 2. Fetch Credentials
 Credentials are stored using AWS Secrets Manager. Please request @dennyabrain for SECRET_ARN and credentials for a suitable AWS IAM account
 ```shell
 aws secretsmanager get-secret-value --secret-id $SECRET_ARN | jq '.SecretString' | jq -r | jq -r 'to_entries[]' | jq -r '"export " + .key + "=" + .value' > env.dev
 ```
 
-**Load environment variables** : `source env.dev` 
+### 3. Setup and Start your Phoenix server
 
-**Install frontend Dependencies** : `cd assets && npm install` 
-
-**Start your Phoenix server**:
-
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+1. Load environment variables : `source env.dev` 
+2. Install frontend Dependencies : `cd assets && npm install` 
+3. To start your Phoenix server, first Run `mix setup` to install and setup dependencies.
+4. Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 

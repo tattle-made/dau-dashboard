@@ -41,3 +41,24 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  hash_worker:
+    image: tattletech/feluda-operator-hash:worker-amd64-latest
+    container_name: hash_worker
+    depends_on:
+      - queue
+    environment:
+      MQ_USERNAME: admin
+      MQ_PASSWORD: Admin123
+      MQ_HOST: rabbitmq
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID_HASH_WORKER}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY_HASH_WORKER}
+      AWS_BUCKET: ${AWS_BUCKET_HASH_WORKER}
+      AWS_REGION: ${AWS_REGION_HASH_WORKER}
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "sleep for 10sec"
+        sleep 10 
+        python -m worker.hash.hash_worker
