@@ -44,7 +44,7 @@ defmodule DAU.UserMessage.Templates.Template do
     factcheck_articles = Map.get(data, :factcheck_articles, [])
 
     pattern =
-      ~r/boomlive|factcrescendo|factly|indiatoday|thelogicalindian|logicallyfacts|newschecker|newsmeter|newsmobile|thequint|thip|vishvasnews/
+      ~r/boomlive|factcrescendo|factly|indiatoday|thelogicalindian|logicallyfacts|newschecker|newsmeter|newsmobile|thequint|thip|vishvasnews|telugupost/
 
     name_map = %{
       "boomlive" => "Boomlive",
@@ -57,7 +57,8 @@ defmodule DAU.UserMessage.Templates.Template do
       "newsmobile" => "Newsmobile",
       "thequint" => "Quint",
       "logicallyfacts" => "Logically Facts",
-      "newsmeter" => "Newsmeter"
+      "newsmeter" => "Newsmeter",
+      "telugupost" => "Telugu Post"
     }
 
     value =
