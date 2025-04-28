@@ -143,6 +143,8 @@ let all_tags = [
   "Rajdeep Sardesai",
   "Palki Sharma",
   "Faye D'souza",
+  "Shereen Bhan",
+  "Sweta Singh",
   "EVM",
   "Virat Kohli",
   "Sachin Tendulkar",
@@ -246,6 +248,9 @@ let all_tags = [
   "Emmanuel Macron",
   "Rishi Sunak",
   "Donald Trump",
+  "Vladimir Putin",
+  "Volodymyr Zelenskyy",
+  "J D Vance",
   "Kash Patel",
   "Ebrahim Raisi",
   "Akhilesh Yadav",
@@ -294,7 +299,10 @@ let all_tags = [
   "Naresh Trehan",
   "Devi Prasad Shetty",
   "Imran Khan",
-  "Sanjay Malhotra"
+  "Sanjay Malhotra",
+  "Pahalgam",
+  "The Pope",
+  "Kumbh Mela"
 ];
 
 function make_chip(tag, callback) {
