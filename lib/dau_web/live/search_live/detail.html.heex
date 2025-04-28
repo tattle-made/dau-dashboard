@@ -199,6 +199,9 @@
     </div>
     <div :if={@query.factcheck_articles}>
       <div class="flex flex-col gap-2 flex-wrap mt-6">
+        <%= if Enum.count(@query.factcheck_articles, & &1.approved) > 2 do %>
+          <p class= "text-xs text-red-600">Please keep the number of approved articles to 2 for a valid template.</p>
+        <% end %>
         <%= for factcheck_article <- @query.factcheck_articles do %>
           <div class="flex flex-row gap-4">
             <span class="w-fit text-teal-900 bg-teal-200 text-xs px-2 py-1 rounded-sm">

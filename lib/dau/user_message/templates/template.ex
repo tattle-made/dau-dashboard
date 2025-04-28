@@ -115,7 +115,7 @@ defmodule DAU.UserMessage.Templates.Template do
       0 -> "0fc"
       1 -> "1fc"
       2 -> "2fc"
-      _ -> raise "Too many fact check articles"
+      _ -> "Too many fact check articles"
     end
   end
 
