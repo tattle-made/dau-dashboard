@@ -335,7 +335,7 @@ let TagSelectorHook = {
       suggestions_div.innerHTML = "";
       if (text !== "") {
         suggestions = all_tags.filter((tag) =>
-          tag.toLowerCase().startsWith(text.toLowerCase())
+          tag.toLowerCase().includes(text.toLowerCase())
         );
         suggestions.map((suggestion) => {
           span = make_chip(suggestion, (tag) => {
