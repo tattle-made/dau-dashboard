@@ -31,6 +31,9 @@ dau-*.tar
 # Ignore digested assets cache.
 /priv/static/cache_manifest.json
 
+# Ignore external escalations seed data
+/priv/external_escalations_seed_data/
+
 # In case you use Node.js/npm, you want to ignore these.
 npm-debug.log
 /assets/node_modules/
