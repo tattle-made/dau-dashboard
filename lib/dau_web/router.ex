@@ -24,6 +24,11 @@ defmodule DAUWeb.Router do
     live "/outbox", SearchLive.Outbox
   end
 
+  scope "/external-escalations", DAUWeb do
+    pipe_through :api
+    post "/", ExternalEscalationController, :create
+  end
+
   scope "/gupshup", DAUWeb do
     pipe_through :api
 
