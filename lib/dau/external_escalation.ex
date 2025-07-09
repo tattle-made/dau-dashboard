@@ -83,4 +83,8 @@ defmodule DAU.ExternalEscalation do
         {:error, error}
     end
   end
+
+  def list_form_entries do
+    Repo.all(FormEntry)
+  end
 end
