@@ -4,70 +4,64 @@ defmodule DAUWeb.ViewExternalEscalationsLive do
   alias DAU.ExternalEscalation
   import DAUWeb.CoreComponents
 
+  @cols [
+    {"Organization Name", :organization_name},
+    {"Submitter Name",   :submitter_name},
+    {"Designation",      :submitter_designation},
+    {"Email",            :submitter_email},
+    {"Country",          :organization_country},
+    {"Media Type",       :escalation_media_type},
+    {"Language",         :content_language},
+    {"Platform",         :content_platform},
+    {"Media Link",       :media_link},
+    {"Transcript",       :transcript},
+    {"English Translation", :english_translation},
+    {"Additional Info",  :additional_info},
+    {"Emails for Slack", :emails_for_slack},
+    {"Submitted At",     :inserted_at}
+  ]
+
   @impl true
   def mount(_params, _session, socket) do
-    case ExternalEscalation.list_form_entries() do
-      {:error, _reason} ->
-        {:ok,
-         socket
-         |> assign(entries: [])
-         |> put_flash(:error, "Could not load escalation entries. Please try again later.")}
-      entries ->
-        sorted_entries = Enum.sort_by(entries, & &1.inserted_at, {:desc, DateTime})
-        {:ok, assign(socket, entries: sorted_entries)}
-    end
+    entries =
+      case ExternalEscalation.list_form_entries() do
+        {:error, _} -> []
+        other       -> other
+      end
+
+    {:ok, assign(socket, entries: entries, cols: @cols)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <.header>External Escalation Form Entries</.header>
-    <div class="w-full max-h-[80vh] overflow-auto border rounded p-5 ">
+    <div class="w-full max-h-[80vh] overflow-auto border rounded p-5">
       <.table id="external_escalations" rows={@entries}>
-        <:col :let={entry} label="Organization Name">
-          <div class="max-w-[12rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={entry.organization_name}><%= entry.organization_name %></div>
-        </:col>
-        <:col :let={entry} label="Submitter Name">
-          <div class="max-w-[10rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={entry.submitter_name}><%= entry.submitter_name %></div>
-        </:col>
-        <:col :let={entry} label="Designation">
-          <div class="max-w-[8rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={entry.submitter_designation}><%= entry.submitter_designation %></div>
-        </:col>
-        <:col :let={entry} label="Email">
-          <div class="max-w-[12rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={entry.submitter_email}><%= entry.submitter_email %></div>
-        </:col>
-        <:col :let={entry} label="Country">
-          <div class="max-w-[8rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={entry.organization_country}><%= entry.organization_country %></div>
-        </:col>
-        <:col :let={entry} label="Media Type">
-          <div class="max-w-[8rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={Enum.join(List.wrap(entry.escalation_media_type), ", ")}><%= Enum.join(List.wrap(entry.escalation_media_type), ", ") %></div>
-        </:col>
-        <:col :let={entry} label="Language">
-          <div class="max-w-[10rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={entry.content_language}><%= entry.content_language %></div>
-        </:col>
-        <:col :let={entry} label="Platform">
-          <div class="max-w-[8rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={entry.content_platform}><%= entry.content_platform %></div>
-        </:col>
-        <:col :let={entry} label="Media Link">
-          <div class="max-w-[16rem] min-h-[2.5rem] max-h-[8rem] overflow-x-auto overflow-y-auto" title={entry.media_link}><%= entry.media_link %></div>
-        </:col>
-        <:col :let={entry} label="Transcript">
-          <div class="w-[16rem] min-h-[2.5rem] max-h-[8rem] overflow-x-auto overflow-y-auto" title={entry.transcript}><%= entry.transcript %></div>
-        </:col>
-        <:col :let={entry} label="English Translation">
-          <div class="w-[16rem] min-h-[2.5rem] max-h-[8rem] overflow-x-auto overflow-y-auto" title={entry.english_translation}><%= entry.english_translation %></div>
-        </:col>
-        <:col :let={entry} label="Additional Info">
-          <div class="w-[16rem] min-h-[2.5rem] max-h-[8rem] overflow-x-auto overflow-y-auto" title={entry.additional_info}><%= entry.additional_info %></div>
-        </:col>
-        <:col :let={entry} label="Emails for Slack">
-          <div class="max-w-[16rem] min-h-[2.5rem] max-h-[8rem] overflow-x-auto overflow-y-auto" title={entry.emails_for_slack}><%= entry.emails_for_slack %></div>
-        </:col>
-        <:col :let={entry} label="Submitted At">
-          <div class="max-w-[10rem] min-h-[2.5rem] max-h-[8rem] overflow-y-auto" title={to_string(entry.inserted_at)}><%= entry.inserted_at %></div>
+        <:col
+          :let={entry}
+          :for={col <- @cols}
+          label={elem(col, 0)}
+        >
+          <div class={"max-w-[16rem] min-h-[2.5rem] max-h-[10rem] overflow-auto"}>
+            <%= format_cell(entry, elem(col, 1)) %>
+          </div>
         </:col>
       </.table>
     </div>
     """
+  end
+
+
+  defp format_cell(entry, :escalation_media_type) do
+    entry.escalation_media_type
+    |> List.wrap()
+    |> Enum.join(", ")
+  end
+  defp format_cell(entry, field) do
+    case Map.get(entry, field) do
+      nil -> "N/A"
+      v   -> to_string(v)
+    end
   end
 end

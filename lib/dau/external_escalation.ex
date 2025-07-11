@@ -1,6 +1,7 @@
 defmodule DAU.ExternalEscalation do
   alias DAU.ExternalEscalation.FormEntry
   alias DAU.Repo
+  import Ecto.Query
   require Logger
 
   def create_external_escalation(attrs) do
@@ -85,6 +86,8 @@ defmodule DAU.ExternalEscalation do
   end
 
   def list_form_entries do
-    Repo.all(FormEntry)
+    FormEntry
+    |> order_by([desc: :inserted_at])
+    |> Repo.all()
   end
 end
