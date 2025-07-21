@@ -1,7 +1,7 @@
 defmodule Scripts.SeedEscalationData do
-  def seed_data do
+  def seed_data(file_path) do
     data =
-      File.read!("priv/external_escalations_seed_data/external_escalations_seed_data.json")
+      File.read!(file_path)
       |> Jason.decode!()
 
     # IO.inspect(data)
@@ -9,6 +9,7 @@ defmodule Scripts.SeedEscalationData do
       fixed_item = fix_item(item)
       result = DAU.ExternalEscalation.create_external_escalation(fixed_item)
       IO.inspect({:item, fixed_item, :result, result})
+      :timer.sleep(500)
     end)
   end
 
