@@ -1,6 +1,5 @@
 defmodule DAUWeb.Router do
   use DAUWeb, :router
-
   import DAUWeb.UserAuth
 
   pipeline :browser do
@@ -22,6 +21,11 @@ defmodule DAUWeb.Router do
 
     get "/", PageController, :home
     live "/outbox", SearchLive.Outbox
+  end
+
+  scope "/external-escalations", DAUWeb do
+    pipe_through :api
+    post "/", ExternalEscalationController, :create
   end
 
   scope "/gupshup", DAUWeb do
@@ -131,6 +135,16 @@ defmodule DAUWeb.Router do
       # live_dashboard "/dashboard", metrics: DAUWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  scope "/", DAUWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :external_escalations,
+      on_mount: [{DAUWeb.UserAuth, :ensure_authenticated}] do
+      live "/view_external_escalations", ViewExternalEscalationsLive, :index
+    end
+
   end
 
   ## Authentication routes
