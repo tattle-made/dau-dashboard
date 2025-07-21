@@ -27,6 +27,8 @@ defmodule DAU.Repo.Migrations.CreateEscalationFormEntries do
       add :additional_info, :text
       add :emails_for_slack, :string, null: false
 
+      # NOTE: The field type for media_link ad emails_for_slack have been changed to :text in another migration file.
+
       timestamps(type: :utc_datetime)
     end
 
