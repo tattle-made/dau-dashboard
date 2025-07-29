@@ -18,7 +18,7 @@ defmodule DAUWeb.ViewExternalEscalationsLive do
     {"English Translation", :english_translation},
     {"Additional Info",  :additional_info},
     {"Emails for Slack", :emails_for_slack},
-    {"Submitted At",     :inserted_at}
+    {"Submitted At (IST)",     :inserted_at}
   ]
 
   @impl true
@@ -53,11 +53,21 @@ defmodule DAUWeb.ViewExternalEscalationsLive do
   end
 
 
+  defp format_cell(entry, :inserted_at) do
+    case entry.inserted_at do
+      nil -> "N/A"
+      datetime ->
+        Timex.to_datetime(datetime, "Asia/Calcutta")
+        |> Calendar.strftime("%d-%m-%Y %I:%M %P")
+    end
+  end
+
   defp format_cell(entry, :escalation_media_type) do
     entry.escalation_media_type
     |> List.wrap()
     |> Enum.join(", ")
   end
+
   defp format_cell(entry, field) do
     case Map.get(entry, field) do
       nil -> "N/A"

@@ -35,7 +35,9 @@ defmodule DAU.ExternalEscalation.FormEntry do
       :transcript,
       :english_translation,
       :additional_info,
-      :emails_for_slack
+      :emails_for_slack,
+      :inserted_at,
+      :updated_at
     ])
     |> validate_required([
       :organization_name,
