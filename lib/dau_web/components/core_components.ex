@@ -998,17 +998,22 @@ defmodule DAUWeb.CoreComponents do
   attr :text, :string, required: true
 
   def media_text(assigns) do
-    ex = ~r/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/\S*)?)/i
+    ex =
+      ~r/(?<!@)\b(?:https?:\/\/|www\.)?[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}(?::\d+)?(?:\/[a-zA-Z0-9\-._~%!$&'()*+,;=:@\/?#\[\]\{\}]*)?/i
 
     urls =
       Regex.scan(ex, assigns.text)
-      |> Enum.map(fn [full_match | _] -> full_match end)
+      |> Enum.map(&List.first/1)
+      # Remove trailing punctuation (.,),]}), but keep valid URL chars
+      |> Enum.map(&Regex.replace(~r/[.,)\]\}]+$/, &1, ""))
 
     new_text =
       String.replace(
         assigns.text,
         ex,
-        "<a href='\\1' target='_blank' class='underline'>\\1</a>"
+        fn url ->
+          "<a href='" <> url <> "' target='_blank' class='underline'>" <> url <> "</a>"
+        end
       )
 
     assigns = assign(assigns, new_text: new_text, urls: urls)
