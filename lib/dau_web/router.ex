@@ -28,6 +28,11 @@ defmodule DAUWeb.Router do
     post "/", ExternalEscalationController, :create
   end
 
+  scope "/slack", DAUWeb do
+    pipe_through :api
+    post "/", SlackController, :create
+  end
+
   scope "/gupshup", DAUWeb do
     pipe_through :api
 
