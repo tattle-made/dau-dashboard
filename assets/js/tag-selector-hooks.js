@@ -186,6 +186,17 @@ let all_tags = [
   "Anti Modi",
   "Pro BJP",
   "Anti BJP",
+  "Anti-Mahatma Gandhi",
+  "Anti-Hindu",
+  "Hindu",
+  "Mahatma Gandhi",
+  "Gandhi family",
+  "Anti-Gandhi family",
+  "INDI alliance",
+  "Anti INDI alliance",
+  "Samajwadi Party",
+  "Anti Samajwadi Party",
+  "Anti Akhilesh Yadav",
   "Reservations",
   "Inheritance Tax",
   "Caste Census",
@@ -302,7 +313,9 @@ let all_tags = [
   "Sanjay Malhotra",
   "Pahalgam",
   "The Pope",
-  "Kumbh Mela"
+  "Kumbh Mela",
+  "Naural Disaster Fake",
+  "Op Sindoor"
 ];
 
 function make_chip(tag, callback) {
