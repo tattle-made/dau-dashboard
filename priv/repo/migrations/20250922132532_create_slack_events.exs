@@ -7,5 +7,7 @@ defmodule DAU.Repo.Migrations.CreateSlackEvents do
 
       timestamps(type: :utc_datetime)
     end
+
+    create index(:slack_events, [:event_id])
   end
 end

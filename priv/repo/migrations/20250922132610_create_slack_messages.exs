@@ -6,10 +6,11 @@ defmodule DAU.Repo.Migrations.CreateSlackMessages do
       add :ts, :string
       add :team, :string
       add :user, :string
-      add :text, :string
+      add :text, :text
       add :urls, {:array, :string}
       add :files, {:array, :map}
       add :is_deleted, :boolean, default: false
+      add :is_edited, :boolean, default: false
       add :channel_id, references(:slack_channels), null: false
       add :parent_id, references(:slack_messages), null: true
 

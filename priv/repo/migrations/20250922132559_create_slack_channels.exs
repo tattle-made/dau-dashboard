@@ -8,5 +8,9 @@ defmodule DAU.Repo.Migrations.CreateSlackChannels do
 
       timestamps(type: :utc_datetime)
     end
+
+    create unique_index(:slack_channels, [:channel_id],
+    name: :slack_channels_channel_id_index
+  )
   end
 end

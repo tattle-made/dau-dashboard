@@ -15,5 +15,6 @@ defmodule DAU.Slack.Channel do
     channel
     |> cast(params, [:channel_id, :channel_name])
     |> validate_required([:channel_id])
+    |> unique_constraint(:channel_id, name: :slack_channels_channel_id_index)
   end
 end

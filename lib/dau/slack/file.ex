@@ -9,11 +9,20 @@ defmodule DAU.Slack.File do
     field :filetype, :string
     field :url_private, :string
     field :permalink, :string
+    field :url_private_download, :string
   end
 
   def changeset(file, params) do
     file
-    |> cast(params, [:file_id, :title, :mimetype, :filetype, :url_private, :permalink])
+    |> cast(params, [
+      :file_id,
+      :title,
+      :mimetype,
+      :filetype,
+      :url_private,
+      :permalink,
+      :url_private_download
+    ])
     |> validate_required([:file_id, :permalink])
   end
 end
