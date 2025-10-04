@@ -93,6 +93,7 @@ defmodule DAU.Slack do
 
   def get_and_update_channel_details(channel_id, %Channel{} = channel) do
     slack_auth_token = System.get_env("SLACK_AUTH_TOKEN")
+
     headers = [
       {"Authorization", "Bearer #{slack_auth_token}"},
       {"Content-Type", "application/x-www-form-urlencoded"}
@@ -156,11 +157,10 @@ defmodule DAU.Slack do
   """
   @spec process_message_delete(map(), String.t(), map()) :: {:ok, atom()} | {:error, atom()}
   def process_message_delete(event, team_id, _payload) do
-    with message_ts when not is_nil(message_ts) <- get_in(event, ["message", "ts"]),
-         event_channel_id when not is_nil(event_channel_id) <- event["channel"],
+    with event_channel_id when not is_nil(event_channel_id) <- event["channel"],
          channel when not is_nil(channel) <- get_slack_channel_from_channel_id(event_channel_id),
          ts when not is_nil(ts) <-
-           message_ts || get_in(event, ["deleted_ts"]) || get_in(event, ["ts"]),
+          get_in(event, ["message", "ts"]) || get_in(event, ["deleted_ts"]) || get_in(event, ["ts"]),
          existing_message when not is_nil(existing_message) <-
            get_unique_slack_message(ts, channel.id, team_id) do
       Logger.debug(
@@ -302,18 +302,19 @@ defmodule DAU.Slack do
     {:error, :invalid_message_event}
   end
 
-  @doc false
-  @spec get_or_create_channel(String.t()) :: {:ok, Channel.t()} | {:error, any()}
   defp get_or_create_channel(channel_id) do
     case get_slack_channel_from_channel_id(channel_id) do
       nil ->
         case create_slack_channel(%{channel_id: channel_id}) do
           {:ok, channel} ->
             # Update channel details asynchronously
-            Task.start(fn ->
-              Logger.debug("Updating details for new channel: #{channel_id}")
-              get_and_update_channel_details(channel_id, channel)
-            end)
+
+            if Application.get_env(:dau, :slack_process_async, true) do
+              Task.start(fn ->
+                Logger.debug("Updating details for new channel: #{channel_id}")
+                get_and_update_channel_details(channel_id, channel)
+              end)
+            end
 
             {:ok, channel}
 
