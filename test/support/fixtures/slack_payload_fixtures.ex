@@ -2,29 +2,31 @@ defmodule DAU.SlackPayloadFixtures do
 
   def all_payloads() do
 # Contents
-# Text on Main Thread
+
+# Text on Main Channel
 # Text Reply inisde a thread
 # Text with multiple lines in main thread
 # When a message in a thread is "also send to the channel"
 # Only URL in the main channel
 # URL with text in the main channel
-# URL with text in main channel with text after URL
 # URL with normal text in a thread reply
 # Image only (no text) on the main channel
 # Image with some text on the main channel
-# Image with some text and multiple URLs
 # Multiple files (word and pdf) with some text
 # some text then markdown and highlighted code  text section
 # Edited above message and added extra text below markdown
-# text message with URL and URL preview
 # Text and then edit the text (2 payloads)
-# After Edit
-# Send a message and then delete it
+# Simple Delete (2 Payloads)
+# Send a file and then delete it (multiple payloads)
+# Send message, then start a thread, then delete the original message (multiple payloads)
+# Sending files and then in edit, add some extra text. (files cannot be delted in edit, they have to be deleted directly)
+# message in main, then a 2-3 new thread message, delete thread message, then delete main message and then delete thread message again (9 payloads)
 #--------------------------------------------------------------------------------------------------
 [
 
-# Text on Main Thread
+# Text on Main Channel
 %{
+  "test" => "Text on Main Channel",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -71,6 +73,7 @@ defmodule DAU.SlackPayloadFixtures do
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
 # Text Reply inisde a thread
 %{
+  "test" => "Reply inside a thread (thread of above testcase main message)",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -122,6 +125,7 @@ defmodule DAU.SlackPayloadFixtures do
 # Text with multiple lines in main thread
 
 %{
+  "test" => "multi-line text on main channel",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -174,6 +178,7 @@ defmodule DAU.SlackPayloadFixtures do
 # When a message in a thread is "also send to the channel"
 
 %{
+  "test" => " When Thread message is `Also send to the Channel`",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -283,6 +288,7 @@ defmodule DAU.SlackPayloadFixtures do
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Only URL in the main channel
 %{
+  "test" => "Only URL on Main Channel",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -329,6 +335,7 @@ defmodule DAU.SlackPayloadFixtures do
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # URL with text in the main channel
 %{
+  "test" => "URL with text",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -378,57 +385,58 @@ defmodule DAU.SlackPayloadFixtures do
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # URL with text in main channel with text after URL
-%{
-  "api_app_id" => "A09DVQ7TY1F",
-  "authorizations" => [
-    %{
-      "enterprise_id" => nil,
-      "is_bot" => true,
-      "is_enterprise_install" => false,
-      "team_id" => "T09DGSRBZRC",
-      "user_id" => "U09DH07QHHC"
-    }
-  ],
-  "context_enterprise_id" => nil,
-  "context_team_id" => "T09DGSRBZRC",
-  "event" => %{
-    "blocks" => [
-      %{
-        "block_id" => "SP76j",
-        "elements" => [
-          %{
-            "elements" => [
-              %{"text" => "Url with normal text: ", "type" => "text"},
-              %{"type" => "link", "url" => "https://github.com"},
-              %{"text" => " with text after url", "type" => "text"}
-            ],
-            "type" => "rich_text_section"
-          }
-        ],
-        "type" => "rich_text"
-      }
-    ],
-    "channel" => "C09DGSRHCKY",
-    "channel_type" => "channel",
-    "client_msg_id" => "d45d1013-078f-450a-8b6f-cfa316080548",
-    "event_ts" => "1757316884.711119",
-    "team" => "T09DGSRBZRC",
-    "text" => "Url with normal text: <https://github.com> with text after url",
-    "ts" => "1757316884.711119",
-    "type" => "message",
-    "user" => "U09DDA47RT7"
-  },
-  "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5REdTUkhDS1kifQ",
-  "event_id" => "Ev09E1FEBBJS",
-  "event_time" => 1757316884,
-  "is_ext_shared_channel" => false,
-  "team_id" => "T09DGSRBZRC",
-  "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
-  "type" => "event_callback"
-},
+# %{
+#   "api_app_id" => "A09DVQ7TY1F",
+#   "authorizations" => [
+#     %{
+#       "enterprise_id" => nil,
+#       "is_bot" => true,
+#       "is_enterprise_install" => false,
+#       "team_id" => "T09DGSRBZRC",
+#       "user_id" => "U09DH07QHHC"
+#     }
+#   ],
+#   "context_enterprise_id" => nil,
+#   "context_team_id" => "T09DGSRBZRC",
+#   "event" => %{
+#     "blocks" => [
+#       %{
+#         "block_id" => "SP76j",
+#         "elements" => [
+#           %{
+#             "elements" => [
+#               %{"text" => "Url with normal text: ", "type" => "text"},
+#               %{"type" => "link", "url" => "https://github.com"},
+#               %{"text" => " with text after url", "type" => "text"}
+#             ],
+#             "type" => "rich_text_section"
+#           }
+#         ],
+#         "type" => "rich_text"
+#       }
+#     ],
+#     "channel" => "C09DGSRHCKY",
+#     "channel_type" => "channel",
+#     "client_msg_id" => "d45d1013-078f-450a-8b6f-cfa316080548",
+#     "event_ts" => "1757316884.711119",
+#     "team" => "T09DGSRBZRC",
+#     "text" => "Url with normal text: <https://github.com> with text after url",
+#     "ts" => "1757316884.711119",
+#     "type" => "message",
+#     "user" => "U09DDA47RT7"
+#   },
+#   "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5REdTUkhDS1kifQ",
+#   "event_id" => "Ev09E1FEBBJS",
+#   "event_time" => 1757316884,
+#   "is_ext_shared_channel" => false,
+#   "team_id" => "T09DGSRBZRC",
+#   "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
+#   "type" => "event_callback"
+# },
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # URL with normal text in a thread reply
 %{
+  "test" => "URL with text on thread",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -483,6 +491,7 @@ defmodule DAU.SlackPayloadFixtures do
 #------------------------------------------------------------------------------------------------------------------------
 # Image only (no text) on the main channel
 %{
+  "test" => "Image only no text on Main Channel",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -559,6 +568,7 @@ defmodule DAU.SlackPayloadFixtures do
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Image with some text on the main channel
 %{
+  "test" => "Image with some text",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -651,101 +661,103 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # Image with some text and multiple URLs
-%{
-  "api_app_id" => "A09DVQ7TY1F",
-  "authorizations" => [
-    %{
-      "enterprise_id" => nil,
-      "is_bot" => true,
-      "is_enterprise_install" => false,
-      "team_id" => "T09DGSRBZRC",
-      "user_id" => "U09DH07QHHC"
-    }
-  ],
-  "context_enterprise_id" => nil,
-  "context_team_id" => "T09DGSRBZRC",
-  "event" => %{
-    "blocks" => [
-      %{
-        "block_id" => "VcyF/",
-        "elements" => [
-          %{
-            "elements" => [
-              %{"text" => "Image with some text and ", "type" => "text"},
-              %{"type" => "link", "url" => "https://github.com"},
-              %{"text" => " ", "type" => "text"},
-              %{"type" => "link", "url" => "https://google.com"},
-              %{"text" => " multiple urls", "type" => "text"}
-            ],
-            "type" => "rich_text_section"
-          }
-        ],
-        "type" => "rich_text"
-      }
-    ],
-    "channel" => "C09DGSRHCKY",
-    "channel_type" => "channel",
-    "client_msg_id" => "ce534cf0-375a-45e8-a8e3-8aced17785fa",
-    "display_as_bot" => false,
-    "event_ts" => "1757317984.878549",
-    "files" => [
-      %{
-        "timestamp" => 1757317974,
-        "external_type" => "",
-        "mimetype" => "image/png",
-        "title" => "Screenshot from 2024-11-25 10-36-55.png",
-        "original_w" => 101,
-        "id" => "F09E5H8Q7NY",
-        "user_team" => "T09DGSRBZRC",
-        "permalink_public" => "https://slack-files.com/T09DGSRBZRC-F09E5H8Q7NY-6ea4445e8a",
-        "user" => "U09DDA47RT7",
-        "thumb_64" => "https://files.slack.com/files-tmb/T09DGSRBZRC-F09E5H8Q7NY-08005f257e/screenshot_from_2024-11-25_10-36-55_64.png",
-        "editable" => false,
-        "pretty_type" => "PNG",
-        "file_access" => "visible",
-        "created" => 1757317974,
-        "thumb_360" => "https://files.slack.com/files-tmb/T09DGSRBZRC-F09E5H8Q7NY-08005f257e/screenshot_from_2024-11-25_10-36-55_360.png",
-        "thumb_360_h" => 91,
-        "thumb_160" => "https://files.slack.com/files-tmb/T09DGSRBZRC-F09E5H8Q7NY-08005f257e/screenshot_from_2024-11-25_10-36-55_160.png",
-        "is_public" => true,
-        "original_h" => 91,
-        "filetype" => "png",
-        "thumb_tiny" => "AwAsADB9ISAMmioXbcfapSubylYeZR2GaBKO4qMLkZJwKXaCPlOfarsjPmkTAgjIparqxU5qcHIzUSVi4yuI/CGoQuRknAqdhlSKgBGNrVUdiZ7ikEhQPSlUbWXnn0pMZxhhxRtIPLAGmLzE28Eg9OoqWL7lR5ABxyT3qVBhBSlsOG46o5I88ipKKhOxo1crd6dJ981MQD1FGKvmI5CNI+ct+VS0UVLdykrH/9k=",
-        "skipped_shares" => true,
-        "mode" => "hosted",
-        "thumb_360_w" => 101,
-        "size" => 5091,
-        "username" => "",
-        "url_private_download" => "https://files.slack.com/files-pri/T09DGSRBZRC-F09E5H8Q7NY/download/screenshot_from_2024-11-25_10-36-55.png",
-        "public_url_shared" => false,
-        "display_as_bot" => false,
-        "has_rich_preview" => false,
-        "thumb_80" => "https://files.slack.com/files-tmb/T09DGSRBZRC-F09E5H8Q7NY-08005f257e/screenshot_from_2024-11-25_10-36-55_80.png",
-        "permalink" => "https://dau-testworkspace.slack.com/files/U09DDA47RT7/F09E5H8Q7NY/screenshot_from_2024-11-25_10-36-55.png",
-        "url_private" => "https://files.slack.com/files-pri/T09DGSRBZRC-F09E5H8Q7NY/screenshot_from_2024-11-25_10-36-55.png",
-        "media_display_type" => "unknown",
-        "name" => "Screenshot from 2024-11-25 10-36-55.png",
-        "is_external" => false
-      }
-    ],
-    "subtype" => "file_share",
-    "text" => "Image with some text and <https://github.com> <https://google.com> multiple urls",
-    "ts" => "1757317984.878549",
-    "type" => "message",
-    "upload" => false,
-    "user" => "U09DDA47RT7"
-  },
-  "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5REdTUkhDS1kifQ",
-  "event_id" => "Ev09E5HABQDS",
-  "event_time" => 1757317984,
-  "is_ext_shared_channel" => false,
-  "team_id" => "T09DGSRBZRC",
-  "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
-  "type" => "event_callback"
-},
+# %{
+#    "test" => "IMage with some text and URLs",
+#   "api_app_id" => "A09DVQ7TY1F",
+#   "authorizations" => [
+#     %{
+#       "enterprise_id" => nil,
+#       "is_bot" => true,
+#       "is_enterprise_install" => false,
+#       "team_id" => "T09DGSRBZRC",
+#       "user_id" => "U09DH07QHHC"
+#     }
+#   ],
+#   "context_enterprise_id" => nil,
+#   "context_team_id" => "T09DGSRBZRC",
+#   "event" => %{
+#     "blocks" => [
+#       %{
+#         "block_id" => "VcyF/",
+#         "elements" => [
+#           %{
+#             "elements" => [
+#               %{"text" => "Image with some text and ", "type" => "text"},
+#               %{"type" => "link", "url" => "https://github.com"},
+#               %{"text" => " ", "type" => "text"},
+#               %{"type" => "link", "url" => "https://google.com"},
+#               %{"text" => " multiple urls", "type" => "text"}
+#             ],
+#             "type" => "rich_text_section"
+#           }
+#         ],
+#         "type" => "rich_text"
+#       }
+#     ],
+#     "channel" => "C09DGSRHCKY",
+#     "channel_type" => "channel",
+#     "client_msg_id" => "ce534cf0-375a-45e8-a8e3-8aced17785fa",
+#     "display_as_bot" => false,
+#     "event_ts" => "1757317984.878549",
+#     "files" => [
+#       %{
+#         "timestamp" => 1757317974,
+#         "external_type" => "",
+#         "mimetype" => "image/png",
+#         "title" => "Screenshot from 2024-11-25 10-36-55.png",
+#         "original_w" => 101,
+#         "id" => "F09E5H8Q7NY",
+#         "user_team" => "T09DGSRBZRC",
+#         "permalink_public" => "https://slack-files.com/T09DGSRBZRC-F09E5H8Q7NY-6ea4445e8a",
+#         "user" => "U09DDA47RT7",
+#         "thumb_64" => "https://files.slack.com/files-tmb/T09DGSRBZRC-F09E5H8Q7NY-08005f257e/screenshot_from_2024-11-25_10-36-55_64.png",
+#         "editable" => false,
+#         "pretty_type" => "PNG",
+#         "file_access" => "visible",
+#         "created" => 1757317974,
+#         "thumb_360" => "https://files.slack.com/files-tmb/T09DGSRBZRC-F09E5H8Q7NY-08005f257e/screenshot_from_2024-11-25_10-36-55_360.png",
+#         "thumb_360_h" => 91,
+#         "thumb_160" => "https://files.slack.com/files-tmb/T09DGSRBZRC-F09E5H8Q7NY-08005f257e/screenshot_from_2024-11-25_10-36-55_160.png",
+#         "is_public" => true,
+#         "original_h" => 91,
+#         "filetype" => "png",
+#         "thumb_tiny" => "AwAsADB9ISAMmioXbcfapSubylYeZR2GaBKO4qMLkZJwKXaCPlOfarsjPmkTAgjIparqxU5qcHIzUSVi4yuI/CGoQuRknAqdhlSKgBGNrVUdiZ7ikEhQPSlUbWXnn0pMZxhhxRtIPLAGmLzE28Eg9OoqWL7lR5ABxyT3qVBhBSlsOG46o5I88ipKKhOxo1crd6dJ981MQD1FGKvmI5CNI+ct+VS0UVLdykrH/9k=",
+#         "skipped_shares" => true,
+#         "mode" => "hosted",
+#         "thumb_360_w" => 101,
+#         "size" => 5091,
+#         "username" => "",
+#         "url_private_download" => "https://files.slack.com/files-pri/T09DGSRBZRC-F09E5H8Q7NY/download/screenshot_from_2024-11-25_10-36-55.png",
+#         "public_url_shared" => false,
+#         "display_as_bot" => false,
+#         "has_rich_preview" => false,
+#         "thumb_80" => "https://files.slack.com/files-tmb/T09DGSRBZRC-F09E5H8Q7NY-08005f257e/screenshot_from_2024-11-25_10-36-55_80.png",
+#         "permalink" => "https://dau-testworkspace.slack.com/files/U09DDA47RT7/F09E5H8Q7NY/screenshot_from_2024-11-25_10-36-55.png",
+#         "url_private" => "https://files.slack.com/files-pri/T09DGSRBZRC-F09E5H8Q7NY/screenshot_from_2024-11-25_10-36-55.png",
+#         "media_display_type" => "unknown",
+#         "name" => "Screenshot from 2024-11-25 10-36-55.png",
+#         "is_external" => false
+#       }
+#     ],
+#     "subtype" => "file_share",
+#     "text" => "Image with some text and <https://github.com> <https://google.com> multiple urls",
+#     "ts" => "1757317984.878549",
+#     "type" => "message",
+#     "upload" => false,
+#     "user" => "U09DDA47RT7"
+#   },
+#   "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5REdTUkhDS1kifQ",
+#   "event_id" => "Ev09E5HABQDS",
+#   "event_time" => 1757317984,
+#   "is_ext_shared_channel" => false,
+#   "team_id" => "T09DGSRBZRC",
+#   "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
+#   "type" => "event_callback"
+# },
 #-------------------------------------------------------------------------------------------------------------------------------------------
 # Multiple files (word and pdf) with some text
 %{
+  "test" => "Multiple files with some text",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -895,6 +907,7 @@ defmodule DAU.SlackPayloadFixtures do
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 # some text then markdown and highlighted code  text section
 %{
+  "test" => "some text then markdown and highlighted code  text section",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -959,6 +972,7 @@ defmodule DAU.SlackPayloadFixtures do
 #-----------------------------------------------------------------------------------------------------------------------------------------
 # Edited above message and added extra text below markdown
 %{
+  "test" => "edit above testcase text",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1076,106 +1090,10 @@ defmodule DAU.SlackPayloadFixtures do
   "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
   "type" => "event_callback"
 },
-#---------------------------------------------------------------------------------------------------
-# text message with URL and URL preview
-%{
-  "api_app_id" => "A09DVQ7TY1F",
-  "authorizations" => [
-    %{
-      "enterprise_id" => nil,
-      "is_bot" => true,
-      "is_enterprise_install" => false,
-      "team_id" => "T09DGSRBZRC",
-      "user_id" => "U09DH07QHHC"
-    }
-  ],
-  "context_enterprise_id" => nil,
-  "context_team_id" => "T09DGSRBZRC",
-  "event" => %{
-    "channel" => "C09DGSRHCKY",
-    "channel_type" => "channel",
-    "event_ts" => "1757319512.001800",
-    "hidden" => true,
-    "message" => %{
-      "attachments" => [
-        %{
-          "fallback" => "GitHub: GitHub · Build and ship software on a single, collaborative platform",
-          "from_url" => "https://github.com/",
-          "id" => 1,
-          "image_bytes" => 48545,
-          "image_height" => 630,
-          "image_url" => "https://images.ctfassets.net/8aevphvgewt8/4UxhHBs2XnuyZ4lYQ83juV/b61529b087aeb4a318bda311edf4c345/home24.jpg",
-          "image_width" => 1200,
-          "original_url" => "https://github.com/",
-          "service_icon" => "https://a.slack-edge.com/80588/img/unfurl_icons/github.png",
-          "service_name" => "GitHub",
-          "text" => "Join the world's most widely adopted, AI-powered developer platform where millions of developers, businesses, and the largest open source community build software that advances humanity.",
-          "title" => "GitHub · Build and ship software on a single, collaborative platform",
-          "title_link" => "https://github.com/"
-        }
-      ],
-      "blocks" => [
-        %{
-          "block_id" => "buETD",
-          "elements" => [
-            %{
-              "elements" => [
-                %{"text" => "url ", "type" => "text"},
-                %{"type" => "link", "url" => "https://github.com/"},
-                %{"text" => " testing multiple blocks", "type" => "text"}
-              ],
-              "type" => "rich_text_section"
-            }
-          ],
-          "type" => "rich_text"
-        }
-      ],
-      "client_msg_id" => "e7172e32-2bfc-488d-9061-3ce8ddaced2b",
-      "team" => "T09DGSRBZRC",
-      "text" => "url <https://github.com/> testing multiple blocks",
-      "ts" => "1757319511.747789",
-      "type" => "message",
-      "user" => "U09DDA47RT7"
-    },
-    "previous_message" => %{
-      "blocks" => [
-        %{
-          "block_id" => "buETD",
-          "elements" => [
-            %{
-              "elements" => [
-                %{"text" => "url ", "type" => "text"},
-                %{"type" => "link", "url" => "https://github.com/"},
-                %{"text" => " testing multiple blocks", "type" => "text"}
-              ],
-              "type" => "rich_text_section"
-            }
-          ],
-          "type" => "rich_text"
-        }
-      ],
-      "client_msg_id" => "e7172e32-2bfc-488d-9061-3ce8ddaced2b",
-      "team" => "T09DGSRBZRC",
-      "text" => "url <https://github.com/> testing multiple blocks",
-      "ts" => "1757319511.747789",
-      "type" => "message",
-      "user" => "U09DDA47RT7"
-    },
-    "subtype" => "message_changed",
-    "ts" => "1757319512.001800",
-    "type" => "message"
-  },
-  "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5REdTUkhDS1kifQ",
-  "event_id" => "Ev09DLQ7390X",
-  "event_time" => 1757319512,
-  "is_ext_shared_channel" => false,
-  "team_id" => "T09DGSRBZRC",
-  "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
-  "type" => "event_callback"
-},
 #----------------------------------------------------------------------------------------------------------------------------------
 # Text and then edit the text (2 payloads)
 %{
+  "test" => "send text and then edit: original message",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1221,6 +1139,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 # After Edit
 %{
+  "test" => "send text and then edit: edited message",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1294,8 +1213,115 @@ defmodule DAU.SlackPayloadFixtures do
   "type" => "event_callback"
 },
 # ------------------------------------------------------------------------------------------------------------------
-# Send a message and then delete it
+# Simple Delete (2 Payloads)
+# Text on main channel
 %{
+  "test" => "send text and then delete: original message",
+  "api_app_id" => "A09DVQ7TY1F",
+  "authorizations" => [
+    %{
+      "enterprise_id" => nil,
+      "is_bot" => true,
+      "is_enterprise_install" => false,
+      "team_id" => "T09DGSRBZRC",
+      "user_id" => "U09DH07QHHC"
+    }
+  ],
+  "context_enterprise_id" => nil,
+  "context_team_id" => "T09DGSRBZRC",
+  "event" => %{
+    "blocks" => [
+      %{
+        "block_id" => "UxtZ4",
+        "elements" => [
+          %{
+            "elements" => [
+              %{"text" => "Testing simple delete", "type" => "text"}
+            ],
+            "type" => "rich_text_section"
+          }
+        ],
+        "type" => "rich_text"
+      }
+    ],
+    "channel" => "C09HA4QCTD0",
+    "channel_type" => "channel",
+    "client_msg_id" => "ac2246ef-f5c1-4726-9d40-f20461985fb1",
+    "event_ts" => "1759550703.569189",
+    "team" => "T09DGSRBZRC",
+    "text" => "Testing simple delete",
+    "ts" => "1759550703.569189",
+    "type" => "message",
+    "user" => "U09DDA47RT7"
+  },
+  "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5SEE0UUNURDAifQ",
+  "event_id" => "Ev09KJJHUXA4",
+  "event_time" => 1759550703,
+  "is_ext_shared_channel" => false,
+  "team_id" => "T09DGSRBZRC",
+  "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
+  "type" => "event_callback"
+},
+#---------
+# Delete above message
+%{
+  "test" => "send text and then delete: deleted message",
+  "api_app_id" => "A09DVQ7TY1F",
+  "authorizations" => [
+    %{
+      "enterprise_id" => nil,
+      "is_bot" => true,
+      "is_enterprise_install" => false,
+      "team_id" => "T09DGSRBZRC",
+      "user_id" => "U09DH07QHHC"
+    }
+  ],
+  "context_enterprise_id" => nil,
+  "context_team_id" => "T09DGSRBZRC",
+  "event" => %{
+    "channel" => "C09HA4QCTD0",
+    "channel_type" => "channel",
+    "deleted_ts" => "1759550703.569189",
+    "event_ts" => "1759551075.000100",
+    "hidden" => true,
+    "previous_message" => %{
+      "blocks" => [
+        %{
+          "block_id" => "UxtZ4",
+          "elements" => [
+            %{
+              "elements" => [
+                %{"text" => "Testing simple delete", "type" => "text"}
+              ],
+              "type" => "rich_text_section"
+            }
+          ],
+          "type" => "rich_text"
+        }
+      ],
+      "client_msg_id" => "ac2246ef-f5c1-4726-9d40-f20461985fb1",
+      "team" => "T09DGSRBZRC",
+      "text" => "Testing simple delete",
+      "ts" => "1759550703.569189",
+      "type" => "message",
+      "user" => "U09DDA47RT7"
+    },
+    "subtype" => "message_deleted",
+    "ts" => "1759551075.000100",
+    "type" => "message"
+  },
+  "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5SEE0UUNURDAifQ",
+  "event_id" => "Ev09KJJVPD32",
+  "event_time" => 1759551075,
+  "is_ext_shared_channel" => false,
+  "team_id" => "T09DGSRBZRC",
+  "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
+  "type" => "event_callback"
+},
+#-------------------------------------------------------------------------------------------------------------------
+# Send a file and then delete it (multiple payloads)
+%{
+  "test" => "send a file and then delete: original message",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1368,6 +1394,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #------------Payload after Deleting the Above text
 %{
+  "test" => "send file and then delete: deleted file",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1448,9 +1475,10 @@ defmodule DAU.SlackPayloadFixtures do
   "type" => "event_callback"
 },
 #-----------------------------------------------------------------------------------------
-# Send message, then start a thread, then delete the original message
+# Send message, then start a thread, then delete the original message (multiple payloads)
 #some text in the main
 %{
+  "test" => "Send message, then start a thread, then delete the original message: original message",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1498,6 +1526,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #---------------------------------------- some message in the thread of the above message
 %{
+  "test" => "Send message, then start a thread, then delete the original message: start thread",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1547,6 +1576,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #----------------------------------------- delete the main message
 %{
+  "test" => "Send message, then start a thread, then delete the original message: delete original message",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1622,6 +1652,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #----------------------------- send another thread message after deleting the main message
 %{
+  "test" => "Send message, then start a thread, then delete the original message: new thread message after deleting original",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1675,6 +1706,7 @@ defmodule DAU.SlackPayloadFixtures do
 
 # editing the above thread message
 %{
+  "test" => "Send message, then start a thread, then delete the original message: edit the sent thread message from previous test",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1762,119 +1794,12 @@ defmodule DAU.SlackPayloadFixtures do
   "type" => "event_callback"
 },
 
-#----------------------------------------------------------------------------------
-#sending text and delete it (no thread)
-%{
-  "api_app_id" => "A09DVQ7TY1F",
-  "authorizations" => [
-    %{
-      "enterprise_id" => nil,
-      "is_bot" => true,
-      "is_enterprise_install" => false,
-      "team_id" => "T09DGSRBZRC",
-      "user_id" => "U09DH07QHHC"
-    }
-  ],
-  "context_enterprise_id" => nil,
-  "context_team_id" => "T09DGSRBZRC",
-  "event" => %{
-    "blocks" => [
-      %{
-        "block_id" => "pgE5A",
-        "elements" => [
-          %{
-            "elements" => [
-              %{
-                "text" => "sending text on the main and deleting",
-                "type" => "text"
-              }
-            ],
-            "type" => "rich_text_section"
-          }
-        ],
-        "type" => "rich_text"
-      }
-    ],
-    "channel" => "C09DGSRHCKY",
-    "channel_type" => "channel",
-    "client_msg_id" => "d0d0ade7-db73-44ff-a883-8d1c63cc6a52",
-    "event_ts" => "1758552064.962299",
-    "team" => "T09DGSRBZRC",
-    "text" => "sending text on the main and deleting",
-    "ts" => "1758552064.962299",
-    "type" => "message",
-    "user" => "U09DDA47RT7"
-  },
-  "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5REdTUkhDS1kifQ",
-  "event_id" => "Ev09GGB7HFUJ",
-  "event_time" => 1758552064,
-  "is_ext_shared_channel" => false,
-  "team_id" => "T09DGSRBZRC",
-  "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
-  "type" => "event_callback"
-},
-#---------------- after deleting above text
-%{
-  "api_app_id" => "A09DVQ7TY1F",
-  "authorizations" => [
-    %{
-      "enterprise_id" => nil,
-      "is_bot" => true,
-      "is_enterprise_install" => false,
-      "team_id" => "T09DGSRBZRC",
-      "user_id" => "U09DH07QHHC"
-    }
-  ],
-  "context_enterprise_id" => nil,
-  "context_team_id" => "T09DGSRBZRC",
-  "event" => %{
-    "channel" => "C09DGSRHCKY",
-    "channel_type" => "channel",
-    "deleted_ts" => "1758552064.962299",
-    "event_ts" => "1758552074.001600",
-    "hidden" => true,
-    "previous_message" => %{
-      "blocks" => [
-        %{
-          "block_id" => "pgE5A",
-          "elements" => [
-            %{
-              "elements" => [
-                %{
-                  "text" => "sending text on the main and deleting",
-                  "type" => "text"
-                }
-              ],
-              "type" => "rich_text_section"
-            }
-          ],
-          "type" => "rich_text"
-        }
-      ],
-      "client_msg_id" => "d0d0ade7-db73-44ff-a883-8d1c63cc6a52",
-      "team" => "T09DGSRBZRC",
-      "text" => "sending text on the main and deleting",
-      "ts" => "1758552064.962299",
-      "type" => "message",
-      "user" => "U09DDA47RT7"
-    },
-    "subtype" => "message_deleted",
-    "ts" => "1758552074.001600",
-    "type" => "message"
-  },
-  "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5REdTUkhDS1kifQ",
-  "event_id" => "Ev09GGB8NZEE",
-  "event_time" => 1758552074,
-  "is_ext_shared_channel" => false,
-  "team_id" => "T09DGSRBZRC",
-  "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
-  "type" => "event_callback"
-},
 #------------------------------------------------
-# Sending files and then in edit, delete one of them (and add some extra text)
+# Sending files and then in edit, add some extra text. (files cannot be delted in edit, they have to be deleted directly)
 
 # first payload
 %{
+  "test" => "Sending files and then in edit: First message with 2 files only no text",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -1978,6 +1903,7 @@ defmodule DAU.SlackPayloadFixtures do
 
 # Adding some text in the above message with only 2 files (in edit, new files cant be added)
 %{
+  "test" => "Sending files and then in edit: edit and add some text in last testcase",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2185,6 +2111,7 @@ defmodule DAU.SlackPayloadFixtures do
 # Delete one of the files in the above message
 
 %{
+  "test" => "Sending files and then in edit: Delete one file from last testcase",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2344,6 +2271,7 @@ defmodule DAU.SlackPayloadFixtures do
 
 #main message
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 1",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2391,6 +2319,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 # replies
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 2",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2438,6 +2367,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #----
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 3",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2485,6 +2415,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #---
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 4",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2533,6 +2464,7 @@ defmodule DAU.SlackPayloadFixtures do
 # delete 1st one
 
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 5",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2587,6 +2519,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #---- delete main message
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 6",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2661,9 +2594,10 @@ defmodule DAU.SlackPayloadFixtures do
   "type" => "event_callback"
 },
 
-# delet 2nd thread message, message payload then, again payload for the deleted parent message (maybe due to some race condition)
+# delete 2nd thread message, message payload then, again payload for the deleted parent message (maybe due to some race condition)
 
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 7",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2719,6 +2653,7 @@ defmodule DAU.SlackPayloadFixtures do
 
 #------------- Race condition, same payload of deleted main message
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 8",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{
@@ -2782,6 +2717,7 @@ defmodule DAU.SlackPayloadFixtures do
 },
 #--- new thread message
 %{
+  "test" => "main message, then start a thread, delete one thread message, delete main message, then delete another thread message: 9",
   "api_app_id" => "A09DVQ7TY1F",
   "authorizations" => [
     %{

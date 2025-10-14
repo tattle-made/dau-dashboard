@@ -8,6 +8,7 @@ defmodule DAU.Slack do
   alias DAU.Slack.Channel
   alias DAU.Slack.Message
   alias DAU.Slack.Event
+  alias DAU.Slack.SlackEvent
   require Logger
 
   def create_slack_event_from_event_id(event_id) do
@@ -34,6 +35,50 @@ defmodule DAU.Slack do
     Repo.get_by(Message, ts: ts, channel_id: channel_id, team: team_id)
   end
 
+  def validate_slack_event(event) when is_map(event) do
+    event_message =
+      if not is_nil(get_in(event, ["message"])) do
+        %{
+          message_ts: get_in(event, ["message", "ts"]),
+          message_text: get_in(event, ["message", "text"]),
+          message_subtype: get_in(event, ["message", "subtype"]),
+          message_edited: get_in(event, ["message", "edited"]),
+          message_thread_ts: get_in(event, ["message", "thread_ts"])
+        }
+      else
+        nil
+      end
+
+    mapped_attrs = %{
+      event_type: get_in(event, ["type"]),
+      event_subtype: get_in(event, ["subtype"]),
+      event_deleted_ts: get_in(event, ["deleted_ts"]),
+      previous_message: get_in(event, ["previous_message"]),
+      channel: get_in(event, ["channel"]),
+      ts: get_in(event, ["ts"]),
+      user: get_in(event, ["user"]),
+      text: get_in(event, ["text"]),
+      thread_ts: get_in(event, ["thread_ts"]),
+      event_message: event_message
+    }
+
+    case SlackEvent.new(mapped_attrs) do
+      {:ok, slack_event} ->
+        {:ok, slack_event}
+
+      {:error, changeset} ->
+        {:error,
+         "Failed to create Slack Event from Payload event. Error in Changeset: #{inspect(changeset)}"}
+
+      _ ->
+        {:error, "Failed to create Slack Event from Payload event."}
+    end
+  end
+
+  def validate_slack_event(_attrs) do
+    {:error, "Passed event is not a map."}
+  end
+
   @doc """
   Processes a Slack message event based on its type (delete, edit, or new).
 
@@ -41,19 +86,20 @@ defmodule DAU.Slack do
   """
   @spec process_message(map(), String.t(), String.t(), map()) :: {:ok, any()} | {:error, atom()}
   def process_message(event, event_id, team_id, payload) do
-    with {:ok, _created_event} <- create_slack_event_from_event_id(event_id) do
-      case get_event_type(event, team_id) do
-        :delete ->
-          process_message_delete(event, team_id, payload)
+    with {:ok, _created_event} <- create_slack_event_from_event_id(event_id),
+         {:ok, slack_event} <- validate_slack_event(event) do
+      case get_event_type(slack_event, team_id) do
+        {:ok, :delete} ->
+          process_message_delete(slack_event, team_id, payload)
 
-        :edit ->
-          process_message_edit(event, team_id, payload)
+        {:ok, :edit} ->
+          process_message_edit(slack_event, event, team_id, payload)
 
-        :duplicate ->
+        {:ok, :duplicate} ->
           {:ok, :duplicate_message}
 
-        :new ->
-          process_new_slack_message(event, team_id, payload)
+        {:ok, :new} ->
+          process_new_slack_message(slack_event, event, team_id, payload)
 
         _ ->
           Logger.warning("Unknown event type for message: #{inspect(event)}")
@@ -66,28 +112,26 @@ defmodule DAU.Slack do
     end
   end
 
-  def get_event_type(event, team_id) do
-    # event_type = get_in(event, ["type"])
-    event_subtype = get_in(event, ["subtype"])
-    event_deleted_ts = get_in(event, ["deleted_ts"])
-    previous_message = get_in(event, ["previous_message"])
-    # message = get_in(event, ["message"])
-    message_subtype = get_in(event, ["message", "subtype"])
-    message_edited = get_in(event, ["message", "edited"])
+  def get_event_type(%SlackEvent{} = event, team_id) do
+    event_subtype = event.event_subtype
+    event_deleted_ts = event.event_deleted_ts
+    previous_message = event.event_message || nil
+    message_subtype = get_in(event, [Access.key(:event_message), Access.key(:message_text)])
+    message_edited = get_in(event, [Access.key(:event_message), Access.key(:message_edited)])
 
     cond do
       event_subtype == "message_deleted" or message_subtype == "tombstone" or
           !is_nil(event_deleted_ts) ->
-        :delete
+        {:ok, :delete}
 
       !is_nil(message_edited) or !is_nil(previous_message) ->
-        :edit
+        {:ok, :edit}
 
       check_repeated_payload?(event, team_id) ->
-        :duplicate
+        {:ok, :duplicate}
 
       true ->
-        :new
+        {:ok, :new}
     end
   end
 
@@ -115,9 +159,10 @@ defmodule DAU.Slack do
     end
   end
 
-  def check_repeated_payload?(event, team_id) do
-    message = get_in(event, ["message"])
-    channel_id = event["channel"]
+  def check_repeated_payload?(%SlackEvent{} = event, team_id) do
+    message = event.event_message
+    # IO.inspect(message, label: "EVENT MESSAGE IS: ")
+    channel_id = event.channel
 
     channel =
       case get_slack_channel_from_channel_id(channel_id) do
@@ -130,9 +175,9 @@ defmodule DAU.Slack do
 
     ts =
       if is_nil(message) do
-        event["ts"]
+        event.ts
       else
-        message["ts"]
+        message.message_ts
       end
 
     existing_message =
@@ -155,12 +200,15 @@ defmodule DAU.Slack do
   Marks the message as deleted in the database if it exists and isn't already marked as deleted.
   Returns `{:ok, :message_deletion_processed}` on success or `{:error, reason}` on failure.
   """
-  @spec process_message_delete(map(), String.t(), map()) :: {:ok, atom()} | {:error, atom()}
-  def process_message_delete(event, team_id, _payload) do
-    with event_channel_id when not is_nil(event_channel_id) <- event["channel"],
+  @spec process_message_delete(%SlackEvent{}, String.t(), map()) ::
+          {:ok, atom()} | {:error, atom()}
+  def process_message_delete(%SlackEvent{} = event, team_id, _payload) do
+    with event_channel_id when not is_nil(event_channel_id) <- event.channel,
          channel when not is_nil(channel) <- get_slack_channel_from_channel_id(event_channel_id),
          ts when not is_nil(ts) <-
-          get_in(event, ["message", "ts"]) || get_in(event, ["deleted_ts"]) || get_in(event, ["ts"]),
+           get_in(event, [Access.key(:event_message), Access.key(:message_ts)]) ||
+             get_in(event, [Access.key(:event_deleted_ts)]) ||
+             event.ts,
          existing_message when not is_nil(existing_message) <-
            get_unique_slack_message(ts, channel.id, team_id) do
       Logger.debug(
@@ -200,16 +248,21 @@ defmodule DAU.Slack do
   Updates the message text, URLs, and files if they've changed.
   Returns `{:ok, :message_edit_processed}` on success or `{:error, reason}` on failure.
   """
-  @spec process_message_edit(map(), String.t(), map()) :: {:ok, atom()} | {:error, atom()}
-  def process_message_edit(%{"message" => message} = event, team_id, _payload) do
-    with ts <- Map.get(message || %{}, "ts", event["ts"]),
-         event_channel_id when not is_nil(event_channel_id) <- event["channel"],
+  @spec process_message_edit(%SlackEvent{}, map(), String.t(), map()) :: {:ok, atom()} | {:error, atom()}
+  def process_message_edit(
+        %SlackEvent{event_message: message} = event,
+        raw_event,
+        team_id,
+        _payload
+      ) do
+    with ts <- Map.get(message || %{}, :message_ts, event.ts),
+         event_channel_id when not is_nil(event_channel_id) <- event.channel,
          channel when not is_nil(channel) <- get_slack_channel_from_channel_id(event_channel_id),
          existing_message when not is_nil(existing_message) <-
            get_unique_slack_message(ts, channel.id, team_id) do
-      text = get_in(message, ["text"])
-      urls = get_message_urls(event)
-      files = get_message_files(event)
+      text = message.message_text
+      urls = get_message_urls(raw_event)
+      files = get_message_files(raw_event)
 
       existing_message = get_unique_slack_message(ts, channel.id, team_id)
 
@@ -252,9 +305,8 @@ defmodule DAU.Slack do
     {:error, :message_not_found_in_event_while_editing}
   end
 
-  def process_new_slack_message(event, team_id, _payload) do
-    with {:ok, %{"channel" => channel_id, "ts" => ts, "user" => user, "text" => text} = _event} <-
-           validate_message_event(event),
+  def process_new_slack_message(%SlackEvent{} = event, raw_event, team_id, _payload) do
+    with %{channel: channel_id, ts: ts, user: user, text: text} = _event <- event,
          {:ok, channel} <- get_or_create_channel(channel_id) do
       Logger.debug("Processing new message from user #{user} in channel #{channel_id}")
 
@@ -263,10 +315,10 @@ defmodule DAU.Slack do
         team: team_id,
         user: user,
         text: text,
-        urls: get_message_urls(event),
+        urls: get_message_urls(raw_event),
         channel_id: channel.id,
         parent_id: get_parent_id(event, ts, team_id, channel.id),
-        files: get_message_files(event)
+        files: get_message_files(raw_event)
       }
 
       message_attrs =
@@ -289,17 +341,6 @@ defmodule DAU.Slack do
         Logger.error("Unexpected error processing new message: #{inspect(error)}")
         {:error, :unexpected_error}
     end
-  end
-
-  @doc false
-  @spec validate_message_event(map()) :: {:ok, map()} | {:error, atom()}
-  defp validate_message_event(%{"channel" => _, "ts" => _, "user" => _, "text" => _} = event) do
-    {:ok, event}
-  end
-
-  defp validate_message_event(_event) do
-    Logger.warning("Invalid message event: missing required fields")
-    {:error, :invalid_message_event}
   end
 
   defp get_or_create_channel(channel_id) do
@@ -417,9 +458,10 @@ defmodule DAU.Slack do
   Returns the parent message ID if it exists.
   Logs a warning if the parent message is not found.
   """
-  @spec get_parent_id(map(), String.t(), String.t(), String.t()) :: String.t() | nil
-  def get_parent_id(event, event_ts, team_id, channel_record_id) do
-    thread_ts = get_in(event, ["thread_ts"]) || get_in(event, ["message", "thread_ts"])
+  @spec get_parent_id(%SlackEvent{}, String.t(), String.t(), String.t()) :: String.t() | nil
+  def get_parent_id(%SlackEvent{} = event, event_ts, team_id, channel_record_id) do
+    # thread_ts = get_in(event, ["thread_ts"]) || get_in(event, ["message", "thread_ts"])
+    thread_ts = event.thread_ts || (event.event_message && event.event_message.message_thread_ts)
 
     if is_nil(thread_ts) or event_ts == thread_ts do
       nil

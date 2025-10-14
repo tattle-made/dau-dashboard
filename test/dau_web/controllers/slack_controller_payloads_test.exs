@@ -9,19 +9,22 @@ defmodule DAUWeb.SlackControllerPayloadsTest do
   import DAU.SlackPayloadFixtures
 
   test "process Slack payloads in chronological order", %{conn: conn} do
-    for payload <- DAU.SlackPayloadFixtures.all_payloads() do
+    DAU.SlackPayloadFixtures.all_payloads()
+    |> Enum.with_index()
+    |> Enum.each(fn {payload, index} ->
+      test_name = payload["test"] || "Test case #{index + 1}"
+      test_case = "[#{index + 1}] #{test_name}"
+
       conn = post(conn, "/slack", payload)
-
-      assert conn.status in [200]
-
-      IO.puts("passed")
+      assert conn.status in [200], "Test case Failed: #{test_case}"
+      IO.puts("✅ #{test_case}")
 
       if event_id = payload["event_id"] do
-        assert Repo.get_by(SlackEvent, event_id: event_id)
+        assert Repo.get_by(SlackEvent, event_id: event_id), "Test case Failed, unable to get processed event_id : #{test_case}"
       end
 
-      Process.sleep(1000)
-    end
+      Process.sleep(50)
+    end)
   end
 
 end

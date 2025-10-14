@@ -9,7 +9,7 @@ defmodule DAUWeb.SlackController do
   end
 
   def create(conn, %{"event" => %{"type" => _} = event, "event_id" => event_id, "team_id" => team_id} = payload) do
-    IO.inspect(payload)
+    # IO.inspect(payload)
 
     if Slack.get_event_from_event_id(event_id) == nil do
       case Slack.process_message(event, event_id, team_id, payload) do
