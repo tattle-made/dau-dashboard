@@ -2,6 +2,13 @@ defmodule DAU.Slack do
   @moduledoc """
   Module for handling Slack-related operations including message processing,
   channel management, and event handling.
+
+  - The payload processing will start from the process_message() function (called from the slack_controller).
+  - This function would first validate the received event againts the DAU.Slack.SlackEvent schema.
+  - After receiving a valid %SlackEvent{} struct, the get_event_type() function analyses the type of event: new, edit, delete, broadcasted, repeated (in case Slack sends
+  the same payload again). The broadcasted here refers to the event when a thread message is "also send to channel".
+  - After receiveing the event's type, a relevant function is further called to handle the event.
+
   """
 
   import Ecto.Query
@@ -62,10 +69,8 @@ defmodule DAU.Slack do
       end
 
     ts = get_in(event, ["ts"])
-    IO.puts("HELOOOOOOOOOOOOOOOOOOoo")
-    IO.inspect(ts)
     ts_utc = case parse_unix_string_to_utc_datetime(ts) do
-      {:ok, dt} -> dt |> IO.inspect(label: "UTC TIMESTAMP: ")
+      {:ok, dt} -> dt
       {:error, reason} ->
         Logger.warning("Failed to parse timestamp #{ts}: #{inspect(reason)}")
         nil
@@ -322,7 +327,6 @@ defmodule DAU.Slack do
           {:error, :message_to_broadcast_not_found}
 
         existing_message ->
-          IO.inspect(existing_message, label: "EXISTING MESSAGES: ")
           updated_attrs = %{
             is_broadcasted: true
           }

@@ -1,53 +1,5 @@
 defmodule DAU.SlackPayloadFixtures do
 
-  def all_payloads2() do
-    [%{
-      "test" => "Text on Main Channel",
-      "api_app_id" => "A09DVQ7TY1F",
-      "authorizations" => [
-        %{
-          "enterprise_id" => nil,
-          "is_bot" => true,
-          "is_enterprise_install" => false,
-          "team_id" => "T09DGSRBZRC",
-          "user_id" => "U09DH07QHHC"
-        }
-      ],
-      "context_enterprise_id" => nil,
-      "context_team_id" => "T09DGSRBZRC",
-      "event" => %{
-        "blocks" => [
-          %{
-            "block_id" => "ywk4G",
-            "elements" => [
-              %{
-                "elements" => [%{"text" => "Text on Main thread", "type" => "text"}],
-                "type" => "rich_text_section"
-              }
-            ],
-            "type" => "rich_text"
-          }
-        ],
-        "channel" => "C09DGSRHCKY",
-        "channel_type" => "channel",
-        "client_msg_id" => "63472ab6-203d-492c-be24-d2ef6c55cb07",
-        "event_ts" => "1757316344.296449",
-        "team" => "T09DGSRBZRC",
-        "text" => "Text on Main thread",
-        "ts" => "1757316344.296449",
-        "type" => "message",
-        "user" => "U09DDA47RT7"
-      },
-      "event_context" => "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDlER1NSQlpSQyIsImFpZCI6IkEwOURWUTdUWTFGIiwiY2lkIjoiQzA5REdTUkhDS1kifQ",
-      "event_id" => "Ev09E5DD5W92",
-      "event_time" => 1757316344,
-      "is_ext_shared_channel" => false,
-      "team_id" => "T09DGSRBZRC",
-      "token" => "6DuNHhx3Y3wKGBsTfQHrpkcK",
-      "type" => "event_callback"
-    }]
-
-   end
   def all_payloads() do
 # Contents
 

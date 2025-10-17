@@ -11,21 +11,19 @@ defmodule DAUWeb.SlackArchivesHomeLive do
   end
 
   def handle_params(unsigned_params, uri, socket) do
-    IO.inspect(unsigned_params)
-    IO.inspect(uri)
-
     channel_id = get_in(unsigned_params, ["channel"])
 
-    channel = case channel_id do
-      nil -> nil
-      channel_id -> Slack.get_slack_channel_from_channel_id(channel_id)
-    end
+    channel =
+      case channel_id do
+        nil -> nil
+        channel_id -> Slack.get_slack_channel_from_channel_id(channel_id)
+      end
 
-    channel_messages = get_channel_messages(channel) |> Enum.filter(fn c -> is_nil(Map.get(c, :parent_id))  end)
+    channel_messages =
+      get_channel_messages(channel) |> Enum.filter(fn c -> is_nil(Map.get(c, :parent_id)) end)
 
     socket = assign(socket, current_channel: channel, channel_messages: channel_messages)
 
-    IO.inspect(channel_messages, label: "CHANNEL MESSAGES: ")
     {:noreply, socket}
   end
 
@@ -34,10 +32,7 @@ defmodule DAUWeb.SlackArchivesHomeLive do
   end
 
   defp get_channel_messages(channel) do
-
     Slack.get_all_channel_messages(channel.id)
-
-
   end
 
   def handle_event("select-channel", params, socket) do
@@ -45,9 +40,6 @@ defmodule DAUWeb.SlackArchivesHomeLive do
     socket = socket |> redirect(to: "/slack-archives?channel=#{params["channel_id"]}")
     {:noreply, socket}
   end
-
-
-
 
   # def render(assigns) do
   #   ~H"""
