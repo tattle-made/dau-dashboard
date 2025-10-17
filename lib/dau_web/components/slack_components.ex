@@ -1,7 +1,5 @@
 defmodule DAUWeb.Components.SlackComponents do
   use Phoenix.Component
-  import Phoenix.HTML
-  import Phoenix.HTML.Link
 
   attr :message, :map, required: true
   attr :show_thread_indicator, :boolean, default: false
@@ -9,7 +7,7 @@ defmodule DAUWeb.Components.SlackComponents do
 
   def message(assigns) do
     ~H"""
-    <div class={["message mb-4 p-4 border rounded-lg", @message.is_deleted && "bg-gray-100"]}>
+    <div class="message mb-4 p-4 border rounded-lg">
       <div class="flex items-start gap-3">
         <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
           <%= String.first(@message.user || "?") %>
@@ -26,8 +24,13 @@ defmodule DAUWeb.Components.SlackComponents do
           </div>
 
           <div class="message-content">
-            <%= if @message.text do %>
-              <p class="whitespace-pre-wrap"><%= @message.text %></p>
+            <%= if @message.is_deleted do %>
+              <p class="text-gray-400 italic">This message was deleted</p>
+            <% else %>
+              <%= if @message.text do %>
+                <p class="whitespace-pre-wrap" id={"message-#{@message.ts}"} phx-hook="Markdown"><%= DAU.Markdown.render(@message.text) %>
+                </p>
+              <% end %>
             <% end %>
 
             <.files files={@message.files} />
@@ -77,7 +80,7 @@ defmodule DAUWeb.Components.SlackComponents do
                           <%= if reply.is_edited, do: "(edited)" %>
                         </span>
                       </div>
-                      <p class="text-sm mb-2"><%= reply.text %></p>
+                      <p class="text-sm mb-2"><%= DAU.Markdown.render(reply.text) %></p>
                       <.files files={reply.files} />
                     </div>
                   <% end %>
