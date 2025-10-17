@@ -78,10 +78,19 @@ defmodule DAUWeb.Components.SlackComponents do
                           |> Timex.Timezone.convert("Asia/Kolkata")
                           |> Timex.format!("{Mshort} {D}, {h12}:{m} {AM} IST") %>
                           <%= if reply.is_edited, do: "(edited)" %>
+                          <%= if reply.is_broadcasted, do: "(broadcasted to channel)" %>
                         </span>
                       </div>
-                      <p class="text-sm mb-2"><%= DAU.Markdown.render(reply.text) %></p>
-                      <.files files={reply.files} />
+                      <div class="message-content">
+                        <%= if reply.is_deleted do %>
+                          <p class="text-gray-400 italic text-sm">This message was deleted</p>
+                        <% else %>
+                          <%= if reply.text do %>
+                            <p class="text-sm mb-2"><%= DAU.Markdown.render(reply.text) %></p>
+                          <% end %>
+                          <.files files={reply.files} />
+                        <% end %>
+                      </div>
                     </div>
                   <% end %>
                 </div>

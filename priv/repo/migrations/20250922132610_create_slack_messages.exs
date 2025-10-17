@@ -18,8 +18,11 @@ defmodule DAU.Repo.Migrations.CreateSlackMessages do
 
       timestamps(type: :utc_datetime)
     end
+
     create unique_index(:slack_messages, [:team, :channel_id, :ts],
-    name: :slack_messages_team_channel_ts_index
-  )
+             name: :slack_messages_team_channel_ts_index
+           )
+
+    create index(:slack_messages, [:ts_utc], name: :slack_messages_ts_utc_index)
   end
 end
