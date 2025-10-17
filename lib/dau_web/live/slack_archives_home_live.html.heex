@@ -1,0 +1,60 @@
+<div class="flex h-[80vh]">
+  <!-- Left Sidebar -->
+  <div class="w-1/4 h-full border-r overflow-hidden">
+    <div class="p-4 border-b">
+      <h2>Channels List</h2>
+    </div>
+    <div class="h-full overflow-auto">
+      <%= if Enum.empty?(@channels) do %>
+        <div class="p-4 text-gray-500">No channels available</div>
+      <% else %>
+        <%= for channel <- @channels do %>
+          <div
+            class="p-4 border-b cursor-pointer hover:bg-gray-200"
+            phx-click={
+              JS.push("select-channel", value: %{id: channel.id, channel_id: channel.channel_id})
+            }
+          >
+            <%= channel.channel_name || channel.channel_id %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="p-4 border-b">
+      <h2>
+        <%= if @current_channel do %>
+          <%= @current_channel.channel_name || @current_channel.channel_id %>
+        <% else %>
+          <span class="text-gray-500">No Channel is Selected</span>
+        <% end %>
+      </h2>
+    </div>
+    <div class="flex-1 p-4 overflow-auto">
+      <%= for message <- @channel_messages do %>
+        <.message
+          message={message}
+          show_thread_indicator={true}
+          on_thread_toggle={
+            JS.toggle(
+              to: "#thread-#{message.id}",
+              in: {
+                "transition-all duration-300 ease-out",
+                "opacity-0 max-h-0 overflow-hidden",
+                "opacity-100 max-h-[1000px] overflow-visible"
+              },
+              out: {
+                "transition-all duration-200 ease-in",
+                "opacity-100 max-h-[1000px] overflow-visible",
+                "opacity-0 max-h-0 overflow-hidden"
+              },
+              time: 300
+            )
+          }
+        />
+      <% end %>
+    </div>
+  </div>
+</div>

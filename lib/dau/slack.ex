@@ -4,6 +4,7 @@ defmodule DAU.Slack do
   channel management, and event handling.
   """
 
+  import Ecto.Query
   alias DAU.Repo
   alias DAU.Slack.Channel
   alias DAU.Slack.Message
@@ -35,6 +36,17 @@ defmodule DAU.Slack do
     Repo.get_by(Message, ts: ts, channel_id: channel_id, team: team_id)
   end
 
+  def get_all_channels() do
+    Repo.all(Channel)
+  end
+
+  def get_all_channel_messages(channel_id) do
+    Message
+    |> where([m], m.channel_id == ^channel_id)
+    |> preload([:parent, :thread_messages])
+    |> Repo.all()
+  end
+
   def validate_slack_event(event) when is_map(event) do
     event_message =
       if not is_nil(get_in(event, ["message"])) do
@@ -49,13 +61,24 @@ defmodule DAU.Slack do
         nil
       end
 
+    ts = get_in(event, ["ts"])
+    IO.puts("HELOOOOOOOOOOOOOOOOOOoo")
+    IO.inspect(ts)
+    ts_utc = case parse_unix_string_to_utc_datetime(ts) do
+      {:ok, dt} -> dt |> IO.inspect(label: "UTC TIMESTAMP: ")
+      {:error, reason} ->
+        Logger.warning("Failed to parse timestamp #{ts}: #{inspect(reason)}")
+        nil
+    end
+
     mapped_attrs = %{
       event_type: get_in(event, ["type"]),
       event_subtype: get_in(event, ["subtype"]),
       event_deleted_ts: get_in(event, ["deleted_ts"]),
       previous_message: get_in(event, ["previous_message"]),
       channel: get_in(event, ["channel"]),
-      ts: get_in(event, ["ts"]),
+      ts: ts,
+      ts_utc: ts_utc,
       user: get_in(event, ["user"]),
       text: get_in(event, ["text"]),
       thread_ts: get_in(event, ["thread_ts"]),
@@ -80,6 +103,35 @@ defmodule DAU.Slack do
   end
 
   @doc """
+  Converts Unix epoch time string into a UTC timestamp.
+  Example:
+  iex(6)> TestModule.parse_epoch_string_to_utc_datetime("1757316344.296449")
+          {:ok, ~U[2025-09-08 07:25:44.296449Z]}
+
+  """
+  def parse_unix_string_to_utc_datetime(epoch_str) when is_binary(epoch_str) do
+    epoch_str = String.trim(epoch_str)
+
+    {secs_str, frac_str} =
+      case String.split(epoch_str, ".", parts: 2) do
+        [s] -> {s, ""}         # no fraction provided
+        [s, f] -> {s, f}
+      end
+
+    with {secs, ""} <- Integer.parse(secs_str),
+         frac6 = frac_str |> String.pad_trailing(6, "0") |> String.slice(0, 6),
+         {micros_frac, ""} <- Integer.parse(frac6),
+         micros = secs * 1_000_000 + micros_frac,
+         {:ok, dt} <- DateTime.from_unix(micros, :microsecond) do
+      {:ok, dt}
+    else
+      :error -> {:error, :invalid_number}
+      {:error, _} -> {:error, :invalid_unix_time}
+      _ -> {:error, :invalid_format}
+    end
+  end
+
+  @doc """
   Processes a Slack message event based on its type (delete, edit, or new).
 
   Returns `{:ok, result}` on success or `{:error, reason}` on failure.
@@ -91,6 +143,9 @@ defmodule DAU.Slack do
       case get_event_type(slack_event, team_id) do
         {:ok, :delete} ->
           process_message_delete(slack_event, team_id, payload)
+
+        {:ok, :message_broadcast} ->
+          process_message_broadcast(slack_event, team_id, payload)
 
         {:ok, :edit} ->
           process_message_edit(slack_event, event, team_id, payload)
@@ -116,13 +171,16 @@ defmodule DAU.Slack do
     event_subtype = event.event_subtype
     event_deleted_ts = event.event_deleted_ts
     previous_message = event.event_message || nil
-    message_subtype = get_in(event, [Access.key(:event_message), Access.key(:message_text)])
+    message_subtype = get_in(event, [Access.key(:event_message), Access.key(:message_subtype)])
     message_edited = get_in(event, [Access.key(:event_message), Access.key(:message_edited)])
 
     cond do
       event_subtype == "message_deleted" or message_subtype == "tombstone" or
           !is_nil(event_deleted_ts) ->
         {:ok, :delete}
+
+      message_subtype == "thread_broadcast" ->
+        {:ok, :message_broadcast}
 
       !is_nil(message_edited) or !is_nil(previous_message) ->
         {:ok, :edit}
@@ -243,12 +301,49 @@ defmodule DAU.Slack do
   end
 
   @doc """
+  Processes an broadcast event for an existing Slack thread message.
+  """
+  @spec process_message_broadcast(%SlackEvent{}, String.t(), map()) ::
+          {:ok, atom()} | {:error, atom()}
+  def process_message_broadcast(
+        %SlackEvent{event_message: message} = event,
+        team_id,
+        _payload
+      ) do
+    with ts <- Map.get(message || %{}, :message_ts, event.ts),
+         event_channel_id when not is_nil(event_channel_id) <- event.channel,
+         channel when not is_nil(channel) <- get_slack_channel_from_channel_id(event_channel_id),
+         existing_message when not is_nil(existing_message) <-
+           get_unique_slack_message(ts, channel.id, team_id) do
+
+
+      case existing_message do
+        nil ->
+          {:error, :message_to_broadcast_not_found}
+
+        existing_message ->
+          IO.inspect(existing_message, label: "EXISTING MESSAGES: ")
+          updated_attrs = %{
+            is_broadcasted: true
+          }
+
+          existing_message
+          |> Message.changeset(updated_attrs)
+          |> Repo.update()
+
+          {:ok, :message_broadcast_processed}
+      end
+    end
+  end
+
+  @doc """
   Processes an edit event for an existing Slack message.
 
   Updates the message text, URLs, and files if they've changed.
   Returns `{:ok, :message_edit_processed}` on success or `{:error, reason}` on failure.
   """
-  @spec process_message_edit(%SlackEvent{}, map(), String.t(), map()) :: {:ok, atom()} | {:error, atom()}
+  @spec process_message_edit(%SlackEvent{}, map(), String.t(), map()) ::
+          {:ok, atom()} | {:error, atom()}
   def process_message_edit(
         %SlackEvent{event_message: message} = event,
         raw_event,
@@ -263,8 +358,6 @@ defmodule DAU.Slack do
       text = message.message_text
       urls = get_message_urls(raw_event)
       files = get_message_files(raw_event)
-
-      existing_message = get_unique_slack_message(ts, channel.id, team_id)
 
       case existing_message do
         nil ->
@@ -306,12 +399,13 @@ defmodule DAU.Slack do
   end
 
   def process_new_slack_message(%SlackEvent{} = event, raw_event, team_id, _payload) do
-    with %{channel: channel_id, ts: ts, user: user, text: text} = _event <- event,
+    with %{channel: channel_id, ts: ts, ts_utc: ts_utc, user: user, text: text} = _event <- event,
          {:ok, channel} <- get_or_create_channel(channel_id) do
       Logger.debug("Processing new message from user #{user} in channel #{channel_id}")
 
       message_attrs = %{
         ts: ts,
+        ts_utc: ts_utc,
         team: team_id,
         user: user,
         text: text,

@@ -11,6 +11,7 @@ defmodule DAU.Slack.SlackEvent do
     field :thread_ts, :string, default: nil
     field :channel, :string, default: nil
     field :ts, :string
+    field :ts_utc, :utc_datetime_usec
     field :user, :string, default: nil
     field :text, :string, default: nil
 
@@ -33,10 +34,11 @@ defmodule DAU.Slack.SlackEvent do
       :thread_ts,
       :channel,
       :ts,
+      :ts_utc,
       :user,
       :text
     ])
-    |> validate_required([:ts, :channel])
+    |> validate_required([:ts,:ts_utc, :channel])
     |> cast_embed(:event_message, with: &event_message_changeset/2)
   end
 

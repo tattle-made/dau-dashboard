@@ -4,12 +4,14 @@ defmodule DAU.Slack.Message do
 
   schema "slack_messages" do
     field :ts, :string
+    field :ts_utc, :utc_datetime_usec
     field :team, :string
     field :user, :string
     field :text, :string
     field :urls, {:array, :string}
     field :is_deleted, :boolean, default: false
     field :is_edited, :boolean, default: false
+    field :is_broadcasted, :boolean, default: false
 
     belongs_to :channel, DAU.Slack.Channel
     belongs_to :parent, DAU.Slack.Message
@@ -21,9 +23,9 @@ defmodule DAU.Slack.Message do
 
   def changeset(message, params \\ %{}) do
     message
-    |> cast(params, [:ts, :team, :channel_id, :user, :text, :urls, :parent_id, :is_deleted, :is_edited])
+    |> cast(params, [:ts, :ts_utc, :team, :channel_id, :user, :text, :urls, :parent_id, :is_deleted, :is_edited, :is_broadcasted])
     |> cast_embed(:files)
-    |> validate_required([:ts, :team, :channel_id, :user])
+    |> validate_required([:ts, :ts_utc, :team, :channel_id, :user])
     |> assoc_constraint(:channel)
     |> foreign_key_constraint(:parent_id)
     |> unique_constraint(:ts, name: :slack_messages_team_channel_ts_index)
