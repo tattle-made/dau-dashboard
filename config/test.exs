@@ -42,3 +42,5 @@ config :dau, :aws_client, AWSS3.Sandbox
 config :dau, AWSS3, file_prefix: "temp"
 
 config :dau, :gupshup_client, DAU.UserMessage.MessageDelivery.Sandbox
+
+config :dau, :slack_process_async, false

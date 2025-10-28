@@ -59,7 +59,9 @@ defmodule DAU.MixProject do
       {:elixir_uuid, "~> 1.2"},
       {:httpoison, "~> 2.0"},
       {:timex, "~> 3.0"},
-      {:sentry, "~> 10.2.0"}
+      {:sentry, "~> 10.2.0"},
+      {:earmark, "~> 1.4.48"},
+      {:html_sanitize_ex, "~> 1.4"}
     ]
   end
 

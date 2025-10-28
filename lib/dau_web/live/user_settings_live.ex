@@ -69,6 +69,20 @@ defmodule DAUWeb.UserSettingsLive do
           </:actions>
         </.simple_form>
       </div>
+
+      <div class="pt-8">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Other Links</h3>
+        <div class="mt-4 space-y-2">
+          <div>
+            <a href={~p"/view_external_escalations"} class="text-blue-600 hover:text-blue-800">
+              View External Escalations
+            </a> <br/>
+            <a href={~p"/slack-archives"} class="text-blue-600 hover:text-blue-800">
+              View Slack Archives
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
     """
   end

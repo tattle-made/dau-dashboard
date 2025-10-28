@@ -28,6 +28,22 @@ defmodule DAUWeb.Router do
     post "/", ExternalEscalationController, :create
   end
 
+  scope "/slack", DAUWeb do
+    pipe_through :api
+    post "/", SlackController, :create
+  end
+
+  scope "/slack-archives", DAUWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :slack_archives,
+      on_mount: [{DAUWeb.UserAuth, :ensure_authenticated}] do
+        live "/", SlackArchivesHomeLive, :index
+    end
+
+
+  end
+
   scope "/gupshup", DAUWeb do
     pipe_through :api
 
