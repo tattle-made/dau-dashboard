@@ -41,6 +41,20 @@ defmodule DAUWeb.SlackArchivesHomeLive do
     {:noreply, socket}
   end
 
+  def handle_event("sync_channel_name",_params, socket) do
+    IO.inspect(socket.assigns)
+    with %{current_channel: channel} <- socket.assigns,
+         {:ok, updated_channel} <- DAU.Slack.get_and_update_channel_details(channel.channel_id, channel) do
+      {:noreply,
+        socket
+        |> assign(:current_channel, updated_channel)
+        |> put_flash(:info, "Channel name updated successfully")}
+    else
+      _ ->
+        {:noreply, put_flash(socket, :error, "Failed to update channel name")}
+    end
+  end
+
   # def render(assigns) do
   #   ~H"""
   #   <div class="flex h-[80vh]">
