@@ -50,7 +50,8 @@ defmodule DAU.Slack do
   def get_all_channel_messages(channel_id) do
     Message
     |> where([m], m.channel_id == ^channel_id)
-    |> preload([:parent, :thread_messages])
+    |> preload([:parent, thread_messages: ^from(t in Message, order_by: [asc: t.ts_utc, asc: t.id])])
+    |> order_by([m], [asc: m.ts_utc, asc: m.id])
     |> Repo.all()
   end
 
