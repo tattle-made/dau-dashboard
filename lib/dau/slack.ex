@@ -50,8 +50,11 @@ defmodule DAU.Slack do
   def get_all_channel_messages(channel_id) do
     Message
     |> where([m], m.channel_id == ^channel_id)
-    |> preload([:parent, thread_messages: ^from(t in Message, order_by: [asc: t.ts_utc, asc: t.id])])
-    |> order_by([m], [asc: m.ts_utc, asc: m.id])
+    |> preload([
+      :parent,
+      thread_messages: ^from(t in Message, order_by: [asc: t.ts_utc, asc: t.id])
+    ])
+    |> order_by([m], asc: m.ts_utc, asc: m.id)
     |> Repo.all()
   end
 
@@ -70,12 +73,16 @@ defmodule DAU.Slack do
       end
 
     ts = get_in(event, ["ts"])
-    ts_utc = case parse_unix_string_to_utc_datetime(ts) do
-      {:ok, dt} -> dt
-      {:error, reason} ->
-        Logger.warning("Failed to parse timestamp #{ts}: #{inspect(reason)}")
-        nil
-    end
+
+    ts_utc =
+      case parse_unix_string_to_utc_datetime(ts) do
+        {:ok, dt} ->
+          dt
+
+        {:error, reason} ->
+          Logger.warning("Failed to parse timestamp #{ts}: #{inspect(reason)}")
+          nil
+      end
 
     mapped_attrs = %{
       event_type: get_in(event, ["type"]),
@@ -120,7 +127,8 @@ defmodule DAU.Slack do
 
     {secs_str, frac_str} =
       case String.split(epoch_str, ".", parts: 2) do
-        [s] -> {s, ""}         # no fraction provided
+        # no fraction provided
+        [s] -> {s, ""}
         [s, f] -> {s, f}
       end
 
@@ -146,7 +154,7 @@ defmodule DAU.Slack do
   def process_message(event, event_id, team_id, payload) do
     with {:ok, _created_event} <- create_slack_event_from_event_id(event_id),
          {:ok, slack_event} <- validate_slack_event(event) do
-      case get_event_type(slack_event, team_id) do
+      case get_event_type(slack_event, event, team_id) do
         {:ok, :delete} ->
           process_message_delete(slack_event, team_id, payload)
 
@@ -158,6 +166,9 @@ defmodule DAU.Slack do
 
         {:ok, :duplicate} ->
           {:ok, :duplicate_message}
+
+        {:ok, :ignore} ->
+          {:ok, :ignore}
 
         {:ok, :new} ->
           process_new_slack_message(slack_event, event, team_id, payload)
@@ -173,7 +184,40 @@ defmodule DAU.Slack do
     end
   end
 
-  def get_event_type(%SlackEvent{} = event, team_id) do
+  defp ignore_preview?(raw_event) do
+    event_message_attachments = get_in(raw_event, ["message", "attachments"])
+    event_prev_message_attachments = get_in(raw_event, ["previous_message", "attachments"])
+    edited = get_in(raw_event, ["message", "edited"])
+
+    case edited do
+      nil ->
+        if is_nil(event_prev_message_attachments) and not is_nil(event_message_attachments) do
+          true
+        else
+          false
+        end
+
+      _edited ->
+        false
+    end
+  end
+
+  @doc """
+  Get the event payload type.
+
+  Specifically regarding Edit payloads:
+
+  When a message has a preview, after receiving the new message payload, another payload gets sent with the preview attachment.
+  This payload is treated as an edit payload. It doesn't change the contents BUT it marks the is_edited property to true.
+  The private function (ignore_preview?) would compare the previous message and current message (both are present in the payload), if current message has an
+  attachment and the previous one didn't, then ignore. It also checks for the "edit" keyowrd in event.message, if present, process it regardless anything.
+  Some unique scenarios:
+  - User sends message with some text and 2 images, then deleted one image: In the payload we won't see edited key, but the payload is still for edit. Therefore,
+  cannot use strict check for the "edited" keyword.
+  - User sends a link (generates a preview). Then later, in the edit adds one more link (with a new preview), After editing, it sends 2 payloads, but both of them has
+  "edited" keyword in the event.message. But we can just process it, as is_edited is already set to true before, so this won't change anything now.
+  """
+  def get_event_type(%SlackEvent{} = event, raw_event, team_id) do
     event_subtype = event.event_subtype
     event_deleted_ts = event.event_deleted_ts
     previous_message = event.event_message || nil
@@ -188,8 +232,11 @@ defmodule DAU.Slack do
       message_subtype == "thread_broadcast" ->
         {:ok, :message_broadcast}
 
-      !is_nil(message_edited) or !is_nil(previous_message) ->
+      (!is_nil(message_edited) or !is_nil(previous_message)) and not ignore_preview?(raw_event) ->
         {:ok, :edit}
+
+      ignore_preview?(raw_event) ->
+        {:ok, :ignore}
 
       check_repeated_payload?(event, team_id) ->
         {:ok, :duplicate}
@@ -321,8 +368,6 @@ defmodule DAU.Slack do
          channel when not is_nil(channel) <- get_slack_channel_from_channel_id(event_channel_id),
          existing_message when not is_nil(existing_message) <-
            get_unique_slack_message(ts, channel.id, team_id) do
-
-
       case existing_message do
         nil ->
           {:error, :message_to_broadcast_not_found}
@@ -355,6 +400,8 @@ defmodule DAU.Slack do
         team_id,
         _payload
       ) do
+    IO.puts("INSIDE MESSAGE EDIT EVENT HANDLER!")
+
     with ts <- Map.get(message || %{}, :message_ts, event.ts),
          event_channel_id when not is_nil(event_channel_id) <- event.channel,
          channel when not is_nil(channel) <- get_slack_channel_from_channel_id(event_channel_id),
