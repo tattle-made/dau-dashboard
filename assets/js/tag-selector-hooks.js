@@ -316,7 +316,8 @@ let all_tags = [
   "Kumbh Mela",
   "Naural Disaster Fake",
   "Op Sindoor",
-  "A.I. Slop"
+  "A.I. Slop",
+  "Israel-Iran strikes"
 ];
 
 function make_chip(tag, callback) {
