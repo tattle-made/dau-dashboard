@@ -65,6 +65,11 @@ defmodule DAU.Feed.Common do
 
     belongs_to :hash_meta, HashMeta
 
+    many_to_many :tag_joins, DAU.OpenData.Tag, join_through: DAU.OpenData.CommonTag
+
+    many_to_many :open_data_assessment_reports, DAU.OpenData.AssessmentReport,
+      join_through: DAU.OpenData.CommonAssessmentReport
+
     timestamps(type: :utc_datetime)
   end
 

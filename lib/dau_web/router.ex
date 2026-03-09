@@ -21,6 +21,8 @@ defmodule DAUWeb.Router do
 
     get "/", PageController, :home
     live "/outbox", SearchLive.Outbox
+    # live "/open-data", OpenDataLive, :index
+    live "/feed-open", FeedOpenLive, :index
   end
 
   scope "/external-escalations", DAUWeb do

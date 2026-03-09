@@ -1,0 +1,321 @@
+<div class="text-xl font-normal text-slate-900 mb-4">
+  <h1><%= "Showing all #{@query_count} queries" %></h1>
+</div>
+<!-- Filters Section -->
+<div class="bg-white rounded-lg border border-zinc-200 p-4 mb-4">
+  <div class="flex justify-between items-center mb-3">
+    <h2 class="text-lg font-semibold text-slate-900">Filters</h2>
+    <.link href={
+      ~p"/feed-open?page_num=1&sort=newest&media_type=all&verification_status=all&tag_category=all&tag=all"
+    }>
+      <p class="text-blue-600 text-sm hover:text-blue-700 cursor-pointer">clear filters</p>
+    </.link>
+  </div>
+
+  <div class="flex flex-wrap items-end gap-x-2 gap-y-2">
+    <!-- Date Range -->
+    <div class="shrink-0">
+      <p class="mb-1 text-xs font-medium text-slate-700">Date Range</p>
+      <div id="date-range-selector" phx-hook="DateSelector" class="flex items-center gap-2">
+        <div class="flex items-center gap-1">
+          <label for="from" class="text-[11px] font-medium text-slate-600">From</label>
+          <input
+            class="h-8 w-[8.5rem] text-xs dark:bg-dark-bg block rounded border border-gray-300 px-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+            type="date"
+            id="from"
+            name="from"
+            value={Keyword.get(@search_params, :from)}
+          />
+        </div>
+        <div class="flex items-center gap-1">
+          <label for="to" class="text-[11px] font-medium text-slate-600">To</label>
+          <input
+            class="h-8 w-[8.5rem] text-xs dark:bg-dark-bg block rounded border border-gray-300 px-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+            type="date"
+            id="to"
+            name="to"
+            value={Keyword.get(@search_params, :to)}
+          />
+        </div>
+      </div>
+    </div>
+    <!-- Media Type -->
+    <div class="shrink-0">
+      <p class="mb-1 text-xs font-medium text-slate-700">Media Type</p>
+      <select
+        id="media_type_select"
+        phx-hook="FilterSelect"
+        data-name="media_type"
+        class="h-8 block w-full md:w-[8rem] rounded border border-gray-300 bg-white px-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      >
+        <option value="video" selected={Keyword.get(@search_params, :media_type) == "video"}>
+          Video
+        </option>
+        <option value="audio" selected={Keyword.get(@search_params, :media_type) == "audio"}>
+          Audio
+        </option>
+        <option value="all" selected={Keyword.get(@search_params, :media_type) == "all"}>
+          All
+        </option>
+      </select>
+    </div>
+    <!-- Verification Status -->
+    <div class="shrink-0">
+      <p class="mb-1 text-xs font-medium text-slate-700">Verification Status</p>
+      <select
+        id="verification_status_select"
+        phx-hook="FilterSelect"
+        data-name="verification_status"
+        class="h-8 block w-full md:w-[10.5rem] rounded border border-gray-300 bg-white px-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      >
+        <option
+          value="deepfake"
+          selected={Keyword.get(@search_params, :verification_status) == "deepfake"}
+        >
+          Deepfake
+        </option>
+        <option
+          value="manipulated"
+          selected={Keyword.get(@search_params, :verification_status) == "manipulated"}
+        >
+          Manipulated
+        </option>
+        <option
+          value="not_manipulated"
+          selected={Keyword.get(@search_params, :verification_status) == "not_manipulated"}
+        >
+          Not Manipulated
+        </option>
+        <option
+          value="ai_generated"
+          selected={Keyword.get(@search_params, :verification_status) == "ai_generated"}
+        >
+          AI Generated
+        </option>
+        <option
+          value="not_ai_generated"
+          selected={Keyword.get(@search_params, :verification_status) == "not_ai_generated"}
+        >
+          Not AI Generated
+        </option>
+        <option
+          value="inconclusive"
+          selected={Keyword.get(@search_params, :verification_status) == "inconclusive"}
+        >
+          Inconclusive
+        </option>
+        <option
+          value="cheapfake"
+          selected={Keyword.get(@search_params, :verification_status) == "cheapfake"}
+        >
+          Cheapfake
+        </option>
+        <option
+          value="out_of_scope"
+          selected={Keyword.get(@search_params, :verification_status) == "out_of_scope"}
+        >
+          Out of Scope
+        </option>
+        <option
+          value="unsupported_language"
+          selected={Keyword.get(@search_params, :verification_status) == "unsupported_language"}
+        >
+          Unsupported Language
+        </option>
+        <option
+          value="spam"
+          selected={Keyword.get(@search_params, :verification_status) == "spam"}
+        >
+          Spam
+        </option>
+        <option value="all" selected={Keyword.get(@search_params, :verification_status) == "all"}>
+          All
+        </option>
+      </select>
+    </div>
+    <!-- Sort -->
+    <div class="shrink-0">
+      <p class="mb-1 text-xs font-medium text-slate-700">Sort By</p>
+      <select
+        id="sort_by_select"
+        phx-hook="FilterSelect"
+        data-name="sort-by"
+        class="h-8 block w-full md:w-[9rem] rounded border border-gray-300 bg-white px-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      >
+        <option value="newest" selected={Keyword.get(@search_params, :sort) == "newest"}>
+          Newest first
+        </option>
+        <option value="oldest" selected={Keyword.get(@search_params, :sort) == "oldest"}>
+          Oldest first
+        </option>
+        <option
+          value="repetition_count"
+          selected={Keyword.get(@search_params, :sort) == "repetition_count"}
+          disabled
+        >
+          Repetition count
+        </option>
+      </select>
+    </div>
+
+    <div class="shrink-0 flex items-end gap-2">
+      <div>
+        <p class="mb-1 text-xs font-medium text-slate-700">Tag Category</p>
+        <select
+          id="tag_category_select"
+          phx-hook="FilterSelect"
+          data-name="tag_category"
+          class="h-8 block w-full md:w-[11rem] rounded border border-gray-300 bg-white px-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="all" selected={Keyword.get(@search_params, :tag_category) == "all"}>
+            All Categories
+          </option>
+          <option
+            :for={category <- @tag_categories}
+            value={category.slug}
+            selected={Keyword.get(@search_params, :tag_category) == category.slug}
+          >
+            <%= category.category %>
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <p class="mb-1 text-xs font-medium text-slate-700">Tag</p>
+        <select
+          id="tag_select"
+          phx-hook="FilterSelect"
+          data-name="tag"
+          disabled={Enum.empty?(@available_tags_for_category)}
+          class="h-8 block w-full md:w-[11rem] rounded border border-gray-300 bg-white px-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+        >
+          <option value="all" selected={Keyword.get(@search_params, :tag) == "all"}>
+            All Tags
+          </option>
+          <option
+            :for={tag <- @available_tags_for_category}
+            value={tag.slug}
+            selected={Keyword.get(@search_params, :tag) == tag.slug}
+          >
+            <%= tag.name %>
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Content Section -->
+<div class="gap-4 w-full max-w-full min-w-0">
+  <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
+    <div :if={Keyword.get(@search_params, :page_num) - 1 > 0}>
+      <.link navigate={"/feed-open?#{search_param_string_for_previous_page(@search_params)}"}>
+        <.icon name="hero-arrow-left" class="h-5 w-5" />
+      </.link>
+    </div>
+    <div class="rounded-full p-2 bg-zinc-100">
+      <p><%= Keyword.get(@search_params, :page_num) %></p>
+    </div>
+
+    <.link navigate={"/feed-open?#{search_param_string_for_next_page(@search_params)}"}>
+      <.icon name="hero-arrow-right" class="h-5 w-5" />
+    </.link>
+  </div>
+
+  <.feed_open_table id="queries" rows={@queries}>
+    <:col :let={query} label="preview">
+      <div class="min-w-[10rem]">
+        <.render_preview type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
+      </div>
+    </:col>
+
+    <:col :let={query} label="media type">
+      <p class="min-w-[7rem]"><%= to_string(query.media_type) %></p>
+    </:col>
+
+    <:col :let={query} label="count">
+      <p class="min-w-[4rem]"><%= humanize_count(query.hash_meta) %></p>
+    </:col>
+
+    <:col :let={query} label="tags">
+      <div class=" flex flex-col gap-2">
+        <div :if={query.tag_joins}>
+          <%= for tag <- query.tag_joins do %>
+            <span class="w-fit rounded-sm bg-gray-200 px-2 py-0.5 text-gray-800">
+              <%= tag.name %>
+            </span>
+          <% end %>
+        </div>
+        <p :if={Enum.empty?(query.tag_joins)}>-</p>
+      </div>
+    </:col>
+    <:col :let={query} label="Factcheck Articles">
+      <%= if Enum.empty?(query.factcheck_articles) or not Enum.any?(query.factcheck_articles, fn ar -> ar.approved end) do %>
+        <div class="min-w-[20rem]">-</div>
+      <% else %>
+        <ul class="min-w-[20rem] text-xs flex flex-col gap-2">
+          <%= for article <- query.factcheck_articles do %>
+            <li :if={article.approved} class="flex min-w-0">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 break-words"
+                href={article.url}
+              >
+                <%= article.url %>
+              </a>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </:col>
+
+    <:col :let={query} label="Assessment Report">
+      <%= if is_nil(report_link(query)) do %>
+        <div class="min-w-[18rem]">-</div>
+      <% else %>
+        <div class="min-w-[18rem]">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-600 break-words"
+            href={report_link(query)}
+          >
+            <%= report_link(query) %>
+          </a>
+        </div>
+      <% end %>
+    </:col>
+
+    <:col :let={query} label="Assessment Report Tools Used">
+      <%= if Enum.empty?(report_tools(query)) do %>
+        <div class="min-w-[22rem]">-</div>
+      <% else %>
+        <ul class="min-w-[22rem] text-xs flex flex-col gap-1">
+          <%= for tool <- report_tools(query) do %>
+            <li class="break-words"><%= tool %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </:col>
+
+    <:col :let={query} label="Assessment Report Observations">
+      <%= if Enum.empty?(report_observations(query)) do %>
+        <div class="min-w-[30rem]">-</div>
+      <% else %>
+        <ul class="min-w-[30rem] text-xs flex flex-col gap-4">
+          <%= for observation <- report_observations(query) do %>
+            <li class="break-words"><%= observation %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </:col>
+
+    <:col :let={query} label="verification status">
+      <p class="min-w-[9rem]"><%= query.verification_status || "-" %></p>
+    </:col>
+
+    <:col :let={query} label="received at">
+      <p class="min-w-[12rem]"><%= humanize_date(query.inserted_at) %></p>
+    </:col>
+  </.feed_open_table>
+</div>
