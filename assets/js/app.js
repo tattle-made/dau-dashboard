@@ -29,6 +29,7 @@ import RichTextEditor from "./rich-text-editor";
 import TagSelector from "./tag-selector";
 import TagSelectorHook from "./tag-selector-hooks";
 import DateSelectorHook from "./date-selector-hook";
+import FilterSelectHook from "./filter-select-hook";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -37,6 +38,7 @@ let csrfToken = document
 let Hooks = {};
 Hooks.TagSelector = TagSelectorHook;
 Hooks.DateSelector = DateSelectorHook;
+Hooks.FilterSelect = FilterSelectHook;
 
 let liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,

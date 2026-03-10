@@ -61,7 +61,8 @@ defmodule DAU.MixProject do
       {:timex, "~> 3.0"},
       {:sentry, "~> 10.2.0"},
       {:earmark, "~> 1.4.48"},
-      {:html_sanitize_ex, "~> 1.4"}
+      {:html_sanitize_ex, "~> 1.4"},
+      {:csv, "~> 3.2"}
     ]
   end
 
