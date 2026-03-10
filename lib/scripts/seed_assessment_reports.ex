@@ -116,12 +116,16 @@ defmodule Scripts.SeedAssessmentReports do
   defp parse_string_array(value) when is_binary(value) do
     value = String.trim(value)
 
+    if value == "" do
+      []
+    else
     case Jason.decode(value) do
       {:ok, list} when is_list(list) ->
         Enum.map(list, &to_clean_string/1)
 
       _ ->
         [value]
+    end
     end
   end
 

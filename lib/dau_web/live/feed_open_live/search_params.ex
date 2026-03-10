@@ -16,7 +16,7 @@ defmodule DAUWeb.FeedOpenLive.SearchParams do
       sort: "newest",
       media_type: "all",
       from: "2024-03-01",
-      to: Date.to_iso8601(Date.utc_today()),
+      to: Timex.now("Asia/Calcutta") |> DateTime.to_date() |> Date.to_iso8601(),
       verification_status: "all",
       tag_category: "all",
       tag: "all"
@@ -49,6 +49,8 @@ defmodule DAUWeb.FeedOpenLive.SearchParams do
   end
 
   def update_search_param(search_params, value) do
+    search_params = reset_page_num(search_params)
+
     case value["name"] do
       "sort-by" ->
         Keyword.put(search_params, :sort, value["value"])
@@ -76,6 +78,10 @@ defmodule DAUWeb.FeedOpenLive.SearchParams do
       _ ->
         search_params
     end
+  end
+
+  defp reset_page_num(search_params) do
+    Keyword.put(search_params, :page_num, 1)
   end
 
   def search_param_string(search_params) do

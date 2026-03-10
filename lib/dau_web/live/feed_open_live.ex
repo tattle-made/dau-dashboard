@@ -30,10 +30,13 @@ defmodule DAUWeb.FeedOpenLive do
       tags_for_category_slug(tag_categories, Keyword.get(search_params, :tag_category))
 
     {count, results} = FeedOpenQuery.list_common_feed(search_params)
+    page_num = Keyword.get(search_params, :page_num)
+    has_next_page = page_num * FeedOpenQuery.page_size() < count
 
     socket =
       socket
-      |> assign(:page_num, Keyword.get(search_params, :page_num))
+      |> assign(:page_num, page_num)
+      |> assign(:has_next_page, has_next_page)
       |> assign(:query_count, count)
       |> assign(:search_params, search_params)
       |> assign(:queries, results)

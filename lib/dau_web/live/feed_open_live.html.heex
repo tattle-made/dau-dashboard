@@ -41,7 +41,8 @@
     </div>
     <!-- Media Type -->
     <div class="shrink-0">
-      <p class="mb-1 text-xs font-medium text-slate-700">Media Type</p>
+      <%!-- <p class="mb-1 text-xs font-medium text-slate-700">Media Type</p> --%>
+      <label for="media_type_select" class="mb-1 text-xs font-medium text-slate-700">Media Type</label>
       <select
         id="media_type_select"
         phx-hook="FilterSelect"
@@ -61,7 +62,7 @@
     </div>
     <!-- Verification Status -->
     <div class="shrink-0">
-      <p class="mb-1 text-xs font-medium text-slate-700">Verification Status</p>
+      <label for="verification_status_select" class="mb-1 text-xs font-medium text-slate-700">Verification Status</label>
       <select
         id="verification_status_select"
         phx-hook="FilterSelect"
@@ -135,7 +136,7 @@
     </div>
     <!-- Sort -->
     <div class="shrink-0">
-      <p class="mb-1 text-xs font-medium text-slate-700">Sort By</p>
+      <label for="sort_by_select" class="mb-1 text-xs font-medium text-slate-700">Sort By</label>
       <select
         id="sort_by_select"
         phx-hook="FilterSelect"
@@ -148,19 +149,19 @@
         <option value="oldest" selected={Keyword.get(@search_params, :sort) == "oldest"}>
           Oldest first
         </option>
-        <option
+        <%!-- <option
           value="repetition_count"
           selected={Keyword.get(@search_params, :sort) == "repetition_count"}
           disabled
         >
           Repetition count
-        </option>
+        </option> --%>
       </select>
     </div>
 
     <div class="shrink-0 flex items-end gap-2">
       <div>
-        <p class="mb-1 text-xs font-medium text-slate-700">Tag Category</p>
+        <label for="tag_category_select" class="mb-1 text-xs font-medium text-slate-700">Tag Category</label>
         <select
           id="tag_category_select"
           phx-hook="FilterSelect"
@@ -181,7 +182,7 @@
       </div>
 
       <div>
-        <p class="mb-1 text-xs font-medium text-slate-700">Tag</p>
+        <label for="tag_select" class="mb-1 text-xs font-medium text-slate-700">Tag</label>
         <select
           id="tag_select"
           phx-hook="FilterSelect"
@@ -216,7 +217,10 @@
       <p><%= Keyword.get(@search_params, :page_num) %></p>
     </div>
 
-    <.link navigate={"/feed-open?#{search_param_string_for_next_page(@search_params)}"}>
+    <.link
+      :if={@has_next_page}
+      navigate={"/feed-open?#{search_param_string_for_next_page(@search_params)}"}
+    >
       <.icon name="hero-arrow-right" class="h-5 w-5" />
     </.link>
   </div>

@@ -14,5 +14,6 @@ defmodule DAU.OpenData.TagsCategory do
     tags_category
     |> cast(attrs, [:category, :slug])
     |> validate_required([:category, :slug])
+    |> unique_constraint(:slug)
   end
 end

@@ -46,6 +46,8 @@ defmodule DAU.OpenData.FeedOpenQuery do
     {count, results}
   end
 
+  def page_size, do: @page_size
+
   defp maybe_filter_media_type(query, "video"), do: where(query, [c], c.media_type == :video)
   defp maybe_filter_media_type(query, "audio"), do: where(query, [c], c.media_type == :audio)
   defp maybe_filter_media_type(query, _), do: query

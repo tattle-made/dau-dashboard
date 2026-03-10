@@ -3,8 +3,8 @@ defmodule DAU.Repo.Migrations.AddTagsTable do
 
   def change do
     create table(:tags) do
-      add :name, :string
-      add :slug, :string
+      add :name, :string, null: false
+      add :slug, :string, null: false
       add :tags_category_id, references(:tags_categories)
       timestamps(type: :utc_datetime)
     end
