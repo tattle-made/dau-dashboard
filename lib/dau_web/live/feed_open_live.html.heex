@@ -42,7 +42,9 @@
     <!-- Media Type -->
     <div class="shrink-0">
       <%!-- <p class="mb-1 text-xs font-medium text-slate-700">Media Type</p> --%>
-      <label for="media_type_select" class="mb-1 text-xs font-medium text-slate-700">Media Type</label>
+      <label for="media_type_select" class="mb-1 text-xs font-medium text-slate-700">
+        Media Type
+      </label>
       <select
         id="media_type_select"
         phx-hook="FilterSelect"
@@ -62,7 +64,9 @@
     </div>
     <!-- Verification Status -->
     <div class="shrink-0">
-      <label for="verification_status_select" class="mb-1 text-xs font-medium text-slate-700">Verification Status</label>
+      <label for="verification_status_select" class="mb-1 text-xs font-medium text-slate-700">
+        Verification Status
+      </label>
       <select
         id="verification_status_select"
         phx-hook="FilterSelect"
@@ -161,7 +165,9 @@
 
     <div class="shrink-0 flex items-end gap-2">
       <div>
-        <label for="tag_category_select" class="mb-1 text-xs font-medium text-slate-700">Tag Category</label>
+        <label for="tag_category_select" class="mb-1 text-xs font-medium text-slate-700">
+          Tag Category
+        </label>
         <select
           id="tag_category_select"
           phx-hook="FilterSelect"
@@ -207,6 +213,126 @@
 </div>
 <!-- Content Section -->
 <div class="gap-4 w-full max-w-full min-w-0">
+  <details class="mb-4 w-full rounded-lg border border-slate-200 bg-white shadow-sm">
+    <summary class="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-slate-800">
+      Column Guide <span class="text-xs font-medium text-slate-500">Toggle</span>
+    </summary>
+    <div class="border-t border-slate-200 px-4 py-3 text-xs text-slate-700">
+      <div class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        DATASET 1
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-[40rem] w-full border-collapse">
+          <thead>
+            <tr class="text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              <th class="py-2 pr-3">Field Name</th>
+              <th class="py-2 pr-3">Field Description</th>
+              <th class="py-2 pr-3">Allowed Values</th>
+              <th class="py-2">Additional Notes</th>
+            </tr>
+          </thead>
+          <tbody class="align-top">
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Assessment Report</td>
+              <td class="py-2 pr-3">
+                The DAU's detailed report providing a description of the media item, the tools used to test the item for AI manipulation,
+                results from the tool testing, and the final conclusion on the existence of AI synthesised content.
+              </td>
+              <td class="py-2 pr-3">
+                URLs linking to the Assessment report published on DAU's website.
+              </td>
+              <td class="py-2">
+                Assessment reports were published for items that were deemed of public importance either because they were viral, relevant to current news, or had been reported to DAU multiple times.
+              </td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Fact Check Articles</td>
+              <td class="py-2 pr-3">
+                Lists articles published by other fact checking organizations reviewing the truth and provenance of this item.
+              </td>
+              <td class="py-2 pr-3">
+                URLs linking to articles fact-checking the media item.
+              </td>
+              <td class="py-2">-</td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">inserted at</td>
+              <td class="py-2 pr-3">
+                The date and time at which the item was received by the DAU.
+              </td>
+              <td class="py-2 pr-3">
+                "Date in format: yyyy-mm-dd<br />Time: hh:mm"
+              </td>
+              <td class="py-2">-</td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Media Type</td>
+              <td class="py-2 pr-3">
+                Classification of media item as audio, video or text.
+              </td>
+              <td class="py-2 pr-3">
+                Text, Audio, Video
+              </td>
+              <td class="py-2">-</td>
+            </tr>
+            <%!-- <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">no repeat instances</td>
+              <td class="py-2 pr-3">
+                Count of times this media was sent to DAU via the tipline.
+              </td>
+              <td class="py-2 pr-3">
+                Integers
+              </td>
+              <td class="py-2">-</td>
+            </tr> --%>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Tags</td>
+              <td class="py-2 pr-3">
+                Labels assigned to each item to describe content including themes of topics covered, language of content, types of prejudice, types of synthetic content observed, etc. Labels were assigned by fact checkers to represent certain patterns in the dataset. The data can be filtered using these tags.
+              </td>
+              <td class="py-2 pr-3">
+                List of tags by which the data can be filtered is available in the drop down menu titled All categories below.
+              </td>
+              <td class="py-2">
+                Select category, then select the specific tag by which you want to filter the data. For example: Select Language to filter data by language of content and then select Hindi in the next drop down menu to filter for items in which content language is Hindi.
+              </td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Verification status</td>
+              <td class="py-2 pr-3">
+                This is the final status assigned to each media item after testing for AI manipulation and conducting research to fact check the content. It indicates which of many categories of digital or AI manipulation the item falls under. It each item is assigned only one status.
+              </td>
+              <td class="py-2 pr-3">
+                Deepfake, Manipulated, Not Manipulated, AI Generated, Not AI Generated, Inconclusive, Cheapfake, Out of Scope, Unsupported Language, Spam
+              </td>
+              <td class="py-2">-</td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Assessment Report Tools Used</td>
+              <td class="py-2 pr-3">
+                List of AI tools used for detecting AI manipulation or synthesis. 
+              </td>
+              <td class="py-2 pr-3">
+                -
+              </td>
+              <td class="py-2">-</td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Assessment Report Observations</td>
+              <td class="py-2 pr-3">
+                Results of each type of analysis conducted on media item to detect synthesis. 
+              </td>
+              <td class="py-2 pr-3">
+                -
+              </td>
+              <td class="py-2">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+
   <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
     <div :if={Keyword.get(@search_params, :page_num) - 1 > 0}>
       <.link navigate={"/feed-open?#{search_param_string_for_previous_page(@search_params)}"}>
@@ -226,7 +352,7 @@
   </div>
 
   <.feed_open_table id="queries" rows={@queries}>
-  <%!-- <:col :let={query} label="id">
+    <%!-- <:col :let={query} label="id">
       <p class="min-w-[7rem]"><%= query.id%></p>
     </:col> --%>
     <:col :let={query} label="preview">
