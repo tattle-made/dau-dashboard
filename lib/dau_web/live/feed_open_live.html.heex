@@ -222,6 +222,9 @@
   </div>
 
   <.feed_open_table id="queries" rows={@queries}>
+  <%!-- <:col :let={query} label="id">
+      <p class="min-w-[7rem]"><%= query.id%></p>
+    </:col> --%>
     <:col :let={query} label="preview">
       <div class="min-w-[10rem]">
         <.render_preview type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
@@ -237,10 +240,10 @@
     </:col>
 
     <:col :let={query} label="tags">
-      <div class=" flex flex-col gap-2">
-        <div :if={query.tag_joins}>
+      <div class="min-w-[10rem]">
+        <div :if={query.tag_joins} class="flex flex-col gap-2">
           <%= for tag <- query.tag_joins do %>
-            <span class="w-fit rounded-sm bg-gray-200 px-2 py-0.5 text-gray-800">
+            <span class="w-fit rounded-sm bg-gray-200 px-2 py-0.5 text-gray-800 text-xs">
               <%= tag.name %>
             </span>
           <% end %>

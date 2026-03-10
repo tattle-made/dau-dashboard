@@ -94,8 +94,8 @@ defmodule DAUWeb.Components.OpenDataComponents do
     ~H"""
     <div class="flex flex-row gap-1 max-h-48 ">
       <div class="">
-        <%= if @type=="image" or @type=="video" do %>
-          <div class="w-24">
+        <%= if @type=="image" or @type=="video" or @type=="text" do %>
+          <div class="w-24 max-h-48 overflow-hidden">
             <img src={@url} />
           </div>
         <% end %>
@@ -109,11 +109,11 @@ defmodule DAUWeb.Components.OpenDataComponents do
             <source src={@url} />
           </audio>
         <% end %>
-        <%= if @type=="text" do %>
+        <%!-- <%= if @type=="text" do %>
           <div class="w-48 h-full ">
             <.render_media_text text={@url} />
           </div>
-        <% end %>
+        <% end %> --%>
       </div>
     </div>
     """
