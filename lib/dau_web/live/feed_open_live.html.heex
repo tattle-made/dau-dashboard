@@ -239,9 +239,9 @@
       <p class="min-w-[7rem]"><%= to_string(query.media_type) %></p>
     </:col>
 
-    <:col :let={query} label="count">
+    <%!-- <:col :let={query} label="count">
       <p class="min-w-[4rem]"><%= humanize_count(query.hash_meta) %></p>
-    </:col>
+    </:col> --%>
 
     <:col :let={query} label="tags">
       <div class="min-w-[10rem]">

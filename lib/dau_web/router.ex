@@ -20,7 +20,7 @@ defmodule DAUWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live "/outbox", SearchLive.Outbox
+    # live "/outbox", SearchLive.Outbox
     # live "/open-data", OpenDataLive, :index
     live "/feed-open", FeedOpenLive, :index
   end
@@ -40,10 +40,8 @@ defmodule DAUWeb.Router do
 
     live_session :slack_archives,
       on_mount: [{DAUWeb.UserAuth, :ensure_authenticated}] do
-        live "/", SlackArchivesHomeLive, :index
+      live "/", SlackArchivesHomeLive, :index
     end
-
-
   end
 
   scope "/gupshup", DAUWeb do
@@ -162,7 +160,6 @@ defmodule DAUWeb.Router do
       on_mount: [{DAUWeb.UserAuth, :ensure_authenticated}] do
       live "/view_external_escalations", ViewExternalEscalationsLive, :index
     end
-
   end
 
   ## Authentication routes
@@ -188,6 +185,7 @@ defmodule DAUWeb.Router do
       on_mount: [{DAUWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/outbox", SearchLive.Outbox
     end
   end
 
