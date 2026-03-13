@@ -1,10 +1,9 @@
-defmodule DAUWeb.FeedOpenLive do
-  import DAUWeb.FeedOpenLive.SearchParams
+defmodule DAUWeb.OpenDataLive.FeedOpenLive do
+  import DAUWeb.OpenDataLive.FeedOpenSearchParams
   import DAUWeb.Components.OpenDataComponents
-  alias DAUWeb.FeedOpenLive.SearchParams
+  alias DAUWeb.OpenDataLive.FeedOpenSearchParams, as: SearchParams
   alias DAU.OpenData
   alias DAU.OpenData.FeedOpenQuery
-  alias DAU.Accounts
   use DAUWeb, :live_view
   use DAUWeb, :html
 
