@@ -8,7 +8,7 @@ defmodule Scripts.SeedUuidsToAssessmentReports do
   alias DAU.Repo
   require Logger
 
-  @default_csv_path "priv/static/open_data/assessment_reports_with_uuids.csv"
+  @default_csv_path "priv/static/open_data/assessment_reports.csv"
 
   def run(csv_path \\ @default_csv_path) do
     csv_path

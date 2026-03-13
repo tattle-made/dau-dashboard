@@ -1,12 +1,9 @@
-defmodule DAUWeb.FeedOpenLive.SearchParams do
+defmodule DAUWeb.OpenDataLive.OtherSourcesOpenSearchParams do
   @allowed_filter_keys [
-    "media_type",
     "page_num",
     "sort",
-    "verification_status",
     "from",
     "to",
-    "tag_category",
     "tag"
   ]
 
@@ -14,11 +11,8 @@ defmodule DAUWeb.FeedOpenLive.SearchParams do
     default_filter_params = [
       page_num: 1,
       sort: "newest",
-      media_type: "all",
       from: "2024-03-01",
       to: Timex.now("Asia/Calcutta") |> DateTime.to_date() |> Date.to_iso8601(),
-      verification_status: "all",
-      tag_category: "all",
       tag: "all"
     ]
 
@@ -60,17 +54,6 @@ defmodule DAUWeb.FeedOpenLive.SearchParams do
           "start" -> Keyword.put(search_params, :from, value["value"])
           "end" -> Keyword.put(search_params, :to, value["value"])
         end
-
-      "media_type" ->
-        Keyword.put(search_params, :media_type, value["value"])
-
-      "verification_status" ->
-        Keyword.put(search_params, :verification_status, value["value"])
-
-      "tag_category" ->
-        search_params
-        |> Keyword.put(:tag_category, value["value"])
-        |> Keyword.put(:tag, "all")
 
       "tag" ->
         Keyword.put(search_params, :tag, value["value"])

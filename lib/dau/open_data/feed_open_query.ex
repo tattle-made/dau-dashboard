@@ -155,7 +155,7 @@ defmodule DAU.OpenData.FeedOpenQuery do
   defp present_filter(value), do: value
 
   defp bulk_add_s3_media_url(common_rows) do
-    base_preview_url = Application.fetch_env!(:dau, :preview_dataset_base_s3_url)
+    base_preview_url = Application.fetch_env!(:dau, :preview_tipline_dataset_base_s3_url)
     Enum.map(common_rows, fn query ->
       media_type = query.media_type
 
