@@ -159,7 +159,6 @@ defmodule Scripts.SeedTags do
         "Language : Other",
         "Language : Punjabi",
         "Language : Kannada",
-        "Language : Bengali",
         "Language : Sinhala",
         "Language : Portuguese",
         "Language : Greek",
@@ -168,6 +167,7 @@ defmodule Scripts.SeedTags do
         "Language : Nepali",
         "Language : Meitei"
 
+        # "Language : Bengali",
         # Bangal
         # Bangal (Bangladeshi)
       ],

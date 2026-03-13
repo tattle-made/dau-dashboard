@@ -1,12 +1,12 @@
-defmodule Scripts.SeedAssessmentReports do
+defmodule Scripts.SeedPartnerEscalations do
   @moduledoc """
-  Seeds `assessment_reports` from the open-data CSV.
+  Seeds `partner_escalations` from the open-data CSV.
   """
 
-  alias DAU.OpenData.AssessmentReport
+  alias DAU.OpenData.PartnerEscalation
   alias DAU.Repo
 
-  @default_csv_path "priv/static/open_data/assessment_reports.csv"
+  @default_csv_path "priv/static/open_data/partner_escalations.csv"
 
   def run(csv_path \\ @default_csv_path) do
     csv_path
@@ -21,9 +21,7 @@ defmodule Scripts.SeedAssessmentReports do
           %{acc | ok: acc.ok + 1}
 
         :skipped ->
-          IO.puts(
-            "Skipping duplicate row at CSV line #{line_no}: #{attrs.assessment_report_link}"
-          )
+          IO.puts("Skipping duplicate row at CSV line #{line_no}: #{attrs.uuid}")
 
           %{acc | skipped: acc.skipped + 1}
 
@@ -34,15 +32,15 @@ defmodule Scripts.SeedAssessmentReports do
     end)
     |> then(fn summary ->
       IO.puts(
-        "Assessment reports seeding finished. Inserted: #{summary.ok}, Skipped: #{summary.skipped}, Failed: #{summary.error}"
+        "Partner escalations seeding finished. Inserted: #{summary.ok}, Skipped: #{summary.skipped}, Failed: #{summary.error}"
       )
 
       summary
     end)
   end
 
-  defp maybe_insert_row(%{assessment_report_link: link} = attrs) when is_binary(link) do
-    if Repo.get_by(AssessmentReport, assessment_report_link: link) do
+  defp maybe_insert_row(%{uuid: uuid} = attrs) when is_binary(uuid) do
+    if Repo.get_by(PartnerEscalation, uuid: uuid) do
       :skipped
     else
       insert_row(attrs)
@@ -52,8 +50,8 @@ defmodule Scripts.SeedAssessmentReports do
   defp maybe_insert_row(attrs), do: insert_row(attrs)
 
   defp insert_row(attrs) do
-    %AssessmentReport{}
-    |> AssessmentReport.changeset(attrs)
+    %PartnerEscalation{}
+    |> PartnerEscalation.changeset(attrs)
     |> Repo.insert()
     |> case do
       {:ok, _record} -> :ok
@@ -63,10 +61,9 @@ defmodule Scripts.SeedAssessmentReports do
 
   defp row_to_attrs(row) do
     %{
-      date: parse_date(Map.get(row, "date")),
-      tipline_id: parse_int(Map.get(row, "tipline id")),
-      media_urls: parse_string_array(Map.get(row, "media urls")),
-      assessment_report_link: blank_to_nil(Map.get(row, "Assessment Report Link")),
+      date: parse_date(Map.get(row, "Date")),
+      count: parse_int(Map.get(row, "count")),
+      media_urls: parse_string_array(Map.get(row, "media_urls")),
       language_of_content:
         blank_to_nil(Map.get(row, "Language of Content") || Map.get(row, "Language of Contentt")),
       tools_used: parse_string_array(Map.get(row, "Tools Used")),
@@ -103,6 +100,7 @@ defmodule Scripts.SeedAssessmentReports do
 
   defp parse_int(value) when is_binary(value) do
     case Integer.parse(String.trim(value)) do
+      # match only pure int
       {int, _} -> int
       :error -> nil
     end
@@ -120,13 +118,13 @@ defmodule Scripts.SeedAssessmentReports do
     if value == "" do
       []
     else
-    case Jason.decode(value) do
-      {:ok, list} when is_list(list) ->
-        Enum.map(list, &to_clean_string/1)
+      case Jason.decode(value) do
+        {:ok, list} when is_list(list) ->
+          Enum.map(list, &to_clean_string/1)
 
-      _ ->
-        [value]
-    end
+        _ ->
+          [value]
+      end
     end
   end
 

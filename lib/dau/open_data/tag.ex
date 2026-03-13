@@ -8,6 +8,10 @@ defmodule DAU.OpenData.Tag do
     belongs_to :tags_category, DAU.OpenData.TagsCategory
 
     many_to_many :commons, DAU.Feed.Common, join_through: DAU.OpenData.CommonTag
+    many_to_many :assessment_reports, DAU.OpenData.AssessmentReport,
+      join_through: DAU.OpenData.AssessmentReportTag
+    many_to_many :partner_escalations, DAU.OpenData.PartnerEscalation,
+      join_through: DAU.OpenData.PartnerEscalationTag
 
     timestamps(type: :utc_datetime)
   end
