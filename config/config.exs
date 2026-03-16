@@ -73,7 +73,9 @@ config :sentry,
 
 config :dau, AWSS3, file_prefix: "temp"
 
-config :dau, preview_dataset_base_s3_url: "https://s3.ap-south-1.amazonaws.com/public.dau.tattle.co.in/preview_dataset/media/"
+config :dau, preview_tipline_dataset_base_s3_url: "https://s3.ap-south-1.amazonaws.com/public.dau.tattle.co.in/preview_dataset/media/"
+
+config :dau, preview_other_sources_dataset_base_s3_url: "https://s3.ap-south-1.amazonaws.com/public.dau.tattle.co.in/preview_dataset/escalations/"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -568,4 +568,8 @@ defmodule DAU.OpenData do
     |> preload(tags: ^from(t in Tag, order_by: [asc: t.name]))
     |> Repo.all()
   end
+
+  def list_languages_tags() do
+    Tag |> where([t], like(t.slug, "language_%") and t.slug != "language_other") |> Repo.all()
+  end
 end

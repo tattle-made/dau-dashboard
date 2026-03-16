@@ -1,0 +1,256 @@
+<div class="mb-3">
+  <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Dataset 2</p>
+  <h1 class="text-2xl font-semibold text-slate-900">
+    Deepfakes Analysis Unit Dataset 2: Sourced from Partner Escalations and Social Media Monitoring
+  </h1>
+</div>
+<div class="text-xl font-normal text-slate-900 mb-4">
+  <h1><%= "Showing all #{@query_count} queries" %></h1>
+</div>
+<!-- Filters Section -->
+<div class="bg-white rounded-lg border border-zinc-200 p-4 mb-4">
+  <div class="flex justify-between items-center mb-3">
+    <h2 class="text-lg font-semibold text-slate-900">Filters</h2>
+    <.link href={
+      ~p"/other-sources-open?page_num=1&sort=newest&tag=all"
+    }>
+      <p class="text-blue-600 text-sm hover:text-blue-700 cursor-pointer">clear filters</p>
+    </.link>
+  </div>
+
+  <div class="flex flex-wrap items-end gap-x-2 gap-y-2">
+    <!-- Date Range -->
+    <div class="shrink-0">
+      <p class="mb-1 text-xs font-medium text-slate-700">Date Range</p>
+      <div id="date-range-selector" phx-hook="DateSelector" class="flex items-center gap-2">
+        <div class="flex items-center gap-1">
+          <label for="from" class="text-[11px] font-medium text-slate-600">From</label>
+          <input
+            class="h-8 w-[8.5rem] text-xs dark:bg-dark-bg block rounded border border-gray-300 px-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+            type="date"
+            id="from"
+            name="from"
+            value={Keyword.get(@search_params, :from)}
+          />
+        </div>
+        <div class="flex items-center gap-1">
+          <label for="to" class="text-[11px] font-medium text-slate-600">To</label>
+          <input
+            class="h-8 w-[8.5rem] text-xs dark:bg-dark-bg block rounded border border-gray-300 px-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+            type="date"
+            id="to"
+            name="to"
+            value={Keyword.get(@search_params, :to)}
+          />
+        </div>
+      </div>
+    </div>
+    <!-- Sort -->
+    <div class="shrink-0">
+      <label for="sort_by_select" class="mb-1 text-xs font-medium text-slate-700">Sort By</label>
+      <select
+        id="sort_by_select"
+        phx-hook="FilterSelect"
+        data-name="sort-by"
+        class="h-8 block w-full md:w-[9rem] rounded border border-gray-300 bg-white px-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      >
+        <option value="newest" selected={Keyword.get(@search_params, :sort) == "newest"}>
+          Newest first
+        </option>
+        <option value="oldest" selected={Keyword.get(@search_params, :sort) == "oldest"}>
+          Oldest first
+        </option>
+      </select>
+    </div>
+
+    <%!-- Tags (language tags) --%>
+    <div>
+      <label for="tag_select" class="mb-1 text-xs font-medium text-slate-700">Language</label>
+      <select
+        id="tag_select"
+        phx-hook="FilterSelect"
+        data-name="tag"
+        disabled={Enum.empty?(@tags)}
+        class="h-8 block w-full md:w-[11rem] rounded border border-gray-300 bg-white px-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+      >
+        <option value="all" selected={Keyword.get(@search_params, :tag) == "all"}>
+          All Languages
+        </option>
+        <option
+          :for={tag <- @tags}
+          value={tag.slug}
+          selected={Keyword.get(@search_params, :tag) == tag.slug}
+        >
+          <%= tag.name %>
+        </option>
+      </select>
+    </div>
+  </div>
+</div>
+<!-- Content Section -->
+<div class="gap-4 w-full max-w-full min-w-0">
+  <%!-- Columns Info --%>
+  <details class="mb-4 w-full rounded-lg border border-slate-200 bg-white shadow-sm">
+    <summary class="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-slate-800">
+      Column Guide <span class="text-xs font-medium text-slate-500">Toggle</span>
+    </summary>
+    <div class="border-t border-slate-200 px-4 py-3 text-xs text-slate-700">
+      <div class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        DATASET 2: Partner Escalations and Other Sources
+      </div>
+      <div class="overflow-x-auto">
+        <div class="mb-4 leading-6">
+          <span class="font-semibold mr-2 text-slate-800">Partner Escalations Dataset: </span>
+          <span>
+            Media items sent to DAU by partner organizations and fact checkers. These items were reported by other experts in the field and were not sent to DAU through the whatsapp tipline.
+          </span>
+        </div>
+        <table class="min-w-[40rem] w-full border-collapse">
+          <thead>
+            <tr class="text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              <th class="py-2 pr-3">Field Name</th>
+              <th class="py-2 pr-3">Field Description</th>
+            </tr>
+          </thead>
+          <tbody class="align-top">
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Language</td>
+              <td class="py-2 pr-3">
+                Language of the content of media item.
+              </td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">inserted at</td>
+              <td class="py-2 pr-3">
+                The date and time at which the item was received by the DAU.
+              </td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">
+                No. of repeat instances (count)
+              </td>
+              <td class="py-2 pr-3">
+                Count of times this media was sent to DAU via the tipline.
+              </td>
+            </tr>
+
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">Tools Used</td>
+              <td class="py-2 pr-3">
+                List of AI tools used for detecting AI manipulation or synthesis.
+              </td>
+            </tr>
+            <tr class="border-t border-slate-200">
+              <td class="py-2 pr-3 font-semibold text-slate-800">
+                Observations
+              </td>
+              <td class="py-2 pr-3">
+                Results of each type of analysis conducted on media item to detect synthesis.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+
+  <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
+    <div :if={Keyword.get(@search_params, :page_num) - 1 > 0}>
+      <.link
+        navigate={"/other-sources-open?#{search_param_string_for_previous_page(@search_params)}"}
+        aria-label="Previous page"
+      >
+        <.icon name="hero-arrow-left" class="h-5 w-5" />
+      </.link>
+    </div>
+    <div class="rounded-full p-2 bg-zinc-100">
+      <p><%= Keyword.get(@search_params, :page_num) %></p>
+    </div>
+
+    <.link
+      :if={@has_next_page}
+      navigate={"/other-sources-open?#{search_param_string_for_next_page(@search_params)}"}
+      aria-label="Next page"
+    >
+      <.icon name="hero-arrow-right" class="h-5 w-5" />
+    </.link>
+  </div>
+
+  <.feed_open_table id="queries" rows={@queries}>
+    <%!-- <:col :let={query} label="id">
+      <p class="min-w-[7rem]"><%= query.id%></p>
+    </:col> --%>
+    <:col :let={query} label="Preview">
+      <div class="min-w-[10rem]">
+        <.render_preview type="text" url={query.preview_url} />
+      </div>
+    </:col>
+
+    <:col :let={query} label="count">
+      <p class="min-w-[4rem]"><%= humanize_count(query.count) %></p>
+    </:col>
+
+    <%!-- <:col :let={query} label="type">
+      <p class="min-w-[4rem]"><%= query.type %></p>
+    </:col> --%>
+
+    <:col :let={query} label="Languages">
+      <div class="min-w-[10rem]">
+        <div :if={not Enum.empty?(query.tags)} class="flex flex-col gap-2">
+          <%= for tag <- query.tags do %>
+            <span class="w-fit rounded-sm bg-gray-200 px-2 py-0.5 text-gray-800 text-xs">
+              <%= tag["name"] %>
+            </span>
+          <% end %>
+        </div>
+        <p :if={Enum.empty?(query.tags)}>-</p>
+      </div>
+    </:col>
+
+    <:col :let={query} label="Assessment Report">
+      <%= if is_nil(query.assessment_report_link) do %>
+        <div class="min-w-[18rem]">-</div>
+      <% else %>
+        <div class="min-w-[18rem]">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-600 break-words"
+            href={query.assessment_report_link}
+          >
+            <%= query.assessment_report_link %>
+          </a>
+        </div>
+      <% end %>
+    </:col>
+
+    <:col :let={query} label="Tools Used">
+      <%= if Enum.empty?(query.tools_used ) or is_nil(query.tools_used) do %>
+        <div class="min-w-[22rem]">-</div>
+      <% else %>
+        <ul class="min-w-[22rem] text-xs flex flex-col gap-1">
+          <%= for tool <- query.tools_used do %>
+            <li class="break-words"><%= tool %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </:col>
+
+    <:col :let={query} label="Observations">
+      <%= if Enum.empty?(query.observations) or is_nil(query.observations) do %>
+        <div class="min-w-[30rem]">-</div>
+      <% else %>
+        <ul class="min-w-[30rem] text-xs flex flex-col gap-4">
+          <%= for observation <- query.observations do %>
+            <li class="break-words"><%= observation %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </:col>
+
+    <:col :let={query} label="Date">
+      <p :if={not is_nil(query.date)} class="min-w-[12rem]"><%= humanize_date(query.date) %></p>
+      <p :if={is_nil(query.date)} class="min-w-[12rem]">-</p>
+    </:col>
+  </.feed_open_table>
+</div>
