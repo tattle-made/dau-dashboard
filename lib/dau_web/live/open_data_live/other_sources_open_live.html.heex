@@ -1,7 +1,7 @@
 <div class="mb-3">
   <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Dataset 2</p>
   <h1 class="text-2xl font-semibold text-slate-900">
-    Deepfakes Analysis Unit Dataset 2: Sourced from partner escalations and social media monitoring
+    Deepfakes Analysis Unit Dataset 2: Sourced from Partner Escalations and Social Media Monitoring
   </h1>
 </div>
 <div class="text-xl font-normal text-slate-900 mb-4">
@@ -12,7 +12,7 @@
   <div class="flex justify-between items-center mb-3">
     <h2 class="text-lg font-semibold text-slate-900">Filters</h2>
     <.link href={
-      ~p"/other-sources-open?page_num=1&sort=newest&media_type=all&verification_status=all&tag_category=all&tag=all"
+      ~p"/other-sources-open?page_num=1&sort=newest&tag=all"
     }>
       <p class="text-blue-600 text-sm hover:text-blue-700 cursor-pointer">clear filters</p>
     </.link>
@@ -87,10 +87,9 @@
     </div>
   </div>
 </div>
-
 <!-- Content Section -->
 <div class="gap-4 w-full max-w-full min-w-0">
-<%!-- Columns Info --%>
+  <%!-- Columns Info --%>
   <details class="mb-4 w-full rounded-lg border border-slate-200 bg-white shadow-sm">
     <summary class="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-slate-800">
       Column Guide <span class="text-xs font-medium text-slate-500">Toggle</span>
@@ -100,14 +99,13 @@
         DATASET 2: Partner Escalations and Other Sources
       </div>
       <div class="overflow-x-auto">
-      <div class="mb-4 leading-6">
-              <span class="font-semibold mr-2 text-slate-800">Partner Escalations Dataset:  </span>
-              <span>
-                Media items sent to DAU by partner organizations and fact checkers. These items were reported by other experts in the field and were not sent to DAU through the whatsapp tipline. 
-              </span>
-            </div>
+        <div class="mb-4 leading-6">
+          <span class="font-semibold mr-2 text-slate-800">Partner Escalations Dataset: </span>
+          <span>
+            Media items sent to DAU by partner organizations and fact checkers. These items were reported by other experts in the field and were not sent to DAU through the whatsapp tipline.
+          </span>
+        </div>
         <table class="min-w-[40rem] w-full border-collapse">
-        
           <thead>
             <tr class="text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">
               <th class="py-2 pr-3">Field Name</th>
@@ -115,11 +113,10 @@
             </tr>
           </thead>
           <tbody class="align-top">
-            
             <tr class="border-t border-slate-200">
               <td class="py-2 pr-3 font-semibold text-slate-800">Language</td>
               <td class="py-2 pr-3">
-                Language of the content of media item. 
+                Language of the content of media item.
               </td>
             </tr>
             <tr class="border-t border-slate-200">
@@ -127,14 +124,14 @@
               <td class="py-2 pr-3">
                 The date and time at which the item was received by the DAU.
               </td>
-           
             </tr>
             <tr class="border-t border-slate-200">
-              <td class="py-2 pr-3 font-semibold text-slate-800">No. of repeat instances (count)</td>
-              <td class="py-2 pr-3">
-                Count of times this media was sent to DAU via the tipline. 
+              <td class="py-2 pr-3 font-semibold text-slate-800">
+                No. of repeat instances (count)
               </td>
-              
+              <td class="py-2 pr-3">
+                Count of times this media was sent to DAU via the tipline.
+              </td>
             </tr>
 
             <tr class="border-t border-slate-200">
@@ -142,10 +139,6 @@
               <td class="py-2 pr-3">
                 List of AI tools used for detecting AI manipulation or synthesis.
               </td>
-              <td class="py-2 pr-3">
-                -
-              </td>
-              <td class="py-2">-</td>
             </tr>
             <tr class="border-t border-slate-200">
               <td class="py-2 pr-3 font-semibold text-slate-800">
@@ -154,10 +147,6 @@
               <td class="py-2 pr-3">
                 Results of each type of analysis conducted on media item to detect synthesis.
               </td>
-              <td class="py-2 pr-3">
-                -
-              </td>
-              <td class="py-2">-</td>
             </tr>
           </tbody>
         </table>
@@ -167,7 +156,10 @@
 
   <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
     <div :if={Keyword.get(@search_params, :page_num) - 1 > 0}>
-      <.link navigate={"/other-sources-open?#{search_param_string_for_previous_page(@search_params)}"}>
+      <.link
+        navigate={"/other-sources-open?#{search_param_string_for_previous_page(@search_params)}"}
+        aria-label="Previous page"
+      >
         <.icon name="hero-arrow-left" class="h-5 w-5" />
       </.link>
     </div>
@@ -178,6 +170,7 @@
     <.link
       :if={@has_next_page}
       navigate={"/other-sources-open?#{search_param_string_for_next_page(@search_params)}"}
+      aria-label="Next page"
     >
       <.icon name="hero-arrow-right" class="h-5 w-5" />
     </.link>
@@ -189,7 +182,7 @@
     </:col> --%>
     <:col :let={query} label="Preview">
       <div class="min-w-[10rem]">
-        <.render_preview type={"text"} url={query.preview_url} />
+        <.render_preview type="text" url={query.preview_url} />
       </div>
     </:col>
 
@@ -232,7 +225,7 @@
     </:col>
 
     <:col :let={query} label="Tools Used">
-      <%= if Enum.empty?(query.tools_used ) do %>
+      <%= if Enum.empty?(query.tools_used ) or is_nil(query.tools_used) do %>
         <div class="min-w-[22rem]">-</div>
       <% else %>
         <ul class="min-w-[22rem] text-xs flex flex-col gap-1">
@@ -244,7 +237,7 @@
     </:col>
 
     <:col :let={query} label="Observations">
-      <%= if Enum.empty?(query.observations) do %>
+      <%= if Enum.empty?(query.observations) or is_nil(query.observations) do %>
         <div class="min-w-[30rem]">-</div>
       <% else %>
         <ul class="min-w-[30rem] text-xs flex flex-col gap-4">
@@ -256,7 +249,8 @@
     </:col>
 
     <:col :let={query} label="Date">
-      <p class="min-w-[12rem]"><%= humanize_date(query.date) %></p>
+      <p :if={not is_nil(query.date)} class="min-w-[12rem]"><%= humanize_date(query.date) %></p>
+      <p :if={is_nil(query.date)} class="min-w-[12rem]">-</p>
     </:col>
   </.feed_open_table>
 </div>

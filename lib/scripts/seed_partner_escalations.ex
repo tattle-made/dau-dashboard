@@ -26,7 +26,7 @@ defmodule Scripts.SeedPartnerEscalations do
           %{acc | skipped: acc.skipped + 1}
 
         {:error, changeset} ->
-          IO.puts("Failed to insert row at CSV line #{line_no}: #{inspect(changeset.errors)}")
+          IO.puts("Failed to insert row at CSV line #{line_no}: #{inspect(changeset)}")
           %{acc | error: acc.error + 1}
       end
     end)
@@ -40,10 +40,12 @@ defmodule Scripts.SeedPartnerEscalations do
   end
 
   defp maybe_insert_row(%{uuid: uuid} = attrs) when is_binary(uuid) do
-    if Repo.get_by(PartnerEscalation, uuid: uuid) do
-      :skipped
-    else
-      insert_row(attrs)
+    case Ecto.UUID.cast(uuid) do
+      {:ok, _} ->
+        if Repo.get_by(PartnerEscalation, uuid: uuid), do: :skipped, else: insert_row(attrs)
+
+      :error ->
+        {:error, %{uuid: {"is invalid", []}}}
     end
   end
 

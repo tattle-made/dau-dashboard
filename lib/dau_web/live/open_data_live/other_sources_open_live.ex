@@ -52,10 +52,13 @@ defmodule DAUWeb.OpenDataLive.OtherSourcesOpenLive do
      )}
   end
 
+  defp humanize_date(nil), do: nil
+
   defp humanize_date(date) do
     Timex.to_datetime(date, "Asia/Calcutta")
     |> Calendar.strftime("%a %d-%m-%Y")
   end
+
 
   def humanize_count(count) do
     case count do

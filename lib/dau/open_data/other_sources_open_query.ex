@@ -2,6 +2,9 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
   import Ecto.Query, warn: false
   alias DAU.OpenData.PartnerEscalation
   alias DAU.OpenData.AssessmentReport
+  alias DAU.OpenData.AssessmentReportTag
+  alias DAU.OpenData.PartnerEscalationTag
+  alias DAU.OpenData.Tag
 
   alias DAU.Repo
 
@@ -50,7 +53,7 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
           "^(https?://)"
         )
       )
-      |> maybe_filter_tags_for_source(tag_filter)
+      |> maybe_filter_tags_for_partner(tag_filter)
       # Group by row.id so the tag join doesn't multiply rows.
       |> group_by([row], row.id)
       |> select([row, t], %{
@@ -86,7 +89,7 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
           "^(https?://)"
         )
       )
-      |> maybe_filter_tags_for_source(tag_filter)
+      |> maybe_filter_tags_for_report(tag_filter)
       # Group by row.id so the tag join doesn't multiply rows.
       |> group_by([row], row.id)
       |> select([row, t], %{
@@ -137,10 +140,47 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
     end
   end
 
-  defp maybe_filter_tags_for_source(query, nil), do: query
+  defp maybe_filter_tags_for_partner(query, nil), do: query
 
-  defp maybe_filter_tags_for_source(query, tag_slug) do
-    where(query, [_, t], t.slug == ^tag_slug)
+  defp maybe_filter_tags_for_partner(query, tag_slug) do
+    # Filter rows by tag without shrinking the aggregated tag list.
+
+    #explaination in below function
+    where(query, [row, _t],
+      fragment(
+        "EXISTS (SELECT 1 FROM partner_escalation_tags pet JOIN tags t ON t.id = pet.tag_id WHERE pet.partner_escalation_id = ? AND t.slug = ?)",
+        row.id,
+        ^tag_slug
+      )
+    )
+  end
+
+  defp maybe_filter_tags_for_report(query, nil), do: query
+
+  defp maybe_filter_tags_for_report(query, tag_slug) do
+    # Filter rows by tag without shrinking the aggregated tag list.
+
+# The outer query has row (report) and t (joined tags for aggregation).
+# The WHERE EXISTS (...) is evaluated for each row.
+# Inside the EXISTS, we join the report‑tag join table to tags, and check:
+# assessment_report_id = row.id
+# tag.slug = desired slug
+# If a match exists → keep that row in the outer query.
+# If not → that row is filtered out.
+
+# The issue with the normal filtering is that this is happening before we are aggregating the tags
+# in the select. So, if a row had 3 tags t1, t2, t3. In normal filtering for t1, the
+# rows with t2, t3 will get discarded from the join. This would result in rows still being
+# properly filtered, but in the tags field of rows, we would have not gotten all the tags for the row (
+# because they were deleted from the join table earlier). therefor this approach.
+
+    where(query, [row, _t],
+      fragment(
+        "EXISTS (SELECT 1 FROM assessment_report_tags art JOIN tags t ON t.id = art.tag_id WHERE art.assessment_report_id = ? AND t.slug = ?)",
+        row.id,
+        ^tag_slug
+      )
+    )
   end
 
   defp present_filter(value) when value in [nil, "", "all"], do: nil
