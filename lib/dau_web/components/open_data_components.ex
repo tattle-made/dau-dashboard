@@ -94,7 +94,7 @@ defmodule DAUWeb.Components.OpenDataComponents do
     ~H"""
     <div class="flex flex-row gap-1 max-h-48 ">
       <div class="">
-        <%= if @type=="image" or @type=="video" or @type=="text" do %>
+        <%= if (@type=="image" or @type=="video") and not is_nil(@url) do %>
           <div class="w-24 max-h-48 overflow-hidden">
             <img src={@url} />
           </div>
@@ -104,90 +104,26 @@ defmodule DAUWeb.Components.OpenDataComponents do
             <source src={@url} type="video/mp4" />
           </video>
         <% end %> --%>
-        <%= if @type=="audio" do %>
+        <%= if @type=="audio" and not is_nil(@url) do %>
           <audio class="w-64" controls>
             <source src={@url} />
           </audio>
         <% end %>
-        <%!-- <%= if @type=="text" do %>
-          <div class="w-48 h-full ">
-            <.render_media_text text={@url} />
+        <%= if @type=="text" do %>
+          <div class="w-48 h-full overflow-hidden">
+           <%= if is_nil(@url) do %>
+             <p>-</p>
+           <% else %>
+             <p class="text-blue-500 break-words whitespace-normal max-w-[12rem]">
+               <%= String.slice(@url, 0..30) %>...
+             </p>
+           <% end %>
           </div>
-        <% end %> --%>
-      </div>
-    </div>
-    """
-  end
-
-  attr :text, :string, required: true
-
-  def render_media_text(assigns) do
-    ex =
-      ~r/(?<!@)\b(?:https?:\/\/|www\.)?[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}(?::\d+)?(?:\/[a-zA-Z0-9\-._~%!$&'()*+,;=:@\/?#\[\]\{\}]*)?/i
-
-    urls =
-      Regex.scan(ex, assigns.text)
-      |> Enum.map(&List.first/1)
-      # Remove trailing punctuation (.,),]}), but keep valid URL chars
-      |> Enum.map(&Regex.replace(~r/[.,)\]\}]+$/, &1, ""))
-
-    new_text =
-      String.replace(
-        assigns.text,
-        ex,
-        fn url ->
-          "<a href='" <> url <> "' target='_blank' class='underline'>" <> url <> "</a>"
-        end
-      )
-
-    assigns = assign(assigns, new_text: new_text, urls: urls)
-
-    ~H"""
-    <% modal_id = "text_preview_#{:erlang.unique_integer([:positive])}" %>
-
-    <.modal id={modal_id}>
-      <div>
-        <p class="text-brand">All URLs:</p>
-        <div class="mt-2">
-          <ul class=" text-xs flex flex-col gap-2">
-            <%= for url <- @urls do %>
-              <li class="flex ">
-                <span class="mr-2">•</span>
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 break-all"
-                  href={url}
-                >
-                  <%= url %>
-                </a>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </.modal>
-    <div class="overflow-y-auto overflow-x-hidden mt-2 custom-scrollbar">
-      <ul class=" text-xs flex flex-col gap-2">
-        <%= for url <- Enum.take(@urls, 4) do %>
-          <li class="flex ">
-            <a target="_blank" rel="noopener noreferrer" class="text-blue-600 truncate" href={url}>
-              <%= url %>
-            </a>
-          </li>
         <% end %>
-      </ul>
+      </div>
     </div>
-    <button
-      phx-click={show_modal(modal_id)}
-      class="text-brand hover:underline hover: underline-brand text-sm"
-    >
-      <%= if length(@urls) > 4 do
-        "view all #{length(@urls)} URLs"
-      else
-        "view full text"
-      end %>
-    </button>
     """
   end
+
+
 end

@@ -1,5 +1,6 @@
 defmodule DAU.OpenData.FeedOpenQuery do
   import Ecto.Query, warn: false
+  alias DAU.OpenData
   alias DAU.Feed.Common
   alias DAU.Repo
 
@@ -190,8 +191,9 @@ defmodule DAU.OpenData.FeedOpenQuery do
                    id <> ".ogg"
 
                :text ->
-                 base_preview_url <>
-                   "thumbnail_#{query.id}" <> ".png"
+                #  base_preview_url <>
+                  #  "thumbnail_#{query.id}" <> ".png"
+                  OpenData.extract_first_url_from_text(key)
 
                true ->
                  key
