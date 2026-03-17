@@ -1,5 +1,6 @@
 defmodule DAU.OpenData.OtherSourcesOpenQuery do
   import Ecto.Query, warn: false
+  alias DAU.OpenData
   alias DAU.OpenData.PartnerEscalation
   alias DAU.OpenData.AssessmentReport
   alias DAU.OpenData.AssessmentReportTag
@@ -65,6 +66,7 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
         tools_used: row.tools_used,
         observations: row.observations,
         uuid: row.uuid,
+        media_urls: row.media_urls,
         # Aggregate tag slug+name into a JSONB array; empty array when no tags.
         tags:
           fragment(
@@ -101,6 +103,7 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
         tools_used: row.tools_used,
         observations: row.observations,
         uuid: row.uuid,
+        media_urls: row.media_urls,
         # Aggregate tag slug+name into a JSONB array; empty array when no tags.
         tags:
           fragment(
@@ -187,10 +190,19 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
   defp present_filter(value), do: value
 
   defp bulk_add_s3_media_url(rows) do
-    base_preview_url = Application.fetch_env!(:dau, :preview_other_sources_dataset_base_s3_url)
+    # base_preview_url = Application.fetch_env!(:dau, :preview_other_sources_dataset_base_s3_url)
+
+    # Enum.map(rows, fn row ->
+    #   Map.put(row, :preview_url, base_preview_url <> "thumbnail_" <> row.uuid <> ".png")
+    # end)
 
     Enum.map(rows, fn row ->
-      Map.put(row, :preview_url, base_preview_url <> "thumbnail_" <> row.uuid <> ".png")
+      media_urls = row.media_urls |> List.wrap()
+      display_url = media_urls |> Enum.at(0) |> OpenData.extract_first_url_from_text()
+      row
+      |> Map.put(:preview_url, display_url)
+
     end)
+
   end
 end
