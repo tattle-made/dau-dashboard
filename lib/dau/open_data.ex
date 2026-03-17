@@ -573,6 +573,10 @@ defmodule DAU.OpenData do
     Tag |> where([t], like(t.slug, "language_%") and t.slug != "language_other") |> Repo.all()
   end
 
+  @doc """
+  Function to extract the first proper URL from a text. The text could be a paragraph with multiple urls.
+  This is the same function used while extracting urls for downloading the thumbnails.
+  """
   def extract_first_url_from_text(text) when is_binary(text) do
     # The Regex:
     # 1. \b(?:https?:\/\/|www\.) -> Mandatory prefix (Prevents sentence-typo matches)
@@ -585,7 +589,7 @@ defmodule DAU.OpenData do
         url
         # 1. Remove trailing punctuation (periods, commas, etc. at the end of sentences)
         |> (&Regex.replace(~r/[.,)\]\}]+$/, &1, "")).()
-        # 2. Prepend https:// if it only starts with www. (Puppeteer requires a protocol)
+        # 2. Prepend https:// if it only starts with www.
         |> (fn
               "www." <> _ = u -> "https://" <> u
               u -> u
