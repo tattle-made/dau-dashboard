@@ -22,14 +22,17 @@ defmodule DAUWeb.OpenDataLive.OtherSourcesOpenLive do
     search_params = SearchParams.params_to_keyword_list(params)
     {count, results} = OtherSourcesOpenQuery.list_combined_data(search_params)
 
+    page_size = OtherSourcesOpenQuery.page_size()
     page_num = Keyword.get(search_params, :page_num)
-    has_next_page = page_num * OtherSourcesOpenQuery.page_size() < count
+    total_pages = max(div(count + page_size - 1, page_size), 1)
+    has_next_page = page_num < total_pages
     tags = OpenData.list_languages_tags()
 
     socket =
       socket
       |> assign(:page_num, page_num)
       |> assign(:has_next_page, has_next_page)
+      |> assign(:total_pages, total_pages)
       |> assign(:query_count, count)
       |> assign(:search_params, search_params)
       |> assign(:queries, results)
@@ -64,6 +67,22 @@ defmodule DAUWeb.OpenDataLive.OtherSourcesOpenLive do
     case count do
       nil -> 1
       _ -> count
+    end
+  end
+
+  defp pagination_items(current_page, total_pages) do
+    cond do
+      total_pages <= 7 ->
+        Enum.to_list(1..total_pages)
+
+      current_page <= 3 ->
+        [1, 2, 3, 4, :gap, total_pages]
+
+      current_page >= total_pages - 2 ->
+        [1, :gap, total_pages - 3, total_pages - 2, total_pages - 1, total_pages]
+
+      true ->
+        [1, :gap, current_page - 1, current_page, current_page + 1, :gap, total_pages]
     end
   end
 

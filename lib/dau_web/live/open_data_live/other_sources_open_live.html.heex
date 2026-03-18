@@ -154,26 +154,54 @@
     </div>
   </details>
 
-  <div class="flex flex-row items-center gap-2 w-full p-2 border-2 border-green-100 rounded-md">
-    <div :if={Keyword.get(@search_params, :page_num) - 1 > 0}>
+  <div class="mt-4 flex w-full ">
+    <div class="join">
       <.link
+        :if={@page_num > 1}
         navigate={"/other-sources-open?#{search_param_string_for_previous_page(@search_params)}"}
+        class="btn btn-sm join-item"
         aria-label="Previous page"
       >
-        <.icon name="hero-arrow-left" class="h-5 w-5" />
+        «
       </.link>
-    </div>
-    <div class="rounded-full p-2 bg-zinc-100">
-      <p><%= Keyword.get(@search_params, :page_num) %></p>
-    </div>
+      <span
+        :if={@page_num == 1}
+        class="btn btn-sm join-item btn-disabled"
+        aria-label="Previous page"
+      >
+        «
+      </span>
 
-    <.link
-      :if={@has_next_page}
-      navigate={"/other-sources-open?#{search_param_string_for_next_page(@search_params)}"}
-      aria-label="Next page"
-    >
-      <.icon name="hero-arrow-right" class="h-5 w-5" />
-    </.link>
+      <%= for item <- pagination_items(@page_num, @total_pages) do %>
+        <%= if item == :gap do %>
+          <span class="btn btn-sm join-item btn-disabled !bg-gray-200">...</span>
+        <% else %>
+          <.link
+            navigate={"/other-sources-open?#{search_param_string_for_page(@search_params, item)}"}
+            class={"btn btn-sm join-item #{if item == @page_num, do: "btn-active text-slate-200 bg-gray-500 hover:bg-gray-600", else: ""}"}
+            aria-current={if item == @page_num, do: "page", else: nil}
+          >
+            <%= item %>
+          </.link>
+        <% end %>
+      <% end %>
+
+      <.link
+        :if={@page_num < @total_pages}
+        navigate={"/other-sources-open?#{search_param_string_for_next_page(@search_params)}"}
+        class="btn btn-sm join-item"
+        aria-label="Next page"
+      >
+        »
+      </.link>
+      <span
+        :if={@page_num >= @total_pages}
+        class="btn btn-sm join-item btn-disabled"
+        aria-label="Next page"
+      >
+        »
+      </span>
+    </div>
   </div>
 
   <.feed_open_table id="queries" rows={@queries}>
