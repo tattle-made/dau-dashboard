@@ -101,4 +101,10 @@ defmodule DAUWeb.OpenDataLive.FeedOpenSearchParams do
     |> Keyword.update(:page_num, 1, fn page_num -> if page_num == 1, do: 1, else: page_num - 1 end)
     |> search_param_string()
   end
+
+  def search_param_string_for_page(search_params, page_num) when is_integer(page_num) and page_num > 0 do
+    search_params
+    |> Keyword.put(:page_num, page_num)
+    |> search_param_string()
+  end
 end

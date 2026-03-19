@@ -29,13 +29,16 @@ defmodule DAUWeb.OpenDataLive.FeedOpenLive do
       tags_for_category_slug(tag_categories, Keyword.get(search_params, :tag_category))
 
     {count, results} = FeedOpenQuery.list_common_feed(search_params)
+    page_size = FeedOpenQuery.page_size()
     page_num = Keyword.get(search_params, :page_num)
-    has_next_page = page_num * FeedOpenQuery.page_size() < count
+    total_pages = max(div(count + page_size - 1, page_size), 1)
+    has_next_page = page_num < total_pages
 
     socket =
       socket
       |> assign(:page_num, page_num)
       |> assign(:has_next_page, has_next_page)
+      |> assign(:total_pages, total_pages)
       |> assign(:query_count, count)
       |> assign(:search_params, search_params)
       |> assign(:queries, results)
@@ -108,6 +111,22 @@ defmodule DAUWeb.OpenDataLive.FeedOpenLive do
     case Enum.find(tag_categories, fn category -> category.slug == category_slug end) do
       nil -> []
       category -> List.wrap(category.tags)
+    end
+  end
+
+  defp pagination_items(current_page, total_pages) do
+    cond do
+      total_pages <= 7 ->
+        Enum.to_list(1..total_pages)
+
+      current_page <= 3 ->
+        [1, 2, 3, 4, :gap, total_pages]
+
+      current_page >= total_pages - 2 ->
+        [1, :gap, total_pages - 3, total_pages - 2, total_pages - 1, total_pages]
+
+      true ->
+        [1, :gap, current_page - 1, current_page, current_page + 1, :gap, total_pages]
     end
   end
 end
