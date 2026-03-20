@@ -3,6 +3,7 @@ defmodule DAU.OpenData.FeedOpenQuery do
   alias DAU.OpenData
   alias DAU.Feed.Common
   alias DAU.Repo
+  alias DAU.OpenData.QueryHelpers
 
   @page_size 25
   @controversial_ids [3912,3889,3601,691,681,680,3899,3898,3724,3732,3656,3638,2104,2097,1661,1594,1586,1570,1564,1490,1360,1361,1349,1348,1102,1035,1034,1033,972,958,719,722,673,671,708,695,639,628,632,629,606,602,598,633,611,605,525,526,519,532,440,298,284,283,278,4500,4501,3848,3847,3958,4569,4570,4571,4468,4378,1299,354,349,2090,4265,4160,4587,4375,4139,3744,857,4365,4070]
@@ -12,6 +13,17 @@ defmodule DAU.OpenData.FeedOpenQuery do
 
   # While downloading thumbnails with puppeteer, for these ids, the operation failed
   @no_thumbnail_common_ids [672,795,761,1125,1132,934,1447,2156,1841,2396,2308,2210,2263,2264,2973,2624,2625,3401,3030,3016,3031,3086,3062,3109,3129,3130,3188,3445,3657,3597,4470,3723,3873,4177,4178,4351]
+
+  def get_common_feed_rows_for_csv() do
+    Common
+      |> maybe_exclude_ids(@no_urls_common_ids ++ @no_thumbnail_common_ids)
+      # Only take items less than equal to than the id passed
+      |> maybe_apply_upper_bound(4603)
+      |> order_by(desc: :inserted_at)
+      |> Repo.all()
+      |> Repo.preload([:query, :hash_meta, :tag_joins, :open_data_assessment_reports])
+      |> bulk_add_s3_media_url()
+  end
 
   def list_common_feed(search_params) do
     order = %{
@@ -193,7 +205,7 @@ defmodule DAU.OpenData.FeedOpenQuery do
                :text ->
                 #  base_preview_url <>
                   #  "thumbnail_#{query.id}" <> ".png"
-                  OpenData.extract_first_url_from_text(key)
+                  QueryHelpers.extract_first_url_from_text(key)
 
                true ->
                  key

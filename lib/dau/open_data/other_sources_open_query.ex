@@ -6,10 +6,28 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
   alias DAU.OpenData.AssessmentReportTag
   alias DAU.OpenData.PartnerEscalationTag
   alias DAU.OpenData.Tag
+  alias DAU.OpenData.QueryHelpers
 
   alias DAU.Repo
 
   @page_size 25
+
+
+  def get_other_sources_rows_for_csv() do
+    query =
+      # passing nil for no tag based filters
+      make_base_query(nil)
+      # Wrap the union so we can safely order/limit/offset on combined fields.
+      |> subquery()
+
+
+      query
+      |> order_by(desc: :date)
+      |> Repo.all()
+      |> bulk_add_s3_media_url()
+
+
+  end
 
   def list_combined_data(search_params) do
     order = %{
@@ -198,7 +216,7 @@ defmodule DAU.OpenData.OtherSourcesOpenQuery do
 
     Enum.map(rows, fn row ->
       media_urls = row.media_urls |> List.wrap()
-      display_url = media_urls |> Enum.at(0) |> OpenData.extract_first_url_from_text()
+      display_url = media_urls |> Enum.at(0) |> QueryHelpers.extract_first_url_from_text()
       row
       |> Map.put(:preview_url, display_url)
 
