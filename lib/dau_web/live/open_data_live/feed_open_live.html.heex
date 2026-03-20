@@ -339,7 +339,7 @@
     </div>
   </details>
 
-  <div class="mt-4 flex w-full ">
+  <div class="mt-4 mb-2 flex w-full items-center justify-between">
     <div class="join">
       <.link
         :if={@page_num > 1}
@@ -387,19 +387,26 @@
         »
       </span>
     </div>
+
+    <a
+      href="https://s3.ap-south-1.amazonaws.com/public.dau.tattle.co.in/preview_dataset/csv_files/tipline_data.csv"
+      class="btn btn-sm bg-slate-600 text-white hover:bg-slate-700"
+    >
+      Download CSV
+    </a>
   </div>
 
   <.feed_open_table id="queries" rows={@queries}>
     <%!-- <:col :let={query} label="id">
       <p class="min-w-[7rem]"><%= query.id%></p>
     </:col> --%>
-    <:col :let={query} label="preview">
+    <:col :let={query} label="Preview">
       <div class="min-w-[10rem]">
         <.render_preview type={"#{query.media_type}"} url={Enum.at(query.media_urls, 0)} />
       </div>
     </:col>
 
-    <:col :let={query} label="media type">
+    <:col :let={query} label="Media Type">
       <p class="min-w-[7rem]"><%= to_string(query.media_type) %></p>
     </:col>
 
@@ -407,7 +414,7 @@
       <p class="min-w-[4rem]"><%= humanize_count(query.hash_meta) %></p>
     </:col> --%>
 
-    <:col :let={query} label="tags">
+    <:col :let={query} label="Tags">
       <div class="min-w-[10rem]">
         <div :if={query.tag_joins} class="flex flex-col gap-2">
           <%= for tag <- query.tag_joins do %>
@@ -481,11 +488,11 @@
       <% end %>
     </:col>
 
-    <:col :let={query} label="verification status">
+    <:col :let={query} label="Verification Status">
       <p class="min-w-[9rem]"><%= query.verification_status || "-" %></p>
     </:col>
 
-    <:col :let={query} label="received at">
+    <:col :let={query} label="Received On">
       <p class="min-w-[12rem]"><%= humanize_date(query.inserted_at) %></p>
     </:col>
   </.feed_open_table>

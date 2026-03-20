@@ -11,9 +11,7 @@
 <div class="bg-white rounded-lg border border-zinc-200 p-4 mb-4">
   <div class="flex justify-between items-center mb-3">
     <h2 class="text-lg font-semibold text-slate-900">Filters</h2>
-    <.link href={
-      ~p"/other-sources-open?page_num=1&sort=newest&tag=all"
-    }>
+    <.link href={~p"/other-sources-open?page_num=1&sort=newest&tag=all"}>
       <p class="text-blue-600 text-sm hover:text-blue-700 cursor-pointer">clear filters</p>
     </.link>
   </div>
@@ -154,7 +152,7 @@
     </div>
   </details>
 
-  <div class="mt-4 flex w-full ">
+  <div class="mt-4 mb-2 flex w-full items-center justify-between">
     <div class="join">
       <.link
         :if={@page_num > 1}
@@ -202,6 +200,12 @@
         »
       </span>
     </div>
+    <a
+      href="https://s3.ap-south-1.amazonaws.com/public.dau.tattle.co.in/preview_dataset/csv_files/other_sources_data.csv"
+      class="btn btn-sm bg-slate-600 text-white hover:bg-slate-700"
+    >
+      Download CSV
+    </a>
   </div>
 
   <.feed_open_table id="queries" rows={@queries}>
