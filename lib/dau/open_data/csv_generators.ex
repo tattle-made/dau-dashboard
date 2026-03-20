@@ -1,4 +1,12 @@
 defmodule DAU.OpenData.CsvGenerators do
+
+  @moduledoc """
+  Module to generate CSV for the open datasets: The tipline data and The other sources dataset (Partner Escalations and Assessment Reports Tables).
+
+  The functions 'get_other_sources_csv' and 'get_tipline_csv' generate CSVs and output them in the tmp directory.
+
+  These function use the same base query as the ones used to fetch data for the UI Tables (from the respective Query modules), but without any applied filters.
+  """
   import Ecto.Query, warn: false
   alias DAU.OpenData.OtherSourcesOpenQuery
   alias DAU.OpenData.FeedOpenQuery

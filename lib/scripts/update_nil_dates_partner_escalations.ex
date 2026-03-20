@@ -27,5 +27,3 @@ defmodule Scripts.UpdateNilDatesPartnerEscalations do
 
   end
 end
-
-#  TODO DELETE bac6fecb-ca83-41a0-a4b6-1c6898dc6d2f	-> extra row (everything is null)  -> 324 (has only one text in url field "RUNJAY AUDIO ESCALATION", nothing else)
