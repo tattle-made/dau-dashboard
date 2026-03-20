@@ -7,6 +7,70 @@
 <div class="text-xl font-normal text-slate-900 mb-4">
   <h1><%= "Showing all #{@query_count} queries" %></h1>
 </div>
+<%!-- Columns Info --%>
+<details class="mb-4 w-full rounded-lg border border-slate-200 bg-white shadow-sm">
+  <summary class="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-slate-800">
+    Column Guide <span class="text-xs font-medium text-slate-500">Toggle</span>
+  </summary>
+  <div class="border-t border-slate-200 px-4 py-3 text-xs text-slate-700">
+    <div class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+      DATASET 2: Partner Escalations and Other Sources
+    </div>
+    <div class="overflow-x-auto">
+      <div class="mb-4 leading-6">
+        <span class="font-semibold mr-2 text-slate-800">Partner Escalations Dataset: </span>
+        <span>
+          Media items sent to DAU by partner organizations and fact checkers. These items were reported by other experts in the field and were not sent to DAU through the whatsapp tipline.
+        </span>
+      </div>
+      <table class="min-w-[40rem] w-full border-collapse">
+        <thead>
+          <tr class="text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <th class="py-2 pr-3">Field Name</th>
+            <th class="py-2 pr-3">Field Description</th>
+          </tr>
+        </thead>
+        <tbody class="align-top">
+          <tr class="border-t border-slate-200">
+            <td class="py-2 pr-3 font-semibold text-slate-800">Language</td>
+            <td class="py-2 pr-3">
+              Language of the content of media item.
+            </td>
+          </tr>
+          <tr class="border-t border-slate-200">
+            <td class="py-2 pr-3 font-semibold text-slate-800">inserted at</td>
+            <td class="py-2 pr-3">
+              The date and time at which the item was received by the DAU.
+            </td>
+          </tr>
+          <tr class="border-t border-slate-200">
+            <td class="py-2 pr-3 font-semibold text-slate-800">
+              No. of repeat instances (count)
+            </td>
+            <td class="py-2 pr-3">
+              Count of times this media was sent to DAU via the tipline.
+            </td>
+          </tr>
+
+          <tr class="border-t border-slate-200">
+            <td class="py-2 pr-3 font-semibold text-slate-800">Tools Used</td>
+            <td class="py-2 pr-3">
+              List of AI tools used for detecting AI manipulation or synthesis.
+            </td>
+          </tr>
+          <tr class="border-t border-slate-200">
+            <td class="py-2 pr-3 font-semibold text-slate-800">
+              Observations
+            </td>
+            <td class="py-2 pr-3">
+              Results of each type of analysis conducted on media item to detect synthesis.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</details>
 <!-- Filters Section -->
 <div class="bg-white rounded-lg border border-zinc-200 p-4 mb-4">
   <div class="flex justify-between items-center mb-3">
@@ -87,71 +151,6 @@
 </div>
 <!-- Content Section -->
 <div class="gap-4 w-full max-w-full min-w-0">
-  <%!-- Columns Info --%>
-  <details class="mb-4 w-full rounded-lg border border-slate-200 bg-white shadow-sm">
-    <summary class="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm font-semibold text-slate-800">
-      Column Guide <span class="text-xs font-medium text-slate-500">Toggle</span>
-    </summary>
-    <div class="border-t border-slate-200 px-4 py-3 text-xs text-slate-700">
-      <div class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-        DATASET 2: Partner Escalations and Other Sources
-      </div>
-      <div class="overflow-x-auto">
-        <div class="mb-4 leading-6">
-          <span class="font-semibold mr-2 text-slate-800">Partner Escalations Dataset: </span>
-          <span>
-            Media items sent to DAU by partner organizations and fact checkers. These items were reported by other experts in the field and were not sent to DAU through the whatsapp tipline.
-          </span>
-        </div>
-        <table class="min-w-[40rem] w-full border-collapse">
-          <thead>
-            <tr class="text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-              <th class="py-2 pr-3">Field Name</th>
-              <th class="py-2 pr-3">Field Description</th>
-            </tr>
-          </thead>
-          <tbody class="align-top">
-            <tr class="border-t border-slate-200">
-              <td class="py-2 pr-3 font-semibold text-slate-800">Language</td>
-              <td class="py-2 pr-3">
-                Language of the content of media item.
-              </td>
-            </tr>
-            <tr class="border-t border-slate-200">
-              <td class="py-2 pr-3 font-semibold text-slate-800">inserted at</td>
-              <td class="py-2 pr-3">
-                The date and time at which the item was received by the DAU.
-              </td>
-            </tr>
-            <tr class="border-t border-slate-200">
-              <td class="py-2 pr-3 font-semibold text-slate-800">
-                No. of repeat instances (count)
-              </td>
-              <td class="py-2 pr-3">
-                Count of times this media was sent to DAU via the tipline.
-              </td>
-            </tr>
-
-            <tr class="border-t border-slate-200">
-              <td class="py-2 pr-3 font-semibold text-slate-800">Tools Used</td>
-              <td class="py-2 pr-3">
-                List of AI tools used for detecting AI manipulation or synthesis.
-              </td>
-            </tr>
-            <tr class="border-t border-slate-200">
-              <td class="py-2 pr-3 font-semibold text-slate-800">
-                Observations
-              </td>
-              <td class="py-2 pr-3">
-                Results of each type of analysis conducted on media item to detect synthesis.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </details>
-
   <div class="mt-4 mb-2 flex w-full items-center justify-between">
     <div class="join">
       <.link
