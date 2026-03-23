@@ -262,6 +262,7 @@ let all_tags = [
   "Vladimir Putin",
   "Volodymyr Zelenskyy",
   "J D Vance",
+  "Benjamin Netanyahu",
   "Kash Patel",
   "Ebrahim Raisi",
   "Akhilesh Yadav",
