@@ -200,14 +200,23 @@ defmodule DAUWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns[:current_user] do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You must log in to access this page.")
-      |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/log_in")
-      |> halt()
+    case conn.assigns[:current_user] do
+      nil ->
+        conn
+        |> put_flash(:error, "You must log in to access this page.")
+        |> maybe_store_return_to()
+        |> redirect(to: ~p"/users/log_in")
+        |> halt()
+
+      %{confirmed_at: nil} ->
+        conn
+        |> put_flash(:error, "Please confirm your email before logging in.")
+        |> maybe_store_return_to()
+        |> redirect(to: ~p"/users/confirm/landing")
+        |> halt()
+
+      _user ->
+        conn
     end
   end
 

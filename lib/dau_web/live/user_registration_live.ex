@@ -7,8 +7,7 @@ defmodule DAUWeb.UserRegistrationLive do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      User registrations are disabled. Please contact admin@tattle.co.in for access.
-      <%!-- <.header class="text-center">
+      <.header class="text-center">
         Register for an account
         <:subtitle>
           Already registered?
@@ -19,14 +18,15 @@ defmodule DAUWeb.UserRegistrationLive do
         </:subtitle>
       </.header>
 
+      <%!-- action={~p"/users/log_in?_action=registered"}
+        method="post"  --> Arguments used when after registering, login is allowed without confirmation--%>
+
       <.simple_form
         for={@form}
         id="registration_form"
         phx-submit="save"
         phx-change="validate"
         phx-trigger-action={@trigger_submit}
-        action={~p"/users/log_in?_action=registered"}
-        method="post"
       >
         <.error :if={@check_errors}>
           Oops, something went wrong! Please check the errors below.
@@ -38,7 +38,7 @@ defmodule DAUWeb.UserRegistrationLive do
         <:actions>
           <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
         </:actions>
-      </.simple_form> --%>
+      </.simple_form>
     </div>
     """
   end
@@ -63,8 +63,9 @@ defmodule DAUWeb.UserRegistrationLive do
             &url(~p"/users/confirm/#{&1}")
           )
 
-        changeset = Accounts.change_user_registration(user)
-        {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
+        # changeset = Accounts.change_user_registration(user)
+        # {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
+        {:noreply, socket |> redirect(to: ~p"/users/confirm/landing")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
