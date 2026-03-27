@@ -75,7 +75,7 @@
 <div class="bg-white rounded-lg border border-zinc-200 p-4 mb-4">
   <div class="flex justify-between items-center mb-3">
     <h2 class="text-lg font-semibold text-slate-900">Filters</h2>
-    <.link href={~p"/other-sources-open?page_num=1&sort=newest&tag=all"}>
+    <.link href={~p"/datasets/preview/escalations?page_num=1&sort=newest&tag=all"}>
       <p class="text-blue-600 text-sm hover:text-blue-700 cursor-pointer">clear filters</p>
     </.link>
   </div>
@@ -155,7 +155,7 @@
     <div class="join">
       <.link
         :if={@page_num > 1}
-        navigate={"/other-sources-open?#{search_param_string_for_previous_page(@search_params)}"}
+        navigate={"/datasets/preview/escalations?#{search_param_string_for_previous_page(@search_params)}"}
         class="btn btn-sm join-item"
         aria-label="Previous page"
       >
@@ -174,7 +174,7 @@
           <span class="btn btn-sm join-item btn-disabled !bg-gray-200">...</span>
         <% else %>
           <.link
-            navigate={"/other-sources-open?#{search_param_string_for_page(@search_params, item)}"}
+            navigate={"/datasets/preview/escalations?#{search_param_string_for_page(@search_params, item)}"}
             class={"btn btn-sm join-item #{if item == @page_num, do: "btn-active text-slate-200 bg-gray-500 hover:bg-gray-600", else: ""}"}
             aria-current={if item == @page_num, do: "page", else: nil}
           >
@@ -185,7 +185,7 @@
 
       <.link
         :if={@page_num < @total_pages}
-        navigate={"/other-sources-open?#{search_param_string_for_next_page(@search_params)}"}
+        navigate={"/datasets/preview/escalations?#{search_param_string_for_next_page(@search_params)}"}
         class="btn btn-sm join-item"
         aria-label="Next page"
       >

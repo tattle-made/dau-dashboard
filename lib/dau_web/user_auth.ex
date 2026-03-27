@@ -33,7 +33,7 @@ defmodule DAUWeb.UserAuth do
     |> renew_session()
     |> put_token_in_session(token)
     |> maybe_write_remember_me_cookie(token, params)
-    |> redirect(to: user_return_to || signed_in_path(conn))
+    |> redirect(to: user_return_to || signed_in_path(user))
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
@@ -232,6 +232,9 @@ defmodule DAUWeb.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn),
-    do: ~p"/demo/query"
+  defp signed_in_path(%DAU.Accounts.User{role: :user}), do: ~p"/datasets"
+  defp signed_in_path(%DAU.Accounts.User{}), do: ~p"/demo/query"
+  defp signed_in_path(%{assigns: %{current_user: %DAU.Accounts.User{} = user}}),
+    do: signed_in_path(user)
+  defp signed_in_path(_conn_or_socket), do: ~p"/demo/query"
 end

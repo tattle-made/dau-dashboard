@@ -56,7 +56,7 @@ defmodule DAUWeb.OpenDataLive.FeedOpenLive do
     {:noreply,
      socket
      |> assign(:search_params, new_search_params)
-     |> push_navigate(to: "/feed-open?#{SearchParams.search_param_string(new_search_params)}")}
+     |> push_navigate(to: "/datasets/preview/whatsapp-tipline-dataset?#{SearchParams.search_param_string(new_search_params)}")}
   end
 
   defp humanize_date(date) do

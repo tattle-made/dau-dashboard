@@ -58,7 +58,7 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
 
           <div class="mt-6">
             <.link
-              navigate="/feed-open"
+              navigate="/datasets/preview/whatsapp-tipline-dataset"
               class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
             >
               View Dataset 1 <span aria-hidden="true">→</span>
@@ -107,7 +107,7 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
 
           <div class="mt-6">
             <.link
-              navigate="/other-sources-open"
+              navigate="/datasets/preview/escalations"
               class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
             >
               View Dataset 2 <span aria-hidden="true">→</span>
