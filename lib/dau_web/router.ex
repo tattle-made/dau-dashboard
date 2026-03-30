@@ -226,7 +226,6 @@ defmodule DAUWeb.Router do
       live "/users/log_in", UserLoginLive, :new
       live "/users/reset_password", UserForgotPasswordLive, :new
       live "/users/reset_password/:token", UserResetPasswordLive, :edit
-      live "/users/confirm/landing", UserConfirmationLandingLive, :index
     end
 
     post "/users/log_in", UserSessionController, :create
@@ -264,6 +263,7 @@ defmodule DAUWeb.Router do
 
     live_session :current_user,
       on_mount: [{DAUWeb.UserAuth, :mount_current_user}] do
+      live "/users/confirm/landing", UserConfirmationLandingLive, :index
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
