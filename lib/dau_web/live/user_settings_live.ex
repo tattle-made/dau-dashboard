@@ -1,7 +1,11 @@
 defmodule DAUWeb.UserSettingsLive do
+
+  alias Permission.RouteAuthorization
   use DAUWeb, :live_view
 
   alias DAU.Accounts
+
+
 
   def render(assigns) do
     ~H"""
@@ -70,7 +74,7 @@ defmodule DAUWeb.UserSettingsLive do
         </.simple_form>
       </div>
 
-      <div class="pt-8">
+      <div :if= {@current_user && RouteAuthorization.allowed?(@current_user, :deny_users) } class="pt-8">
         <h3 class="text-lg font-medium leading-6 text-gray-900">Other Links</h3>
         <div class="mt-4 space-y-2">
           <div>

@@ -12,7 +12,17 @@
     </script>
   </head>
   <body class="bg-white antialiased">
-    <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
+    <header class="px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
+        <div class="flex items-center gap-4">
+          <a href="/">
+            <img src={~p"/images/logo.png"} width="36" alt= "DAU-logo" />
+          </a>
+          <p class="bg-brand/5 text-brand rounded-full px-2 font-medium leading-6">
+            v<%= "0.1.0" %>
+          </p>
+        </div>
+        <ul class="relative z-10 flex items-center gap-4 justify-end">
       <%= if @current_user do %>
         <li class="text-[0.8125rem] leading-6 text-green-900">
           <%= @current_user.email %>
@@ -35,14 +45,14 @@
           </.link>
         </li>
       <% else %>
-        <%!-- <li>
+        <li>
           <.link
             href={~p"/users/register"}
             class="text-[0.8125rem] leading-6 text-green-900 font-medium hover:text-green-700"
           >
             Register
           </.link>
-        </li> --%>
+        </li>
         <li>
           <.link
             href={~p"/users/log_in"}
@@ -52,7 +62,9 @@
           </.link>
         </li>
       <% end %>
-    </ul>
+        </ul>
+      </div>
+    </header>
     <%= @inner_content %>
   </body>
 </html>

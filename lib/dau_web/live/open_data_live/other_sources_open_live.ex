@@ -51,7 +51,7 @@ defmodule DAUWeb.OpenDataLive.OtherSourcesOpenLive do
      socket
      |> assign(:search_params, new_search_params)
      |> push_navigate(
-       to: "/other-sources-open?#{SearchParams.search_param_string(new_search_params)}"
+       to: "/datasets/preview/escalations?#{SearchParams.search_param_string(new_search_params)}"
      )}
   end
 

@@ -33,7 +33,7 @@ defmodule DAUWeb.UserAuth do
     |> renew_session()
     |> put_token_in_session(token)
     |> maybe_write_remember_me_cookie(token, params)
-    |> redirect(to: user_return_to || signed_in_path(conn))
+    |> redirect(to: user_return_to || signed_in_path(user))
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}) do
@@ -200,14 +200,23 @@ defmodule DAUWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns[:current_user] do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You must log in to access this page.")
-      |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/log_in")
-      |> halt()
+    case conn.assigns[:current_user] do
+      nil ->
+        conn
+        |> put_flash(:error, "You must log in to access this page.")
+        |> maybe_store_return_to()
+        |> redirect(to: ~p"/users/log_in")
+        |> halt()
+
+      %{confirmed_at: nil} ->
+        conn
+        |> put_flash(:error, "Please confirm your email before logging in.")
+        |> maybe_store_return_to()
+        |> redirect(to: ~p"/users/confirm/landing")
+        |> halt()
+
+      _user ->
+        conn
     end
   end
 
@@ -223,6 +232,14 @@ defmodule DAUWeb.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn),
-    do: ~p"/demo/query"
+  @doc """
+  Returns the signed-in redirect path for the given user.
+  """
+  def signed_in_path_for(%DAU.Accounts.User{} = user), do: signed_in_path(user)
+
+  defp signed_in_path(%DAU.Accounts.User{role: :user}), do: ~p"/datasets"
+  defp signed_in_path(%DAU.Accounts.User{}), do: ~p"/demo/query"
+  defp signed_in_path(%{assigns: %{current_user: %DAU.Accounts.User{} = user}}),
+    do: signed_in_path(user)
+  defp signed_in_path(_conn_or_socket), do: ~p"/demo/query"
 end

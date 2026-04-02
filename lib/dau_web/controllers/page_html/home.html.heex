@@ -1,25 +1,57 @@
 <.flash_group flash={@flash} />
-<div class="flex flex-col justify-center p-24">
-  <div class="h-1/2 grow-0">
-    <div class="flex flex-row gap-2 items-center">
-    <a href="/">
-      <img src={~p"/images/logo.png"} width="36" />
-    </a>
-    <h1 class="font-bold text-brand text-2xl">DAU</h1>
-    </div>
-    <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
-      Deepfake Analysis Unit
-      <small class="bg-brand/5 text-[0.8125rem] ml-3 rounded-full px-2 font-medium leading-6">
-        <%= "v0.1.0" %>
-      </small>
-    </h1>
-    <div class="w-1/2">
-      <p class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter text-gray-400">
+<div class="mx-auto max-w-6xl px-6 py-14 sm:py-16 lg:px-8">
+  <div class="flex flex-col-reverse gap-10 lg:flex-row lg:items-center">
+    <div class="flex-1">
+      <div class="flex flex-row gap-2 items-center">
+        <a href="/">
+          <img src={~p"/images/logo.png"} width="36" />
+        </a>
+        <h1 class="font-bold text-brand text-2xl">DAU</h1>
+      </div>
+      <h1 class="text-brand mt-6 flex items-center text-sm font-semibold leading-6">
+        Deepfake Analysis Unit
+        <small class="bg-brand/5 text-[0.8125rem] ml-3 rounded-full px-2 font-medium leading-6">
+          <%= "v0.1.0" %>
+        </small>
+      </h1>
+      <p class="mt-4 text-2xl font-semibold leading-9 tracking-tight text-gray-400">
         A collaborative space for analysing synthetic media
       </p>
+
+      <div class="mt-6 text-sm text-gray-600">
+        <%= if @current_user do %>
+        <%= case Permission.RouteAuthorization.allowed?(@current_user, :deny_users) do%>
+        <% true -> %>
+        <p>
+           View User queries.
+            <.link navigate={~p"/demo/query"} class="font-semibold text-brand hover:underline">
+              Go to the Feed
+            </.link>
+          </p>
+        <% false -> %>
+          <p>
+            Explore and view DAU datasets here.
+            <.link navigate={~p"/datasets"} class="font-semibold text-brand hover:underline">
+              Browse datasets
+            </.link>
+          </p>
+        <% end %>
+        <% else %>
+          <p>
+            Register to access DAU datasets and previews.
+            <.link navigate={~p"/users/register"} class="font-semibold text-brand hover:underline">
+              Create an account
+            </.link>
+          </p>
+        <% end %>
+      </div>
     </div>
-  </div>
-  <div class="max-w-2xl lg:mx-0">
-    <img src="/images/home-hero-landscape.png"/>
+
+    <div class="flex-1">
+      <img
+        src={~p"/images/home-hero-landscape.png"}
+        class="w-full max-w-xl mx-auto"
+      />
+    </div>
   </div>
 </div>

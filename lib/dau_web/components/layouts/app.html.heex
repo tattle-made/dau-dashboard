@@ -1,5 +1,6 @@
 <header class="px-4 sm:px-6 lg:px-8">
   <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
+    <%!--
     <div class="flex items-center gap-4">
       <a href="/">
         <img src={~p"/images/logo.png"} width="36" />
@@ -8,7 +9,9 @@
         v<%= "0.1.0" %>
       </p>
     </div>
-    <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
+    --%>
+    <%!-- <div :if= {@current_user && @current_user.role != :user} class="flex items-center gap-4 font-semibold leading-6 text-zinc-900 ml-auto"> --%>
+    <div :if= {@current_user && Permission.RouteAuthorization.allowed?(@current_user, :deny_users)} class="flex items-center gap-4 font-semibold leading-6 text-zinc-900 ml-auto">
       <a
         href={~p"/demo/query?page_num=1&sort=newest&verification_status=&media_type=all"}
         class="text-slate-700 font-medium"
