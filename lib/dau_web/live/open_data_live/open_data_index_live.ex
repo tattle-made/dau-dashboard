@@ -19,64 +19,6 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
         </p>
       </div>
 
-      <div
-        id="colocated-hook-demo"
-        phx-hook=".HelloHook"
-        class="mt-6 rounded-md border border-dashed border-zinc-300 bg-slate-50 p-4 text-sm text-slate-700 transition-colors"
-      >
-        <div class="flex items-center justify-between gap-4">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Colocated Hook Demo
-            </p>
-            <p class="mt-1">
-              Count: <span data-count>0</span>
-            </p>
-            <p class="text-xs text-slate-500" data-status>
-              Waiting for mount...
-            </p>
-          </div>
-          <button
-            type="button"
-            data-action
-            class="inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-800"
-          >
-            Click me
-          </button>
-        </div>
-      </div>
-
-      <script :type={Phoenix.LiveView.ColocatedHook} name=".HelloHook">
-        export default {
-          mounted() {
-            this.count = 0;
-            this.countEl = this.el.querySelector("[data-count]");
-            this.statusEl = this.el.querySelector("[data-status]");
-            this.buttonEl = this.el.querySelector("[data-action]");
-
-            this.buttonEl.addEventListener("click", () => this.increment());
-            this.statusEl.textContent = "Mounted. Click the button to test.";
-            this.update();
-          },
-          increment() {
-            this.count += 1;
-            this.update();
-          },
-          update() {
-            this.countEl.textContent = this.count;
-
-            if (this.count % 2 === 0) {
-              this.el.classList.remove("bg-emerald-50");
-              this.el.classList.add("bg-slate-50");
-            } else {
-              this.el.classList.remove("bg-slate-50");
-              this.el.classList.add("bg-emerald-50");
-            }
-          }
-        }
-      </script>
-
-
       <div class="mt-8 flex flex-col gap-6">
         <div class="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <div class="flex items-start justify-between gap-4">
