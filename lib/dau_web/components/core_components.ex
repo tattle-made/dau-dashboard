@@ -278,6 +278,7 @@ defmodule DAUWeb.CoreComponents do
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :errors, :list, default: []
+  attr :show_errors, :boolean, default: true, doc: "show errors only after input is used"
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
@@ -293,6 +294,7 @@ defmodule DAUWeb.CoreComponents do
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
+    |> assign(:show_errors, Phoenix.Component.used_input?(field) or not is_nil(field.form.action))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> input()
@@ -305,7 +307,7 @@ defmodule DAUWeb.CoreComponents do
       end)
 
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div>
       <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
         <input type="hidden" name={@name} value="false" />
         <input
@@ -319,14 +321,14 @@ defmodule DAUWeb.CoreComponents do
         />
         <%= @label %>
       </label>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :if={@show_errors} :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
   end
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div>
       <.label for={@id}><%= @label %></.label>
       <select
         id={@id}
@@ -338,34 +340,34 @@ defmodule DAUWeb.CoreComponents do
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :if={@show_errors} :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
   end
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div>
       <.label for={@id}><%= @label %></.label>
       <textarea
         id={@id}
         name={@name}
         class={[
           "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "min-h-[6rem] phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
+          "min-h-[6rem]",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :if={@show_errors} :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
   end
 
   def input(%{type: "checkgroup"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name} class="text-sm">
+    <div class="text-sm">
       <.label for={@id}><%= @label %></.label>
       <div class="mt-1 w-full shadow-sm pl-3 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-black focus:border-black sm:text-sm">
         <div class="grid grid-cols-1 gap-1 text-sm items-baseline">
@@ -385,7 +387,7 @@ defmodule DAUWeb.CoreComponents do
           </div>
         </div>
       </div>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :if={@show_errors} :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
   end
@@ -393,7 +395,7 @@ defmodule DAUWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div>
       <.label for={@id}><%= @label %></.label>
       <input
         type={@type}
@@ -402,13 +404,12 @@ defmodule DAUWeb.CoreComponents do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
           "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :if={@show_errors} :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
   end
