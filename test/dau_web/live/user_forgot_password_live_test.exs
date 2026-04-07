@@ -21,7 +21,7 @@ defmodule DAUWeb.UserForgotPasswordLiveTest do
     #     conn
     #     |> log_in_user(user_fixture())
     #     |> live(~p"/users/reset_password")
-    #     |> follow_redirect(conn, ~p"/demo/query")
+    #     |> follow_redirect(conn, ~p"/datasets")
 
     #   assert {:ok, _conn} = result
     # end

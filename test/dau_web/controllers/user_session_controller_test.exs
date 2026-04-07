@@ -4,7 +4,7 @@ defmodule DAUWeb.UserSessionControllerTest do
   import DAU.AccountsFixtures
 
   setup do
-    %{user: user_fixture()}
+    %{user: confirmed_user_fixture()}
   end
 
   describe "POST /users/log_in" do
@@ -15,7 +15,7 @@ defmodule DAUWeb.UserSessionControllerTest do
         })
 
       assert get_session(conn, :user_token)
-      assert redirected_to(conn) == ~p"/demo/query"
+      assert redirected_to(conn) == ~p"/datasets"
 
       # Now do a logged in request and assert on the menu
       conn = get(conn, ~p"/")
@@ -36,7 +36,7 @@ defmodule DAUWeb.UserSessionControllerTest do
         })
 
       assert conn.resp_cookies["_dau_web_user_remember_me"]
-      assert redirected_to(conn) == ~p"/demo/query"
+      assert redirected_to(conn) == ~p"/datasets"
     end
 
     test "logs the user in with return to", %{conn: conn, user: user} do
@@ -65,7 +65,7 @@ defmodule DAUWeb.UserSessionControllerTest do
           }
         })
 
-      assert redirected_to(conn) == ~p"/demo/query"
+      assert redirected_to(conn) == ~p"/datasets"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Account created successfully"
     end
 
