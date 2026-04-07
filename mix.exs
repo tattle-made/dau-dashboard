@@ -47,7 +47,7 @@ defmodule DAU.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.1.0"},
+      {:phoenix_live_view, "== 1.1.0"},
       {:floki, ">= 0.30.0", only: :test},
       {:lazy_html, ">= 0.0.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
@@ -72,7 +72,8 @@ defmodule DAU.MixProject do
       {:earmark, "~> 1.4.48"},
       {:html_sanitize_ex, "~> 1.4"},
       {:csv, "~> 3.2"},
-      {:elixir_make, "~> 0.9", override: true}
+      {:elixir_make, "~> 0.9", override: true},
+      {:igniter, "~> 0.6", only: [:dev, :test]}
     ]
   end
 
