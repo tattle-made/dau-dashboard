@@ -89,10 +89,10 @@ defmodule DAU.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind dau", "esbuild dau"],
+      "assets.build": ["compile", "tailwind default", "esbuild default"],
       "assets.deploy": [
-        "tailwind dau --minify",
-        "esbuild dau --minify",
+        "tailwind default --minify",
+        "esbuild default --minify",
         "phx.digest"
       ],
       precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
