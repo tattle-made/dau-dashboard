@@ -4,8 +4,12 @@ defmodule DAUWeb.Search.SearchLiveTest do
   use DAUWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
+  import DAU.AccountsFixtures
 
-  setup :register_and_log_in_user
+  setup %{conn: conn} do
+    user = confirmed_user_fixture(%{role: :admin})
+    %{conn: log_in_user(conn, user), user: user}
+  end
 
   describe "search filtering" do
     setup do

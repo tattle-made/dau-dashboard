@@ -14,7 +14,7 @@ defmodule DAUWeb.UserAuthTest do
       |> Map.replace!(:secret_key_base, DAUWeb.Endpoint.config(:secret_key_base))
       |> init_test_session(%{})
 
-    %{user: user_fixture(), conn: conn}
+    %{user: confirmed_user_fixture(), conn: conn}
   end
 
   describe "log_in_user/3" do
@@ -22,7 +22,7 @@ defmodule DAUWeb.UserAuthTest do
       conn = UserAuth.log_in_user(conn, user)
       assert token = get_session(conn, :user_token)
       assert get_session(conn, :live_socket_id) == "users_sessions:#{Base.url_encode64(token)}"
-      assert redirected_to(conn) == ~p"/demo/query"
+      assert redirected_to(conn) == ~p"/datasets"
       assert Accounts.get_user_by_session_token(token)
     end
 
@@ -216,7 +216,7 @@ defmodule DAUWeb.UserAuthTest do
     test "redirects if user is authenticated", %{conn: conn, user: user} do
       conn = conn |> assign(:current_user, user) |> UserAuth.redirect_if_user_is_authenticated([])
       assert conn.halted
-      assert redirected_to(conn) == ~p"/demo/query"
+      assert redirected_to(conn) == ~p"/datasets"
     end
 
     test "does not redirect if user is not authenticated", %{conn: conn} do

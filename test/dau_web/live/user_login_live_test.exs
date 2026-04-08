@@ -18,7 +18,7 @@ defmodule DAUWeb.UserLoginLiveTest do
     #     conn
     #     |> log_in_user(user_fixture())
     #     |> live(~p"/users/log_in")
-    #     |> follow_redirect(conn, "/demo/query")
+    #     |> follow_redirect(conn, "/datasets")
 
     #   assert {:ok, _conn} = result
     # end
@@ -27,7 +27,7 @@ defmodule DAUWeb.UserLoginLiveTest do
   describe "user login" do
     test "redirects if user login with valid credentials", %{conn: conn} do
       password = "123456789abcd"
-      user = user_fixture(%{password: password})
+      user = confirmed_user_fixture(%{password: password})
 
       {:ok, lv, _html} = live(conn, ~p"/users/log_in")
 
@@ -37,7 +37,7 @@ defmodule DAUWeb.UserLoginLiveTest do
       conn = submit_form(form, conn)
 
       assert redirected_to(conn) ==
-               ~p"/demo/query"
+               ~p"/datasets"
     end
 
     test "redirects to login page with a flash error if there are no valid credentials", %{
@@ -64,7 +64,7 @@ defmodule DAUWeb.UserLoginLiveTest do
 
     # {:ok, _login_live, login_html} =
     #   lv
-    #   |> element(~s|main a:fl-contains("Sign up")|)
+    #   |> element("main a", "Sign up")
     #   |> render_click()
     #   |> follow_redirect(conn, ~p"/users/register")
 
@@ -78,7 +78,7 @@ defmodule DAUWeb.UserLoginLiveTest do
 
     #   {:ok, conn} =
     #     lv
-    #     |> element(~s|main a:fl-contains("Forgot your password?")|)
+    #     |> element("main a", "Forgot your password?")
     #     |> render_click()
     #     |> follow_redirect(conn, ~p"/users/reset_password")
 

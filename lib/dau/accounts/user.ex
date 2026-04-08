@@ -16,7 +16,7 @@ defmodule DAU.Accounts.User do
         :expert_factchecker,
         :expert_forensic,
         :user
-      ]
+      ], default: :user
 
     timestamps(type: :utc_datetime)
   end

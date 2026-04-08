@@ -23,6 +23,18 @@ defmodule DAU.AccountsFixtures do
     user
   end
 
+  def confirm_user(%DAU.Accounts.User{} = user) do
+    user
+    |> DAU.Accounts.User.confirm_changeset()
+    |> DAU.Repo.update!()
+  end
+
+  def confirmed_user_fixture(attrs \\ %{}) do
+    attrs
+    |> user_fixture()
+    |> confirm_user()
+  end
+
   def extract_user_token(fun) do
     {:ok, captured_email} = fun.(&"[TOKEN]#{&1}[TOKEN]")
     [_, token | _] = String.split(captured_email.text_body, "[TOKEN]")
