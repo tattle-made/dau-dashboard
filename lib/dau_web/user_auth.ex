@@ -237,7 +237,7 @@ defmodule DAUWeb.UserAuth do
   """
   def signed_in_path_for(%DAU.Accounts.User{} = user), do: signed_in_path(user)
 
-  defp signed_in_path(%DAU.Accounts.User{role: :user}), do: ~p"/datasets"
+  defp signed_in_path(%DAU.Accounts.User{role: :drive_by}), do: ~p"/datasets"
   defp signed_in_path(%DAU.Accounts.User{}), do: ~p"/demo/query"
   defp signed_in_path(%{assigns: %{current_user: %DAU.Accounts.User{} = user}}),
     do: signed_in_path(user)

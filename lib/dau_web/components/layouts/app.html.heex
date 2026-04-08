@@ -10,7 +10,7 @@
       </p>
     </div>
     --%>
-    <%!-- <div :if= {@current_user && @current_user.role != :user} class="flex items-center gap-4 font-semibold leading-6 text-zinc-900 ml-auto"> --%>
+    <%!-- <div :if= {@current_user && @current_user.role != :drive_by} class="flex items-center gap-4 font-semibold leading-6 text-zinc-900 ml-auto"> --%>
     <div :if= {@current_user && Permission.RouteAuthorization.allowed?(@current_user, :deny_users)} class="flex items-center gap-4 font-semibold leading-6 text-zinc-900 ml-auto">
       <a
         href={~p"/demo/query?page_num=1&sort=newest&verification_status=&media_type=all"}

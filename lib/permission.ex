@@ -3,14 +3,15 @@ defmodule Permission do
   Rudimentary role based access control for dashboard.
 
   This module helps answer the question - Can user U perform an action A on resource R.
-  U is `DAU.Accounts.User` with U.role ∈ {:expert_factchecker, :expert_forensic, :secratariat_manager,
-  :secratariat_associate, :admin}. Refer `DAU.Accounts.User` for definition.
+  U is `DAU.Accounts.User` with U.role ∈ {:drive_by, :expert_factchecker, :expert_forensic,
+  :secratariat_manager, :secratariat_associate, :admin}. Refer `DAU.Accounts.User` for definition.
   A ∈ {:view, :create, :edit, :delete}
   R is any module that implements the Ecto.Schema behaviour
 
   ## Background Information
-  Dashboard Users can have Roles - user(by default), expert_factchecker, expert_forensic, secratariat_manager,
-  secratariat_associate, admin.  Roles have privileges which are defined in `priviledges/0`
+  Dashboard Users can have Roles - drive_by (by default), expert_factchecker, expert_forensic,
+  secratariat_manager, secratariat_associate, admin. Roles have privileges which are defined in
+  `priviledges/0`
 
   ## Examples
   user_a = Repo.get(User, 1)
@@ -68,7 +69,7 @@ defmodule Permission do
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle}),
       expert_forensic: MapSet.new(),
-      user: MapSet.new()
+      drive_by: MapSet.new()
     }
   end
 end

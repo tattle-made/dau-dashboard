@@ -24,6 +24,6 @@ alias DAU.Feed
     password: "dau_forensic_pw",
     role: :expert_forensic
   },
-  %{email: "dau_user@email.com", password: "dau_user_pw", role: :user}
+  %{email: "dau_user@email.com", password: "dau_user_pw", role: :drive_by}
 ]
 |> Enum.map(&Accounts.register_user(&1))
