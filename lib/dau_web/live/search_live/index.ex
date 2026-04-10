@@ -81,25 +81,41 @@ defmodule DAUWeb.SearchLive.Index do
   def handle_event("mark-as-spam", _value, socket) do
     selection = socket.assigns.selection
     search_params = socket.assigns.search_params
+    user = socket.assigns.current_user
 
-    Enum.map(selection, fn id ->
-      with query <- Feed.get_feed_item_by_id(id),
-           {:ok, _} <- Feed.add_user_response_label(query, %{verification_status: :spam}) do
-        IO.puts("#{id} marked as spam")
-      else
-        _ -> IO.puts("error marking spam #{id}")
-      end
-    end)
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      Enum.map(selection, fn id ->
+        with query <- Feed.get_feed_item_by_id(id),
+             {:ok, _} <- Feed.add_user_response_label(query, %{verification_status: :spam}, user) do
+          IO.puts("#{id} marked as spam")
+        else
+          {:error, :unauthorized} ->
+            IO.puts("unauthorized marking spam #{id}")
 
-    {count, results} = Feed.list_common_feed(search_params)
+          _ ->
+            IO.puts("error marking spam #{id}")
+        end
+      end)
 
-    socket =
-      socket
-      |> assign(:queries, results)
-      |> assign(:query_count, count)
-      |> assign(:selection, [])
+      {count, results} = Feed.list_common_feed(search_params)
 
-    {:noreply, socket}
+      socket =
+        socket
+        |> assign(:queries, results)
+        |> assign(:query_count, count)
+        |> assign(:selection, [])
+        |> put_flash(:info, "Success")
+
+      {:noreply, socket}
+    else
+      {:error, :unauthorized} ->
+        socket =
+          socket
+          # |> assign(:selection, [])
+          |> put_flash(:error, "Not Authorized to perform this action.")
+
+        {:noreply, socket}
+    end
   end
 
   def handle_event("delete", _value, socket) do
@@ -113,17 +129,24 @@ defmodule DAUWeb.SearchLive.Index do
 
   def handle_event("take-up", _value, socket) do
     selection = socket.assigns.selection
-    user = socket.assigns.current_user_name
+    user_name = socket.assigns.current_user_name
+    user = socket.assigns.current_user
     _page_num = socket.assigns.page_num
     search_params = socket.assigns.search_params
 
-    Enum.map(selection, fn id ->
-      Feed.get_feed_item_by_id(id)
-      |> Feed.take_up(user)
-    end)
+    if Permission.has_privilege?(user, :edit, Common) do
+      Enum.map(selection, fn id ->
+        Feed.get_feed_item_by_id(id)
+        |> Feed.take_up(user_name, user)
+      end)
 
-    {_count, results} = Feed.list_common_feed(search_params)
-    {:noreply, assign(socket, :queries, results) |> assign(:selection, [])}
+      {_count, results} = Feed.list_common_feed(search_params)
+
+      {:noreply,
+       assign(socket, :queries, results) |> assign(:selection, []) |> put_flash(:info, "Success")}
+    else
+      {:noreply, socket |> put_flash(:error, "Action not permitted.")}
+    end
   end
 
   defp humanize_date(date) do

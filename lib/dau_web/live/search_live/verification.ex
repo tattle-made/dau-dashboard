@@ -40,7 +40,7 @@ defmodule DAUWeb.SearchLive.Verification do
 
     attributes = Map.put(normal_params, "tags", tags)
 
-    case Feed.add_secratariat_notes(query, attributes) do
+    case Feed.add_secratariat_notes(query, attributes, socket.assigns.current_user) do
       {:ok, _user} ->
         {
           :noreply,
@@ -48,6 +48,9 @@ defmodule DAUWeb.SearchLive.Verification do
           |> put_flash(:info, "verification notes updated")
           # |> redirect(to: ~p"/demo/query?pagE_")
         }
+
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

@@ -41,6 +41,16 @@ defmodule Permission do
   alias DAU.Feed.Common
   alias DAU.Feed.AssessmentReportMetadata
 
+  def authorize(nil, _action, _resource), do: {:error, :unauthorized}
+
+  def authorize(%User{} = user, action, resource) do
+    if has_privilege?(user, action, resource) do
+      :ok
+    else
+      {:error, :unauthorized}
+    end
+  end
+
   def has_privilege?(%User{} = user, action, resource) do
     case user.role do
       :admin -> true

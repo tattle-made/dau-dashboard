@@ -8,6 +8,7 @@ defmodule DAU.Feed do
   alias DAU.UserMessage.Templates.Factory
   alias DAU.UserMessage.Templates.Template
   alias DAU.UserMessage.Query
+  alias Permission
 
   def add_to_common_feed(attrs \\ %{}) do
     %Common{}
@@ -248,28 +249,36 @@ defmodule DAU.Feed do
     map
   end
 
-  def add_secratariat_notes(%Common{} = common, attrs \\ %{}) do
-    common
-    |> Common.annotation_changeset(attrs)
-    |> Repo.update()
+  def add_secratariat_notes(%Common{} = common, attrs, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      common
+      |> Common.annotation_changeset(attrs)
+      |> Repo.update()
+    end
   end
 
-  def add_user_response_label(%Common{} = common, attrs \\ %{}) do
-    common
-    |> Common.user_response_label_changeset(attrs)
-    |> Repo.update()
+  def add_user_response_label(%Common{} = common, attrs, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      common
+      |> Common.user_response_label_changeset(attrs)
+      |> Repo.update()
+    end
   end
 
-  def delete_user_response_lable(%Common{} = common) do
-    common
-    |> Common.changeset_to_remove_user_response_label()
-    |> Repo.update()
+  def delete_user_response_lable(%Common{} = common, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      common
+      |> Common.changeset_to_remove_user_response_label()
+      |> Repo.update()
+    end
   end
 
-  def take_up(%Common{} = common, user_name) do
+  def take_up(%Common{} = common, user_name, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
     common
     |> Common.take_up_changeset(%{taken_by: user_name})
     |> Repo.update()
+    end
   end
 
   defp bulk_add_s3_media_url(common) do
@@ -307,67 +316,78 @@ defmodule DAU.Feed do
 
     message is a string and target is the user's phone number
   """
-  def add_user_response(id, response) do
-    {:ok, _common} =
+  def add_user_response(id, response, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
       Repo.get!(Common, id)
       |> Common.user_response_changeset(%{user_response: response})
       |> Repo.update()
+    end
   end
 
-  def add_verification_sop(%Common{} = common, attrs) do
-    common
-    |> Common.verification_sop_changeset(attrs)
-    |> Repo.update()
+  def add_verification_sop(%Common{} = common, attrs, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      common
+      |> Common.verification_sop_changeset(attrs)
+      |> Repo.update()
+    end
   end
 
-  def add_resource(query_id, %Resource{} = resource) do
-    Repo.get!(Common, query_id)
-    |> Common.query_with_resource_changeset(resource)
-    |> Repo.update()
+  def add_resource(query_id, %Resource{} = resource, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      Repo.get!(Common, query_id)
+      |> Common.query_with_resource_changeset(resource)
+      |> Repo.update()
+    end
   end
 
   def get_resources(query_id) do
     Repo.get!(Common, query_id).resources
   end
 
-  def add_assessment_report(query_id, %AssessmentReport{} = assessment_report) do
-    Repo.get!(Common, query_id)
-    |> Common.query_with_assessment_report_changeset(assessment_report)
-    |> Repo.update()
+  def add_assessment_report(query_id, %AssessmentReport{} = assessment_report, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      Repo.get!(Common, query_id)
+      |> Common.query_with_assessment_report_changeset(assessment_report)
+      |> Repo.update()
+    end
   end
 
   def get_assessment_report(query_id) do
     Repo.get!(Common, query_id).assessment_report
   end
 
-  def add_factcheck_article(query_id, %FactcheckArticle{} = factcheck_article) do
-    Repo.get!(Common, query_id)
-    |> Common.query_with_factcheck_article(factcheck_article)
-    |> Repo.update()
+  def add_factcheck_article(query_id, %FactcheckArticle{} = factcheck_article, user) do
+    with :ok <- Permission.authorize(user, :add, FactcheckArticle) do
+      Repo.get!(Common, query_id)
+      |> Common.query_with_factcheck_article(factcheck_article)
+      |> Repo.update()
+    end
   end
 
-  def set_approval_status(query_id, article_id, approval_status) do
-    try do
-      common = Repo.get!(Common, query_id)
+  def set_approval_status(query_id, article_id, approval_status, user) do
+    with :ok <- Permission.authorize(user, :approve, FactcheckArticle) do
+      try do
+        common = Repo.get!(Common, query_id)
 
-      articles =
-        Enum.map(common.factcheck_articles, fn article ->
-          if article.id == article_id do
-            %{id: article.id, approved: approval_status}
-          else
-            %{id: article.id}
-          end
-        end)
+        articles =
+          Enum.map(common.factcheck_articles, fn article ->
+            if article.id == article_id do
+              %{id: article.id, approved: approval_status}
+            else
+              %{id: article.id}
+            end
+          end)
 
-      case(
-        Common.query_with_updated_factcheck_article_changeset(common, articles)
-        |> Repo.update()
-      ) do
-        {:ok, common} -> {:ok, common}
-        {:error, _} -> raise "Unable to update in database"
+        case(
+          Common.query_with_updated_factcheck_article_changeset(common, articles)
+          |> Repo.update()
+        ) do
+          {:ok, common} -> {:ok, common}
+          {:error, _} -> raise "Unable to update in database"
+        end
+      rescue
+        _err -> {:error, "Unable to approve article"}
       end
-    rescue
-      _err -> {:error, "Unable to approve article"}
     end
   end
 

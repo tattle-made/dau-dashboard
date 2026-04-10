@@ -10,16 +10,25 @@ defmodule DAUWeb.Components.MatchReview do
   def handle_event("reuse-response", value, socket) do
     src = value["value"] |> String.to_integer()
     target = socket.assigns.common_id
-
+    user = socket.assigns.current_user
 
     socket =
-      with {:ok, common} <- Blake2B.copy_response_fields(src, target),
-           {:ok, query} <- UserMessage.add_response_to_outbox(common),
+      with {:ok, common} <- Blake2B.copy_response_fields(src, target, user),
+           {:ok, query} <- UserMessage.add_response_to_outbox(common, user),
            template_meta <- Detail.get_templatized_response_paramters(common),
-           {:ok} <- UserMessage.send_response(query.user_message_outbox,template_meta) do
+           {:ok} <-
+             UserMessage.send_response_from_common(
+               query.user_message_outbox,
+               template_meta,
+               user
+             ) do
         socket
         |> redirect(to: ~p"/demo/query/#{target}")
       else
+        {:error, :unauthorized} ->
+          socket
+          |> put_flash(:error, "You are not authorized to perform this action.")
+
         error ->
           Logger.error(error)
 
@@ -33,7 +42,12 @@ defmodule DAUWeb.Components.MatchReview do
   def update(assigns, socket) do
     id = assigns.common_id
     matches = Blake2B.get_matches_by_common_id(id)
-    socket = socket |> assign(:common_id, id) |> assign(:suggested_matches, matches.result)
+    socket =
+      socket
+      |> assign(:common_id, id)
+      |> assign(:current_user, assigns.current_user)
+      |> assign(:suggested_matches, matches.result)
+
     {:ok, socket}
   end
 

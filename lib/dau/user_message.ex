@@ -11,6 +11,7 @@ defmodule DAU.UserMessage do
   alias DAU.Accounts.User
   alias DAU.UserMessage
   alias DAU.Feed.Common
+  alias Permission
   alias DAU.UserMessage.Query
   alias DAU.UserMessage.Preference
   alias DAU.Repo
@@ -239,42 +240,44 @@ defmodule DAU.UserMessage do
   use `inner_lateral_join` to limit the number of associations fetched.
   This could be an issue when there's a lot of data.
   """
-  def add_response_to_outbox(%Common{} = common) do
-    result =
-      Repo.get!(Common, common.id)
-      |> Repo.preload(query: [:user_message_outbox])
+  def add_response_to_outbox(%Common{} = common, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      result =
+        Repo.get!(Common, common.id)
+        |> Repo.preload(query: [:user_message_outbox])
 
-    if result.query != nil do
-      # raise "Unexpected state"
-      response = %{
-        sender_number: common.sender_number,
-        reply_type: Query.reply_type(result.query),
-        type: "text",
-        text: common.user_response
-      }
+      if result.query != nil do
+        # raise "Unexpected state"
+        response = %{
+          sender_number: common.sender_number,
+          reply_type: Query.reply_type(result.query),
+          type: "text",
+          text: common.user_response
+        }
 
-      {:ok, outbox} =
-        UserMessage.create_outbox(response)
+        {:ok, outbox} =
+          UserMessage.create_outbox(response)
 
-      UserMessage.add_outbox_to_query(result.query, outbox)
-    else
-      {:ok, query} =
-        UserMessage.create_query_with_common(result, %{
-          status: "pending",
-          inserted_at: common.inserted_at
-        })
+        UserMessage.add_outbox_to_query(result.query, outbox)
+      else
+        {:ok, query} =
+          UserMessage.create_query_with_common(result, %{
+            status: "pending",
+            inserted_at: common.inserted_at
+          })
 
-      response = %{
-        sender_number: common.sender_number,
-        reply_type: Query.reply_type(query),
-        type: "text",
-        text: common.user_response
-      }
+        response = %{
+          sender_number: common.sender_number,
+          reply_type: Query.reply_type(query),
+          type: "text",
+          text: common.user_response
+        }
 
-      {:ok, outbox} =
-        UserMessage.create_outbox(response)
+        {:ok, outbox} =
+          UserMessage.create_outbox(response)
 
-      UserMessage.add_outbox_to_query(query, outbox)
+        UserMessage.add_outbox_to_query(query, outbox)
+      end
     end
   end
 
@@ -332,7 +335,19 @@ defmodule DAU.UserMessage do
     |> Repo.preload(:user_message_outbox)
   end
 
-  def send_response(%Outbox{id: id}, template_meta) do
+  def send_response(%Outbox{} = outbox, template_meta, user) do
+    with :ok <- Permission.authorize(user, :approve, Outbox) do
+      do_send_response(outbox, template_meta)
+    end
+  end
+
+  def send_response_from_common(%Outbox{} = outbox, template_meta, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      do_send_response(outbox, template_meta)
+    end
+  end
+
+  defp do_send_response(%Outbox{id: id}, template_meta) do
     outbox = Repo.get(Outbox, id)
     bsp = Application.fetch_env!(:dau, :bsp)
 
@@ -342,17 +357,17 @@ defmodule DAU.UserMessage do
         :notification -> fn -> bsp.send_template_to_bsp(outbox, template_meta) end
       end
 
-
     case reply_function.() do
       {:ok, %HTTPoison.Response{} = response} ->
         Logger.info(response.body)
 
-      case bsp.parse_status_response(response.body) do
-        {:ok,res_msg_id} ->
-          case UserMessage.add_e_id(res_msg_id, id) do
-            {:ok,_}->
-              {:ok}
-          end
+        case bsp.parse_status_response(response.body) do
+          {:ok, res_msg_id} ->
+            case UserMessage.add_e_id(res_msg_id, id) do
+              {:ok, _} ->
+                {:ok}
+            end
+
           {:error, reason} ->
             Logger.error(reason)
             {:error, "Unable to update e_id"}
@@ -361,7 +376,6 @@ defmodule DAU.UserMessage do
       {:error, reason} ->
         Logger.error(reason)
         {:error, "Unable to update status in database"}
-
     end
   end
 

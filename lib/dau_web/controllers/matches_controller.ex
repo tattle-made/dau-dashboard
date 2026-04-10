@@ -15,13 +15,20 @@ defmodule DAUWeb.MatchesController do
   end
 
   def import_response(conn, %{"src" => src, "target" => target}) do
-    case Blake2B.copy_response_fields(src, target) do
+    user = conn.assigns.current_user
+
+    case Blake2B.copy_response_fields(src, target, user) do
       {:ok, common} ->
         common = Repo.get(Common, common.id) |> Repo.preload(:query)
-        UserMessage.add_response_to_outbox(common)
+        UserMessage.add_response_to_outbox(common, user)
 
         conn
         |> put_flash(:ok, "Successfully imported response")
+        |> redirect(to: ~p"/demo/query/#{target}")
+
+      {:error, :unauthorized} ->
+        conn
+        |> put_flash(:error, "You are not authorized to perform this action.")
         |> redirect(to: ~p"/demo/query/#{target}")
 
       {:error, reason} ->
