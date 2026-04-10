@@ -4,14 +4,24 @@ defmodule DAUWeb.MatchesController do
   alias DAU.UserMessage
   alias DAU.MediaMatch.Blake2B
   alias DAU.Feed
+  alias Permission
   use DAUWeb, :controller
   import Logger
 
   def index(conn, params) do
-    IO.inspect(params)
-    id = params["id"]
-    matches = Blake2B.get_matches_by_common_id(id)
-    render(conn, :index, matches: matches, src: id)
+    user = conn.assigns.current_user
+
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      IO.inspect(params)
+      id = params["id"]
+      matches = Blake2B.get_matches_by_common_id(id)
+      render(conn, :index, matches: matches, src: id)
+    else
+      {:error, :unauthorized} ->
+        conn
+        |> put_flash(:error, "You are not authorized to perform this action.")
+        |> redirect(to: ~p"/")
+    end
   end
 
   def import_response(conn, %{"src" => src, "target" => target}) do

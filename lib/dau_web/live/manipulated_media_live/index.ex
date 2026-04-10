@@ -1,8 +1,10 @@
 defmodule DAUWeb.ManipulatedMediaLive.Index do
+  alias DAU.Feed.Common
   use DAUWeb, :live_view
 
   alias DAU.Canon
   alias DAU.Canon.ManipulatedMedia
+  alias Permission
 
   @impl true
   def mount(_params, _session, socket) do
@@ -42,9 +44,19 @@ defmodule DAUWeb.ManipulatedMediaLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
+    user = socket.assigns.current_user
     manipulated_media = Canon.get_manipulated_media!(id)
-    {:ok, _} = Canon.delete_manipulated_media(manipulated_media)
 
-    {:noreply, stream_delete(socket, :manipulated_media_collection, manipulated_media)}
+    case Canon.delete_manipulated_media(manipulated_media, user) do
+      {:ok, _} ->
+        {:noreply, stream_delete(socket, :manipulated_media_collection, manipulated_media)}
+
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
+
+      error ->
+        IO.inspect(error)
+        {:noreply, put_flash(socket, :error, "Something went wrong.")}
+    end
   end
 end

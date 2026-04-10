@@ -4,6 +4,7 @@ defmodule DAU.Canon do
   """
 
   import Ecto.Query, warn: false
+  alias DAU.Feed.Common
   alias DAU.Repo
 
   alias DAU.Canon.ManipulatedMedia
@@ -49,10 +50,12 @@ defmodule DAU.Canon do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_manipulated_media(attrs \\ %{}) do
-    %ManipulatedMedia{}
-    |> ManipulatedMedia.changeset(attrs)
-    |> Repo.insert()
+  def create_manipulated_media(user, attrs \\ %{}) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      %ManipulatedMedia{}
+      |> ManipulatedMedia.changeset(attrs)
+      |> Repo.insert()
+    end
   end
 
   @doc """
@@ -67,10 +70,12 @@ defmodule DAU.Canon do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_manipulated_media(%ManipulatedMedia{} = manipulated_media, attrs) do
-    manipulated_media
-    |> ManipulatedMedia.changeset(attrs)
-    |> Repo.update()
+  def update_manipulated_media(%ManipulatedMedia{} = manipulated_media, attrs, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      manipulated_media
+      |> ManipulatedMedia.changeset(attrs)
+      |> Repo.update()
+    end
   end
 
   @doc """
@@ -85,8 +90,10 @@ defmodule DAU.Canon do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_manipulated_media(%ManipulatedMedia{} = manipulated_media) do
-    Repo.delete(manipulated_media)
+  def delete_manipulated_media(%ManipulatedMedia{} = manipulated_media, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      Repo.delete(manipulated_media)
+    end
   end
 
   @doc """

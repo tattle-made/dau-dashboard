@@ -1,15 +1,17 @@
 defmodule DAUWeb.ManipulatedMediaLive.FormComponent do
+  alias DAU.Feed.Common
   use DAUWeb, :live_component
 
   alias DAU.Canon
   alias DAUWeb.ManipulatedMediaLive.SimpleS3Upload
+  alias Permission
 
   @impl true
   def render(assigns) do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
         <:subtitle>Use this form to manage manipulated_media records in your database.</:subtitle>
       </.header>
 
@@ -76,35 +78,56 @@ defmodule DAUWeb.ManipulatedMediaLive.FormComponent do
   end
 
   defp save_manipulated_media(socket, :edit, manipulated_media_params) do
-    case Canon.update_manipulated_media(
-           socket.assigns.manipulated_media,
-           manipulated_media_params
-         ) do
-      {:ok, manipulated_media} ->
-        notify_parent({:saved, manipulated_media})
+    user = socket.assigns.current_user
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Manipulated media updated successfully")
-         |> push_patch(to: socket.assigns.patch)}
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      case Canon.update_manipulated_media(
+             socket.assigns.manipulated_media,
+             manipulated_media_params,
+             user
+           ) do
+        {:ok, manipulated_media} ->
+          notify_parent({:saved, manipulated_media})
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+          {:noreply,
+           socket
+           |> put_flash(:info, "Manipulated media updated successfully")
+           |> push_patch(to: socket.assigns.patch)}
+
+        {:error, :unauthorized} ->
+          {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply, assign_form(socket, changeset)}
+      end
+    else
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
     end
   end
 
   defp save_manipulated_media(socket, :new, manipulated_media_params) do
-    case Canon.create_manipulated_media(manipulated_media_params) do
-      {:ok, manipulated_media} ->
-        notify_parent({:saved, manipulated_media})
+    user = socket.assigns.current_user
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Manipulated media created successfully")
-         |> push_patch(to: socket.assigns.patch)}
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      case Canon.create_manipulated_media(user, manipulated_media_params) do
+        {:ok, manipulated_media} ->
+          notify_parent({:saved, manipulated_media})
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+          {:noreply,
+           socket
+           |> put_flash(:info, "Manipulated media created successfully")
+           |> push_patch(to: socket.assigns.patch)}
+
+        {:error, :unauthorized} ->
+          {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:noreply, assign_form(socket, changeset)}
+      end
+    else
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
     end
   end
 
