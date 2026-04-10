@@ -98,52 +98,52 @@ defmodule DAUWeb.Router do
       live "/manipulated_media/:id", ManipulatedMediaLive.Show, :show
       live "/manipulated_media/:id/show/edit", ManipulatedMediaLive.Show, :edit
 
-      live "/factcheck_articles", FactcheckArticleLive.Index, :index
-      live "/factcheck_articles/new", FactcheckArticleLive.Index, :new
-      live "/factcheck_articles/:id/edit", FactcheckArticleLive.Index, :edit
+      # live "/factcheck_articles", FactcheckArticleLive.Index, :index
+      # live "/factcheck_articles/new", FactcheckArticleLive.Index, :new
+      # live "/factcheck_articles/:id/edit", FactcheckArticleLive.Index, :edit
 
-      live "/factcheck_articles/:id", FactcheckArticleLive.Show, :show
-      live "/factcheck_articles/:id/show/edit", FactcheckArticleLive.Show, :edit
+      # live "/factcheck_articles/:id", FactcheckArticleLive.Show, :show
+      # live "/factcheck_articles/:id/show/edit", FactcheckArticleLive.Show, :edit
 
-      live "/analysis", AnalysisLive.Index, :index
-      live "/analysis/new", AnalysisLive.Index, :new
-      live "/analysis/:id/edit", AnalysisLive.Index, :edit
+      # live "/analysis", AnalysisLive.Index, :index
+      # live "/analysis/new", AnalysisLive.Index, :new
+      # live "/analysis/:id/edit", AnalysisLive.Index, :edit
 
-      live "/analysis/:id", AnalysisLive.Show, :show
-      live "/analysis/:id/show/edit", AnalysisLive.Show, :edit
+      # live "/analysis/:id", AnalysisLive.Show, :show
+      # live "/analysis/:id/show/edit", AnalysisLive.Show, :edit
     end
   end
 
-  scope "/verification", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_users]
+  # scope "/verification", DAUWeb do
+  #   pipe_through [:browser, :require_authenticated_user, :deny_users]
 
-    live_session :verification,
-      on_mount: [
-        {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :deny_users}
-      ] do
-      live "/queries", QueryLive.Index, :index
-      live "/queries/new", QueryLive.Index, :new
-      live "/queries/:id/edit", QueryLive.Index, :edit
+  #   live_session :verification,
+  #     on_mount: [
+  #       {DAUWeb.UserAuth, :ensure_authenticated},
+  #       {LiveAuth, :deny_users}
+  #     ] do
+  #     live "/queries", QueryLive.Index, :index
+  #     live "/queries/new", QueryLive.Index, :new
+  #     live "/queries/:id/edit", QueryLive.Index, :edit
 
-      live "/queries/:id", QueryLive.Show, :show
-      live "/queries/:id/show/edit", QueryLive.Show, :edit
+  #     live "/queries/:id", QueryLive.Show, :show
+  #     live "/queries/:id/show/edit", QueryLive.Show, :edit
 
-      live "/comments", CommentLive.Index, :index
-      live "/comments/new", CommentLive.Index, :new
-      live "/comments/:id/edit", CommentLive.Index, :edit
+  #     live "/comments", CommentLive.Index, :index
+  #     live "/comments/new", CommentLive.Index, :new
+  #     live "/comments/:id/edit", CommentLive.Index, :edit
 
-      live "/comments/:id", CommentLive.Show, :show
-      live "/comments/:id/show/edit", CommentLive.Show, :edit
+  #     live "/comments/:id", CommentLive.Show, :show
+  #     live "/comments/:id/show/edit", CommentLive.Show, :edit
 
-      live "/response", ResponseLive.Index, :index
-      live "/response/new", ResponseLive.Index, :new
-      live "/response/:id/edit", ResponseLive.Index, :edit
+  #     live "/response", ResponseLive.Index, :index
+  #     live "/response/new", ResponseLive.Index, :new
+  #     live "/response/:id/edit", ResponseLive.Index, :edit
 
-      live "/response/:id", ResponseLive.Show, :show
-      live "/response/:id/show/edit", ResponseLive.Show, :edit
-    end
-  end
+  #     live "/response/:id", ResponseLive.Show, :show
+  #     live "/response/:id/show/edit", ResponseLive.Show, :edit
+  #   end
+  # end
 
   scope "/demo", DAUWeb do
     pipe_through [:browser, :require_authenticated_user, :deny_users]
@@ -156,7 +156,7 @@ defmodule DAUWeb.Router do
       live "/query/", SearchLive.Index
       live "/query/verification/:id", SearchLive.Verification
       live "/query/:id", SearchLive.Detail
-      live "/query/components", SearchLive.Component
+      # live "/query/components", SearchLive.Component
       live "/query/:id/user-response/", SearchLive.UserResponse
     end
 
