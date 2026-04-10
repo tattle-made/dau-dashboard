@@ -47,10 +47,10 @@ defmodule DAUWeb.Router do
     end
   end
 
-  scope "/external-escalations", DAUWeb do
-    pipe_through :api
-    post "/", ExternalEscalationController, :create
-  end
+  # scope "/external-escalations", DAUWeb do
+  #   pipe_through :api
+  #   post "/", ExternalEscalationController, :create
+  # end
 
   scope "/slack", DAUWeb do
     pipe_through :api

@@ -22,31 +22,36 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def create(conn, payload) do
-    alias UserMessage.Conversation
-    alias MediaMatch.Blake2B
+    with {:ok, _} <- authenticate_request(conn) do
+      alias UserMessage.Conversation
+      alias MediaMatch.Blake2B
 
-    case Conversation.add_to_inbox(payload) do
-      {:ok, inbox} ->
-        conn = conn |> Plug.Conn.send_resp(200, [])
+      case Conversation.add_to_inbox(payload) do
+        {:ok, inbox} ->
+          conn = conn |> Plug.Conn.send_resp(200, [])
 
-        Task.start(fn ->
-          with {:ok, properties_added} <- Conversation.add_message_properties(inbox),
-               :ok <-
-                 if(inbox.media_type in ["audio", "video"],
-                   do: Blake2B.create_job(properties_added),
-                   else: :ok
-                 ) do
-          else
-            error ->
-              Logger.error("Error in processing message in background #{inspect(error)}")
-              Sentry.capture_message("Could not process message. #{inspect(error)}")
-          end
-        end)
+          Task.start(fn ->
+            with {:ok, properties_added} <- Conversation.add_message_properties(inbox),
+                 :ok <-
+                   if(inbox.media_type in ["audio", "video"],
+                     do: Blake2B.create_job(properties_added),
+                     else: :ok
+                   ) do
+            else
+              error ->
+                Logger.error("Error in processing message in background #{inspect(error)}")
+                Sentry.capture_message("Could not process message. #{inspect(error)}")
+            end
+          end)
 
-        conn
+          conn
 
-      {:error, _reason} ->
-        conn |> send_400()
+        {:error, _reason} ->
+          conn |> send_400()
+      end
+    else
+      {:error, :unauthorized} ->
+        conn |> send_401()
     end
   rescue
     error ->
@@ -62,6 +67,114 @@ defmodule DAUWeb.IncomingMessageController do
   end
 
   def receive_delivery_report(conn, params) do
+    case verify_turn_webhook_signature(conn) do
+      :ok ->
+        process_delivery_report(conn, params)
+
+      :error ->
+        Logger.warning("TURN delivery report webhook signature verification failed")
+        conn |> send_401()
+    end
+  end
+
+  def send_400(conn) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> resp(400, Jason.encode!(%{status: :invalid_request}))
+    |> send_resp()
+  end
+
+  def send_401(conn) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> resp(401, Jason.encode!(%{status: :unauthorized}))
+    |> send_resp()
+  end
+
+  # Function to authenticate Turn Tipline API
+  # that Turn calls to send media items to dashboard
+  defp authenticate_request(conn) do
+    raw_token = get_req_header(conn, "authorization") |> List.first()
+    stored_token = System.get_env("TURN_TIPLINE_WEBHOOK_SECRET")
+
+    token =
+      case raw_token do
+        "Bearer " <> token -> token
+        _ -> nil
+      end
+
+    case {token, stored_token} do
+      {nil, _} ->
+        Logger.warning(
+          "TURN WEBHOOK authentication failed: No authorization header provided or invalid format"
+        )
+
+        {:error, :unauthorized}
+
+      {_, nil} ->
+        Logger.error(
+          "TURN WEBHOOK authentication failed: TURN_TIPLINE_WEBHOOK_SECRET not configured"
+        )
+
+        {:error, :unauthorized}
+
+      {provided_token, expected_token} ->
+        if Plug.Crypto.secure_compare(provided_token, expected_token) do
+          {:ok, :authenticated}
+        else
+          Logger.warning("TURN WEBHOOK authentication failed: Invalid token provided")
+          {:error, :unauthorized}
+        end
+    end
+  end
+
+  @doc """
+  Verifies the TURN delivery report webhook signature to ensure the request came from TURN.
+
+  TURN webhooks include an X-Turn-Hook-Signature header.
+  verify by:
+  1. Extracting the signature header and raw body from conn
+  2. Computing an HMAC-SHA256 using the webhook secret
+  3. Base64 encoding the result
+  4. Using constant-time comparison to prevent timing attacks
+  """
+  defp verify_turn_webhook_signature(conn) do
+    secret = System.get_env("TURN_DELIVERY_REPORT_WEBHOOK_SECRET")
+    signature = get_req_header(conn, "x-turn-hook-signature") |> List.first()
+    raw_body = conn.assigns[:raw_body] || ""
+
+    if is_nil(signature) or signature == "" do
+      Logger.warning(
+        "TURN webhook signature verification failed: Missing x-turn-hook-signature header"
+      )
+
+      :error
+    else
+      case secret do
+        nil ->
+          Logger.error(
+            "TURN webhook signature verification failed: TURN_DELIVERY_REPORT_WEBHOOK_SECRET not configured"
+          )
+
+          :error
+
+        secret ->
+          expected =
+            :crypto.mac(:hmac, :sha256, secret, raw_body)
+            |> Base.encode64()
+
+          # constant-time comparison to prevent timing attacks
+          if Plug.Crypto.secure_compare(signature, expected) do
+            :ok
+          else
+            Logger.warning("TURN webhook signature verification failed: Invalid signature")
+            :error
+          end
+      end
+    end
+  end
+
+  defp process_delivery_report(conn, params) do
     bsp = Application.fetch_env!(:dau, :bsp)
 
     try do
@@ -74,7 +187,7 @@ defmodule DAUWeb.IncomingMessageController do
           Logger.info("report added to db")
 
         {:error, reason} ->
-          Logger.error(reason)
+          Logger.error("Failed to add delivery report: #{reason}")
       end
 
       Task.async(fn -> Analytics.create_delivery_event(params) end)
@@ -85,22 +198,15 @@ defmodule DAUWeb.IncomingMessageController do
       |> send_resp()
     rescue
       error ->
+        Logger.error("Error processing delivery report: #{inspect(error)}")
+        Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
+
         conn
         |> put_resp_content_type("application/json")
         |> resp(200, Jason.encode!(%{status: :ok}))
         |> send_resp()
 
-        Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
         # Message.send(:dau_alerts, "invalid_delivery_report", "Invalid delivery report", params)
     end
-
-    # |> Plug.Conn.send_resp(200, Jason.encode(%{}))
-  end
-
-  def send_400(conn) do
-    conn
-    |> put_resp_content_type("application/json")
-    |> resp(400, Jason.encode!(%{status: :invalid_request}))
-    |> send_resp()
   end
 end
