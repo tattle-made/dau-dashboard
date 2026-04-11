@@ -21,19 +21,16 @@ defmodule DAU.Accounts.UserNotifier do
   Deliver instructions to confirm account.
   """
   def deliver_confirmation_instructions(user, url) do
-    deliver(user.email, "Confirmation instructions", """
-
-    ==============================
+    deliver(user.email, "Confirm your DAU account", """
 
     Hi #{user.email},
 
-    You can confirm your account by visiting the URL below:
+    Welcome to Deepfake Analysis Unit (DAU).
 
+    Please confirm your account by clicking the link below:
     #{url}
 
-    If you didn't create an account with us, please ignore this.
-
-    ==============================
+    If you didn't create this account, you can safely ignore this email.
     """)
   end
 
@@ -41,19 +38,16 @@ defmodule DAU.Accounts.UserNotifier do
   Deliver instructions to reset a user password.
   """
   def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset password instructions", """
-
-    ==============================
+    deliver(user.email, "Reset your DAU password", """
 
     Hi #{user.email},
 
-    You can reset your password by visiting the URL below:
+    We received a request to reset your password.
 
+    You can set a new password using the link below:
     #{url}
 
-    If you didn't request this change, please ignore this.
-
-    ==============================
+    If you didn't request a password reset, please ignore this email.
     """)
   end
 
@@ -61,19 +55,16 @@ defmodule DAU.Accounts.UserNotifier do
   Deliver instructions to update a user email.
   """
   def deliver_update_email_instructions(user, url) do
-    deliver(user.email, "Update email instructions", """
-
-    ==============================
+    deliver(user.email, "Confirm your new email address", """
 
     Hi #{user.email},
 
-    You can change your email by visiting the URL below:
+    You requested to update your email address.
 
+    Please confirm the change by clicking the link below:
     #{url}
 
-    If you didn't request this change, please ignore this.
-
-    ==============================
+    If you didn't request this change, please ignore this email.
     """)
   end
 end

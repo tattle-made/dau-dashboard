@@ -29,6 +29,7 @@ defmodule DAUWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/datasets/terms-of-use", TermsOfUseLive, :index
     # live "/outbox", SearchLive.Outbox
   end
 
