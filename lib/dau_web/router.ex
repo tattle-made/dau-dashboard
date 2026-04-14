@@ -17,14 +17,15 @@ defmodule DAUWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :allow_users do
-    plug DAUWeb.Plugs.RouteAuthorizationPlug, permission: :allow_users
+  pipeline :allow_driveby_user do
+    plug DAUWeb.Plugs.RouteAuthorizationPlug, permission: :allow_driveby_user
   end
 
-  pipeline :deny_users do
-    plug DAUWeb.Plugs.RouteAuthorizationPlug, permission: :deny_users
+  pipeline :deny_driveby_user do
+    plug DAUWeb.Plugs.RouteAuthorizationPlug, permission: :deny_driveby_user
   end
 
+  # Open Routes, no Authorization or Authentication is Required
   scope "/", DAUWeb do
     pipe_through :browser
 
@@ -33,14 +34,14 @@ defmodule DAUWeb.Router do
     # live "/outbox", SearchLive.Outbox
   end
 
-  # Scope for open datasets: TODO change route names and scope
+  # Open Datasets Routes. Require only Authentication. Anyone who is logged-in can access these.
   scope "/datasets", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :allow_users]
+    pipe_through [:browser, :require_authenticated_user, :allow_driveby_user]
 
     live_session :open_data,
       on_mount: [
         {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :allow_users}
+        {LiveAuth, :allow_driveby_user}
       ] do
       live "/", OpenDataLive.OpenDataIndexLive, :index
       live "/preview/whatsapp-tipline-dataset", OpenDataLive.FeedOpenLive, :index
@@ -48,28 +49,33 @@ defmodule DAUWeb.Router do
     end
   end
 
+  # This endpoint receives form submission data from Google Forms via an Apps Script trigger whenever a user submits a response.
   # scope "/external-escalations", DAUWeb do
   #   pipe_through :api
   #   post "/", ExternalEscalationController, :create
   # end
 
+  # Webhook endpoint to get Slack events
   scope "/slack", DAUWeb do
     pipe_through :api
     post "/", SlackController, :create
   end
 
-  scope "/slack-archives", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_users]
+  # Liveview to display Slack archives and external escalations
+  scope "/", DAUWeb do
+    pipe_through [:browser, :require_authenticated_user, :deny_driveby_user]
 
     live_session :slack_archives,
       on_mount: [
         {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :deny_users}
+        {LiveAuth, :deny_driveby_user}
       ] do
-      live "/", SlackArchivesHomeLive, :index
+      live "/slack-archives", SlackArchivesHomeLive, :index
+      live "/external-escalations", ViewExternalEscalationsLive, :index
     end
   end
 
+  # Webhook endpoint to receive data from the WhatsApp BSP.
   scope "/gupshup", DAUWeb do
     pipe_through :api
 
@@ -84,80 +90,18 @@ defmodule DAUWeb.Router do
   #   pipe_through :api
   # end
 
-  scope "/canon", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_users]
-
-    live_session :canon,
-      on_mount: [
-        {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :deny_users}
-      ] do
-      live "/manipulated_media", ManipulatedMediaLive.Index, :index
-      live "/manipulated_media/new", ManipulatedMediaLive.Index, :new
-      live "/manipulated_media/:id/edit", ManipulatedMediaLive.Index, :edit
-
-      live "/manipulated_media/:id", ManipulatedMediaLive.Show, :show
-      live "/manipulated_media/:id/show/edit", ManipulatedMediaLive.Show, :edit
-
-      # live "/factcheck_articles", FactcheckArticleLive.Index, :index
-      # live "/factcheck_articles/new", FactcheckArticleLive.Index, :new
-      # live "/factcheck_articles/:id/edit", FactcheckArticleLive.Index, :edit
-
-      # live "/factcheck_articles/:id", FactcheckArticleLive.Show, :show
-      # live "/factcheck_articles/:id/show/edit", FactcheckArticleLive.Show, :edit
-
-      # live "/analysis", AnalysisLive.Index, :index
-      # live "/analysis/new", AnalysisLive.Index, :new
-      # live "/analysis/:id/edit", AnalysisLive.Index, :edit
-
-      # live "/analysis/:id", AnalysisLive.Show, :show
-      # live "/analysis/:id/show/edit", AnalysisLive.Show, :edit
-    end
-  end
-
-  # scope "/verification", DAUWeb do
-  #   pipe_through [:browser, :require_authenticated_user, :deny_users]
-
-  #   live_session :verification,
-  #     on_mount: [
-  #       {DAUWeb.UserAuth, :ensure_authenticated},
-  #       {LiveAuth, :deny_users}
-  #     ] do
-  #     live "/queries", QueryLive.Index, :index
-  #     live "/queries/new", QueryLive.Index, :new
-  #     live "/queries/:id/edit", QueryLive.Index, :edit
-
-  #     live "/queries/:id", QueryLive.Show, :show
-  #     live "/queries/:id/show/edit", QueryLive.Show, :edit
-
-  #     live "/comments", CommentLive.Index, :index
-  #     live "/comments/new", CommentLive.Index, :new
-  #     live "/comments/:id/edit", CommentLive.Index, :edit
-
-  #     live "/comments/:id", CommentLive.Show, :show
-  #     live "/comments/:id/show/edit", CommentLive.Show, :edit
-
-  #     live "/response", ResponseLive.Index, :index
-  #     live "/response/new", ResponseLive.Index, :new
-  #     live "/response/:id/edit", ResponseLive.Index, :edit
-
-  #     live "/response/:id", ResponseLive.Show, :show
-  #     live "/response/:id/show/edit", ResponseLive.Show, :edit
-  #   end
-  # end
-
+  # Liveview routes to work with the WhatsApp tipline data. Only Authorized users are allowed to access these routes.
   scope "/demo", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_users]
+    pipe_through [:browser, :require_authenticated_user, :deny_driveby_user]
 
     live_session :demo,
       on_mount: [
         {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :deny_users}
+        {LiveAuth, :deny_driveby_user}
       ] do
       live "/query/", SearchLive.Index
       live "/query/verification/:id", SearchLive.Verification
       live "/query/:id", SearchLive.Detail
-      # live "/query/components", SearchLive.Component
       live "/query/:id/user-response/", SearchLive.UserResponse
     end
 
@@ -171,19 +115,17 @@ defmodule DAUWeb.Router do
     delete "/query/:id/assessment-report/metadata/delete",
            AssessmentReportMetadataController,
            :delete
-
-    # post "/query/import-response/src/:src/target/:target", MatchesController, :import_response
   end
 
   scope "/admin", DAUWeb do
     import Phoenix.LiveDashboard.Router
-    pipe_through [:browser, :require_authenticated_user, :deny_users]
+    pipe_through [:browser, :require_authenticated_user, :deny_driveby_user]
 
     live_dashboard "/dashboard",
       metrics: DAUWeb.Telemetry,
       on_mount: [
         {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :deny_users}
+        {LiveAuth, :deny_driveby_user}
       ]
   end
 
@@ -203,20 +145,7 @@ defmodule DAUWeb.Router do
     end
   end
 
-  scope "/", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_users]
-
-    live_session :external_escalations,
-      on_mount: [
-        {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :deny_users}
-      ] do
-      live "/view_external_escalations", ViewExternalEscalationsLive, :index
-    end
-  end
-
   ## Authentication routes
-
   scope "/", DAUWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
@@ -232,13 +161,14 @@ defmodule DAUWeb.Router do
     post "/users/log_in", UserSessionController, :create
   end
 
+  # Setting routes. Require Authentication.
   scope "/", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :allow_users]
+    pipe_through [:browser, :require_authenticated_user, :allow_driveby_user]
 
     live_session :user_settings,
       on_mount: [
         {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :allow_users}
+        {LiveAuth, :allow_driveby_user}
       ] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
@@ -246,17 +176,18 @@ defmodule DAUWeb.Router do
   end
 
   scope "/", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_users]
+    pipe_through [:browser, :require_authenticated_user, :deny_driveby_user]
 
     live_session :user_outbox,
       on_mount: [
         {DAUWeb.UserAuth, :ensure_authenticated},
-        {LiveAuth, :deny_users}
+        {LiveAuth, :deny_driveby_user}
       ] do
       live "/outbox", SearchLive.Outbox
     end
   end
 
+  # User confirmation and logout routes - no authentication required
   scope "/", DAUWeb do
     pipe_through :browser
 
@@ -271,7 +202,7 @@ defmodule DAUWeb.Router do
   end
 
   scope "/analytics", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_users]
+    pipe_through [:browser, :require_authenticated_user, :deny_driveby_user]
 
     get "/", AnalyticsController, :hello_world
   end

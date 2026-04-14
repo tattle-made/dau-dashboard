@@ -9,12 +9,12 @@ defmodule DAUWeb.LiveRouteAuthorization do
 
   alias Permission.RouteAuthorization
 
-  def on_mount(:allow_users, _params, _session, socket) do
-    authorize(socket, :allow_users)
+  def on_mount(:allow_driveby_user, _params, _session, socket) do
+    authorize(socket, :allow_driveby_user)
   end
 
-  def on_mount(:deny_users, _params, _session, socket) do
-    authorize(socket, :deny_users)
+  def on_mount(:deny_driveby_user, _params, _session, socket) do
+    authorize(socket, :deny_driveby_user)
   end
 
   defp authorize(socket, permission) do

@@ -20,7 +20,7 @@
 
       <div class="mt-6 text-sm text-gray-600">
         <%= if @current_user do %>
-        <%= case Permission.RouteAuthorization.allowed?(@current_user, :deny_users) do%>
+        <%= case Permission.RouteAuthorization.allowed?(@current_user, :deny_driveby_user) do%>
         <% true -> %>
         <p>
            View User queries.

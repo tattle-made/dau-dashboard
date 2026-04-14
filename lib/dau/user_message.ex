@@ -335,7 +335,7 @@ defmodule DAU.UserMessage do
     |> Repo.preload(:user_message_outbox)
   end
 
-  def send_response(%Outbox{} = outbox, template_meta, user) do
+  def send_response_from_outbox(%Outbox{} = outbox, template_meta, user) do
     with :ok <- Permission.authorize(user, :approve, Outbox) do
       do_send_response(outbox, template_meta)
     end

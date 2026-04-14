@@ -71,16 +71,18 @@ defmodule DAUWeb.UserRegistrationLive do
                   <p>
                     You must include attribution for the data you use as follows: <br />
 
-                    <li class="list-disc list-inside space-y-1 ml-2">
-                      The <strong>DAU Data Preview, March 2026</strong>. URL:
-                      <a
-                        href="https://dau.tattle.co.in/datasets"
-                        class="text-blue-600 hover:text-blue-800 underline font-medium"
-                        target="_blank"
-                      >
-                        https://dau.tattle.co.in/datasets
-                      </a>
-                    </li>
+                    <ul>
+                      <li class="list-disc list-inside space-y-1 ml-2">
+                        The <strong>DAU Data Preview, March 2026</strong>. URL:
+                        <a
+                          href="https://dau.tattle.co.in/datasets"
+                          class="text-blue-600 hover:text-blue-800 underline font-medium"
+                          target="_blank"
+                        >
+                          https://dau.tattle.co.in/datasets
+                        </a>
+                      </li>
+                    </ul>
                   </p>
                   <p>
                     You must not claim or imply that <strong>Tattle</strong>
