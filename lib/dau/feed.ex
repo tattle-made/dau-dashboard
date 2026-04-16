@@ -120,7 +120,13 @@ defmodule DAU.Feed do
       feed: :common
     }
   """
-  def list_common_feed(search_params) do
+  def list_common_feed(user, search_params) do
+    with :ok <- Permission.authorize(user, :view, Common) do
+      get_common_feed(search_params)
+    end
+  end
+
+  defp get_common_feed(search_params) do
     order = %{
       "newest" => [desc: :inserted_at],
       "oldest" => [asc: :inserted_at]
@@ -142,19 +148,44 @@ defmodule DAU.Feed do
 
     query =
       case Keyword.get(search_params, :verification_status) do
-        "deepfake" -> query |> where([c], c.verification_status == :deepfake)
-        "manipulated" -> query |> where([c], c.verification_status == :manipulated)
-        "not_manipulated" -> query |> where([c], c.verification_status == :not_manipulated)
-        "ai_generated" -> query |> where([c], c.verification_status == :ai_generated)
-        "not_ai_generated" -> query |> where([c], c.verification_status == :not_ai_generated)
-        "inconclusive" -> query |> where([c], c.verification_status == :inconclusive)
-        "cheapfake" -> query |> where([c], c.verification_status == :cheapfake)
-        "out_of_scope" -> query |> where([c], c.verification_status == :out_of_scope)
-        "unsupported_language" -> query |> where([c], c.verification_status == :unsupported_language)
-        "spam" -> query |> where([c], c.verification_status == :spam)
-        "all" -> query
-        nil -> query
-        _ -> query
+        "deepfake" ->
+          query |> where([c], c.verification_status == :deepfake)
+
+        "manipulated" ->
+          query |> where([c], c.verification_status == :manipulated)
+
+        "not_manipulated" ->
+          query |> where([c], c.verification_status == :not_manipulated)
+
+        "ai_generated" ->
+          query |> where([c], c.verification_status == :ai_generated)
+
+        "not_ai_generated" ->
+          query |> where([c], c.verification_status == :not_ai_generated)
+
+        "inconclusive" ->
+          query |> where([c], c.verification_status == :inconclusive)
+
+        "cheapfake" ->
+          query |> where([c], c.verification_status == :cheapfake)
+
+        "out_of_scope" ->
+          query |> where([c], c.verification_status == :out_of_scope)
+
+        "unsupported_language" ->
+          query |> where([c], c.verification_status == :unsupported_language)
+
+        "spam" ->
+          query |> where([c], c.verification_status == :spam)
+
+        "all" ->
+          query
+
+        nil ->
+          query
+
+        _ ->
+          query
       end
 
     query =
@@ -224,29 +255,32 @@ defmodule DAU.Feed do
     {count, results}
   end
 
-  def get_feed_item_by_id(id) do
-    query = Repo.get(Common, id) |> Repo.preload(:query) |> Repo.preload(:hash_meta)
-    media_type = query.media_type
+  def get_feed_item_by_id(id, user) do
+    with :ok <-
+           Permission.authorize(user, :view, Common) do
+      query = Repo.get(Common, id) |> Repo.preload(:query) |> Repo.preload(:hash_meta)
+      media_type = query.media_type
 
-    {_, map} =
-      query
-      |> Map.get_and_update(
-        :media_urls,
-        &{&1,
-         Enum.map(&1, fn key ->
-           url =
-             if media_type == :video || media_type == :audio do
-               {:ok, url} = AWSS3.client().presigned_url("staging.dau.tattle.co.in", key)
-               url
-             else
-               key
-             end
+      {_, map} =
+        query
+        |> Map.get_and_update(
+          :media_urls,
+          &{&1,
+           Enum.map(&1, fn key ->
+             url =
+               if media_type == :video || media_type == :audio do
+                 {:ok, url} = AWSS3.client().presigned_url("staging.dau.tattle.co.in", key)
+                 url
+               else
+                 key
+               end
 
-           url
-         end)}
-      )
+             url
+           end)}
+        )
 
-    map
+      map
+    end
   end
 
   def add_secratariat_notes(%Common{} = common, attrs, user) do
@@ -275,9 +309,9 @@ defmodule DAU.Feed do
 
   def take_up(%Common{} = common, user_name, user) do
     with :ok <- Permission.authorize(user, :edit, Common) do
-    common
-    |> Common.take_up_changeset(%{taken_by: user_name})
-    |> Repo.update()
+      common
+      |> Common.take_up_changeset(%{taken_by: user_name})
+      |> Repo.update()
     end
   end
 

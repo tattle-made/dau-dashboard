@@ -26,7 +26,7 @@ defmodule DAU.Vendor.Gupshup.DeliveryReport do
     length_minus_one = length - 1
 
     _txn_id = String.slice(external_id, 0..length_minus_one)
-    msg_id = String.slice(external_id, length_plus_one..-1)
+    msg_id = String.slice(external_id, length_plus_one..-1//1)
 
     # [_txn_id, msg_id] = String.split(external_id, "-")
 

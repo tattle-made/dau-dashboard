@@ -3,6 +3,7 @@ defmodule DAUWeb.SearchLive.Verification do
   alias DAU.Feed.Common
   use DAUWeb, :live_view
   use DAUWeb, :html
+  require Logger
 
   def mount(_params, _session, socket) do
     form =
@@ -20,17 +21,26 @@ defmodule DAUWeb.SearchLive.Verification do
   end
 
   def handle_params(params, _uri, socket) do
+    user = socket.assigns.current_user
     query_id = String.to_integer(params["id"])
-    query = Feed.get_feed_item_by_id(query_id)
-    query_changeset = query |> Common.annotation_changeset()
+    # query = Feed.get_feed_item_by_id(query_id, user)
+    case Feed.get_feed_item_by_id(query_id, user) do
+      {:error, :unauthorized} ->
+        Logger.error("Unauthorized User")
+        socket = socket |> put_flash(:error, "Unauthorized") |> redirect(to: "/")
+        {:noreply, socket}
 
-    socket =
-      socket
-      |> assign(:query, query)
-      |> assign(:form, to_form(query_changeset))
-      |> assign(:tags, query.tags)
+      query ->
+        query_changeset = query |> Common.annotation_changeset()
 
-    {:noreply, socket}
+        socket =
+          socket
+          |> assign(:query, query)
+          |> assign(:form, to_form(query_changeset))
+          |> assign(:tags, query.tags)
+
+        {:noreply, socket}
+    end
   end
 
   def handle_event("save", params, socket) do

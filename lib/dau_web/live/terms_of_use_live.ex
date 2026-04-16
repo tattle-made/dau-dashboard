@@ -1,5 +1,6 @@
 defmodule DAUWeb.TermsOfUseLive do
   use DAUWeb, :live_view
+  on_mount {DAUWeb.UserAuth, :mount_current_user}
 
   def render(assigns) do
     ~H"""
@@ -36,7 +37,9 @@ defmodule DAUWeb.TermsOfUseLive do
                 only grant use and access of this website, its products, and its services to Data License those who have accepted its terms.
               </p>
               <div>
-                <p class="font-medium mb-2">You must include attribution for the data you use as follows:</p>
+                <p class="font-medium mb-2">
+                  You must include attribution for the data you use as follows:
+                </p>
                 <ul class="list-disc list-inside space-y-2 ml-4">
                   <li>
                     The <strong>DAU Data Preview, March 2026</strong>. URL:
@@ -103,7 +106,6 @@ defmodule DAUWeb.TermsOfUseLive do
   end
 
   def mount(_params, _session, socket) do
-    socket = assign(socket, current_user: nil)
     {:ok, socket}
   end
 end

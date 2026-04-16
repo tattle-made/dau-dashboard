@@ -16,6 +16,7 @@ defmodule DAUWeb.SearchLive.Detail do
   alias DAUWeb.Components.MatchReview
   use DAUWeb, :live_view
   use DAUWeb, :html
+  require Logger
 
   def mount(_params, session, socket) do
     user_token = session["user_token"]
@@ -35,17 +36,28 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   def handle_params(%{"id" => id}, _uri, socket) do
-    query = Feed.get_feed_item_by_id(id)
-    form_user_response_label = query |> Common.user_response_changeset() |> to_form()
+    user = socket.assigns.current_user
 
-    socket =
-      socket
-      |> assign(:query, query)
-      |> assign_async(:matches, fn -> {:ok, %{matches: Blake2B.get_matches_by_common_id(id)}} end)
-      |> assign(:form_user_response_label, form_user_response_label)
-      |> stream(:resources, query.resources)
+    case Feed.get_feed_item_by_id(id, user) do
+      {:error, :unauthorized} ->
+        Logger.error("Unauthorized User")
+        socket = socket |> put_flash(:error, "Unauthorized") |> redirect(to: "/")
+        {:noreply, socket}
 
-    {:noreply, socket}
+      query ->
+        form_user_response_label = query |> Common.user_response_changeset() |> to_form()
+
+        socket =
+          socket
+          |> assign(:query, query)
+          |> assign_async(:matches, fn ->
+            {:ok, %{matches: Blake2B.get_matches_by_common_id(id)}}
+          end)
+          |> assign(:form_user_response_label, form_user_response_label)
+          |> stream(:resources, query.resources)
+
+        {:noreply, socket}
+    end
   end
 
   def handle_event("test-click", value, socket) do
@@ -61,7 +73,7 @@ defmodule DAUWeb.SearchLive.Detail do
 
     result =
       with {:ok, _common} <- Feed.add_user_response(query.id, response, user),
-           common <- Feed.get_feed_item_by_id(query.id),
+           common <- Feed.get_feed_item_by_id(query.id, user),
            {:ok, outbox_query} <- UserMessage.add_response_to_outbox(common, user),
            {:ok} <-
              UserMessage.send_response_from_common(
@@ -301,7 +313,7 @@ defmodule DAUWeb.SearchLive.Detail do
 
   def beautify_url(url) when is_binary(url) do
     case String.length(url) do
-      x when x > 40 -> String.slice(url, 0..20) <> "..." <> String.slice(url, -20..-1)
+      x when x > 40 -> String.slice(url, 0..20) <> "..." <> String.slice(url, -20..-1//1)
       x when x < 40 -> url
     end
   end

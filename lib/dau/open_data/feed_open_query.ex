@@ -6,26 +6,188 @@ defmodule DAU.OpenData.FeedOpenQuery do
   alias DAU.OpenData.QueryHelpers
 
   @page_size 25
-  @controversial_ids [3912,3889,3601,691,681,680,3899,3898,3724,3732,3656,3638,2104,2097,1661,1594,1586,1570,1564,1490,1360,1361,1349,1348,1102,1035,1034,1033,972,958,719,722,673,671,708,695,639,628,632,629,606,602,598,633,611,605,525,526,519,532,440,298,284,283,278,4500,4501,3848,3847,3958,4569,4570,4571,4468,4378,1299,354,349,2090,4265,4160,4587,4375,4139,3744,857,4365,4070]
+  @controversial_ids [
+    3912,
+    3889,
+    3601,
+    691,
+    681,
+    680,
+    3899,
+    3898,
+    3724,
+    3732,
+    3656,
+    3638,
+    2104,
+    2097,
+    1661,
+    1594,
+    1586,
+    1570,
+    1564,
+    1490,
+    1360,
+    1361,
+    1349,
+    1348,
+    1102,
+    1035,
+    1034,
+    1033,
+    972,
+    958,
+    719,
+    722,
+    673,
+    671,
+    708,
+    695,
+    639,
+    628,
+    632,
+    629,
+    606,
+    602,
+    598,
+    633,
+    611,
+    605,
+    525,
+    526,
+    519,
+    532,
+    440,
+    298,
+    284,
+    283,
+    278,
+    4500,
+    4501,
+    3848,
+    3847,
+    3958,
+    4569,
+    4570,
+    4571,
+    4468,
+    4378,
+    1299,
+    354,
+    349,
+    2090,
+    4265,
+    4160,
+    4587,
+    4375,
+    4139,
+    3744,
+    857,
+    4365,
+    4070
+  ]
 
   # While Url extraction from media_type = text feed-common table, no proper urls were extracted
-  @no_urls_common_ids [419,337,395,2613,2614,2927,2934,2926,3033,3075,3088,3038,3077,3087,3073,3079,3765,3074,3099,3080,3061,3078,3076,3110,4334,3519,3465,3738,3258,4155,3688,4490,3983,3966,4483]
+  @no_urls_common_ids [
+    419,
+    337,
+    395,
+    2613,
+    2614,
+    2927,
+    2934,
+    2926,
+    3033,
+    3075,
+    3088,
+    3038,
+    3077,
+    3087,
+    3073,
+    3079,
+    3765,
+    3074,
+    3099,
+    3080,
+    3061,
+    3078,
+    3076,
+    3110,
+    4334,
+    3519,
+    3465,
+    3738,
+    3258,
+    4155,
+    3688,
+    4490,
+    3983,
+    3966,
+    4483
+  ]
 
   # While downloading thumbnails with puppeteer, for these ids, the operation failed
-  @no_thumbnail_common_ids [672,795,761,1125,1132,934,1447,2156,1841,2396,2308,2210,2263,2264,2973,2624,2625,3401,3030,3016,3031,3086,3062,3109,3129,3130,3188,3445,3657,3597,4470,3723,3873,4177,4178,4351]
+  @no_thumbnail_common_ids [
+    672,
+    795,
+    761,
+    1125,
+    1132,
+    934,
+    1447,
+    2156,
+    1841,
+    2396,
+    2308,
+    2210,
+    2263,
+    2264,
+    2973,
+    2624,
+    2625,
+    3401,
+    3030,
+    3016,
+    3031,
+    3086,
+    3062,
+    3109,
+    3129,
+    3130,
+    3188,
+    3445,
+    3657,
+    3597,
+    4470,
+    3723,
+    3873,
+    4177,
+    4178,
+    4351
+  ]
+
+  @exclude_fields [
+    :sender_number,
+    :verification_note,
+    :taken_by,
+    :user_response,
+    :verification_sop,
+    :hash_meta_id
+  ]
 
   def get_common_feed_rows_for_csv() do
     Common
-      |> maybe_exclude_ids(@no_urls_common_ids)
-      # Only take items less than equal to than the id passed
-      |> maybe_apply_upper_bound(4603)
-      |> order_by(desc: :inserted_at)
-      |> Repo.all()
-      |> Repo.preload([:query, :hash_meta, :tag_joins, :open_data_assessment_reports])
-      |> bulk_add_s3_media_url()
+    |> maybe_exclude_ids(@no_urls_common_ids)
+    # Only take items less than equal to than the id passed
+    |> maybe_apply_upper_bound(4603)
+    |> order_by(desc: :inserted_at)
+    |> Repo.all()
+    |> Repo.preload([:query, :hash_meta, :tag_joins, :open_data_assessment_reports])
+    |> bulk_add_s3_media_url()
+    |> filter_unwanted_fields()
   end
 
-  def list_common_feed(search_params) do
+  def list_common_feed_open(search_params) do
     order = %{
       "newest" => [desc: :inserted_at],
       "oldest" => [asc: :inserted_at]
@@ -55,6 +217,7 @@ defmodule DAU.OpenData.FeedOpenQuery do
       |> Repo.all()
       |> Repo.preload([:query, :hash_meta, :tag_joins, :open_data_assessment_reports])
       |> bulk_add_s3_media_url()
+      |> filter_unwanted_fields()
 
     {count, results}
   end
@@ -169,6 +332,7 @@ defmodule DAU.OpenData.FeedOpenQuery do
 
   defp bulk_add_s3_media_url(common_rows) do
     base_preview_url = Application.fetch_env!(:dau, :preview_tipline_dataset_base_s3_url)
+
     Enum.map(common_rows, fn query ->
       media_type = query.media_type
 
@@ -203,9 +367,9 @@ defmodule DAU.OpenData.FeedOpenQuery do
                    id <> ".ogg"
 
                :text ->
-                #  base_preview_url <>
-                  #  "thumbnail_#{query.id}" <> ".png"
-                  QueryHelpers.extract_first_url_from_text(key)
+                 #  base_preview_url <>
+                 #  "thumbnail_#{query.id}" <> ".png"
+                 QueryHelpers.extract_first_url_from_text(key)
 
                true ->
                  key
@@ -214,6 +378,14 @@ defmodule DAU.OpenData.FeedOpenQuery do
         )
 
       map
+    end)
+  end
+
+  defp filter_unwanted_fields(results) do
+    Enum.map(results, fn result ->
+      result
+      |> Map.from_struct()
+      |> Map.drop(@exclude_fields)
     end)
   end
 end

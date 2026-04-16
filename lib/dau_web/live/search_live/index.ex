@@ -2,6 +2,7 @@ defmodule DAUWeb.SearchLive.Index do
   import DAUWeb.SearchLive.SearchParams
   alias DAUWeb.SearchLive.SearchParams
   alias DAU.Feed
+  alias DAU.Feed.Common
   alias DAU.Accounts
   alias DauWeb.SearchLive.Data
   use DAUWeb, :live_view
@@ -27,18 +28,24 @@ defmodule DAUWeb.SearchLive.Index do
   """
   def handle_params(params, _uri, socket) do
     search_params = SearchParams.params_to_keyword_list(params)
+    user = socket.assigns.current_user
 
-    {count, results} = Feed.list_common_feed(search_params)
+    case Feed.list_common_feed(user, search_params) do
+      {:error, :unauthorized} ->
+        socket = socket |> put_flash(:error, "Unauthorized access") |> redirect(to: "/")
+        {:noreply, socket}
 
-    socket =
-      socket
-      |> assign(:page_num, Keyword.get(search_params, :page_num))
-      |> assign(:query_count, count)
-      |> assign(:search_params, search_params)
-      |> assign(:queries, results)
-      |> assign(:selection, [])
+      {count, results} ->
+        socket =
+          socket
+          |> assign(:page_num, Keyword.get(search_params, :page_num))
+          |> assign(:query_count, count)
+          |> assign(:search_params, search_params)
+          |> assign(:queries, results)
+          |> assign(:selection, [])
 
-    {:noreply, socket}
+        {:noreply, socket}
+    end
   end
 
   def handle_event("change-search", value, socket) do
@@ -85,7 +92,7 @@ defmodule DAUWeb.SearchLive.Index do
 
     with :ok <- Permission.authorize(user, :edit, Common) do
       Enum.map(selection, fn id ->
-        with query <- Feed.get_feed_item_by_id(id),
+        with query <- Feed.get_feed_item_by_id(id, user),
              {:ok, _} <- Feed.add_user_response_label(query, %{verification_status: :spam}, user) do
           IO.puts("#{id} marked as spam")
         else
@@ -97,7 +104,9 @@ defmodule DAUWeb.SearchLive.Index do
         end
       end)
 
-      {count, results} = Feed.list_common_feed(search_params)
+      # Already checking for the permission in the above function, so
+      # not matching the error case
+      {count, results} = Feed.list_common_feed(user, search_params)
 
       socket =
         socket
@@ -113,7 +122,7 @@ defmodule DAUWeb.SearchLive.Index do
           socket
           # |> assign(:selection, [])
           |> put_flash(:error, "Not Authorized to perform this action.")
-
+IO.inspect(user, label: "NOT AUTH")
         {:noreply, socket}
     end
   end
@@ -136,11 +145,13 @@ defmodule DAUWeb.SearchLive.Index do
 
     if Permission.has_privilege?(user, :edit, Common) do
       Enum.map(selection, fn id ->
-        Feed.get_feed_item_by_id(id)
+        Feed.get_feed_item_by_id(id, user)
         |> Feed.take_up(user_name, user)
       end)
 
-      {_count, results} = Feed.list_common_feed(search_params)
+      # Already checking for the permission in the above function, so
+      # not matching the error case
+      {_count, results} = Feed.list_common_feed(user, search_params)
 
       {:noreply,
        assign(socket, :queries, results) |> assign(:selection, []) |> put_flash(:info, "Success")}

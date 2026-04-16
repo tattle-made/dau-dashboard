@@ -5,6 +5,7 @@ defmodule DAU.Administration do
   This is an escape hatch for features that admins need on a day to day basis to
   support with the various dau secratariat workflows
   """
+  require Logger
   alias DAU.MediaMatch.Hash
   alias DAU.UserMessage.Query
   alias DAU.UserMessage.Conversation
@@ -27,18 +28,28 @@ defmodule DAU.Administration do
     |> Repo.all()
   end
 
-  def get_user_number(query_id) do
-    query = Feed.get_feed_item_by_id(query_id)
-    query.sender_number
+  def get_user_number(query_id, user) do
+    case Feed.get_feed_item_by_id(query_id, user) do
+      {:error, :unauthorized} ->
+        Logger.error("Unauthorized User")
+
+      query ->
+        query.sender_number
+    end
   end
 
   def analyze_user_language(sender_number) do
     Inbox |> where([c], c.sender_number == ^sender_number) |> Repo.all()
   end
 
-  def add_user_language_to_query(query_id, language) do
-    query = Feed.get_feed_item_by_id(query_id)
-    query |> Common.changeset(%{language: language}) |> Repo.update()
+  def add_user_language_to_query(query_id, language, user) do
+    case Feed.get_feed_item_by_id(query_id, user) do
+      {:error, :unauthorized} ->
+        Logger.error("Unauthorized User")
+
+      query ->
+        query |> Common.changeset(%{language: language}) |> Repo.update()
+    end
   end
 
   def group_by_file_hash(page_num) do

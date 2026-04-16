@@ -33,6 +33,10 @@ defmodule Permission do
   This can possibly be done by passing an opts Keyword List to has_privilege? - ownership: true
   We will have to standardize conventions for how ownership is implemented in the database to make
   the code simple.
+
+  ## The Permission context includes the
+  Permission.RouteAuthorization module (inside permission directory), and a separate
+  DAUWeb.LiveRouteAuthorization module for liveview route authorization.
   """
   # todo : is it possible to import all schema's somehow?
   alias DAU.UserMessage.Outbox
@@ -67,18 +71,23 @@ defmodule Permission do
         |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
         |> MapSet.put({:edit, AssessmentReportMetadata})
-        |> MapSet.put({:view, Outbox}),
+        |> MapSet.put({:view, Outbox})
+        |> MapSet.put({:view, Common}),
       secratariat_associate:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle})
         |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
         |> MapSet.put({:edit, AssessmentReportMetadata})
-        |> MapSet.put({:view, Outbox}),
+        |> MapSet.put({:view, Outbox})
+        |> MapSet.put({:view, Common}),
       expert_factchecker:
         MapSet.new()
-        |> MapSet.put({:add, FactcheckArticle}),
-      expert_forensic: MapSet.new(),
+        |> MapSet.put({:add, FactcheckArticle})
+        |> MapSet.put({:view, Common}),
+      expert_forensic:
+        MapSet.new()
+        |> MapSet.put({:view, Common}),
       drive_by: MapSet.new()
     }
   end
