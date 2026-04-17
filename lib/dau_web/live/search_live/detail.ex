@@ -73,7 +73,7 @@ defmodule DAUWeb.SearchLive.Detail do
 
     result =
       with {:ok, _common} <- Feed.add_user_response(query.id, response, user),
-           common <- Feed.get_feed_item_by_id(query.id, user),
+           %Common{} = common <- Feed.get_feed_item_by_id(query.id, user),
            {:ok, outbox_query} <- UserMessage.add_response_to_outbox(common, user),
            {:ok} <-
              UserMessage.send_response_from_common(

@@ -122,7 +122,7 @@ defmodule DAUWeb.SearchLive.Index do
           socket
           # |> assign(:selection, [])
           |> put_flash(:error, "Not Authorized to perform this action.")
-IO.inspect(user, label: "NOT AUTH")
+
         {:noreply, socket}
     end
   end
