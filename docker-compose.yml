@@ -1,4 +1,27 @@
 services:
+# Un-comment and run this service to run this project in Docker (as done in the prod). 
+# Prerequisites are: 
+# 1. Creating a docker image called "dau:test" from the Dockerfile of this Project.
+# 2. A "env.docker" file should be present before running this service. This file can be
+#    created from the existing "env.dev" file. The only difference between the two is that
+#    the newly created "env.docker" file will not have export keyword for all the variables. 
+  # app:
+  #     image: dau:test
+  #     ports:
+  #       - 4000:4000
+  #     environment:
+  #       PHX_SERVER: "true"
+  #       DATABASE_USER: tattle
+  #       DATABASE_PASSWORD: weak_password
+  #       DATABASE_NAME: dau_dev
+  #       # queue is the service name. As everything is happening inside the docker compose, the service name
+  #       # is used instead of localhost.
+  #       RABBITMQ_URL: amqp://admin:Admin123@queue  
+  #     depends_on:
+  #       - db
+  #       - queue
+  #     env_file:
+  #      - env.docker
   db:
     image: postgres:14.10
     restart: always
