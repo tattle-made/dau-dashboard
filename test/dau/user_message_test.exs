@@ -209,7 +209,7 @@ defmodule DAU.UserMessageTest do
         |> AccountsFixtures.user_fixture()
 
       user =
-        AccountsFixtures.valid_user_attributes(%{role: :user})
+        AccountsFixtures.valid_user_attributes(%{role: :drive_by})
         |> AccountsFixtures.user_fixture()
 
       assert Permission.has_privilege?(admin, :approve, Outbox) == true

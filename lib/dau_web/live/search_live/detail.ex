@@ -16,6 +16,7 @@ defmodule DAUWeb.SearchLive.Detail do
   alias DAUWeb.Components.MatchReview
   use DAUWeb, :live_view
   use DAUWeb, :html
+  require Logger
 
   def mount(_params, session, socket) do
     user_token = session["user_token"]
@@ -35,17 +36,28 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   def handle_params(%{"id" => id}, _uri, socket) do
-    query = Feed.get_feed_item_by_id(id)
-    form_user_response_label = query |> Common.user_response_changeset() |> to_form()
+    user = socket.assigns.current_user
 
-    socket =
-      socket
-      |> assign(:query, query)
-      |> assign_async(:matches, fn -> {:ok, %{matches: Blake2B.get_matches_by_common_id(id)}} end)
-      |> assign(:form_user_response_label, form_user_response_label)
-      |> stream(:resources, query.resources)
+    case Feed.get_feed_item_by_id(id, user) do
+      {:error, :unauthorized} ->
+        Logger.error("Unauthorized User")
+        socket = socket |> put_flash(:error, "Unauthorized") |> redirect(to: "/")
+        {:noreply, socket}
 
-    {:noreply, socket}
+      query ->
+        form_user_response_label = query |> Common.user_response_changeset() |> to_form()
+
+        socket =
+          socket
+          |> assign(:query, query)
+          |> assign_async(:matches, fn ->
+            {:ok, %{matches: Blake2B.get_matches_by_common_id(id)}}
+          end)
+          |> assign(:form_user_response_label, form_user_response_label)
+          |> stream(:resources, query.resources)
+
+        {:noreply, socket}
+    end
   end
 
   def handle_event("test-click", value, socket) do
@@ -54,36 +66,60 @@ defmodule DAUWeb.SearchLive.Detail do
   end
 
   def handle_event("approve-response", _param, socket) do
+    user = socket.assigns.current_user
     query = socket.assigns.query
     response = get_templatized_response(query)
     response_params = get_templatized_response_paramters(query)
-    Feed.add_user_response(query.id, response)
-    common = Feed.get_feed_item_by_id(query.id)
 
-    socket =
-      with {:ok, query} <- UserMessage.add_response_to_outbox(common),
-           {:ok} <- UserMessage.send_response(query.user_message_outbox, response_params) do
-        socket
-        |> put_flash(:info, "Response Approved")
-        |> assign(:query, common)
+    result =
+      with {:ok, _common} <- Feed.add_user_response(query.id, response, user),
+           %Common{} = common <- Feed.get_feed_item_by_id(query.id, user),
+           {:ok, outbox_query} <- UserMessage.add_response_to_outbox(common, user),
+           {:ok} <-
+             UserMessage.send_response_from_common(
+               outbox_query.user_message_outbox,
+               response_params,
+               user
+             ) do
+        {:ok, common}
       else
-        _err ->
-          socket
-          |> put_flash(:info, "Error caused while approving response. Please reach out to admin")
+        {:error, :unauthorized} -> {:error, :unauthorized}
+        error -> {:error, error}
       end
 
-    Task.async(fn -> Analytics.create_message_sent_event(common.id) end)
+    case result do
+      {:ok, common} ->
+        Task.async(fn -> Analytics.create_message_sent_event(common.id) end)
 
-    {:noreply, socket}
+        {:noreply,
+         socket
+         |> put_flash(:info, "Response Approved")
+         |> assign(:query, common)}
+
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Error caused while approving response. Please reach out to admin")}
+    end
   end
 
   def handle_event("save-verification-sop", verification_sop_params, socket) do
-    case Feed.add_verification_sop(socket.assigns.query, verification_sop_params) do
+    case Feed.add_verification_sop(
+           socket.assigns.query,
+           verification_sop_params,
+           socket.assigns.current_user
+         ) do
       {:ok, query} ->
         {:noreply,
          socket
          |> put_flash(:info, "Verification SOP saved")
          |> assign(:query, query)}
+
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         IO.inspect(changeset)
@@ -101,9 +137,16 @@ defmodule DAUWeb.SearchLive.Detail do
       text: params["resource-text"]
     }
 
-    {:ok, query} = Feed.add_resource(socket.assigns.query.id, resource)
+    case Feed.add_resource(socket.assigns.query.id, resource, socket.assigns.current_user) do
+      {:ok, query} ->
+        {:noreply, socket |> assign(:query, query)}
 
-    {:noreply, socket |> assign(:query, query)}
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Error adding resource. Please try again.")}
+    end
   end
 
   def handle_event("add-factcheck-article", params, socket) do
@@ -112,11 +155,20 @@ defmodule DAUWeb.SearchLive.Detail do
       url: params["factcheck-article-url"]
     }
 
-    {:ok, query} = Feed.add_factcheck_article(socket.assigns.query.id, factcheck_article)
+    case Feed.add_factcheck_article(
+           socket.assigns.query.id,
+           factcheck_article,
+           socket.assigns.current_user
+         ) do
+      {:ok, query} ->
+        {:noreply, assign(socket, :query, query)}
 
-    socket = socket |> assign(:query, query)
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
 
-    {:noreply, socket}
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Error adding factcheck article.")}
+    end
   end
 
   def handle_event("change-status-factheck-article", params, socket) do
@@ -125,14 +177,20 @@ defmodule DAUWeb.SearchLive.Detail do
 
     server_response =
       case params["type"] do
-        "reject" -> Feed.set_approval_status(query_id, article_id, false)
-        "approve" -> Feed.set_approval_status(query_id, article_id, true)
+        "reject" ->
+          Feed.set_approval_status(query_id, article_id, false, socket.assigns.current_user)
+
+        "approve" ->
+          Feed.set_approval_status(query_id, article_id, true, socket.assigns.current_user)
       end
 
     socket =
       case server_response do
         {:ok, query} ->
           socket |> assign(:query, query)
+
+        {:error, :unauthorized} ->
+          socket |> put_flash(:error, "You are not authorized to perform this action.")
 
         {:error, reason} ->
           socket
@@ -147,19 +205,32 @@ defmodule DAUWeb.SearchLive.Detail do
       url: params["assessment-report-url"]
     }
 
-    {:ok, query} = Feed.add_assessment_report(socket.assigns.query.id, assessment_report)
-    socket = socket |> assign(:query, query)
+    case Feed.add_assessment_report(
+           socket.assigns.query.id,
+           assessment_report,
+           socket.assigns.current_user
+         ) do
+      {:ok, query} ->
+        {:noreply, assign(socket, :query, query)}
 
-    {:noreply, socket}
+      {:error, :unauthorized} ->
+        {:noreply, put_flash(socket, :error, "You are not authorized to perform this action.")}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Error adding assessment report.")}
+    end
   end
 
   def handle_event("save-user-response-label", %{"common" => common}, socket) do
     query = socket.assigns.query
 
     socket =
-      case Feed.add_user_response_label(query, common) do
+      case Feed.add_user_response_label(query, common, socket.assigns.current_user) do
         {:ok, query} ->
           socket |> put_flash(:info, "user response label applied") |> assign(:query, query)
+
+        {:error, :unauthorized} ->
+          socket |> put_flash(:error, "You are not authorized to perform this action.")
 
         {:error, %Ecto.Changeset{} = changeset} ->
           socket |> assign(:form_user_response_label, to_form(changeset))
@@ -172,9 +243,12 @@ defmodule DAUWeb.SearchLive.Detail do
     query = socket.assigns.query
 
     socket =
-      case Feed.delete_user_response_lable(query) do
+      case Feed.delete_user_response_lable(query, socket.assigns.current_user) do
         {:ok, query} ->
           socket |> assign(:query, query)
+
+        {:error, :unauthorized} ->
+          socket |> put_flash(:error, "You are not authorized to perform this action.")
 
         {:error, %Ecto.Changeset{} = changeset} ->
           IO.inspect(changeset)
@@ -239,7 +313,7 @@ defmodule DAUWeb.SearchLive.Detail do
 
   def beautify_url(url) when is_binary(url) do
     case String.length(url) do
-      x when x > 40 -> String.slice(url, 0..20) <> "..." <> String.slice(url, -20..-1)
+      x when x > 40 -> String.slice(url, 0..20) <> "..." <> String.slice(url, -20..-1//1)
       x when x < 40 -> url
     end
   end

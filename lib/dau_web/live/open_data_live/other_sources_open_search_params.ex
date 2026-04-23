@@ -70,7 +70,7 @@ defmodule DAUWeb.OpenDataLive.OtherSourcesOpenSearchParams do
   def search_param_string(search_params) do
     search_params
     |> Enum.reduce("", fn x, acc -> "#{acc}&#{elem(x, 0)}=#{elem(x, 1)}" end)
-    |> String.slice(1..-1)
+    |> String.slice(1..-1//1)
   end
 
   def search_param_string_for_next_page(search_params) do

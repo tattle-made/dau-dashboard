@@ -99,7 +99,7 @@ defmodule DAU.UserMessage.Templates.Template do
     ]
 
     name = Enum.reduce(name_parts, "", fn acc, name -> "#{name}_#{acc}" end)
-    name = name |> String.slice(1..-1)
+    name = name |> String.slice(1..-1//1)
 
     new_meta = Map.put(template.meta, :template_name, name)
     Map.put(template, :meta, new_meta)

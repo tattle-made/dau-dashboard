@@ -28,7 +28,8 @@ defmodule DAUWeb.OpenDataLive.FeedOpenLive do
     available_tags_for_category =
       tags_for_category_slug(tag_categories, Keyword.get(search_params, :tag_category))
 
-    {count, results} = FeedOpenQuery.list_common_feed(search_params)
+    {count, results} = FeedOpenQuery.list_common_feed_open(search_params)
+    IO.inspect(results)
     page_size = FeedOpenQuery.page_size()
     page_num = Keyword.get(search_params, :page_num)
     total_pages = max(div(count + page_size - 1, page_size), 1)

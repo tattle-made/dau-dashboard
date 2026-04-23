@@ -49,10 +49,18 @@ defmodule DAUWeb.SearchLive.UserResponse do
     response_params = DAUWeb.SearchLive.Detail.get_templatized_response_paramters(common)
 
     socket =
-      case UserMessage.send_response(query.user_message_outbox, response_params) do
+      case UserMessage.send_response_from_outbox(
+             query.user_message_outbox,
+             response_params,
+             socket.assigns.current_user
+           ) do
         {:ok} ->
           socket
           |> put_flash(:info, "Message sent to BSP")
+
+        {:error, :unauthorized} ->
+          socket
+          |> put_flash(:error, "You are not authorized to perform this action.")
 
         {:error, reason} ->
           socket

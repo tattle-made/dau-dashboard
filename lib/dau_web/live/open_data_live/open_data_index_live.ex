@@ -52,7 +52,7 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
               2. The DAU did not archive media items that were shared with them as URLs, as a result, some links in the data are broken. This represents the way synthetic content circulates and disappears from the internet and we have chosen to maintain these links in the dataset for transparency.
             </p>
             <p>
-              The licensing for this dataset is shared below.
+              The terms of use for this dataset is shared below.
             </p>
           </div>
 
@@ -101,7 +101,7 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
               4. The DAU did not archive media items that were shared with them as URLs, as a result, some links in the data are broken. This represents the way synthetic content circulates and disappears from the internet and we have chosen to maintain these links in the dataset.
             </p>
             <p>
-              The licensing for this dataset is shared below.
+              The terms of use for this dataset is shared below.
             </p>
           </div>
 
@@ -119,20 +119,18 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
       <div class="mt-10 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div class="flex flex-col gap-3">
           <div>
-            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Licensing</p>
-            <h2 class="mt-1 text-lg font-semibold text-slate-900">Dataset Licensing</h2>
+            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Usage</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-900">Terms of Use</h2>
           </div>
           <p class="text-sm text-slate-700">
             The data presented here is a limited sample of the entire dataset. In that we share only screenshots from the media item or its URL. Complete media items are not available. For access to the full dataset please submit a request to DAU directly. For ethical commercial use cases, the dataset can be made available at a charge.
           </p>
           <div>
             <.link
-              navigate="https://docs.google.com/document/u/0/d/1iY_E2cKKm8EXSFAqQrvEl1wD4OLkNitS20RuDnGBMIY"
-              target="_blank"
-              rel="noopener noreferrer"
+              navigate="/datasets/terms-of-use"
               class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
             >
-              View DAU Data License <span aria-hidden="true">→</span>
+              View Terms of Use <span aria-hidden="true">→</span>
             </.link>
           </div>
         </div>

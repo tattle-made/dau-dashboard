@@ -1,5 +1,7 @@
 defmodule DAUWeb.AssessmentReportMetadataController do
   alias DAU.Feed.AssessmentReportMetadataRepository
+  alias DAU.Feed.Common
+  alias Permission
   use DAUWeb, :controller
 
   @theme_radio_labels [
@@ -75,92 +77,138 @@ defmodule DAUWeb.AssessmentReportMetadataController do
   end
 
   def show(conn, params) do
-    form = %{
-      target: "",
-      language: "",
-      primary_theme: "",
-      secondary_theme: "",
-      third_theme: "",
-      claim_is_sectarian: "",
-      gender: [],
-      content_disturbing: "",
-      claim_category: "",
-      claim_logo: "",
-      org_logo: "",
-      frame_org: "",
-      medium_of_content: ""
-    }
+    user = conn.assigns.current_user
 
-    form = Phoenix.HTML.FormData.to_form(form, as: :my_form)
-    render(conn, :show, form: form, id: params["id"])
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      form = %{
+        target: "",
+        language: "",
+        primary_theme: "",
+        secondary_theme: "",
+        third_theme: "",
+        claim_is_sectarian: "",
+        gender: [],
+        content_disturbing: "",
+        claim_category: "",
+        claim_logo: "",
+        org_logo: "",
+        frame_org: "",
+        medium_of_content: ""
+      }
+
+      form = Phoenix.HTML.FormData.to_form(form, as: :my_form)
+      render(conn, :show, form: form, id: params["id"])
+    else
+      {:error, :unauthorized} ->
+        conn
+        |> put_flash(:error, "You are not authorized to perform this action.")
+        |> redirect(to: ~p"/")
+    end
   end
 
   def create(conn, params) do
-    id = params["id"]
-    form_data = params["my_form"]
-    form_data = Map.put(form_data, "feed_common_id", id)
+    user = conn.assigns.current_user
 
-    case AssessmentReportMetadataRepository.create(form_data) do
-      {:ok, _metadata} ->
-        conn
-        |> put_flash(:info, "Assessment Report Metadata Added!")
-        |> redirect(to: "/demo/query/#{id}")
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      id = params["id"]
+      form_data = params["my_form"]
+      form_data = Map.put(form_data, "feed_common_id", id)
 
-      {:error, changeset} ->
+      case AssessmentReportMetadataRepository.create(form_data) do
+        {:ok, _metadata} ->
+          conn
+          |> put_flash(:info, "Assessment Report Metadata Added!")
+          |> redirect(to: "/demo/query/#{id}")
+
+        {:error, changeset} ->
+          conn
+          |> put_flash(:error, "Error creating Assessment Report Metadata://.")
+          |> render(:show, form: changeset, id: id)
+      end
+    else
+      {:error, :unauthorized} ->
         conn
-        |> put_flash(:error, "Error creating Assessment Report Metadata://.")
-        |> render(:show, form: changeset, id: id)
+        |> put_flash(:error, "You are not authorized to perform this action.")
+        |> redirect(to: ~p"/")
     end
-
-    redirect(conn, to: "/demo/query/#{id}")
   end
 
   def edit(conn, params) do
-    id = params["id"]
+    user = conn.assigns.current_user
 
-    assessment_report_metadata =
-      AssessmentReportMetadataRepository.get(id)
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      id = params["id"]
 
-    changeset = Ecto.Changeset.change(assessment_report_metadata)
-    form = Phoenix.HTML.FormData.to_form(changeset, as: :my_form)
-    render(conn, :edit, form: form, id: id)
+      assessment_report_metadata =
+        AssessmentReportMetadataRepository.get(id)
+
+      changeset = Ecto.Changeset.change(assessment_report_metadata)
+      form = Phoenix.HTML.FormData.to_form(changeset, as: :my_form)
+      render(conn, :edit, form: form, id: id)
+    else
+      {:error, :unauthorized} ->
+        conn
+        |> put_flash(:error, "You are not authorized to perform this action.")
+        |> redirect(to: ~p"/")
+    end
   end
 
   def update(conn, params) do
-    id = params["id"]
-    form_data = params["my_form"]
+    user = conn.assigns.current_user
 
-    case AssessmentReportMetadataRepository.update(id, form_data) do
-      {:ok, _metadata} ->
-        conn
-        |> put_flash(:info, "Assessment Report Metadata Updated.")
-        |> redirect(to: "/demo/query/#{id}")
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      id = params["id"]
+      form_data = params["my_form"]
 
-      {:error, changeset} ->
+      case AssessmentReportMetadataRepository.update(id, form_data) do
+        {:ok, _metadata} ->
+          conn
+          |> put_flash(:info, "Assessment Report Metadata Updated.")
+          |> redirect(to: "/demo/query/#{id}")
+
+        {:error, changeset} ->
+          conn
+          |> put_flash(:error, "Error Updating Assessment Report Metadata://.")
+          |> render(:edit, form: changeset, id: id)
+      end
+    else
+      {:error, :unauthorized} ->
         conn
-        |> put_flash(:error, "Error Updating Assessment Report Metadata://.")
-        |> render(:edit, form: changeset, id: id)
+        |> put_flash(:error, "You are not authorized to perform this action.")
+        |> redirect(to: ~p"/")
     end
   end
 
   def delete(conn, params) do
-    id = params["id"]
+    user = conn.assigns.current_user
 
-    case AssessmentReportMetadataRepository.delete(id) do
-      {:ok, _metadata} ->
-        conn
-        # |> put_flash(:info, "assessment report metadata deleted successfully.")
-        |> redirect(to: "/demo/query/#{id}")
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      id = params["id"]
 
-      {:error, :not_found} ->
+      case AssessmentReportMetadataRepository.delete(id) do
+        {:ok, _metadata} ->
+          conn
+          # |> put_flash(:info, "assessment report metadata deleted successfully.")
+          |> redirect(to: "/demo/query/#{id}")
+
+        {:error, :not_found} ->
+          conn
+          # |> put_flash(:error, "Error deleting assessment report metadata.")
+          |> redirect(to: "/demo/query/#{id}")
+      end
+    else
+      {:error, :unauthorized} ->
         conn
-        # |> put_flash(:error, "Error deleting assessment report metadata.")
-        |> redirect(to: "/demo/query/#{id}")
+        |> put_flash(:error, "You are not authorized to perform this action.")
+        |> redirect(to: ~p"/")
     end
   end
 
   def fetch(conn, _params) do
-    metadata = AssessmentReportMetadataRepository.fetch_all()
+    user = conn.assigns.current_user
+
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      metadata = AssessmentReportMetadataRepository.fetch_all()
 
     translate_gender = fn gender_list ->
       gender_list
@@ -200,6 +248,12 @@ defmodule DAUWeb.AssessmentReportMetadataController do
         )
       end)
 
-    render(conn, :fetch, metadata: transformed_metadata)
+      render(conn, :fetch, metadata: transformed_metadata)
+    else
+      {:error, :unauthorized} ->
+        conn
+        |> put_flash(:error, "You are not authorized to perform this action.")
+        |> redirect(to: ~p"/")
+    end
   end
 end

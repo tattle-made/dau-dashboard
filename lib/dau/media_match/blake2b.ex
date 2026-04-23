@@ -21,6 +21,7 @@ defmodule DAU.MediaMatch.Blake2B do
   alias DAU.MediaMatch.Blake2b.WorkerRequest
   alias DAU.MediaMatch.Blake2B.Media
   alias DAU.Repo
+  alias Permission
   import Ecto.Query
   import Ecto.Changeset
 
@@ -151,22 +152,21 @@ defmodule DAU.MediaMatch.Blake2B do
     _ -> nil
   end
 
-  def copy_response_fields(src, target) do
-    src_common = Repo.get(Common, src) |> Repo.preload(:query)
+  def copy_response_fields(src, target, user) do
+    with :ok <- Permission.authorize(user, :edit, Common) do
+      src_common = Repo.get(Common, src) |> Repo.preload(:query)
 
-    to_copy = %{
-      user_response: src_common.user_response,
-      factcheck_articles: src_common.factcheck_articles,
-      assessment_report: src_common.assessment_report,
-      verification_status: src_common.verification_status
-    }
+      to_copy = %{
+        user_response: src_common.user_response,
+        factcheck_articles: src_common.factcheck_articles,
+        assessment_report: src_common.assessment_report,
+        verification_status: src_common.verification_status
+      }
 
-    new_target =
       Repo.get(Common, target)
       |> cast(to_copy, [:user_response, :verification_status])
       |> Repo.update()
-
-    new_target
+    end
   end
 
   def auto_tag_spam(conversation, media) do

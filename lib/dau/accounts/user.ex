@@ -15,8 +15,8 @@ defmodule DAU.Accounts.User do
         :secratariat_manager,
         :expert_factchecker,
         :expert_forensic,
-        :user
-      ], default: :user
+        :drive_by
+      ], default: :drive_by
 
     timestamps(type: :utc_datetime)
   end

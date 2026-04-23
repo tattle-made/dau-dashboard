@@ -105,7 +105,7 @@ defmodule DAU.UserMessage.Outbox do
       length_minus_one = length - 1
 
       txn_id = String.slice(id, 0..length_minus_one)
-      msg_id = String.slice(id, length_plus_one..-1)
+      msg_id = String.slice(id, length_plus_one..-1//1)
 
       {:ok, {txn_id, msg_id}}
     rescue

@@ -10,11 +10,12 @@
 #   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20230227-slim - for the release image
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.15.0-erlang-26.0-debian-bullseye-20230227-slim
+
 #
-ARG ELIXIR_VERSION=1.15.0
+ARG ELIXIR_VERSION=1.16.0
 ARG OTP_VERSION=26.0
-ARG DEBIAN_VERSION=rc3-debian-bullseye-20230522-slim
-ARG RUNNER_DEBIAN_VERSION=bullseye-20230522-slim
+ARG DEBIAN_VERSION=debian-bullseye-20260406-slim
+ARG RUNNER_DEBIAN_VERSION=bullseye-20260406-slim
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${RUNNER_DEBIAN_VERSION}"
@@ -56,11 +57,12 @@ COPY assets assets
 
 RUN npm install --prefix assets
 
+# # Compile the release
+RUN mix compile
+
 # compile assets
 RUN mix assets.deploy
 
-# # Compile the release
-RUN mix compile
 
 # # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
@@ -100,4 +102,5 @@ USER nobody
 # ENTRYPOINT ["/tini", "--"]
 
 # CMD ["/app/bin/server"]
-CMD ["tail", "-f", "/dev/null"]
+# CMD ["tail", "-f", "/dev/null"]
+CMD ["bin/dau", "start"]

@@ -3,14 +3,15 @@ defmodule Permission do
   Rudimentary role based access control for dashboard.
 
   This module helps answer the question - Can user U perform an action A on resource R.
-  U is `DAU.Accounts.User` with U.role ∈ {:expert_factchecker, :expert_forensic, :secratariat_manager,
-  :secratariat_associate, :admin}. Refer `DAU.Accounts.User` for definition.
+  U is `DAU.Accounts.User` with U.role ∈ {:drive_by, :expert_factchecker, :expert_forensic,
+  :secratariat_manager, :secratariat_associate, :admin}. Refer `DAU.Accounts.User` for definition.
   A ∈ {:view, :create, :edit, :delete}
   R is any module that implements the Ecto.Schema behaviour
 
   ## Background Information
-  Dashboard Users can have Roles - user(by default), expert_factchecker, expert_forensic, secratariat_manager,
-  secratariat_associate, admin.  Roles have privileges which are defined in `priviledges/0`
+  Dashboard Users can have Roles - drive_by (by default), expert_factchecker, expert_forensic,
+  secratariat_manager, secratariat_associate, admin. Roles have privileges which are defined in
+  `priviledges/0`
 
   ## Examples
   user_a = Repo.get(User, 1)
@@ -32,6 +33,10 @@ defmodule Permission do
   This can possibly be done by passing an opts Keyword List to has_privilege? - ownership: true
   We will have to standardize conventions for how ownership is implemented in the database to make
   the code simple.
+
+  ## The Permission context includes the
+  Permission.RouteAuthorization module (inside permission directory), and a separate
+  DAUWeb.LiveRouteAuthorization module for liveview route authorization.
   """
   # todo : is it possible to import all schema's somehow?
   alias DAU.UserMessage.Outbox
@@ -39,6 +44,16 @@ defmodule Permission do
   alias DAU.Accounts.User
   alias DAU.Feed.Common
   alias DAU.Feed.AssessmentReportMetadata
+
+  def authorize(nil, _action, _resource), do: {:error, :unauthorized}
+
+  def authorize(%User{} = user, action, resource) do
+    if has_privilege?(user, action, resource) do
+      :ok
+    else
+      {:error, :unauthorized}
+    end
+  end
 
   def has_privilege?(%User{} = user, action, resource) do
     case user.role do
@@ -56,19 +71,24 @@ defmodule Permission do
         |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
         |> MapSet.put({:edit, AssessmentReportMetadata})
-        |> MapSet.put({:view, Outbox}),
+        |> MapSet.put({:view, Outbox})
+        |> MapSet.put({:view, Common}),
       secratariat_associate:
         MapSet.new()
         |> MapSet.put({:add, FactcheckArticle})
         |> MapSet.put({:approve, FactcheckArticle})
         |> MapSet.put({:edit, Common})
         |> MapSet.put({:edit, AssessmentReportMetadata})
-        |> MapSet.put({:view, Outbox}),
+        |> MapSet.put({:view, Outbox})
+        |> MapSet.put({:view, Common}),
       expert_factchecker:
         MapSet.new()
-        |> MapSet.put({:add, FactcheckArticle}),
-      expert_forensic: MapSet.new(),
-      user: MapSet.new()
+        |> MapSet.put({:add, FactcheckArticle})
+        |> MapSet.put({:view, Common}),
+      expert_forensic:
+        MapSet.new()
+        |> MapSet.put({:view, Common}),
+      drive_by: MapSet.new()
     }
   end
 end

@@ -44,6 +44,7 @@
                     module={MatchReview}
                     id="match_review"
                     common_id={@query.id}
+                    current_user={@current_user}
                     suggested_matches={[]}
                   />
                 </div>
@@ -224,7 +225,7 @@
               </div>
               <div :if={!factcheck_article.approved}>
                 <button
-                  id="approve-button"
+                  id="reject-button"
                   value={factcheck_article.id}
                   phx-value-type="approve"
                   phx-click="change-status-factheck-article"
