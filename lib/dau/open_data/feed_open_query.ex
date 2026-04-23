@@ -166,6 +166,10 @@ defmodule DAU.OpenData.FeedOpenQuery do
     4351
   ]
 
+  @dummy_entries [
+    1, 2, 15, 2518
+  ]
+
   @exclude_fields [
     :sender_number,
     :verification_note,
@@ -177,7 +181,7 @@ defmodule DAU.OpenData.FeedOpenQuery do
 
   def get_common_feed_rows_for_csv() do
     Common
-    |> maybe_exclude_ids(@no_urls_common_ids)
+    |> maybe_exclude_ids(@no_urls_common_ids ++ @dummy_entries)
     # Only take items less than equal to than the id passed
     |> maybe_apply_upper_bound(4603)
     |> order_by(desc: :inserted_at)
@@ -199,7 +203,7 @@ defmodule DAU.OpenData.FeedOpenQuery do
       |> maybe_filter_verification_status(Keyword.get(search_params, :verification_status))
       |> maybe_filter_from_date(Keyword.get(search_params, :from))
       |> maybe_filter_to_date(Keyword.get(search_params, :to))
-      |> maybe_exclude_ids(@no_urls_common_ids)
+      |> maybe_exclude_ids(@no_urls_common_ids ++ @dummy_entries)
       # Only take items less than equal to than the id passed
       |> maybe_apply_upper_bound(4603)
       |> maybe_filter_tags(
