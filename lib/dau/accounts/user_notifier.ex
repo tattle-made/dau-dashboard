@@ -8,7 +8,7 @@ defmodule DAU.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"DAU", "contact@example.com"})
+      |> from({"DAU", "admin@tattle.co.in"})
       |> subject(subject)
       |> text_body(body)
 
