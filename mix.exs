@@ -72,7 +72,8 @@ defmodule DAU.MixProject do
       {:html_sanitize_ex, "~> 1.4"},
       {:csv, "~> 3.2"},
       {:elixir_make, "~> 0.9", override: true},
-      {:igniter, "~> 0.6", only: [:dev, :test]}
+      {:igniter, "~> 0.6", only: [:dev, :test]},
+      {:gen_smtp, "~> 1.0"}
     ]
   end
 
