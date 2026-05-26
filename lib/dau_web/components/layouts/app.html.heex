@@ -11,17 +11,25 @@
     </div>
     --%>
     <%!-- <div :if= {@current_user && @current_user.role != :drive_by} class="flex items-center gap-4 font-semibold leading-6 text-zinc-900 ml-auto"> --%>
-    <div :if= {@current_user && Permission.RouteAuthorization.allowed?(@current_user, :deny_driveby_user)} class="flex items-center gap-4 font-semibold leading-6 text-zinc-900 ml-auto">
+    <div :if= {@current_user} class="flex items-center gap-4 font-semibold leading-6 text-zinc-900 ml-auto">
       <a
-        href={~p"/demo/query?page_num=1&sort=newest&verification_status=&media_type=all"}
+        href={~p"/datasets"}
         class="text-slate-700 font-medium"
       >
-        Feed
+        Datasets
       </a>
-
-      <a href={~p"/outbox"} class="text-slate-700 font-medium">
-        Outbox
-      </a>
+      <span class="flex items-center gap-4" :if= {Permission.RouteAuthorization.allowed?(@current_user, :deny_driveby_user)}>
+        <a
+          href={~p"/demo/query?page_num=1&sort=newest&verification_status=&media_type=all"}
+          class="text-slate-700 font-medium"
+        >
+          Feed
+        </a>
+  
+        <a href={~p"/outbox"} class="text-slate-700 font-medium">
+          Outbox
+        </a>
+      </span>
       <%!-- <a href={~p"/canon/manipulated_media"} class="text-slate-700 font-medium"> Canon </a> --%>
     </div>
   </div>
