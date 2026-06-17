@@ -135,6 +135,28 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
           </div>
         </div>
       </div>
+
+      <div class="mt-10 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex flex-col gap-3">
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Access</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-900">Access to the Complete Dataset</h2>
+          </div>
+          <p class="text-sm text-slate-700">
+            Fill this form to request access to the complete dataset.
+          </p>
+          <div>
+            <.link
+              href="https://forms.gle/UPepDXnbpwkKB1iL9"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
+            >
+              Form <span aria-hidden="true"><.icon name="hero-arrow-top-right-on-square" class="size-3" /></span>
+            </.link>
+          </div>
+        </div>
+      </div>
     </div>
     """
   end
