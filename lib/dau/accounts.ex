@@ -350,4 +350,22 @@ defmodule DAU.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  @doc """
+  Returns the most recently registered users.
+  """
+  def list_recent_users(page \\ 1, per_page \\ 20) do
+    offset = (page - 1) * per_page
+
+    User
+    |> order_by(desc: :inserted_at)
+    |> limit(^per_page)
+    |> offset(^offset)
+    |> Repo.all()
+  end
+
+  def count_users do
+    Repo.aggregate(User, :count, :id)
+  end
+
 end
