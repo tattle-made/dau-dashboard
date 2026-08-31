@@ -209,5 +209,6 @@ defmodule DAUWeb.Router do
     pipe_through [:browser, :require_authenticated_user, :admin_only]
 
     get "/", AnalyticsController, :hello_world
+    get "/user-registrations", AnalyticsController, :user_registrations
   end
 end

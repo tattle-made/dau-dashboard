@@ -6,4 +6,8 @@ defmodule DAUWeb.AnalyticsController do
     data = Analytics.fetch_author_and_url()
     render(conn, :index, data: data)
   end
+
+  def user_registrations(conn, _params) do
+    render(conn, :user_registrations)
+  end
 end
