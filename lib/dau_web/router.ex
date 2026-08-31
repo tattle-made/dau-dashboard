@@ -25,6 +25,10 @@ defmodule DAUWeb.Router do
     plug DAUWeb.Plugs.RouteAuthorizationPlug, permission: :deny_driveby_user
   end
 
+  pipeline :admin_only do
+    plug DAUWeb.Plugs.RouteAuthorizationPlug, permission: :admin_only
+  end
+
   # Open Routes, no Authorization or Authentication is Required
   scope "/", DAUWeb do
     pipe_through :browser
@@ -202,7 +206,7 @@ defmodule DAUWeb.Router do
   end
 
   scope "/analytics", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_driveby_user]
+    pipe_through [:browser, :require_authenticated_user, :admin_only]
 
     get "/", AnalyticsController, :hello_world
   end
