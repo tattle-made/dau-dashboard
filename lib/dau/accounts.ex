@@ -7,6 +7,7 @@ defmodule DAU.Accounts do
   alias DAU.Repo
 
   alias DAU.Accounts.{User, UserToken, UserNotifier}
+  alias Permission
 
   ## Database getters
 
@@ -354,18 +355,21 @@ defmodule DAU.Accounts do
   @doc """
   Returns the most recently registered users.
   """
-  def list_recent_users(page \\ 1, per_page \\ 20) do
-    offset = (page - 1) * per_page
+  def list_recent_users(user, page \\ 1, per_page \\ 20) do
+    with :ok <- Permission.authorize(user, :view, User) do
+      offset = (page - 1) * per_page
 
-    User
-    |> order_by(desc: :inserted_at)
-    |> limit(^per_page)
-    |> offset(^offset)
-    |> Repo.all()
+      User
+      |> order_by(desc: :inserted_at)
+      |> limit(^per_page)
+      |> offset(^offset)
+      |> Repo.all()
+    end
   end
 
-  def count_users do
-    Repo.aggregate(User, :count, :id)
+  def count_users(user) do
+    with :ok <- Permission.authorize(user, :view, User) do
+      Repo.aggregate(User, :count, :id)
+    end
   end
-
 end

@@ -27,6 +27,18 @@ defmodule Permission do
   Permission.has_privilege?(user_a, :edit, Common)
   true
 
+  ## Admin-only actions
+  Admins short-circuit to `true` in `has_privilege?/3`, and every other role is checked
+  against `privileges/0` by exact `{action, resource}` membership. So an action that is
+  deliberately admin-only needs no entry anywhere - simply call
+  `Permission.authorize(user, :view, SomeSchema)` with a pair that appears under no other
+  role, and only admins will pass.
+
+  Note that this makes the denial silent: a typo in the action, or the wrong resource
+  module, produces a pair no role holds and so becomes admin-only rather than raising.
+  If a check unexpectedly locks out a role, first confirm the pair matches the one in
+  `privileges/0` exactly.
+
   ## Future Features
   The current implementation lacks a notion of ownership. For eg allowing :edit action to be perfomed
   by the User who created or 'owns' a Resource.
