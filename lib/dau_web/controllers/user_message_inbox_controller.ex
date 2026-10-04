@@ -31,12 +31,12 @@ defmodule DAUWeb.IncomingMessageController do
           conn = conn |> Plug.Conn.send_resp(200, [])
 
           Task.start(fn ->
-            with {:ok, properties_added} <- Conversation.add_message_properties(inbox),
-                 :ok <-
-                   if(inbox.media_type in ["audio", "video"],
-                     do: Blake2B.create_job(properties_added),
-                     else: :ok
-                   ) do
+            with {:ok, properties_added} <- Conversation.add_message_properties(inbox) do
+              #  :ok <-
+              #    if(inbox.media_type in ["audio", "video"],
+              #      do: Blake2B.create_job(properties_added),
+              #      else: :ok
+              #    ) do
             else
               error ->
                 Logger.error("Error in processing message in background #{inspect(error)}")
