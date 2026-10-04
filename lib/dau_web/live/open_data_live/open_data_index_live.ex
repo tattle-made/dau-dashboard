@@ -34,13 +34,13 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
 
           <div class="mt-4 space-y-3 text-sm text-slate-700">
             <p>
-              This dataset consists of media items including images, audio files, and video files sent to the Deepfakes Analysis Unit (DAU) for inspection due to the sender suspecting that the item has been altered or synthesized using AI tools. The DAU has analysed each data item using AI detection tools and fact checking research to determine the presence or absence of AI manipulation.
+              This dataset consists of media items including audio files and video files sent to the Deepfakes Analysis Unit (DAU) for inspection due to the sender suspecting that the item has been altered or synthesized using AI tools. The DAU has analysed each data item using AI detection tools and verification methodology to determine the presence or absence of AI manipulation or generation.
             </p>
             <p>
               The data was reported to DAU via a Whatsapp tipline, between March 21, 2024 and February 16, 2026.
             </p>
             <p>
-              The dataset was reviewed by one of three fact checkers at DAU and each entry described with various fields of metadata. The data dictionary for this dataset is available on its table page.
+              The dataset was reviewed by the DAU Secretariat and each entry described with various fields of metadata. The data dictionary for this dataset is available on its table page.
             </p>
             <p>
               Some things to note about the data:
@@ -73,17 +73,17 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
                 Dataset 2
               </p>
               <h2 class="mt-1 text-lg font-semibold text-slate-900">
-                Deepfakes Analysis Unit Dataset 2: Sourced from partner escalations and social media monitoring.
+                Deepfakes Analysis Unit Dataset 2: Sourced from TIA partner escalations and social media monitoring.
               </h2>
             </div>
           </div>
 
           <div class="mt-4 space-y-3 text-sm text-slate-700">
             <p>
-              This dataset consists of media items including images, audio files, and video files suspected to have been altered using AI, which were either sent to the Deepfakes Analysis Unit (DAU) for inspection by a partner or found online through social media monitoring. The DAU has analysed each data item using AI detection tools and conducting fact checking research to determine the presence or absence of AI manipulation. The primary geographical focus of the dataset is India. The dataset has been divided into two sections based on the channel of receiving the data. This documentation pertains to the dataset sourced from partner escalations or social media monitoring. The data was collected between March 21, 2024 and February 16, 2026.
+              This dataset consists of media items including audio files and video files suspected to have been manipulated or generated using AI. These files were sent to the Deepfakes Analysis Unit (DAU) for analysis by a TIA partner or they found the media on their own during social media monitoring. The DAU has analysed each data item using AI detection tools and verification methodology to determine the presence or absence of AI manipulation. The primary geographical focus of the dataset is India. The dataset has been divided into two sections based on the channel of receiving the data. This documentation pertains to the dataset sourced from partner escalations or social media monitoring. The data was collected between March 21, 2024 and February 16, 2026.
             </p>
             <p>
-              Each media item was reviewed by one of three fact checkers at DAU and each entry described with various fields of metadata. The data dictionary for this dataset is available on its table page.
+              Each media item was reviewed by the DAU Secretariat and each entry described with various fields of metadata. The data dictionary for this dataset is available on its table page.
             </p>
             <p>
               Some things to note:
@@ -131,6 +131,28 @@ defmodule DAUWeb.OpenDataLive.OpenDataIndexLive do
               class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
             >
               View Terms of Use <span aria-hidden="true">→</span>
+            </.link>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex flex-col gap-3">
+          <div>
+            <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Access</p>
+            <h2 class="mt-1 text-lg font-semibold text-slate-900">Access to the Complete Dataset</h2>
+          </div>
+          <p class="text-sm text-slate-700">
+            Fill this form to request access to the complete dataset.
+          </p>
+          <div>
+            <.link
+              href="https://forms.gle/UPepDXnbpwkKB1iL9"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
+            >
+              Form <span aria-hidden="true"><.icon name="hero-arrow-top-right-on-square" class="size-3" /></span>
             </.link>
           </div>
         </div>

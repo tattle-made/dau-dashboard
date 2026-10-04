@@ -25,6 +25,18 @@ defmodule DAUWeb.Router do
     plug DAUWeb.Plugs.RouteAuthorizationPlug, permission: :deny_driveby_user
   end
 
+  pipeline :admin_only do
+    plug DAUWeb.Plugs.RouteAuthorizationPlug, permission: :admin_only
+  end
+
+  # Controller-rendered pages behind authentication. Without this the browser keeps
+  # the HTML, so the back button re-displays the page after logout. LiveView routes
+  # do not need it - going back reconnects the socket, which re-runs the
+  # :ensure_authenticated on_mount hook and redirects.
+  pipeline :no_page_cache do
+    plug DAUWeb.Plugs.DisablePageCachingPlug
+  end
+
   # Open Routes, no Authorization or Authentication is Required
   scope "/", DAUWeb do
     pipe_through :browser
@@ -104,6 +116,12 @@ defmodule DAUWeb.Router do
       live "/query/:id", SearchLive.Detail
       live "/query/:id/user-response/", SearchLive.UserResponse
     end
+  end
+
+  # Controller-rendered tipline pages. Kept separate from the live_session scope above
+  # so they can pipe through :no_page_cache.
+  scope "/demo", DAUWeb do
+    pipe_through [:browser, :require_authenticated_user, :deny_driveby_user, :no_page_cache]
 
     get "/query/:id/matches", MatchesController, :index
     get "/query/:id/assessment-report/metadata", AssessmentReportMetadataController, :show
@@ -202,8 +220,9 @@ defmodule DAUWeb.Router do
   end
 
   scope "/analytics", DAUWeb do
-    pipe_through [:browser, :require_authenticated_user, :deny_driveby_user]
+    pipe_through [:browser, :require_authenticated_user, :admin_only, :no_page_cache]
 
     get "/", AnalyticsController, :hello_world
+    get "/user-registrations", AnalyticsController, :user_registrations
   end
 end
