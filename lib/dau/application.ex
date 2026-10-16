@@ -11,6 +11,8 @@ defmodule DAU.Application do
       config: %{metadata: [:file, :line]}
     })
 
+    DAU.ObanErrorReporter.attach()
+
     children = [
       DAUWeb.Telemetry,
       DAU.Repo,
