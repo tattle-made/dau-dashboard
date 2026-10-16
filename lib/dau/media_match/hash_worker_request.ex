@@ -1,57 +1,53 @@
 defmodule DAU.MediaMatch.HashWorkerRequest do
   @moduledoc """
-  Job description for feluda's hash worker.
-  This job is serialized and added to a Queue in RabbitMQ and taken up by feluda workers.
+  Arguments of the hash request job inserted on the `media_hash` Oban queue.
   """
   alias DAU.UserMessage.Inbox
+  alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.MediaMatch.HashWorkerRequest
   use Ecto.Schema
   import Ecto.Changeset
 
   @type media_type :: :video | :audio | :image | :text
   @type t :: %__MODULE__{
-          id: String.t(),
-          path: String.t(),
+          inbox_id: integer(),
+          file_key: String.t(),
           media_type: media_type()
         }
 
   @primary_key false
   @derive Jason.Encoder
   embedded_schema do
-    field :id, :string
-    field :path, :string
+    field :inbox_id, :integer
+    field :file_key, :string
     field :media_type, Ecto.Enum, values: [:video, :audio, :image, :text]
   end
 
-  @all_fields [:id, :path, :media_type]
-  @required_fields [:id, :path, :media_type]
+  @all_fields [:inbox_id, :file_key, :media_type]
+  @required_fields [:inbox_id, :file_key, :media_type]
 
   @doc """
   Create a valid job request for hash worker.
 
   ## Examples
-    iex> HashWorkerRequest.new(%{"id" => "123-123-123", "path" => "app/asdf-23", "media_type" => "video"})
+    iex> HashWorkerRequest.new(%{"inbox_id" => 123, "file_key" => "app/asdf-23", "media_type" => "video"})
     {:ok,
     %DAU.MediaMatch.HashWorkerRequest{
-      id: "123-123-123",
-      path: "app/asdf-23",
+      inbox_id: 123,
+      file_key: "app/asdf-23",
       media_type: :video
     }}
 
-    iex> HashWorkerRequest.new(%{"id" => "123-123-123", "path" => "app/asdf-23", "media_type" => "multimedia"})
+    iex> HashWorkerRequest.new(%{"inbox_id" => 123, "file_key" => "app/asdf-23", "media_type" => "multimedia"})
     {:error, "Hash worker request is badly formed"}
   """
   @spec new(attrs :: any()) :: {:ok, HashWorkerRequest.t()} | {:error, String.t()}
   def new(%Inbox{} = inbox) do
-    file_key = inbox.file_key
+    new(%{inbox_id: inbox.id, file_key: inbox.file_key, media_type: inbox.media_type})
+  end
 
-    inbox_map =
-      Map.take(inbox, Inbox.__schema__(:fields))
-      |> Map.update!(:id, &Integer.to_string(&1))
-      |> Map.delete(:path)
-      |> Map.put(:path, file_key)
-
-    %HashWorkerRequest{} |> cast(inbox_map, @required_fields) |> apply_changes()
+  def new(%MessagePropertiesAdded{} = message) do
+    new(%{inbox_id: message.id, file_key: message.path, media_type: message.media_type})
   end
 
   def new(attrs) do
@@ -68,5 +64,13 @@ defmodule DAU.MediaMatch.HashWorkerRequest do
     |> cast(attrs, @all_fields)
     |> validate_required(@required_fields)
     |> validate_inclusion(:media_type, [:video, :audio, :text, :image])
+  end
+
+  def to_args(%HashWorkerRequest{} = request) do
+    %{
+      inbox_id: request.inbox_id,
+      file_key: request.file_key,
+      media_type: Atom.to_string(request.media_type)
+    }
   end
 end

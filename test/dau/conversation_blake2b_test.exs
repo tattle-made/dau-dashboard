@@ -1,6 +1,7 @@
 defmodule DAU.UserMessage.ConversationBlake2BTest do
   alias DAU.MediaMatch.Blake2B
   alias DAU.MediaMatch.Blake2B.Media
+  alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.Blake2BFixtures
   alias DAU.UserMessageFixtures
   alias DAU.UserMessage.Conversation.MessagePropertiesAdded
@@ -52,16 +53,9 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
       conversation: conversation,
       message_added: message_added
     } do
-      alias DAU.MediaMatch.Blake2B.Media
+      args = Blake2BFixtures.make_response_args(:video, message_added.id)
 
-      # IO.inspect(conversation)
-
-      response_string =
-        "{\"indexer_id\":1,\"post_id\":#{message_added.id},\"media_type\":\"video\",\"hash_value\":\"ABDSADJSDFSDF-AFASDFSDF-ASDFSDFSDFFSDF\",\"status\":\"indexed\",\"status_code\":200}"
-
-      # IO.inspect(response_string)
-
-      assert {:ok} = Blake2B.worker_response_received(response_string)
+      assert {:ok, :ok} = Blake2B.worker_response_received(args)
 
       {:ok, conversation} = Conversation.build(message_added.id)
       count = Conversation.get_media_count(conversation)
@@ -93,7 +87,7 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
     test "count", %{conversations: conversations} do
       conversations
       |> Enum.map(&Conversation.get_first_message(&1))
-      |> Enum.map(&Blake2BFixtures.make_response_string(:video, &1.id))
+      |> Enum.map(&Blake2BFixtures.make_response_args(:video, &1.id))
       |> Enum.map(&Blake2B.worker_response_received(&1))
 
       counts =
@@ -117,9 +111,8 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
 
       {:ok, existing_conversation} = Conversation.add_to_inbox(existing_message) |> elem(1) |> Conversation.add_message_properties()
       existing_message_id = existing_conversation.id
-      existing_response_string = Blake2BFixtures.make_response_string(:video, existing_message_id)
-      existing_worker_func = Blake2B.worker_response_received(existing_response_string)
-      existing_media = Media.build(existing_response_string)
+      existing_args = Blake2BFixtures.make_response_args(:video, existing_message_id)
+      {:ok, :ok} = Blake2B.worker_response_received(existing_args)
       {:ok, existing_query} = Conversation.get(existing_conversation.id)
       {:ok, existing_conversation_build} = Conversation.build(existing_query)
       existing_common = Repo.get!(Common, existing_conversation_build.feed_id)
@@ -136,8 +129,12 @@ defmodule DAU.UserMessage.ConversationBlake2BTest do
 
       {:ok, incoming_conversation} = Conversation.add_to_inbox(incoming_message) |> elem(1) |> Conversation.add_message_properties()
       incoming_message_id = incoming_conversation.id
-      incoming_response_string = Blake2BFixtures.make_response_string(:video, incoming_message_id)
-      incoming_media = Media.build(incoming_response_string)
+      incoming_args = Blake2BFixtures.make_response_args(:video, incoming_message_id)
+      {:ok, incoming_response} = HashWorkerResponse.new(incoming_args)
+
+      incoming_media =
+        Media.build(incoming_response, UserMessage.get_incoming_message!(incoming_message_id))
+
       {:ok, incoming_query} = Conversation.get(incoming_conversation.id)
       {:ok, incoming_conversation_build} = Conversation.build(incoming_query)
 

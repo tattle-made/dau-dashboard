@@ -2,10 +2,7 @@ defmodule DAU.MediaMatch do
   @moduledoc """
   The MediaMatching context. Helps in managing operations on exact or similar media items.
 
-  For every media item that is received in the dau inbox, a job is created using `create_job/2`.
-  The job could be created in db, in memory or in a queue like RabbitMQ. That is controlled by the :via option of `create_job/2`. At some point Dashboard receives a `HashWorkerResponse`
-  which is used to update the duplicate table for the corresponding inbox media item using `create_duplicate/1`
-  This marks the end of the processing pipeline. All data useful for media matching should be in our database by now.
+  For every media item received in the dau inbox, `create_job/2` inserts a hash request job for the hash worker. Its result arrives as a `HashResultWorker` job, which updates the hash and duplicate tables. All data useful for media matching should be in our database by then.
 
   Now for higher level media matching features, look in other contexts like `UserMessage` or SpamFilter
   """
@@ -13,51 +10,37 @@ defmodule DAU.MediaMatch do
   import Ecto.Query, warn: false
   alias DAU.MediaMatch.HashMeta
   alias DAU.MediaMatch.Hash
-  alias DAU.MediaMatch.HashWorkerResponse
+  alias DAU.MediaMatch.HashWorkerRequest
+  alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.UserMessage.Inbox
   alias DAU.Repo
   import Ecto.Query
 
-  @type create_job_option :: {:via, :rabbitmq | :memory}
-  @type create_job_options :: [create_job_option()]
+  @hash_queue "media_hash"
+  @hash_worker "dau_worker.hash_worker.HashWorker"
 
-  @spec create_job(Inbox.t(), :hash_worker | :vector_worker, create_job_options()) ::
-          {:ok} | {:ok, response: HashWorkerResponse.t()} | {:error, reason: String.t()}
-  def create_job(%Inbox{} = _inbox, :hash_worker, opts) do
-    via = Keyword.get(opts, :via, :memory)
-
-    case via do
-      :rabbitmq ->
-        {:ok}
-
-      _ ->
-        raise "Unsupported value for via : #{inspect(via)}"
+  @doc """
+  Insert a hash request job for the Python hash worker. At most one incomplete job exists per inbox.
+  """
+  @spec create_job(Inbox.t() | MessagePropertiesAdded.t(), :hash_worker) ::
+          {:ok, Oban.Job.t()} | {:error, term()}
+  def create_job(inbox_or_message, :hash_worker) do
+    with {:ok, request} <- HashWorkerRequest.new(inbox_or_message) do
+      request
+      |> HashWorkerRequest.to_args()
+      |> Oban.Job.new(
+        queue: @hash_queue,
+        worker: @hash_worker,
+        max_attempts: 5,
+        unique: [period: :infinity, keys: [:inbox_id], states: :incomplete]
+      )
+      |> Oban.insert()
     end
-  end
-
-  def create_job(%Inbox{} = _inbox, :vector_worker, opts) do
-    via = Keyword.get(opts, :via, :memory)
-
-    case via do
-      :rabbitmq -> nil
-      :memory -> nil
-      _ -> raise "Unsupported value for via : #{inspect(via)}"
-    end
-  end
-
-  def create_duplicate(%HashWorkerResponse{}) do
   end
 
   @doc """
   Create a row in mediamatch_hashes table.
   """
-  def create_hash(%HashWorkerResponse{} = response, %Inbox{} = inbox) do
-    attrs = HashWorkerResponse.get_map(response)
-    attrs |> Map.put(:user_language, inbox.user_language_input)
-
-    create_hash(attrs)
-  end
-
   def create_hash(attrs) do
     %Hash{}
     |> Hash.changeset(attrs)
@@ -103,11 +86,6 @@ defmodule DAU.MediaMatch do
   Get user response associated with a media item.
   """
   def get_user_response_by_hash(%Hash{} = hash) do
-    inbox = get_inbox_by_hash(hash.value)
-    inbox.query.feed_common.user_response
-  end
-
-  def get_user_response_by_hash(%HashWorkerResponse{} = hash) do
     inbox = get_inbox_by_hash(hash.value)
     inbox.query.feed_common.user_response
   end

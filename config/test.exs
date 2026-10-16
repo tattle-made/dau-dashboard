@@ -26,6 +26,10 @@ config :dau, DAUWeb.Endpoint,
 # In test we don't send emails.
 config :dau, DAU.Mailer, adapter: Swoosh.Adapters.Test
 
+config :dau, Oban, testing: :manual
+
+config :sentry, dsn: nil
+
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
@@ -35,7 +39,7 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :dau, :aws_client, AWSS3.Sandbox
+config :dau, :aws_client, AWSS3.Fake
 
 config :dau, AWSS3, file_prefix: "temp"
 

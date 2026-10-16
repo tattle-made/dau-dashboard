@@ -271,8 +271,9 @@ defmodule DAU.UserMessageTest do
 
       {:ok, hashworker_response} =
         HashWorkerResponse.new(%{
-          "inbox_id" => "#{inbox.id}",
-          "value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
+          "inbox_id" => inbox.id,
+          "media_type" => "video",
+          "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
         })
 
       {:ok, query} = UserMessage.create_query(%{status: "pending"})
@@ -306,8 +307,9 @@ defmodule DAU.UserMessageTest do
 
       {:ok, hashworker_response} =
         HashWorkerResponse.new(%{
-          "inbox_id" => "#{inbox.id}",
-          "value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
+          "inbox_id" => inbox.id,
+          "media_type" => "video",
+          "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
         })
 
       # if response.value exists in query, add query to that feed

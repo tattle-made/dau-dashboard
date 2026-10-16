@@ -34,6 +34,12 @@ config :dau, DAUWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :dau, DAU.Mailer, adapter: Swoosh.Adapters.Local
 
+config :dau, Oban,
+  repo: DAU.Repo,
+  queues: [media_results: 5],
+  pruner: [max_age: {30, :days}],
+  lifeline: [rescue_after: {30, :minutes}]
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
