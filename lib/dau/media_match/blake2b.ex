@@ -16,7 +16,6 @@ defmodule DAU.MediaMatch.Blake2B do
   alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.MediaMatch.Hash
   alias DAU.MediaMatch.HashMeta
-  alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.MediaMatch.Blake2b.WorkerRequest
   alias DAU.MediaMatch.Blake2B.Media
@@ -106,8 +105,8 @@ defmodule DAU.MediaMatch.Blake2B do
     {:ok}
   end
 
-  def create_job(%MessagePropertiesAdded{} = request) do
-    HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
+  def create_job(%MessagePropertiesAdded{} = _request) do
+    :ok
   end
 
   def get_matches(%Hash{} = hash) do
