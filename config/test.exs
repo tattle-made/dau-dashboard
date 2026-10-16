@@ -35,8 +35,6 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :dau, RabbitMQ, url: "amqp://admin:Admin123@localhost"
-
 config :dau, :aws_client, AWSS3.Sandbox
 
 config :dau, AWSS3, file_prefix: "temp"

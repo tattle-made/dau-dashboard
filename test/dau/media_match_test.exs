@@ -49,36 +49,6 @@ defmodule DAU.MediaMatchTest do
     end
   end
 
-  describe "duplicates" do
-    # import DAU.MediaMatchFixtures
-    # alias DAU.MediaMatch
-
-    # setup do
-    #   parent = self()
-
-    #   spawn(fn ->
-    #     {:ok, %RabbitMQ{} = mq_queue} = RabbitMQ.initialize("test-hash-worker-job-queue")
-    #     send(parent, {:ok, mq_queue})
-    #   end)
-
-    #   state =
-    #     receive do
-    #       {:ok, mq_queue} ->
-    #         %{mq_queue: mq_queue}
-    #     end
-
-    #   state
-    # end
-    #
-    test "create valid job" do
-      # IO.inspect(mq_queue, label: "mq_queue")
-      # inbox = inbox_video_message_fixture(%{})
-      # job = MediaMatch.create_job(inbox, :hash_worker, via: :rabbitmq)
-
-      # job_response =
-    end
-  end
-
   describe "hash" do
     setup do
       inbox = UserMessageFixtures.inbox_video_message_fixture()

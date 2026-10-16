@@ -6,8 +6,6 @@ defmodule DAUWeb.IncomingMessageController do
   alias DAU.UserMessage.Analytics
   alias DAU.UserMessage.Analytics.Event
   alias DAU.MediaMatch
-  alias DAU.MediaMatch.HashWorkerRequest
-  alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.Vendor.Gupshup.DeliveryReport
   alias DAU.UserMessage
   alias DAU.UserMessage.Inbox

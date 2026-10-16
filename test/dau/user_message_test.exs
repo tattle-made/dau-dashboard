@@ -1,5 +1,4 @@
 defmodule DAU.UserMessageTest do
-  alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.UserMessage.Query
   alias DAU.Feed.Common
   alias DAU.Feed
@@ -313,10 +312,6 @@ defmodule DAU.UserMessageTest do
 
       # if response.value exists in query, add query to that feed
       # if it does not exists, add new query
-    end
-
-    test "ainvayi" do
-      HashWorkerGenServer.status(HashWorkerGenServer) |> IO.inspect()
     end
   end
 end
