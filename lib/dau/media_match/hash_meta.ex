@@ -17,5 +17,6 @@ defmodule DAU.MediaMatch.HashMeta do
     hash_meta
     |> cast(attrs, [:count, :label, :description, :value, :user_language])
     |> validate_required([:value, :user_language])
+    |> unique_constraint([:value, :user_language])
   end
 end

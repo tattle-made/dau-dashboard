@@ -1,44 +1,59 @@
 defmodule DAU.MediaMatch.HashWorkerResponse do
   @moduledoc """
-  Response returned by hash worker in feluda and added to the report queue.
+  Response returned by oban hash worker. The response ends up enqueued as a job for `HashResultWorker`.
   """
   alias DAU.MediaMatch.HashWorkerResponse
   use Ecto.Schema
   import Ecto.Changeset
 
   @type t :: %__MODULE__{
-          post_id: String.t(),
-          hash_value: integer()
+          indexer_id: integer() | nil,
+          inbox_id: integer(),
+          media_type: String.t(),
+          hash_value: String.t(),
+          status: String.t() | nil,
+          status_code: integer() | nil,
+          worker_version: String.t() | nil
         }
 
   @primary_key false
   embedded_schema do
     field :indexer_id, :integer
-    field :post_id, :integer
+    field :inbox_id, :integer
     field :media_type, :string
     field :hash_value, :string
     field :status, :string
     field :status_code, :integer
+    field :worker_version, :string
   end
 
-  @all_fields [:indexer_id, :post_id, :media_type, :hash_value, :status, :status_code]
-  @required_fields [:post_id, :media_type, :hash_value]
+  @all_fields [
+    :indexer_id,
+    :inbox_id,
+    :media_type,
+    :hash_value,
+    :status,
+    :status_code,
+    :worker_version
+  ]
+  @required_fields [:inbox_id, :media_type, :hash_value]
 
   @doc """
   Create a valid response from params.
 
-  Most likely the params will be received from an external response queue like RabbitMQ.
+  Most likely the params are the args of a `HashResultWorker` job, inserted by the hash worker.
 
   ## Examples
-    iex> HashWorkerResponse.new(%{"post_id" => 1, "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF" })
+    iex> HashWorkerResponse.new(%{"inbox_id" => 1, "media_type" => "video", "hash_value" => "AACAPwAAAEAAAEBA", "worker_version" => "feluda-video-hash@0.1.1"})
     {:ok,
     %DAU.MediaMatch.HashWorkerResponse{
-      id: nil,
-      post_id: "123-123-sdf",
-      hash_value: "ADFSDFJSKDFJSDKFJKSDSDFSDF"
+      inbox_id: 1,
+      media_type: "video",
+      hash_value: "AACAPwAAAEAAAEBA",
+      worker_version: "feluda-video-hash@0.1.1"
     }}
 
-    iex> HashWorkerResponse.new(%{"value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF" })
+    iex> HashWorkerResponse.new(%{"inbox_id" => 1, "media_type" => "video"})
     {:error, "Hash worker response is badly formed"}
   """
   @spec new(attrs :: any()) :: {:ok, HashWorkerResponse.t()} | {:error, String.t()}
