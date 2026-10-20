@@ -9,7 +9,7 @@ This guide will help you set up a local development environment for the dashboar
 | Piece | Repo | What it does |
 | --- | --- | --- |
 | Dashboard | this repo (Phoenix, Elixir) | Web app, business logic, database schema. Runs Elixir Oban for background jobs. |
-| Hash worker | [`dau-worker`](https://github.com/aayushmau5/dau-worker) (Python) | Hashes media files. Runs [oban-py](https://github.com/oban-bg/oban-py). |
+| Hash worker | [`dau-worker`](https://github.com/tattle-made/dau-worker) (Python) | Hashes media files. Runs [oban-py](https://github.com/oban-bg/oban-py). |
 | Postgres | `docker-compose.yml` here | Shared by both. |
 
 The dashboard queues media hashing jobs and the worker runs them; both share one Postgres.
@@ -30,7 +30,7 @@ How the pipeline works, and how it's configured, is in [DEPLOYMENT.md](DEPLOYMEN
 
    ```sh
    git clone https://github.com/tattle-made/dau-dashboard.git
-   git clone https://github.com/aayushmau5/dau-worker.git
+   git clone https://github.com/tattle-made/dau-worker.git
    cd dau-dashboard
    ```
 
@@ -92,6 +92,15 @@ How the pipeline works, and how it's configured, is in [DEPLOYMENT.md](DEPLOYMEN
    Fill in `dau-worker/.env`: `OBAN_DSN` (the `dau_dev` database), and read-only AWS credentials
    for the bucket the dashboard uploads to (`AWS_BUCKET=staging.dau.tattle.co.in`).
 
+   To run the worker only in Docker, add the AWS credentials to `env.dev` instead:
+
+   ```sh
+   export AWS_ACCESS_KEY_ID_HASH_WORKER=...
+   export AWS_SECRET_ACCESS_KEY_HASH_WORKER=...
+   ```
+
+   The worker's tests still need `uv sync` and `.env`.
+
 ## Running DAU (Development)
 
 Run the dashboard's migrations first (setup step 4). The worker refuses to start until its Oban
@@ -113,13 +122,24 @@ Open two terminal windows:
 
 2. **Terminal 2: Start the hash worker**
 
-   From `dau-worker`:
+   Natively, from `dau-worker`:
 
    ```sh
    uv run --env-file .env oban start
    ```
 
-   `--env-file` loads `.env` in any shell, fish included. See the worker's README for Docker.
+   `--env-file` loads `.env` in any shell, fish included.
+
+   Or in Docker, from `dau-dashboard`:
+
+   ```sh
+   source env.dev
+   docker compose up -d --build worker
+   docker compose logs -f worker
+   ```
+
+   Compose builds `../dau-worker` and connects it to the `db` service. The bucket and region
+   default to `staging.dau.tattle.co.in` and `ap-south-1`.
 
 > **Tip:** Never run `oban install` or `oban uninstall` in the worker. The dashboard's migrations
 > own the schema, and `uninstall` would also drop the dashboard's jobs.
@@ -173,6 +193,6 @@ runs the tests. In the worker repo, run `uv run --env-file .env pytest`.
 ## Additional Resources
 
 - [DEPLOYMENT.md](DEPLOYMENT.md): how the system runs, the hashing pipeline, configuration
-- [dau-worker](https://github.com/aayushmau5/dau-worker): the media hash worker
+- [dau-worker](https://github.com/tattle-made/dau-worker): the media hash worker
 - [Oban (Elixir)](https://hexdocs.pm/oban/Oban.html) and [oban-py](https://github.com/oban-bg/oban-py)
 - [feluda](https://github.com/tattle-made/feluda): media analysis library behind the worker's hashing

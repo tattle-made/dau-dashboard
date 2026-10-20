@@ -8,7 +8,7 @@ to inspect jobs. For a local development setup, see [CONTRIBUTING.md](CONTRIBUTI
 | Component | Source | Runs |
 | --- | --- | --- |
 | Dashboard | this repo | Phoenix release. The `Dockerfile` builds it; `.github/workflows/release.yml` publishes `tattletech/dau-dashboard`. Starts with `bin/dau start`. |
-| Hash worker | [`dau-worker`](https://github.com/aayushmau5/dau-worker) | oban-py worker. Its `Dockerfile` builds the image; it starts with `oban start`. |
+| Hash worker | [`dau-worker`](https://github.com/tattle-made/dau-worker) | oban-py worker. Its `Dockerfile` builds the image; it starts with `oban start`. |
 | Postgres | 14+ (13 is the minimum for oban-py) | Shared by both. Holds the app tables and the Oban job tables. |
 
 ## Media Hashing
@@ -110,4 +110,5 @@ LIMIT 20;
 On `SIGTERM`, the worker stops fetching and waits for its running jobs to finish, with no time
 limit. A container runtime that kills it sooner (Docker's default is 10 s) leaves those jobs in
 `executing`; the dashboard rescues them after 30 minutes and they run again. Give the worker a
-longer stop grace period than your longest expected hash.
+longer stop grace period than your longest expected hash. The local `docker-compose.yml` sets
+`stop_grace_period: 20m`, the same as the hash timeout.
