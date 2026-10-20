@@ -29,11 +29,7 @@ defmodule DAUWeb.IncomingMessageController do
 
           Task.start(fn ->
             with {:ok, properties_added} <- Conversation.add_message_properties(inbox),
-                 {:ok, _} <-
-                   if(properties_added.media_type in ["audio", "video"],
-                     do: MediaMatch.create_job(properties_added, :hash_worker),
-                     else: {:ok, :skipped}
-                   ) do
+                 {:ok, _} <- create_hash_job(properties_added) do
               :ok
             else
               error ->
@@ -88,6 +84,11 @@ defmodule DAUWeb.IncomingMessageController do
     |> resp(401, Jason.encode!(%{status: :unauthorized}))
     |> send_resp()
   end
+
+  defp create_hash_job(%{media_type: media_type} = message) when media_type in ["audio", "video"],
+    do: MediaMatch.create_job(message, :hash_worker)
+
+  defp create_hash_job(_message), do: {:ok, :skipped}
 
   # Function to authenticate Turn Tipline API
   # that Turn calls to send media items to dashboard
