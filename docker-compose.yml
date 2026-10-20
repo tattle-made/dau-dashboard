@@ -1,10 +1,10 @@
 services:
-# Un-comment and run this service to run this project in Docker (as done in the prod). 
-# Prerequisites are: 
+# Un-comment and run this service to run this project in Docker (as done in the prod).
+# Prerequisites are:
 # 1. Creating a docker image called "dau:test" from the Dockerfile of this Project.
 # 2. A "env.docker" file should be present before running this service. This file can be
 #    created from the existing "env.dev" file. The only difference between the two is that
-#    the newly created "env.docker" file will not have export keyword for all the variables. 
+#    the newly created "env.docker" file will not have export keyword for all the variables.
   # app:
   #     image: dau:test
   #     ports:
@@ -40,3 +40,20 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  worker:
+    # image: tattletech/dau-worker:latest
+    build: ../dau-worker
+    container_name: hash_worker
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      OBAN_DSN: ${OBAN_DSN:-postgresql://tattle:weak_password@db:5432/dau_dev}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID_HASH_WORKER}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY_HASH_WORKER}
+      AWS_BUCKET: ${AWS_BUCKET_HASH_WORKER:-staging.dau.tattle.co.in}
+      AWS_REGION: ${AWS_REGION_HASH_WORKER:-ap-south-1}
+    # Gives a running hash time to finish on stop. Same as the worker's 20 min hash timeout.
+    stop_grace_period: 20m
