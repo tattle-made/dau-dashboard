@@ -17,5 +17,6 @@ defmodule DAU.MediaMatch.Hash do
     |> cast(attrs, [:value, :worker_version, :inbox_id, :user_language])
     |> validate_required([:value, :inbox_id, :user_language])
     |> foreign_key_constraint(:inbox_id)
+    |> unique_constraint([:inbox_id, :value, :user_language])
   end
 end

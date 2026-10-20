@@ -11,9 +11,12 @@ defmodule DAU.Application do
       config: %{metadata: [:file, :line]}
     })
 
+    DAU.ObanErrorReporter.attach()
+
     children = [
       DAUWeb.Telemetry,
       DAU.Repo,
+      {Oban, Application.fetch_env!(:dau, Oban)},
       {DNSCluster, query: Application.get_env(:dau, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: DAU.PubSub},
       # Start the Finch HTTP client for sending emails
