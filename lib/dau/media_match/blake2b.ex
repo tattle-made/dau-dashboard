@@ -12,7 +12,6 @@ defmodule DAU.MediaMatch.Blake2B do
   alias DAU.UserMessage.Conversation.Hash, as: ConversationHash
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Conversation
-  alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.MediaMatch.Hash
   alias DAU.MediaMatch.HashMeta
   alias DAU.MediaMatch.Blake2B.Media
@@ -104,10 +103,6 @@ defmodule DAU.MediaMatch.Blake2B do
       |> Repo.update_all(inc: [count: 1])
 
     {:ok}
-  end
-
-  def create_job(%MessagePropertiesAdded{} = _request) do
-    :ok
   end
 
   def get_matches(%Hash{} = hash) do

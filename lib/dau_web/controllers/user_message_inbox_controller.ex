@@ -22,19 +22,19 @@ defmodule DAUWeb.IncomingMessageController do
   def create(conn, payload) do
     with {:ok, _} <- authenticate_request(conn) do
       alias UserMessage.Conversation
-      alias MediaMatch.Blake2B
 
       case Conversation.add_to_inbox(payload) do
         {:ok, inbox} ->
           conn = conn |> Plug.Conn.send_resp(200, [])
 
           Task.start(fn ->
-            with {:ok, properties_added} <- Conversation.add_message_properties(inbox) do
-              #  :ok <-
-              #    if(inbox.media_type in ["audio", "video"],
-              #      do: Blake2B.create_job(properties_added),
-              #      else: :ok
-              #    ) do
+            with {:ok, properties_added} <- Conversation.add_message_properties(inbox),
+                 {:ok, _} <-
+                   if(properties_added.media_type in ["audio", "video"],
+                     do: MediaMatch.create_job(properties_added, :hash_worker),
+                     else: {:ok, :skipped}
+                   ) do
+              :ok
             else
               error ->
                 Logger.error("Error in processing message in background #{inspect(error)}")
