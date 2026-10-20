@@ -13,7 +13,7 @@ Deepfake Analysis Unit(DAU) is a collaborative space for analyzing deepfakes
 ### 1. Setup infrastructure dependencies**
 
 - Run `source env.dev` to setup enviroment variables.
-- `docker-compose up`
+- `docker compose -f docker-compose.dev.yml up -d`
 Visit `localhost:8080` to access adminer. Login with following fields
 
 | | |

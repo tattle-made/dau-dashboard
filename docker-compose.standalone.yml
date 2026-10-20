@@ -1,23 +1,29 @@
+# Everything: Postgres, Adminer, the Phoenix release and the hash worker.
+# Prerequisites:
+# 1. dau-worker checked out next to this repo (../dau-worker).
+# 2. An "env.docker" file, created from "env.dev" without the export keywords, plus a
+#    SECRET_KEY_BASE (generate one with `mix phx.gen.secret`).
 services:
-# Un-comment and run this service to run this project in Docker (as done in the prod).
-# Prerequisites are:
-# 1. Creating a docker image called "dau:test" from the Dockerfile of this Project.
-# 2. A "env.docker" file should be present before running this service. This file can be
-#    created from the existing "env.dev" file. The only difference between the two is that
-#    the newly created "env.docker" file will not have export keyword for all the variables.
-  # app:
-  #     image: dau:test
-  #     ports:
-  #       - 4000:4000
-  #     environment:
-  #       PHX_SERVER: "true"
-  #       DATABASE_USER: tattle
-  #       DATABASE_PASSWORD: weak_password
-  #       DATABASE_NAME: dau_dev
-  #     depends_on:
-  #       - db
-  #     env_file:
-  #      - env.docker
+  app:
+    build: .
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    # The release does not migrate on start.
+    command: ["sh", "-c", "bin/dau eval 'DAU.Release.migrate()' && bin/dau start"]
+    ports:
+      - 4000:4000
+    environment:
+      PHX_SERVER: "true"
+      PHX_HOST: localhost
+      DATABASE_USER: tattle
+      DATABASE_PASSWORD: weak_password
+      DATABASE_HOSTNAME: db
+      DATABASE_NAME: dau_dev
+    env_file:
+      - env.docker
+
   db:
     image: postgres:14.10
     restart: always
