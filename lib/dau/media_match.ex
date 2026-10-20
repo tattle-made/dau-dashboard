@@ -14,6 +14,7 @@ defmodule DAU.MediaMatch do
   alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.UserMessage.Inbox
   alias DAU.Repo
+  import Ecto.Query
 
   @hash_queue "media_hash"
   @hash_worker "dau_worker.hash_worker.HashWorker"
@@ -54,5 +55,41 @@ defmodule DAU.MediaMatch do
 
   def get_hashmeta(value, user_language) do
     Repo.get_by(HashMeta, %{value: value, user_language: user_language})
+  end
+
+  @doc """
+  Given hash value, get inbox.query.common
+
+  This can then be used to answer the following queries :
+  1. Find response to media with hash h
+  """
+  def get_inbox_by_hash(hash, opts \\ []) do
+    preload = Keyword.get(opts, :preload, false)
+
+    preload_statement = fn query ->
+      if preload, do: Repo.preload(query, inbox: [query: [:feed_common]]), else: query
+    end
+
+    from(h in Hash, where: h.value == ^hash)
+    |> limit(1)
+    |> Repo.all()
+    |> preload_statement.()
+    |> hd
+    |> Map.get(:inbox)
+  end
+
+  @doc """
+  Get user response associated with a media item.
+  """
+  def get_user_response_by_hash(%Hash{} = hash) do
+    inbox = get_inbox_by_hash(hash.value)
+    inbox.query.feed_common.user_response
+  end
+
+  def increment_hash_count(value, language) do
+    HashMeta
+    |> where(value: ^value)
+    |> where(user_language: ^language)
+    |> Repo.update_all(inc: [count: 1])
   end
 end
