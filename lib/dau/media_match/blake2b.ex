@@ -1,11 +1,8 @@
 defmodule DAU.MediaMatch.Blake2B do
   @moduledoc """
-  Enforces business logic for Feluda [hash worker](https://github.com/tattle-made/feluda/tree/main/src/worker/hash).
-
-
+  Enforces business logic for hash results from the Python [hash worker](https://github.com/tattle-made/dau-worker).
   """
   require Logger
-  alias DAU.MediaMatch.Blake2B
   alias DAU.Feed.Common
   alias DAU.Feed
   alias DAU.MediaMatch.Blake2b.Match
