@@ -30,6 +30,13 @@
           Outbox
         </a>
       </span>
+      <a
+        :if={Permission.RouteAuthorization.allowed?(@current_user, :admin_only)}
+        href={~p"/media-match/queue"}
+        class="text-slate-700 font-medium"
+      >
+        Queue
+      </a>
       <%!-- <a href={~p"/canon/manipulated_media"} class="text-slate-700 font-medium"> Canon </a> --%>
     </div>
   </div>

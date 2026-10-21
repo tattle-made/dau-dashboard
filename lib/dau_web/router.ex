@@ -1,6 +1,7 @@
 defmodule DAUWeb.Router do
   use DAUWeb, :router
   import DAUWeb.UserAuth
+  import Oban.Web.Router
   alias DAUWeb.LiveRouteAuthorization, as: LiveAuth
 
   pipeline :browser do
@@ -145,6 +146,12 @@ defmodule DAUWeb.Router do
         {DAUWeb.UserAuth, :ensure_authenticated},
         {LiveAuth, :deny_driveby_user}
       ]
+  end
+
+  scope "/media-match" do
+    pipe_through [:browser, :require_authenticated_user, :admin_only]
+
+    oban_dashboard "/queue"
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
