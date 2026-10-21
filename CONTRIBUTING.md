@@ -37,19 +37,13 @@ How the pipeline works, and how it's configured, is in [DEPLOYMENT.md](DEPLOYMEN
 2. **Fetch credentials:**
 
    Credentials are stored in AWS Secrets Manager. Ask @dennyabrain for the `SECRET_ARN` and
-   credentials for a suitable AWS IAM account, then write them to `env.dev` (git-ignored):
+   credentials for a suitable AWS IAM account:
 
    ```sh
    aws secretsmanager get-secret-value --secret-id $SECRET_ARN | jq '.SecretString' | jq -r | jq -r 'to_entries[]' | jq -r '"export " + .key + "=" + .value' > env.dev
    ```
 
-   `config/runtime.exs` refuses to boot, in every environment including tests, unless these are
-   set: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `GUPSHUP_ENDPOINT`, `GUPSHUP_USERID`,
-   `GUPSHUP_PASSWORD`, `GUPSHUP_HSM_USERID`, `GUPSHUP_HSM_PASSWORD`, `SLACK_WEBHOOK_URL`.
-
-   - In dev, media uploads go to the real `staging.dau.tattle.co.in` bucket (`AWSS3.Sandbox`), so
-     the AWS values must be real.
-   - Tests use an offline fake (`AWSS3.Fake`), so dummy AWS values are enough there.
+   Tests use an offline fake (`AWSS3.Fake`), so dummy AWS values are enough there.
 
 3. **Start Postgres:**
 
@@ -77,9 +71,8 @@ How the pipeline works, and how it's configured, is in [DEPLOYMENT.md](DEPLOYMEN
    mix setup
    ```
 
-   `mix setup` installs dependencies, creates and migrates `dau_dev`, seeds it, and builds assets.
-   The seeds create one user per role (passwords are in `priv/repo/seeds.exs`), for example
-   `dau_admin@email.com` (admin) and `tattle_manager@email.com` (secretariat manager).
+   `mix setup` installs dependencies, creates and migrates the db, seeds it, and builds assets.
+   The seeds create one user per role (`priv/repo/seeds.exs`).
 
    After pulling new code, run `mix ecto.migrate`.
 
@@ -89,20 +82,11 @@ How the pipeline works, and how it's configured, is in [DEPLOYMENT.md](DEPLOYMEN
    cd ../dau-worker
    uv sync
    cp .env.example .env
+   # Fill in .env
    cd ../dau-dashboard
    ```
 
-   Fill in `dau-worker/.env`: `OBAN_DSN` (the `dau_dev` database), and read-only AWS credentials
-   for the bucket the dashboard uploads to (`AWS_BUCKET=staging.dau.tattle.co.in`).
-
-## Running DAU (Development)
-
-Run the dashboard's migrations first (setup step 4). The worker refuses to start until its Oban
-tables exist.
-
-Open two terminal windows:
-
-1. **Terminal 1: Start the dashboard**
+6. **Start the dashboard**
 
    From `dau-dashboard`:
 
@@ -111,10 +95,9 @@ Open two terminal windows:
    mix phx.server
    ```
 
-   The app runs at [localhost:4000](http://localhost:4000). Use `iex -S mix phx.server` for a
-   shell inside the running app.
+   Use `iex -S mix phx.server` for a shell inside the running app.
 
-2. **Terminal 2: Start the hash worker**
+2. **Start the hash worker**
 
    From `dau-worker`:
 
@@ -136,7 +119,7 @@ To queue a hash by hand and inspect jobs, see
 containers. The dashboard runs as a production release, so there is no live reload. Use it to
 try DAU without installing Elixir or Python.
 
-1. Create `env.docker` (git-ignored) from `env.dev`, without the `export` keywords, and add a
+1. Create `env.docker` from `env.dev`, without the `export` keywords, and add a
    `SECRET_KEY_BASE` (generate one with `openssl rand -base64 48`).
 2. Export the worker's AWS credentials in your shell:
 
@@ -151,13 +134,6 @@ try DAU without installing Elixir or Python.
    docker compose -f docker-compose.standalone.yml up -d --build
    ```
 
-The dashboard runs its migrations on start and serves [localhost:4000](http://localhost:4000).
-The worker's bucket and region default to `staging.dau.tattle.co.in` and `ap-south-1`. Follow
-the logs with `docker compose -f docker-compose.standalone.yml logs -f app worker`.
-
-Both compose files use the same `dau_dev` database. Stop `mix phx.server` before starting the
-standalone stack, since both use port 4000.
-
 ## Running the Tests
 
 1. **Dashboard**
@@ -169,8 +145,6 @@ standalone stack, since both use port 4000.
    mix test
    ```
 
-   The `test` alias creates and migrates `dau_test` first.
-
 2. **Hash worker**
 
    From `dau-worker`:
@@ -178,19 +152,6 @@ standalone stack, since both use port 4000.
    ```sh
    uv run --env-file .env pytest
    ```
-
-   The worker's schema contract test runs against `dau_test`. It needs that database migrated
-   (`MIX_ENV=test mix ecto.migrate` in `dau-dashboard`) and `DAU_TEST_DSN` set in the worker's
-   `.env`. Without `DAU_TEST_DSN`, that one test is skipped.
-
-## Before You Open a PR
-
-```sh
-mix precommit
-```
-
-It compiles with warnings as errors, drops unused dependencies from the lock file, formats, and
-runs the tests. In the worker repo, run `uv run --env-file .env pytest`.
 
 ## Other Tasks
 
