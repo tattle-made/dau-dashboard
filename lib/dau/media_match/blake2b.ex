@@ -1,18 +1,14 @@
 defmodule DAU.MediaMatch.Blake2B do
   @moduledoc """
-  Enforces business logic for Feluda [hash worker](https://github.com/tattle-made/feluda/tree/main/src/worker/hash).
-
-
+  Enforces business logic for hash results from the Python [hash worker](https://github.com/tattle-made/dau-worker).
   """
   require Logger
-  alias DAU.MediaMatch.Blake2B
   alias DAU.Feed.Common
   alias DAU.Feed
   alias DAU.MediaMatch.Blake2b.Match
   alias DAU.UserMessage.Conversation.Hash, as: ConversationHash
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Conversation
-  alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.MediaMatch.Hash
   alias DAU.MediaMatch.HashMeta
   alias DAU.MediaMatch.Blake2B.Media
@@ -104,10 +100,6 @@ defmodule DAU.MediaMatch.Blake2B do
       |> Repo.update_all(inc: [count: 1])
 
     {:ok}
-  end
-
-  def create_job(%MessagePropertiesAdded{} = _request) do
-    :ok
   end
 
   def get_matches(%Hash{} = hash) do

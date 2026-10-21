@@ -71,8 +71,4 @@ defmodule DAU.MediaMatch.HashWorkerResponse do
     |> cast(attrs, @all_fields)
     |> validate_required(@required_fields)
   end
-
-  def get_map(%HashWorkerResponse{} = response) do
-    Map.take(response, HashWorkerResponse.__schema__(:fields))
-  end
 end

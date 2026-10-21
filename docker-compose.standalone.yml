@@ -1,0 +1,65 @@
+# Everything: Postgres, Adminer, the Phoenix release and the hash worker.
+# Prerequisites:
+# 1. dau-worker checked out next to this repo (../dau-worker).
+# 2. An "env.docker" file, created from "env.dev" without the export keywords, plus a
+#    SECRET_KEY_BASE (generate one with `mix phx.gen.secret`).
+services:
+  app:
+    build: .
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    # The release does not migrate on start.
+    command: ["sh", "-c", "bin/dau eval 'DAU.Release.migrate()' && bin/dau start"]
+    ports:
+      - 4000:4000
+    environment:
+      PHX_SERVER: "true"
+      PHX_HOST: localhost
+      DATABASE_USER: tattle
+      DATABASE_PASSWORD: weak_password
+      DATABASE_HOSTNAME: db
+      DATABASE_NAME: dau_dev
+    env_file:
+      - env.docker
+
+  db:
+    image: postgres:14.10
+    restart: always
+    environment:
+      - POSTGRES_USER=tattle
+      - POSTGRES_PASSWORD=weak_password
+      - POSTGRES_DB=dau_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - ~/data/dau/postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  db_gui:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  worker:
+    # image: tattletech/dau-worker:latest
+    build: ../dau-worker
+    container_name: hash_worker
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      OBAN_DSN: ${OBAN_DSN:-postgresql://tattle:weak_password@db:5432/dau_dev}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID_HASH_WORKER}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY_HASH_WORKER}
+      AWS_BUCKET: ${AWS_BUCKET_HASH_WORKER:-staging.dau.tattle.co.in}
+      AWS_REGION: ${AWS_REGION_HASH_WORKER:-ap-south-1}
+    # Gives a running hash time to finish on stop. Same as the worker's 20 min hash timeout.
+    stop_grace_period: 20m

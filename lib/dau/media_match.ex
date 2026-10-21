@@ -47,10 +47,6 @@ defmodule DAU.MediaMatch do
     |> Repo.insert()
   end
 
-  # def create_hashmeta(%HashWorkerResponse{} = response, %Inbox{} = inbox) do
-  #   create_hashmeta
-  # end
-
   def create_hashmeta(attrs) do
     %HashMeta{}
     |> HashMeta.changeset(attrs)
