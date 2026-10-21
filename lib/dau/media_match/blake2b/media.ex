@@ -4,11 +4,10 @@ defmodule DAU.MediaMatch.Blake2B.Media do
   the language of the user.
   """
   alias DAU.UserMessage.Inbox
-  alias DAU.UserMessage.Conversation
   alias DAU.UserMessage
   alias DAU.MediaMatch.HashWorkerResponse
   alias DAU.MediaMatch.Blake2B.Media
-  defstruct [:hash, :language, :inbox_id, :count]
+  defstruct [:hash, :language, :inbox_id, :count, :worker_version]
 
   def new() do
     %Media{}
@@ -30,23 +29,26 @@ defmodule DAU.MediaMatch.Blake2B.Media do
     %{media | count: count}
   end
 
-  def build(attrs) when is_binary(attrs) do
-    # todo : fix the double decodes.
-    with {:ok, temp} <- Jason.decode(attrs),
-         {:ok, response_map} <- Jason.decode(temp),
-         {:ok, response} <- HashWorkerResponse.new(response_map),
-         inbox <- UserMessage.get_incoming_message(response.post_id),
+  def set_worker_version(%Media{} = media, worker_version) do
+    %{media | worker_version: worker_version}
+  end
+
+  def build(attrs) when is_map(attrs) do
+    with {:ok, response} <- HashWorkerResponse.new(attrs),
+         %Inbox{} = inbox <- UserMessage.get_incoming_message(response.inbox_id),
          media <- build(response, inbox) do
-      media
+      {:ok, media}
     else
-      {:error, reason} -> {:error, reason}
+      nil -> {:error, :inbox_not_found}
+      {:error, _reason} -> {:error, :invalid_args}
     end
   end
 
   def build(%HashWorkerResponse{} = response, %Inbox{} = inbox) do
     Media.new()
-    |> Media.set_inbox_id(response.post_id)
+    |> Media.set_inbox_id(response.inbox_id)
     |> Media.set_hash(response.hash_value)
     |> Media.set_language(inbox.user_language_input)
+    |> Media.set_worker_version(response.worker_version)
   end
 end

@@ -1,24 +1,16 @@
 defmodule DAU.MediaMatch.Blake2B do
   @moduledoc """
-  Enforces business logic for Feluda [hash worker](https://github.com/tattle-made/feluda/tree/main/src/worker/hash).
-
-
+  Enforces business logic for hash results from the Python [hash worker](https://github.com/tattle-made/dau-worker).
   """
   require Logger
-  alias DAU.MediaMatch.Blake2B
   alias DAU.Feed.Common
   alias DAU.Feed
   alias DAU.MediaMatch.Blake2b.Match
   alias DAU.UserMessage.Conversation.Hash, as: ConversationHash
-  alias DAU.UserMessage
   alias DAU.UserMessage.Inbox
   alias DAU.UserMessage.Conversation
-  alias DAU.UserMessage.Conversation.MessagePropertiesAdded
   alias DAU.MediaMatch.Hash
   alias DAU.MediaMatch.HashMeta
-  alias DAU.MediaMatch.HashWorkerGenServer
-  alias DAU.MediaMatch.HashWorkerResponse
-  alias DAU.MediaMatch.Blake2b.WorkerRequest
   alias DAU.MediaMatch.Blake2B.Media
   alias DAU.Repo
   alias Permission
@@ -27,48 +19,51 @@ defmodule DAU.MediaMatch.Blake2B do
 
   @doc """
 
-  response is unstructured data received from a rabbitmq queue
-  example:  %{"post_id" => 1, "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF" }
+  args are the args of a `HashResultWorker` job, inserted by the Python hash worker.
+  example:  %{"inbox_id" => 1, "media_type" => "video", "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF", "worker_version" => "blake2b"}
 
   If the hash does not exist, create a new hashmeta with count set to 1
   if the hash already exists, increment its count by 1
+
+  Runs in one transaction and does nothing when the inbox already has a hash (idempotent).
   """
-  def worker_response_received(response_string) do
-    with media <- Media.build(response_string),
-         {:ok, _hash} <- save_hash(media),
-         {:ok, hashmeta_id} <- increment_hash_count(media),
-         {:ok, conversation} <- Conversation.build(media.inbox_id),
-         {:ok, _common} <-
-           Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id),
-         {:ok} <-
-           auto_tag_spam(conversation, media) do
-      :ok
-    else
-      err ->
-        Logger.error(err)
-        err
-    end
-  rescue
-    error ->
-      IO.inspect(error)
-      Logger.error(error)
-      Sentry.capture_exception(error, stacktrace: __STACKTRACE__)
+  def worker_response_received(args) when is_map(args) do
+    Repo.transaction(fn ->
+      with {:ok, media} <- Media.build(args),
+           false <- hash_exists?(media),
+           {:ok, _hash} <- save_hash(media),
+           {:ok, hashmeta_id} <- increment_hash_count(media),
+           {:ok, conversation} <- Conversation.build(media.inbox_id),
+           {:ok, _common} <-
+             Conversation.associate_hashmeta_with_feed(conversation, hashmeta_id),
+           {:ok} <-
+             auto_tag_spam(conversation, media) do
+        :ok
+      else
+        true -> :ok
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
   end
 
   @doc """
-
-  Returns {:ok, hashmeta} or {:ok}
+  Returns {:ok, hashmeta_id} or {:error, changeset}
   """
   def increment_hash_count(%Media{} = media) do
     case hashmeta_exists?(media) do
       nil ->
-        {:ok, hashmeta} = save_hashmeta(media)
-        {:ok, hashmeta.id}
+        with {:ok, hashmeta} <- save_hashmeta(media) do
+          {:ok, hashmeta.id}
+        end
 
       hashmeta ->
         {:ok} = save_hash_count_plus_one(media)
         {:ok, hashmeta.id}
     end
+  end
+
+  def hash_exists?(%Media{} = media) do
+    Repo.exists?(from(h in Hash, where: h.inbox_id == ^media.inbox_id))
   end
 
   def hashmeta_exists?(%Media{} = media) do
@@ -80,7 +75,8 @@ defmodule DAU.MediaMatch.Blake2B do
     |> Hash.changeset(%{
       value: media.hash,
       inbox_id: media.inbox_id,
-      user_language: media.language
+      user_language: media.language,
+      worker_version: media.worker_version
     })
     |> Repo.insert()
   end
@@ -104,10 +100,6 @@ defmodule DAU.MediaMatch.Blake2B do
       |> Repo.update_all(inc: [count: 1])
 
     {:ok}
-  end
-
-  def create_job(%MessagePropertiesAdded{} = request) do
-    HashWorkerGenServer.add_to_job_queue(HashWorkerGenServer, request)
   end
 
   def get_matches(%Hash{} = hash) do

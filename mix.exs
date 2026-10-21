@@ -21,7 +21,7 @@ defmodule DAU.MixProject do
   def application do
     [
       mod: {DAU.Application, []},
-      extra_applications: [:amqp, :logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -45,6 +45,7 @@ defmodule DAU.MixProject do
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
+      {:oban, "~> 2.24"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "== 1.1.0"},
@@ -63,7 +64,6 @@ defmodule DAU.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
-      {:amqp, "~> 4.1"},
       {:elixir_uuid, "~> 1.2"},
       {:httpoison, "~> 2.0"},
       {:timex, "~> 3.0"},

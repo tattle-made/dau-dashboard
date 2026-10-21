@@ -1,5 +1,4 @@
 defmodule DAU.UserMessageTest do
-  alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.UserMessage.Query
   alias DAU.Feed.Common
   alias DAU.Feed
@@ -272,8 +271,9 @@ defmodule DAU.UserMessageTest do
 
       {:ok, hashworker_response} =
         HashWorkerResponse.new(%{
-          "inbox_id" => "#{inbox.id}",
-          "value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
+          "inbox_id" => inbox.id,
+          "media_type" => "video",
+          "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
         })
 
       {:ok, query} = UserMessage.create_query(%{status: "pending"})
@@ -307,16 +307,13 @@ defmodule DAU.UserMessageTest do
 
       {:ok, hashworker_response} =
         HashWorkerResponse.new(%{
-          "inbox_id" => "#{inbox.id}",
-          "value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
+          "inbox_id" => inbox.id,
+          "media_type" => "video",
+          "hash_value" => "ADFSDFJSKDFJSDKFJKSDSDFSDF"
         })
 
       # if response.value exists in query, add query to that feed
       # if it does not exists, add new query
-    end
-
-    test "ainvayi" do
-      HashWorkerGenServer.status(HashWorkerGenServer) |> IO.inspect()
     end
   end
 end

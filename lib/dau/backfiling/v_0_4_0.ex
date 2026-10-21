@@ -1,6 +1,6 @@
 defmodule DAU.Backfiling.V040 do
   alias DAU.UserMessage.Conversation.MessagePropertiesAdded
-  alias DAU.MediaMatch.Blake2B
+  # alias DAU.MediaMatch.Blake2B
   alias DAU.UserMessage.Query
   alias DAU.UserMessage.Inbox
   alias DAU.Repo
@@ -26,9 +26,13 @@ defmodule DAU.Backfiling.V040 do
       |> Enum.map(&get_common_by_id(&1))
       |> Enum.filter(fn common -> common != nil end)
       |> Enum.map(fn item ->
-        %MessagePropertiesAdded{id: item["id"], path: item["media_url"], media_type: item["media_type"]}
+        %MessagePropertiesAdded{
+          id: item["id"],
+          path: item["media_url"],
+          media_type: item["media_type"]
+        }
       end)
-      |> Enum.map(&Blake2B.create_job(&1))
+      # |> Enum.map(&Blake2B.create_job(&1))
       |> IO.inspect()
 
     # |> Enum.map(&Blake2B.create_job)

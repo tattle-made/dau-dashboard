@@ -9,7 +9,5 @@ alias DAU.UserMessage.Inbox
 alias DAU.MediaMatch.{
   Hash,
   HashMeta,
-  HashWorkerGenServer,
-  HashWorkerRequest,
   HashWorkerResponse
 }

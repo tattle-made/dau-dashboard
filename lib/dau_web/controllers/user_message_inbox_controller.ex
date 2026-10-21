@@ -6,8 +6,6 @@ defmodule DAUWeb.IncomingMessageController do
   alias DAU.UserMessage.Analytics
   alias DAU.UserMessage.Analytics.Event
   alias DAU.MediaMatch
-  alias DAU.MediaMatch.HashWorkerRequest
-  alias DAU.MediaMatch.HashWorkerGenServer
   alias DAU.Vendor.Gupshup.DeliveryReport
   alias DAU.UserMessage
   alias DAU.UserMessage.Inbox
@@ -24,19 +22,15 @@ defmodule DAUWeb.IncomingMessageController do
   def create(conn, payload) do
     with {:ok, _} <- authenticate_request(conn) do
       alias UserMessage.Conversation
-      alias MediaMatch.Blake2B
 
       case Conversation.add_to_inbox(payload) do
         {:ok, inbox} ->
           conn = conn |> Plug.Conn.send_resp(200, [])
 
           Task.start(fn ->
-            with {:ok, properties_added} <- Conversation.add_message_properties(inbox) do
-              #  :ok <-
-              #    if(inbox.media_type in ["audio", "video"],
-              #      do: Blake2B.create_job(properties_added),
-              #      else: :ok
-              #    ) do
+            with {:ok, properties_added} <- Conversation.add_message_properties(inbox),
+                 {:ok, _} <- create_hash_job(properties_added) do
+              :ok
             else
               error ->
                 Logger.error("Error in processing message in background #{inspect(error)}")
@@ -90,6 +84,11 @@ defmodule DAUWeb.IncomingMessageController do
     |> resp(401, Jason.encode!(%{status: :unauthorized}))
     |> send_resp()
   end
+
+  defp create_hash_job(%{media_type: media_type} = message) when media_type in ["audio", "video"],
+    do: MediaMatch.create_job(message, :hash_worker)
+
+  defp create_hash_job(_message), do: {:ok, :skipped}
 
   # Function to authenticate Turn Tipline API
   # that Turn calls to send media items to dashboard
