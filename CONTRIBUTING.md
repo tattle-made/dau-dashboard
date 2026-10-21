@@ -10,7 +10,7 @@ This guide will help you set up a local development environment for the dashboar
 | --- | --- | --- |
 | Dashboard | this repo (Phoenix, Elixir) | Web app, business logic, database schema. Runs Elixir Oban for background jobs. |
 | Hash worker | [`dau-worker`](https://github.com/tattle-made/dau-worker) (Python) | Hashes media files. Runs [oban-py](https://github.com/oban-bg/oban-py). |
-| Postgres | `docker-compose.yml` here | Shared by both. |
+| Postgres | `docker-compose.dev.yml` | Shared by both. |
 
 The dashboard queues media hashing jobs and the worker runs them; both share one Postgres.
 How the pipeline works, and how it's configured, is in [DEPLOYMENT.md](DEPLOYMENT.md).
@@ -54,8 +54,11 @@ How the pipeline works, and how it's configured, is in [DEPLOYMENT.md](DEPLOYMEN
 3. **Start Postgres:**
 
    ```sh
-   docker compose up -d db db_gui
+   docker compose -f docker-compose.dev.yml up -d
    ```
+
+   This starts Postgres and Adminer only. To run everything in containers instead, see
+   [Running Everything in Docker](#running-everything-in-docker).
 
    Adminer runs at [localhost:8080](http://localhost:8080):
 
@@ -92,15 +95,6 @@ How the pipeline works, and how it's configured, is in [DEPLOYMENT.md](DEPLOYMEN
    Fill in `dau-worker/.env`: `OBAN_DSN` (the `dau_dev` database), and read-only AWS credentials
    for the bucket the dashboard uploads to (`AWS_BUCKET=staging.dau.tattle.co.in`).
 
-   To run the worker only in Docker, add the AWS credentials to `env.dev` instead:
-
-   ```sh
-   export AWS_ACCESS_KEY_ID_HASH_WORKER=...
-   export AWS_SECRET_ACCESS_KEY_HASH_WORKER=...
-   ```
-
-   The worker's tests still need `uv sync` and `.env`.
-
 ## Running DAU (Development)
 
 Run the dashboard's migrations first (setup step 4). The worker refuses to start until its Oban
@@ -122,7 +116,7 @@ Open two terminal windows:
 
 2. **Terminal 2: Start the hash worker**
 
-   Natively, from `dau-worker`:
+   From `dau-worker`:
 
    ```sh
    uv run --env-file .env oban start
@@ -130,22 +124,39 @@ Open two terminal windows:
 
    `--env-file` loads `.env` in any shell, fish included.
 
-   Or in Docker, from `dau-dashboard`:
-
-   ```sh
-   source env.dev
-   docker compose up -d --build worker
-   docker compose logs -f worker
-   ```
-
-   Compose builds `../dau-worker` and connects it to the `db` service. The bucket and region
-   default to `staging.dau.tattle.co.in` and `ap-south-1`.
-
 > **Tip:** Never run `oban install` or `oban uninstall` in the worker. The dashboard's migrations
 > own the schema, and `uninstall` would also drop the dashboard's jobs.
 
 To queue a hash by hand and inspect jobs, see
 [DEPLOYMENT.md: Inspecting and Running Jobs](DEPLOYMENT.md#inspecting-and-running-jobs).
+
+## Running Everything in Docker
+
+`docker-compose.standalone.yml` runs Postgres, Adminer, the dashboard and the hash worker in
+containers. The dashboard runs as a production release, so there is no live reload. Use it to
+try DAU without installing Elixir or Python.
+
+1. Create `env.docker` (git-ignored) from `env.dev`, without the `export` keywords, and add a
+   `SECRET_KEY_BASE` (generate one with `openssl rand -base64 48`).
+2. Export the worker's AWS credentials in your shell:
+
+   ```sh
+   export AWS_ACCESS_KEY_ID_HASH_WORKER=...
+   export AWS_SECRET_ACCESS_KEY_HASH_WORKER=...
+   ```
+
+3. From `dau-dashboard`, with `dau-worker` checked out next to it:
+
+   ```sh
+   docker compose -f docker-compose.standalone.yml up -d --build
+   ```
+
+The dashboard runs its migrations on start and serves [localhost:4000](http://localhost:4000).
+The worker's bucket and region default to `staging.dau.tattle.co.in` and `ap-south-1`. Follow
+the logs with `docker compose -f docker-compose.standalone.yml logs -f app worker`.
+
+Both compose files use the same `dau_dev` database. Stop `mix phx.server` before starting the
+standalone stack, since both use port 4000.
 
 ## Running the Tests
 

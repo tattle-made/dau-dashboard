@@ -110,5 +110,5 @@ LIMIT 20;
 On `SIGTERM`, the worker stops fetching and waits for its running jobs to finish, with no time
 limit. A container runtime that kills it sooner (Docker's default is 10 s) leaves those jobs in
 `executing`; the dashboard rescues them after 30 minutes and they run again. Give the worker a
-longer stop grace period than your longest expected hash. The local `docker-compose.yml` sets
-`stop_grace_period: 20m`, the same as the hash timeout.
+longer stop grace period than your longest expected hash. The local
+`docker-compose.standalone.yml` sets `stop_grace_period: 20m`, the same as the hash timeout.
