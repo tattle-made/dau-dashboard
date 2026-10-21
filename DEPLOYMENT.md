@@ -5,11 +5,11 @@ to inspect jobs. For a local development setup, see [CONTRIBUTING.md](CONTRIBUTI
 
 ## Components
 
-| Component | Source | Runs |
-| --- | --- | --- |
-| Dashboard | this repo | Phoenix release. The `Dockerfile` builds it; `.github/workflows/release.yml` publishes `tattletech/dau-dashboard`. Starts with `bin/dau start`. |
-| Hash worker | [`dau-worker`](https://github.com/tattle-made/dau-worker) | oban-py worker. Its `Dockerfile` builds the image; it starts with `oban start`. |
-| Postgres | 14+ (13 is the minimum for oban-py) | Shared by both. Holds the app tables and the Oban job tables. |
+| Component | Runs |
+| --- | --- |
+| Dashboard | Phoenix release. The `Dockerfile` builds it; `.github/workflows/release.yml` publishes `tattletech/dau-dashboard`. Starts with `bin/dau start`. |
+| Hash worker ([`dau-worker`](https://github.com/tattle-made/dau-worker)) | oban-py worker. Its `Dockerfile` builds the image; it starts with `oban start`. |
+| Postgres | Shared by both. Holds the app tables and the Oban job tables. |
 
 ## Media Hashing
 
@@ -44,26 +44,7 @@ with `leadership = false` in its `oban.toml`, so it only runs jobs.
    ```
 
 3. **Dashboard:** `bin/dau start`.
-4. **Hash worker(s).** A worker refuses to start until the Oban tables exist, so it must come
-   after step 2. Run more worker containers to hash more files in parallel.
-
-## Environment
-
-**Dashboard** (`config/runtime.exs`):
-
-- Always required: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `GUPSHUP_ENDPOINT`,
-  `GUPSHUP_USERID`, `GUPSHUP_PASSWORD`, `GUPSHUP_HSM_USERID`, `GUPSHUP_HSM_PASSWORD`,
-  `SLACK_WEBHOOK_URL`.
-- Production: `SECRET_KEY_BASE` (required), `DATABASE_USER`, `DATABASE_PASSWORD`,
-  `DATABASE_HOSTNAME`, `DATABASE_NAME`, `POOL_SIZE` (default 10), `PHX_HOST`
-  (default `dau.tattle.co.in`), `PORT` (default 4000), `PHX_SERVER`.
-
-**Hash worker** (see `dau-worker/.env.example`):
-
-- `OBAN_DSN`: the dashboard's database.
-- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `AWS_BUCKET`: read-only access to the
-  bucket the dashboard uploads to (`staging.dau.tattle.co.in`). feluda reads these when it is
-  first imported, so they must be set before the worker starts.
+4. **Hash worker(s).** A worker refuses to start until the Oban tables exist, so it must come after step 2. 
 
 ## Configuration
 
